@@ -66,12 +66,12 @@ from ..data.context import (
 
 from .hidden import extract_hidden
 
-CONTEXT_FNS = {
-    "Qwen3-8B":      build_context_template,
-    "Qwen3-8B-Base": build_context_base,
-    "Llama-3.1-8B-Instruct": build_context_template,
-    "Llama-3.1-8B":  build_context_base
-}
+# CONTEXT_FNS = {
+#     "Qwen3-8B":      build_context_template,
+#     "Qwen3-8B-Base": build_context_base,
+#     "Llama-3.1-8B-Instruct": build_context_template,
+#     "Llama-3.1-8B":  build_context_base
+# }
 
 # CONTEXT_FNS = {
 #     "Qwen3-8B":      build_context_base,
@@ -92,7 +92,6 @@ def extract_trajectory_hidden(
     max_tokens:       int,
     layers:           list[str] | str,   # list of ints or "all"
     pool:             str,               # "last" | "mean" | "all"
-    device:           str,
     context_strategy: str = "dependency",
     context_fn:       Callable = build_context_template,
     pbar=None,
@@ -113,6 +112,7 @@ def extract_trajectory_hidden(
         torch.cuda.synchronize()
 
     hidden: dict[int, dict[str, Tensor]] = {}
+    device = next(model.parameters()).device
 
     for step_idx in iter_scoreable_steps(traj):
         encoded = context_fn(
@@ -163,7 +163,6 @@ def extract_trajectories_hidden(
     max_tokens:       int,
     layers:           list[str] | str,   # list of ints or "all"
     pool:             str,               # "last" | "mean" | "all"
-    device:           str,
     context_strategy: str = "dependency", # "dependency" | "all"
     context_fn:       Callable = build_context_template,
 ):
@@ -178,7 +177,7 @@ def extract_trajectories_hidden(
 
         hidden = extract_trajectory_hidden(
             traj, model, tokenizer, max_tokens,
-            layers, pool, device, context_strategy,
+            layers, pool, context_strategy,
             context_fn, pbar,
         )
 
@@ -251,7 +250,11 @@ def main():
     args = parse_args()
 
     # ── Device / dtype ────────────────────────────────────────────────────────
-    device = args.device or ("cuda" if torch.cuda.is_available() else "cpu")
+    if args.device == "auto": device_map = "auto"
+    else:
+        device = args.device or ("cuda" if torch.cuda.is_available() else "cpu")
+        device_map = {"":device}
+
     dtype_map = {
         "float32":  torch.float32,
         "bfloat16": torch.bfloat16,
@@ -268,11 +271,12 @@ def main():
     print(f"Loading tokenizer: {args.model}")
     tokenizer = AutoTokenizer.from_pretrained(args.model)
 
-    print(f"Loading model → {device} ({args.dtype})")
+    print(f"Loading model → {args.device} ({args.dtype})")
     model = AutoModelForCausalLM.from_pretrained(
         args.model,
         torch_dtype=torch_dtype,
-        device_map={"": device},
+        # device_map={"": device},
+        device_map=device_map,
     )
     model.eval()
 
@@ -282,7 +286,8 @@ def main():
 
     # ── Context builder ──────────────────────────────────────────────────────
     model_key  = Path(args.model).parts[-1]
-    context_fn = CONTEXT_FNS[model_key]
+    # context_fn = CONTEXT_FNS[model_key]
+    context_fn = build_context_template
 
     # ── Validate --layers against actual model depth ──────────────────────────
     if layers != "all":
@@ -321,7 +326,7 @@ def main():
     t0   = time.perf_counter()
     extract_trajectories_hidden(
         trajectories, out_dir, model, tokenizer, args.max_tokens,
-        layers, args.pool, device, args.context, context_fn
+        layers, args.pool, args.context, context_fn
     )
 
     elapsed = time.perf_counter() - t0

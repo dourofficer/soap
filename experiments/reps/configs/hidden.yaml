@@ -1,0 +1,29 @@
+# experiments/reps/configs/base.yaml
+# Extraction sweep for grads and hidden states.  Shrink any list to narrow.
+
+shared:
+  models:   [llama-3.1-8b, qwen3-8b]
+  subsets:  [algorithm-generated, hand-crafted]
+
+  outputs_root: outputs/2025-05-25
+  data_dir:     data/ww
+  device:       auto
+  max_tokens:   8192
+  dtype:        bfloat16
+  context:      all   # "dependency" | "all"
+
+  # Trajectory slice — both are optional (null = no limit).
+  start_idx: 0
+  end_idx:   1
+
+  # Full paths / HF names for each model shorthand.
+  # Use the shorthand directly if the model is on the HF Hub.
+  model_paths:
+    qwen3-8b:      /home/thanhdo/hub/Qwen/Qwen3-8B
+    llama-3.1-8b:  /home/thanhdo/hub/meta-llama/Llama-3.1-8B-Instruct
+
+# ── Hidden-state extraction ───────────────────────────────────────────────────
+hidden:
+  
+  layers: all # Layer shorthands: "embed", "act/<N>", "act/<N>_normed", or ["all"].
+  pool: all # Pooling: "last" | "mean" | "all"
