@@ -1,0 +1,45 @@
+# =============================================================================
+# Sweep configuration for experiments.classifier.run_all_positions
+# =============================================================================
+
+# --- I/O ---
+reps_root:    "/data/hoang/attrib/outputs"
+data_root:    "data/ww"
+outputs_root: "outputs/2025-05-25"
+
+# --- Sweep dimensions ---
+models:
+  - llama-3.1-8b
+  - qwen3-8b
+
+subsets:
+  - algorithm-generated
+  - hand-crafted
+
+poolings:
+  - mean
+  - last
+
+seeds:
+  - 1
+  - 2
+  - 3
+
+# --- Shared args passed to every job ---
+thresholds:
+  - 0.0
+  - 0.01
+  - 0.02
+  - 0.025
+  - 0.05
+  - 0.075
+  - 0.1
+  - 0.125
+  - 0.15
+  - 0.175
+  - 0.2
+
+positions:
+  - all
+
+device: cuda
