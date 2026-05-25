@@ -258,6 +258,105 @@ def build_context_base(
     return {"input_ids": full_ids["input_ids"], "ctx_len": ctx_len}
 
 
+def preprocess_context(
+    traj:       Trajectory,
+    step_idx:   int,
+    tokenizer:  PreTrainedTokenizer,
+    max_tokens: int | None = None,
+    strategy:   str = "dependency",
+) -> dict[str, Any]:
+
+    history      = traj.history
+    ctx_indices  = select_context(history, step_idx, strategy=strategy)
+    step_content = _serialize_turns(history, [step_idx])
+    assistant_msg = {"role": "assistant", "content": step_content}
+
+    def _apply(indices: list[int]) -> tuple:
+        """Tokenise [user_msg, assistant_msg] and the user-only prefix."""
+        user_msg = {"role": "user", "content": _serialize_turns(history, indices)}
+        full_ids = tokenizer.apply_chat_template(
+            [user_msg, assistant_msg],
+            tokenize              = True,
+            add_generation_prompt = False,
+            return_tensors        = "pt",
+        )
+        prefix_ids = tokenizer.apply_chat_template(
+            [user_msg],
+            tokenize              = True,
+            add_generation_prompt = True,
+            return_tensors        = "pt",
+        )
+        return full_ids, prefix_ids
+
+    def _build_step_tokens(
+        ctx_indices: list[int],
+        ctx_len:     int,
+        seq_len:     int,
+    ) -> dict[int, list[int]]:
+        """Map each step index to its token positions in full_ids.
+
+        Context steps: found by progressive tokenization — the prefix grows
+        one step at a time and the length delta gives the token span of each
+        added step.
+
+        Scored step (step_idx): always occupies [ctx_len, seq_len).
+        """
+        step_tokens: dict[int, list[int]] = {}
+
+        # Compute prefix length after each cumulative prefix of ctx_indices.
+        # prefix_lengths[k] = number of tokens in the prefix that contains
+        # exactly the first k context steps.
+        prefix_lengths = []
+        for k in range(len(ctx_indices) + 1):
+            _, partial_prefix = _apply(ctx_indices[:k])
+            prefix_lengths.append(partial_prefix["input_ids"].shape[1])
+
+        for k, idx in enumerate(ctx_indices):
+            start = prefix_lengths[k]
+            end   = prefix_lengths[k + 1]
+            step_tokens[idx] = list(range(start, end))
+
+        # The scored step always sits right after the context prefix.
+        step_tokens[step_idx] = list(range(ctx_len, seq_len))
+
+        return step_tokens
+
+    full_ids, prefix_ids = _apply(ctx_indices)
+
+    # ── Truncate context if full sequence exceeds max_tokens ─────────────
+    if max_tokens is not None:
+        while (
+            full_ids["input_ids"].shape[1] > max_tokens
+            and len(ctx_indices) > 0
+        ):
+            ctx_indices = ctx_indices[1:]   # drop oldest turn
+            full_ids, prefix_ids = _apply(ctx_indices)
+
+        if full_ids["input_ids"].shape[1] > max_tokens:
+            # Hard truncation: step alone exceeds budget; slice from the front.
+            # All ctx_indices have already been dropped, so step_tokens only
+            # contains the scored step (no context step entries).
+            step_len = full_ids["input_ids"].shape[1] - prefix_ids["input_ids"].shape[1]
+            full_ids["input_ids"] = full_ids["input_ids"][:, -max_tokens:]
+            ctx_len     = max(0, max_tokens - step_len)
+            seq_len     = full_ids["input_ids"].shape[1]
+            step_tokens = _build_step_tokens([], ctx_len, seq_len)
+            return {
+                "input_ids":   full_ids["input_ids"],
+                "ctx_len":     ctx_len,
+                "step_tokens": step_tokens,
+            }
+
+    ctx_len     = prefix_ids["input_ids"].shape[1]
+    seq_len     = full_ids["input_ids"].shape[1]
+    step_tokens = _build_step_tokens(ctx_indices, ctx_len, seq_len)
+
+    return {
+        "input_ids":   full_ids["input_ids"],
+        "ctx_len":     ctx_len,
+        "step_tokens": step_tokens,
+    }
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Helpers
 # ─────────────────────────────────────────────────────────────────────────────
