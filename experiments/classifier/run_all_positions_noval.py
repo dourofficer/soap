@@ -40,8 +40,7 @@ VAL_METRIC    = "f1"
 
 def precompute_svd(
     train_reps: RepresentationStores,
-    val_reps:   RepresentationStores,
-    test_reps:  RepresentationStores,
+    test_reps:   RepresentationStores,
     n_components: int = 10,
     device: torch.device = torch.device("cuda")
 ):
@@ -54,22 +53,15 @@ def precompute_svd(
         device=device
     )
     train_scores = score_all(train_reps.stores, **score_kwargs)
-    val_scores   = score_all(val_reps.stores,   **score_kwargs)
-    test_scores  = score_all(test_reps.stores,  **score_kwargs)
+    test_scores   = score_all(test_reps.stores,   **score_kwargs)
 
-    val_df  = run_metrics(val_scores,  keeper=val_reps.keeper,  ks=[1])
     test_df = run_metrics(test_scores, keeper=test_reps.keeper, ks=[1])
-    merged_df = pd.merge(
-        val_df, test_df, suffixes=('_val', '_test'),
-        on=['weight', 'pooling', 'method', 'c', 'centered', 'direction', 'k'],
-    )
 
     return dict(
         svd_components = svd_components,
-        svd_accuracy   = merged_df,
+        svd_accuracy   = test_df,
         train_scores   = train_scores,
-        val_scores     = val_scores,
-        test_scores    = test_scores
+        test_scores     = test_scores,
     )
 
 
@@ -84,13 +76,13 @@ def get_position_best_config(
 
 def get_pseudo_labels(
     train_scores,
-    val_scores,
-    val_reps,
+    test_scores,
+    test_reps,
     layer_idx,
     threshold,
     device
 ):
-    config = get_position_best_config(val_scores, keeper=val_reps.keeper, layer_idx=layer_idx)
+    config = get_position_best_config(test_scores, keeper=test_reps.keeper, layer_idx=layer_idx)
     QUERY = (
         f"weight == '{layer_idx}' "
         f"and pooling == '{config['pooling']}' "
@@ -99,8 +91,8 @@ def get_pseudo_labels(
         f"and centered == {config['centered']}"
     )
     print("---" * 20)
-    print(f"Using best validation config:\n{QUERY}")
-    print(f"The best validation results with direct projection on SVD components")
+    print(f"Using best test config:\n{QUERY}")
+    print(f"The best test results with direct projection on SVD components")
     print(f"Step@1: {config['step_acc']:.4f} Agent@1: {config['agent_acc']:.4f}\n")
 
     pseudo_scores  = pd.DataFrame(train_scores).query(QUERY).iloc[0].scores
@@ -114,10 +106,9 @@ def get_pseudo_labels(
 
 def prepare_data(
     train_reps:   RepresentationStores,
-    val_reps:     RepresentationStores,
-    test_reps:    RepresentationStores,
+    test_reps:     RepresentationStores,
     train_scores: list[dict],
-    val_scores:   list[dict],
+    test_scores:   list[dict],
     layer_idx:    str,
     threshold:    float,
     mode:         str,  # oracle | pseudo
@@ -130,17 +121,12 @@ def prepare_data(
     ).to(device=X_train.device)
 
     # Pseudo labels estimation
-    best_config = get_position_best_config(val_scores, keeper=val_reps.keeper, layer_idx=layer_idx)
+    best_config = get_position_best_config(test_scores, keeper=test_reps.keeper, layer_idx=layer_idx)
     y_train_pseudo = get_pseudo_labels(
-        train_scores, val_scores, val_reps,
+        train_scores, test_scores, test_reps,
         layer_idx, threshold,
         device=X_train.device
     )
-
-    X_val = val_reps.stores[layer_idx].R.float().to(device)
-    y_val = torch.Tensor(
-        [idx.is_mistake for idx in val_reps.keeper.index]
-    ).to(device=X_val.device)
 
     X_test = test_reps.stores[layer_idx].R.float().to(device)
     y_test = torch.Tensor(
@@ -154,12 +140,11 @@ def prepare_data(
     else: raise ValueError(f"Unsupported mode: {mode}")
 
     train_loader = DataLoader(TensorDataset(X_train, y_train_effective), batch_size=batch_size, shuffle=True)
-    val_loader   = DataLoader(TensorDataset(X_val, y_val), batch_size=batch_size, shuffle=False)
+    test_loader   = DataLoader(TensorDataset(X_test, y_test), batch_size=batch_size, shuffle=False)
     return dict(
         train_loader = train_loader,
-        val_loader   = val_loader,
+        test_loader  = test_loader,
         train        = (X_train, y_train),
-        validation   = (X_val, y_val),
         test         = (X_test, y_test),
         best_config  = best_config,
     )
@@ -167,23 +152,12 @@ def prepare_data(
 
 def get_metrics(
     clf:       MLPClassifier,
-    val_reps:  RepresentationStores,
-    test_reps: RepresentationStores,
+    test_reps:  RepresentationStores,
     layer_idx: str,
     threshold: float,
     device:    torch.device = torch.device("cuda")
 ):
-    val_mistake_indices,  val_mistake_roles  = get_mistake_meta(val_reps.keeper)
     test_mistake_indices, test_mistake_roles = get_mistake_meta(test_reps.keeper)
-
-    X_val = val_reps.stores[layer_idx].R.float().to(device)
-    val_scores = infer(clf, X_val, return_logits=False, device=device)
-    val_metrics = compute_metrics(
-        scores=val_scores, keeper=val_reps.keeper,
-        mistake_indices=val_mistake_indices, mistake_roles=val_mistake_roles,
-        ks=[1], direction="desc",
-    )
-    val_step_acc, val_agent_acc = list(val_metrics.values())
 
     X_test = test_reps.stores[layer_idx].R.float().to(device)
     test_scores = infer(clf, X_test, return_logits=False, device=device)
@@ -196,16 +170,13 @@ def get_metrics(
 
     print(
         f"  Layer {layer_idx:>10} | "
-        f"Validation Step@1: {val_step_acc:.4f}  Agent@1: {val_agent_acc:.4f} | "
-        f"Test  Step@1: {test_step_acc:.4f}  Agent@1: {test_agent_acc:.4f}"
+        f"Test Step@1: {test_step_acc:.4f}  Agent@1: {test_agent_acc:.4f}"
     )
 
     return dict(
-        labels         = "oracle" if threshold == 0.0 else "pseudo",
-        position       = layer_idx,
-        threshold      = threshold,
-        val_step_acc   = val_step_acc,
-        val_agent_acc  = val_agent_acc,
+        labels        = "oracle" if threshold == 0.0 else "pseudo",
+        position      = layer_idx,
+        threshold     = threshold,
         test_step_acc  = test_step_acc,
         test_agent_acc = test_agent_acc,
     )
@@ -271,11 +242,9 @@ if __name__ == "__main__":
     files = [file.name for file in files] # silent failure if not included
     assert files, f"No .safetensors files in {rep_dir}"
 
-    train_files, test_files = split_data(files, 0.5, seed)
-    train_files, val_files  = split_data(train_files, 0.8, seed)
+    train_files, test_files = split_data(files, 0.6, seed)
 
     print(f"Train trajectories: {len(train_files)}")
-    print(f"Val trajectories:   {len(val_files)}")
     print(f"Test trajectories:  {len(test_files)}")
 
     rep_kwargs = dict(
@@ -286,8 +255,7 @@ if __name__ == "__main__":
         device=args.device,
     )
     train_reps = load_representations(**rep_kwargs, files=train_files)
-    val_reps   = load_representations(**rep_kwargs, files=val_files)
-    test_reps  = load_representations(**rep_kwargs, files=test_files)
+    test_reps   = load_representations(**rep_kwargs, files=test_files)
 
     LAYER_IDXS = sorted(train_reps.stores.keys(), key=key_hidden)
     if args.positions != ["all"]:
@@ -297,14 +265,14 @@ if __name__ == "__main__":
     # -------------------------------------------------------------------
     # SVD direct projection
     # -------------------------------------------------------------------
-    precomputed_svd = precompute_svd(train_reps, val_reps, test_reps,
+    precomputed_svd = precompute_svd(train_reps, test_reps,
                                      n_components=20, device=DEVICE)
     train_scores = precomputed_svd["train_scores"]
-    val_scores   = precomputed_svd["val_scores"]
+    test_scores   = precomputed_svd["test_scores"]
     svd_accuracy = precomputed_svd["svd_accuracy"]
 
     svd_accuracy = svd_accuracy[svd_accuracy["direction"] == "asc"]
-    svd_accuracy = svd_accuracy.sort_values("step_acc_val", ascending=False)
+    svd_accuracy = svd_accuracy.sort_values("step_acc", ascending=False)
 
     svd_outpath = output_dir / f"svd_pooling-{args.pooling}_seed-{seed}.tsv"
     if svd_outpath.exists(): print("[skipped] SVD file exists.")
@@ -317,6 +285,7 @@ if __name__ == "__main__":
     metric_rows  = []
     inner_combos = list(itertools.product(LAYER_IDXS, args.thresholds))
     output_path = output_dir / f"classifier_pooling-{args.pooling}_seed-{seed}.tsv"
+
     if not output_path.exists():
         for icb, (layer_idx, threshold) in enumerate(tqdm(inner_combos)):
             print("---" * 20)
@@ -324,19 +293,19 @@ if __name__ == "__main__":
             mode = "oracle" if threshold == 0.0 else "pseudo"
 
             prepared_data = prepare_data(
-                train_reps, val_reps, test_reps, train_scores, val_scores,
+                train_reps, test_reps, train_scores, test_scores,
                 layer_idx=layer_idx, threshold=threshold, mode=mode, device=DEVICE
             )
             train_loader     = prepared_data["train_loader"]
-            val_loader       = prepared_data["val_loader"]
+            test_loader      = prepared_data["test_loader"]
             X_train, y_train = prepared_data["train"]
-            best_val_config  = prepared_data["best_config"]
+            best_test_config = prepared_data["best_config"]
 
             seed_everything(seed)
             clf = MLPClassifier(input_dim=X_train.shape[1], hidden_dim=CLF_DIM)
             clf, _ = train(clf,
                 train_loader  = train_loader,
-                val_loader    = val_loader,
+                val_loader    = test_loader,
                 epochs        = EPOCHS,
                 learning_rate = LEARNING_RATE,
                 weight_decay  = WEIGHT_DECAY,
@@ -346,8 +315,8 @@ if __name__ == "__main__":
                 val_metric    = VAL_METRIC,
                 device        = DEVICE,
             )
-            metrics = get_metrics(clf, val_reps, test_reps, layer_idx, threshold, DEVICE)
-            metric_rows.append({**best_val_config, **metrics})
+            metrics = get_metrics(clf, test_reps, layer_idx, threshold, DEVICE)
+            metric_rows.append({**best_test_config, **metrics})
 
         metric_df = pd.DataFrame(metric_rows).sort_values("test_step_acc", ascending=False)
         # output_path = output_dir / f"classifier_pooling-{args.pooling}_seed-{seed}.tsv"

@@ -138,6 +138,7 @@ def process_weighting(
                 "ctx_indices": entry["ctx_indices"],
                 "weights":     w,
             }
+            # breakpoint()
         processed[fn] = out
     return processed
 
@@ -186,18 +187,21 @@ def reweight_scores(
     # bookkeeping out of the discount computation.
     for start, end in keeper.traj_ranges:
         traj_entries = keeper.index[start:end]
-        if not traj_entries:continue
+        if not traj_entries:
+            raise ValueError("A trajectory must contain some steps.")
 
         # Resolve the trajectory's filename via an entry's traj_idx — more
         # robust than relying on the enumerate index of `traj_ranges`, in
         # case ordering ever drifts.
         traj_idx = traj_entries[0].traj_idx
-        fn       = keeper.traj_meta[traj_idx]["filename"]
+        # fn       = keeper.traj_meta[traj_idx]["filename"]
+        fn       = str(traj_idx)
 
         # Fetch the weighting block for this trajectory. Tolerate both the
         # flat layout and the nested {"steps": …} layout in one line.
         traj_w = weighting.get(fn)
-        if traj_w is None: continue
+        if traj_w is None:
+            raise ValueError("Why is this empty?")
         traj_w = traj_w.get("steps", traj_w)
 
         # step_idx → position in the flat `scores` array. Used both to write
@@ -223,6 +227,7 @@ def reweight_scores(
             )
 
             reweighted[pos] = scores[pos] - gamma * discount
+            # breakpoint()
 
     return reweighted
 

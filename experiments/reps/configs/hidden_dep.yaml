@@ -5,16 +5,16 @@ shared:
   models:   [llama-3.1-8b, qwen3-8b]
   subsets:  [algorithm-generated, hand-crafted]
 
-  outputs_root: outputs/2025-05-25
+  outputs_root: outputs/representation-dependency
   data_dir:     data/ww
   device:       auto
   max_tokens:   8192
   dtype:        bfloat16
-  context:      all   # "dependency" | "all"
+  context:      dependency   # "dependency" | "all"
 
   # Trajectory slice — both are optional (null = no limit).
   start_idx: 0
-  end_idx:   1
+  end_idx:   null
 
   # Full paths / HF names for each model shorthand.
   # Use the shorthand directly if the model is on the HF Hub.

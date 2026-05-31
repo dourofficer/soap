@@ -18,12 +18,24 @@ python -m attribscope.reps.extract_weights \
     --context    dependency \
     --device     cuda \
     --dtype      bfloat16
+
+
+CUDA_VISIBLE_DEVICES=1,0 python -m attribscope.reps.extract_weights \
+    --model      qwen3-8b \
+    --subset     hand-crafted \
+    --input      data/ww \
+    --output-root  outputs/weighting \
+    --max_tokens 8192 \
+    --context    all \
+    --device     auto \
+    --dtype      bfloat16
 """
 from __future__ import annotations
 
 import argparse
 import json
 from pathlib import Path
+from collections import OrderedDict
 
 import torch
 import torch.nn.functional as F
@@ -39,8 +51,8 @@ from ..data.trajectory import Trajectory, load_dataset
 from ..data.context    import iter_scoreable_steps, preprocess_context
 
 MODELS = {
-    "llama-3.1-8b": "/data/hoang/resources/models/meta-llama/Llama-3.1-8B-Instruct",
-    "qwen3-8b": "/data/hoang/resources/models/Qwen/Qwen3-8B"
+    "llama-3.1-8b": "/home/thanhdo/hub/meta-llama/Llama-3.1-8B-Instruct",
+    "qwen3-8b":     "/home/thanhdo/hub/Qwen/Qwen3-8B"
 }
 # ────────────────────────────────────────────────────────────────────────
 # Per-trajectory extraction
@@ -52,11 +64,12 @@ def extract_trajectory_scores(
     model:      PreTrainedModel,
     tokenizer:  PreTrainedTokenizer,
     max_tokens: int,
-    device:     str,
     context:    str,
+    pbar:       None = None,
 ) -> dict[str, Tensor]:
     flat: dict[str, Tensor] = {}
 
+    device = next(model.parameters()).device
     for step_idx in iter_scoreable_steps(traj):
         encoded     = preprocess_context(
             traj, step_idx, tokenizer,
@@ -68,6 +81,16 @@ def extract_trajectory_scores(
         ctx_step_ids = sorted(m for m in step_tokens if m != step_idx)
         if not ctx_step_ids:
             continue
+
+        # Update tqdm
+        seq_len = input_ids.shape[1]
+        if pbar is not None:
+            pbar.set_postfix(OrderedDict([
+                ("file",     traj.filename),
+                ("seq_len",  seq_len),
+                ("step_idx", step_idx),
+                ("n_steps",  len(traj.history)),
+            ]))
 
         # Forward pass → hidden states (L+1, seq_len, d)
         out    = model(input_ids, output_hidden_states=True, use_cache=False)
@@ -138,7 +161,11 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args   = parse_args()
-    device = args.device or ("cuda" if torch.cuda.is_available() else "cpu")
+    if args.device != "auto":
+        device = args.device or ("cuda" if torch.cuda.is_available() else "cpu")
+        device_map = {"": device}
+    else:
+        device_map = "auto"
     torch_dtype = {
         "float32":  torch.float32,
         "bfloat16": torch.bfloat16,
@@ -149,9 +176,9 @@ def main() -> None:
     print(f"Loading tokenizer: {model_path}")
     tokenizer = AutoTokenizer.from_pretrained(model_path)
 
-    print(f"Loading model → {device} ({args.dtype})")
+    print(f"Loading model → {args.device} ({args.dtype})")
     model = AutoModelForCausalLM.from_pretrained(
-        model_path, torch_dtype=torch_dtype, device_map={"": device},
+        model_path, torch_dtype=torch_dtype, device_map=device_map,
     )
     model.eval()
 
@@ -163,17 +190,19 @@ def main() -> None:
     out_root = Path(args.output_root) / args.model / args.subset 
     out_root.mkdir(parents=True, exist_ok=True)
 
-    for traj in tqdm(trajectories, desc="trajectories"):
-        out_path = out_root / f"{traj.filename}.safetensors"
-        if out_path.exists():
-            continue
+    pbar = tqdm(trajectories, desc="Processing trajectories")
+    for traj in pbar:
+        pbar.set_postfix(file=traj.filename, n_steps=len(traj.history))
+        out_path = out_root / f"{Path(traj.filename).stem}.safetensors"
+        if out_path.exists(): continue
 
         flat = extract_trajectory_scores(
             traj, model, tokenizer,
-            max_tokens=args.max_tokens, device=device, context=args.context,
+            max_tokens=args.max_tokens, 
+            context=args.context,
+            pbar=pbar,
         )
-        if not flat:
-            continue
+        if not flat: continue
 
         save_file(
             flat, out_path,

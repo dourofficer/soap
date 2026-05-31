@@ -2,17 +2,33 @@
 Sequential sweep runner over MODELS x SUBSETS x POOLINGS x SEEDS.
 
 Usage:
-    CUDA_VISIBLE_DEVICES=0 python -m experiments.classifier.run \
+    CUDA_VISIBLE_DEVICES=0 python -m experiments.classifier.run_noval \
         --config experiments/classifier/configs/default.yaml \
         --dry-run
 
-    CUDA_VISIBLE_DEVICES=0 python -m experiments.classifier.run \
+    CUDA_VISIBLE_DEVICES=0 python -m experiments.classifier.run_noval \
         --config experiments/classifier/configs/hidden_full.yaml \
-        --set models=[qwen3-8b] --dry-run
+        --set models=[qwen3-8b] outputs_root="outputs/classifier-full-noval" --dry-run
 
-    CUDA_VISIBLE_DEVICES=0 python -m experiments.classifier.run \
+    CUDA_VISIBLE_DEVICES=0 python -m experiments.classifier.run_noval \
         --config experiments/classifier/configs/hidden_full.yaml \
-        --set models=[llama-3.1-8b] --dry-run
+        --set models=[llama-3.1-8b] outputs_root="outputs/classifier-full-noval" --dry-run
+
+    CUDA_VISIBLE_DEVICES=1 python -m experiments.classifier.run_noval \
+        --config experiments/classifier/configs/hidden_full.yaml \
+        --set models=[llama-3.1-8b] \
+              subsets=[hand-crafted] \
+              outputs_root="outputs/classifier-full-noval" \
+              seeds=[1] \
+         --dry-run
+
+    CUDA_VISIBLE_DEVICES=1 python -m experiments.classifier.run_noval \
+        --config experiments/classifier/configs/hidden_full.yaml \
+        --set models=[qwen3-8b] \
+              subsets=[hand-crafted] \
+              outputs_root="outputs/classifier-full-noval" \
+              seeds=[1] \
+         --dry-run
 """
 
 import argparse
@@ -26,7 +42,7 @@ from pathlib import Path
 from rich.console import Console
 
 CONSOLE = Console()
-MODULE  = "experiments.classifier.run_all_positions"
+MODULE  = "experiments.classifier.run_all_positions_noval"
 
 
 # ---------------------------------------------------------------------------

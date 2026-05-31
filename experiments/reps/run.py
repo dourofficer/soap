@@ -13,6 +13,10 @@ attribscope.reps.extract_grads / extract_hidden unchanged.
 
     # see the commands that would run, without running them:
     python -m experiments.reps.run hidden --config ... --dry-run
+
+CUDA_VISIBLE_DEVICES=0 python -m experiments.reps.run \
+    --config experiments/reps/configs/hidden.yaml" \
+    --set shared.context=dependency shared.outputs_root="outputs/2025-05-25"
 """
 from __future__ import annotations
 
