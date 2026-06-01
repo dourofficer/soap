@@ -10,11 +10,16 @@ DistMetric = Literal["l1", "l2", "cosine"]
 #   Score = projection onto (or residual from) an SVD subspace.
 # ═══════════════════════════════════════════════════════════════════
 
-def _run_svd(G: torch.Tensor, c: int) -> torch.Tensor:
-    """Top-c right singular vectors of G, shape (d, c)."""
-    _, _, V = torch.svd_lowrank(G, q=c, niter=10)
-    return V
+# def _run_svd(G: torch.Tensor, k: int) -> torch.Tensor:
+#     """Top-k right singular vectors of G. Shape: (d, k)."""
+#     torch.manual_seed(100)
+#     _, _, V = torch.svd_lowrank(G.float(), q=k, niter=10)
+#     return V.contiguous()
 
+def _run_svd(G: torch.Tensor, k: int) -> torch.Tensor:
+    """Top-k right singular vectors of G. Shape: (d, k)."""
+    _, _, Vh = torch.linalg.svd(G.float(), full_matrices=False)
+    return Vh[:k].T.contiguous()
 
 def projection_svd(
     R: torch.Tensor, # (T, d) matrix of row reps to score
@@ -38,6 +43,20 @@ def projection_svd(
     scores =  (R_f @ V[:, :c]).square().mean(dim=1).to(R.dtype)
     return scores
 
+def ranged_projection_svd(
+    R: torch.Tensor, # (T, d) matrix of row reps to score
+    V: torch.Tensor, # (d, c) matrix of top-c right singular vectors from G
+    c_begin: int = 0,
+    c_end:   int = 20,
+    ref: torch.Tensor | None = None, # (d,) mean gradient for centering, if desired
+) -> torch.Tensor:
+    assert 0 <= c_begin < c_end <= V.shape[1], \
+        f"Invalid range [{c_begin}:{c_end}] for V with {V.shape[1]} components"
+    R_f = R.float()
+    if ref is not None:
+        R_f = R_f - ref
+    scores = (R_f @ V[:, c_begin:c_end]).square().mean(dim=1).to(R.dtype)
+    return scores
 
 def reconstruction_svd(
     R: torch.Tensor,

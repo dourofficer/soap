@@ -40,7 +40,7 @@ import pandas as pd
 import torch
 from tqdm.auto import tqdm
 
-from attribscope.svd2.utils import (
+from attribscope.svd.utils import (
     load_representations, _resolve_dir, split_data,
 )
 from experiments.classifier.run_all_positions_noval import prepare_data as prepare_data_normal
@@ -168,8 +168,8 @@ def run_sweep(model: str, subset: str, device: torch.device) -> None:
             device=device
         )
     elif comp_cols == ['c_begin', 'c_end']: 
-        from attribscope.svd2.patch import truncated_projection_svd
-        SCORING_FNS = {"trunc_proj": truncated_projection_svd}
+        from attribscope.svd.computation import ranged_projection_svd
+        SCORING_FNS = {"trunc_proj": ranged_projection_svd}
         prepare_data = prepare_data_trunc
         precompute_svd = precompute_svd_truncate
         svd_kwargs = dict(

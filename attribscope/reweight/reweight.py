@@ -2,7 +2,7 @@ import json
 from collections import defaultdict
 from pathlib import Path
 import numpy as np
-from attribscope.svd2.utils import StoreKeeper
+from attribscope.svd.utils import StoreKeeper
 import torch.nn.functional as F
 from safetensors import safe_open
 import torch

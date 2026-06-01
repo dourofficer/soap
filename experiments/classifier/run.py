@@ -13,6 +13,21 @@ Usage:
     CUDA_VISIBLE_DEVICES=0 python -m experiments.classifier.run \
         --config experiments/classifier/configs/hidden_full.yaml \
         --set models=[llama-3.1-8b] --dry-run
+
+    CUDA_VISIBLE_DEVICES=0 python -m experiments.classifier.run \
+        --config experiments/classifier/configs/hidden_full.yaml \
+        --set models=[llama-3.1-8b] \
+              subsets=[hand-crafted] \
+              outputs_root="outputs/classifier-full-noval-trunc" \
+              seeds=[1] \
+         --dry-run
+
+    CUDA_VISIBLE_DEVICES=0 python -m experiments.classifier.run \
+        --config experiments/classifier/configs/hidden_full.yaml \
+        --set models=[qwen3-8b] \
+              outputs_root="outputs/classifier" \
+              seeds=[1] \
+         --dry-run
 """
 
 import argparse
@@ -26,7 +41,7 @@ from pathlib import Path
 from rich.console import Console
 
 CONSOLE = Console()
-MODULE  = "experiments.classifier.run_all_positions"
+MODULE  = "attribscope.classifier.run_all_positions"
 
 
 # ---------------------------------------------------------------------------
