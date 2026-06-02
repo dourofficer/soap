@@ -15,8 +15,12 @@ attribscope.reps.extract_grads / extract_hidden unchanged.
     python -m experiments.reps.run hidden --config ... --dry-run
 
 CUDA_VISIBLE_DEVICES=0 python -m experiments.reps.run \
-    --config experiments/reps/configs/hidden.yaml" \
+    --config experiments/reps/configs/hidden.yaml \
     --set shared.context=dependency shared.outputs_root="outputs/2025-05-25"
+
+CUDA_VISIBLE_DEVICES=1 python -m experiments.reps.run hidden \
+    --config experiments/reps/configs/hidden_all.yaml \
+    --set shared.models=[deepseek-8b]
 """
 from __future__ import annotations
 
@@ -183,7 +187,6 @@ PHASES = {
     "grads":  run_grads,
     "hidden": run_hidden,
 }
-
 
 def main() -> None:
     p = argparse.ArgumentParser(prog="experiments.reps.run")

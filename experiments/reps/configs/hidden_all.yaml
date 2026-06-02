@@ -21,6 +21,7 @@ shared:
   model_paths:
     qwen3-8b:      /home/thanhdo/hub/Qwen/Qwen3-8B
     llama-3.1-8b:  /home/thanhdo/hub/meta-llama/Llama-3.1-8B-Instruct
+    deepseek-8b:   /home/thanhdo/hub/deepseek-ai/DeepSeek-R1-Distill-Llama-8B
 
 # ── Hidden-state extraction ───────────────────────────────────────────────────
 hidden:
