@@ -5,12 +5,14 @@
 # --- I/O ---
 reps_root:    "outputs/representation-full"
 data_root:    "data/ww"
-outputs_root: "outputs/classifier-full"
+outputs_root: "outputs/classifier"
 
 # --- Sweep dimensions ---
 models:
   - qwen3-8b
   - llama-3.1-8b
+  - deepseek-8b
+  - qwen3-14b
 
 subsets:
   - algorithm-generated

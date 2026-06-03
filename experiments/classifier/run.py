@@ -28,6 +28,12 @@ Usage:
               outputs_root="outputs/classifier" \
               seeds=[1] \
          --dry-run
+
+CUDA_VISIBLE_DEVICES=1 python -m experiments.classifier.run \
+        --config experiments/classifier/configs/hidden_full.yaml \
+        --set subsets=[hand-crafted] \
+              seeds=[1] \
+              models=[qwen3-14b]
 """
 
 import argparse
