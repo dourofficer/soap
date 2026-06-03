@@ -96,12 +96,15 @@ from safetensors.torch import save_file
 from ..data.trajectory import Trajectory, load_dataset
 from ..data.context    import iter_scoreable_steps, preprocess_context
 
+HUB = "/home/thanhdo/hub"
 MODELS = {
-    "llama-3.1-8b": "/home/thanhdo/hub/meta-llama/Llama-3.1-8B-Instruct",
-    "qwen3-8b":     "/home/thanhdo/hub/Qwen/Qwen3-8B",
-    "qwen3-4b":     "/home/thanhdo/hub/Qwen/Qwen3-4B",
-    "qwen3-14b":    "/home/thanhdo/hub/Qwen/Qwen3-14B",
+    "llama-3.1-8b": f"{HUB}/meta-llama/Llama-3.1-8B-Instruct",
+    "qwen3-8b":     f"{HUB}/Qwen/Qwen3-8B",
+    "qwen3-4b":     f"{HUB}/Qwen/Qwen3-4B",
+    "qwen3-14b":    f"{HUB}/Qwen/Qwen3-14B",
+    "deepseek-8b":  f"{HUB}/deepseek-ai/DeepSeek-R1-Distill-Llama-8B",
 }
+
 
 def _extract_metadata(traj: Trajectory) -> dict:
     return {
