@@ -49,15 +49,15 @@ file doesn't handle, or a bug.
 
 CLI example
 -----------
-    python -m attribscope.reps.extract_attention_qk \\
-        --model        qwen3-14b \\
-        --subset       hand-crafted \\
-        --input        data/ww \\
-        --output-root  outputs/weighting_attn_qk \\
-        --max_tokens   8192 \\
-        --context      dependency \\
-        --query-pool   mean \\
-        --device       auto \\
+    python -m src.attention.streaming \
+        --model        qwen3-4b \
+        --subset       hand-crafted \
+        --input        data/ww \
+        --output-root  outputs/attention \
+        --max_tokens   2048 \
+        --context      all \
+        --query-pool   mean \
+        --device       auto \
         --dtype        bfloat16
 
 Architecture compatibility
@@ -87,7 +87,8 @@ from safetensors.torch import save_file
 from ..data.trajectory import Trajectory, load_dataset
 from ..data.context    import iter_scoreable_steps, preprocess_context
 
-HUB = "/data/hoang/resources/models"
+# HUB = "/data/hoang/resources/models"
+HUB = "/home/thanhdo/hub"
 MODELS = {
     "llama-3.1-8b": f"{HUB}/meta-llama/Llama-3.1-8B-Instruct",
     "qwen3-8b":     f"{HUB}/Qwen/Qwen3-8B",

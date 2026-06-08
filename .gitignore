@@ -3,4 +3,5 @@ __pycache__/
 .venv
 .ipynb_checkpoints/
 outputs/
+download/
 # misc/

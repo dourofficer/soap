@@ -5,12 +5,12 @@ subsets=(hand-crafted algorithm-generated)
  
 for model in "${models[@]}"; do
     for subset in "${subsets[@]}"; do
-        echo "=== Running model=$model subset=$subset ==="
+        echo "=== Running model=$model | subset=$subset ==="
         python -m src.attention.streaming \
             --model        "$model" \
             --subset       "$subset" \
             --input        data/ww \
-            --output-root  outputs/weighting_attn \
+            --output-root  outputs/attention \
             --max_tokens   8192 \
             --context      all \
             --query-pool   mean \

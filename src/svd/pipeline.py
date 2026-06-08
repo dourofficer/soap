@@ -63,14 +63,14 @@ from tqdm import tqdm
 from safetensors import safe_open
 import argparse
 
-from attribscope.svd.utils import (
+from src.utils.utils import (
     _resolve_dir,
     split_data,
     load_representations,
     RepresentationStores,
     run_metrics
 )
-from attribscope.svd.computation import fit_all, score_all
+from src.svd.computation import fit_all, score_all
 
 def run_pipeline(
     val_reps:           RepresentationStores,

@@ -28,13 +28,13 @@ python -m attribscope.reps.extract_hidden \
     --max_tokens 8192
 
 # All layers, both pooling strategies
-python -m attribscope.reps.extract_hidden \
-    --model  "/data/hoang/resources/models/meta-llama/Llama-3.1-8B-Instruct" \
+python -m src.activations.extract \
+    --model  "/home/thanhdo/hub/meta-llama/Llama-3.1-8B-Instruct" \
     --input  data/ww/hand-crafted \
-    --output outputs/hidden/llama-3.1-8b/hand-crafted \
+    --output testing/activations/llama-3.1-8b/hand-crafted \
     --layers all \
     --pool   all \
-    --max_tokens 16000 \
+    --max_tokens 8192 \
     --start_idx 0 --end_idx 1
 """
 from __future__ import annotations
@@ -61,25 +61,9 @@ from ..data.trajectory import Trajectory, load_dataset
 from ..data.context import (
     iter_scoreable_steps, 
     build_context, 
-    build_context_base
 )
 
-from .hidden import extract_hidden
-
-# CONTEXT_FNS = {
-#     "Qwen3-8B":      build_context_template,
-#     "Qwen3-8B-Base": build_context_base,
-#     "Llama-3.1-8B-Instruct": build_context_template,
-#     "Llama-3.1-8B":  build_context_base
-# }
-
-# CONTEXT_FNS = {
-#     "Qwen3-8B":      build_context_base,
-#     "Qwen3-8B-Base": build_context_base,
-#     "Llama-3.1-8B-Instruct": build_context_base,
-#     "Llama-3.1-8B":  build_context_base
-# }
-
+from .core import extract_hidden
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Per-trajectory extraction
