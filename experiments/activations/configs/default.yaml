@@ -1,43 +1,22 @@
-# experiments/reps/configs/default.yaml
-# Extraction sweep for grads and hidden states.  Shrink any list to narrow.
+models:   [llama-3.1-8b, qwen3-8b]
+subsets:  [algorithm-generated, hand-crafted]
 
-shared:
-  models:   [llama-3.1-8b, qwen3-8b]
-  subsets:  [magentic-one, tau-retail]
+outputs_root: outputs/temporary
+data_dir:     data/ww
+device:       auto
+max_tokens:   8192
+dtype:        bfloat16
+context:      all   # "dependency" | "all"
 
-  outputs_root: outputs
-  data_dir:     data/ww
-  device:       cuda
-  max_tokens:   8192
-  dtype:        bfloat16
-  context:      all   # "dependency" | "all"
+# Trajectory slice — both optional (null = no limit).
+start_idx: 0
+end_idx:   null
 
-  # Trajectory slice — both are optional (null = no limit).
-  start_idx: 0
-  end_idx:   1
+# Full paths / HF names for each model shorthand.
+model_paths:
+  qwen3-8b:     /home/thanhdo/hub/Qwen/Qwen3-8B
+  llama-3.1-8b: /home/thanhdo/hub/meta-llama/Llama-3.1-8B-Instruct
+  deepseek-8b:  /home/thanhdo/hub/deepseek-ai/DeepSeek-R1-Distill-Llama-8B
 
-  # Full paths / HF names for each model shorthand.
-  # Use the shorthand directly if the model is on the HF Hub.
-  model_paths:
-    qwen3-8b:     /data/hoang/resources/models/Qwen/Qwen3-8B
-    llama-3.1-8b: /data/hoang/resources/models/meta-llama/Llama-3.1-8B-Instruct
-
-# ── Gradient extraction ───────────────────────────────────────────────────────
-grads:
-  # Shorthands like "v/35", "gate/35", or ["all"] for every parameter.
-  target_params: ["all"]
-
-  # Loss: "ntp" | "kl_uniform" | "kl_temp"
-  loss: kl_temp
-
-  # Temperatures to sweep — only used when loss == kl_temp.
-  # Each temperature gets its own output sub-directory: .../grads/<model>/<subset>/t<T>/
-  temperatures: [1.2, 1.4]
-
-# ── Hidden-state extraction ───────────────────────────────────────────────────
-hidden:
-  # Layer shorthands: "embed", "act/<N>", "act/<N>_normed", or ["all"].
-  layers: ["all"]
-
-  # Pooling: "last" | "mean" | "all"
-  pool: all
+layers: all  # "embed" | "act/<N>" | "act/<N>_normed" | "all"
+pool:   all  # "last" | "mean" | "all"

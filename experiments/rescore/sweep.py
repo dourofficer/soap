@@ -6,9 +6,10 @@ reproduce each row's val + test SVD-projection scores, then sweep
 applying the discount pass and recording step_acc / agent_acc on val + test.
 
 One output TSV per (model, subset) at
-    outputs/tables/discounted/sweep/{model}__{subset}__svd.tsv
+    {out_root}/{model}__{subset}__svd.tsv
 
-python -m attribscope.discount.discount_svd --device cuda
+python -m src.experiments.rescore.sweep \
+    --config src/experiments/rescore/configs/default.yaml
 """
 from __future__ import annotations
 
@@ -17,6 +18,7 @@ from itertools import product
 from pathlib import Path
 
 import pandas as pd
+import yaml
 from tqdm.auto import tqdm
 
 from src.rescore.weights import aggregate_attn
@@ -24,18 +26,16 @@ from src.rescore.discount import orient_svd_scores, apply_discount
 from src.svd.reproduce import reproduce_svd
 from src.utils.utils import compute_metrics
 
-GAMMAS  = [round(0.1 * i, 1) for i in range(1, 11)]   # 0.1 .. 1.0
-WS      = [1, 2, 3, 4, 5, "all"]
-ORIENTS = ["negate", "inverse", "sigmoid"]
 
-MODELS  = ["deepseek-8b", "llama-3.1-8b", "qwen3-8b", "qwen3-14b"]
-SUBSETS = ["algorithm-generated", "hand-crafted"]
-
-UNDISC_ROOT_DEFAULT = Path("outputs/tables/undiscounted")
-ATTN_ROOT_DEFAULT   = Path("outputs/weighting_attn")
-REPS_ROOT_DEFAULT   = Path("outputs/representation-full")
-DATA_ROOT_DEFAULT   = Path("data/ww")
-OUT_ROOT_DEFAULT    = Path("outputs/tables/discounted/sweep")
+def load_cfg(path: Path, overrides: list[str]) -> dict:
+    cfg = yaml.safe_load(path.read_text())
+    for ov in overrides:
+        key, _, val = ov.partition("=")
+        parts, node = key.split("."), cfg
+        for p in parts[:-1]:
+            node = node.setdefault(p, {})
+        node[parts[-1]] = yaml.safe_load(val)
+    return cfg
 
 
 def _range_label(lo: int, hi: int) -> str:
@@ -71,14 +71,20 @@ def _row_record(row, layer_range, gamma, w, orient, val_m, test_m) -> dict:
 
 
 def run_one_pair(
-    model: str, subset: str,
-    undisc_root: Path, attn_root: Path,
-    reps_root: Path, data_root: Path,
-    out_root: Path,
-    n_ranges: int,
-    device: str,
+    model: str, subset: str, cfg: dict,
 ) -> None:
-    table_path = undisc_root / f"{model}__{subset}.tsv"
+    undisc_root = Path(cfg["undisc_root"])
+    attn_root   = Path(cfg["attn_root"])
+    reps_root   = Path(cfg["reps_root"])
+    data_root   = Path(cfg["data_root"])
+    out_root    = Path(cfg["out_root"])
+    device      = cfg["device"]
+    n_ranges    = cfg["n_ranges"]
+    gammas      = cfg["gammas"]
+    ws          = cfg["ws"]
+    orients     = cfg["orients"]
+
+    table_path = undisc_root / f"{model}/{subset}.tsv"
     if not table_path.exists():
         print(f"[skip] missing undiscounted table: {table_path}")
         return
@@ -87,10 +93,11 @@ def run_one_pair(
     if len(rows) == 0:
         print(f"[skip] no svd rows in {table_path}")
         return
+
     out_root.mkdir(parents=True, exist_ok=True)
-    out_path = out_root / f"{model}__{subset}__svd.tsv"
+    out_path = out_root / f"{model}/{subset}.tsv"
     if out_path.exists():
-        print(f"discounted result already exist: {out_path}")
+        print(f"[skip] already exists: {out_path}")
         return
 
     weightings, bounds = aggregate_attn(
@@ -99,17 +106,17 @@ def run_one_pair(
     range_labels = [_range_label(lo, hi) for (lo, hi) in bounds]
 
     records = []
-    n_per_row = len(ORIENTS) * len(weightings) * len(GAMMAS) * len(WS)
+    n_per_row = len(orients) * len(weightings) * len(gammas) * len(ws)
     pbar = tqdm(total=len(rows) * n_per_row, desc=f"{model}/{subset} svd")
     for _, row in rows.iterrows():
         bundle = reproduce_svd(row, model, subset, reps_root, data_root, device)
 
-        for orient in ORIENTS:
+        for orient in orients:
             v_o = orient_svd_scores(bundle.val_scores,  strategy=orient).cpu()
             t_o = orient_svd_scores(bundle.test_scores, strategy=orient).cpu()
 
             for r_idx, weighting in enumerate(weightings):
-                for gamma, w in product(GAMMAS, WS):
+                for gamma, w in product(gammas, ws):
                     v_d = apply_discount(v_o, bundle.val_keeper,  weighting, gamma=gamma, w=w)
                     t_d = apply_discount(t_o, bundle.test_keeper, weighting, gamma=gamma, w=w)
                     val_m  = compute_metrics(v_d, bundle.val_keeper,  ks=[1], direction="desc")
@@ -120,39 +127,22 @@ def run_one_pair(
                     pbar.update(1)
     pbar.close()
 
-
     pd.DataFrame(records).to_csv(out_path, sep="\t", index=False)
     print(f"wrote {out_path}  ({len(records)} rows)")
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--model",  choices=MODELS,  default=None,
-                    help="If unset, run all models.")
-    ap.add_argument("--subset", choices=SUBSETS, default=None,
-                    help="If unset, run both subsets.")
-    ap.add_argument("--undisc-root", type=Path, default=UNDISC_ROOT_DEFAULT)
-    ap.add_argument("--attn-root",   type=Path, default=ATTN_ROOT_DEFAULT)
-    ap.add_argument("--reps-root",   type=Path, default=REPS_ROOT_DEFAULT)
-    ap.add_argument("--data-root",   type=Path, default=DATA_ROOT_DEFAULT)
-    ap.add_argument("--out-root",    type=Path, default=OUT_ROOT_DEFAULT)
-    ap.add_argument("--n-ranges",    type=int,  default=4)
-    ap.add_argument("--device", default="cuda")
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--config", type=Path, required=True)
+    ap.add_argument("--set", dest="overrides", action="append", default=[],
+                    metavar="KEY=VALUE")
     args = ap.parse_args()
 
-    targets = [
-        (m, s)
-        for m in (MODELS  if args.model  is None else [args.model])
-        for s in (SUBSETS if args.subset is None else [args.subset])
-    ]
-    for model, subset in targets:
-        run_one_pair(
-            model=model, subset=subset,
-            undisc_root=args.undisc_root, attn_root=args.attn_root,
-            reps_root=args.reps_root,    data_root=args.data_root,
-            out_root=args.out_root,      n_ranges=args.n_ranges,
-            device=args.device,
-        )
+    cfg = load_cfg(args.config, args.overrides)
+
+    for model in cfg["models"]:
+        for subset in cfg["subsets"]:
+            run_one_pair(model, subset, cfg)
 
 
 if __name__ == "__main__":

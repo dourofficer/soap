@@ -16,20 +16,18 @@ from transformers import PreTrainedTokenizer
 # Context selection  ←  PLACEHOLDER
 # ─────────────────────────────────────────────────────────────────────────────
 
-def select_context(history: list[dict], step_idx: int, strategy: str = "dependency") -> list[int]:
+def select_context(history: list[dict], step_idx: int) -> list[int]:
     """Return the indices of history turns to use as context for step `step_idx`.
 
     **Default**: every turn strictly before step_idx, i.e. range(step_idx).
 
-    This function is called inside :func:`build_context` and is the
-    **primary hook for truncation strategies**.  Replace or monkey-patch it
-    to implement.
+    This function is called inside :func:`build_context`.  
+    Replace or monkey-patch it to implement.
 
     Parameters
     ----------
     history  : full trajectory history list.
     step_idx : the step being scored (0-indexed; never 0 itself).
-    strategy : the context selection strategy to use.
 
     Returns
     -------
@@ -37,20 +35,7 @@ def select_context(history: list[dict], step_idx: int, strategy: str = "dependen
         Ordered indices into `history` to include as context.
         All indices must satisfy idx < step_idx.
     """
-    is_handcrafted = any([m.get("role").startswith("Orchestrator") for m in history])
-    if is_handcrafted:
-        # breakpoint()
-        if strategy == "dependency":
-            deps = get_dependency_dict(derive_llm_inputs(history))
-            print_once(f"Context strategy 'dependency' is selected.")
-            return deps[step_idx]
-        elif strategy == "all":
-            print_once(f"Context strategy 'all' is selected.")
-            return list(range(step_idx))
-        else:
-            raise ValueError(f"Unknown context selection strategy: {strategy}")
-    else:
-        return list(range(step_idx))
+    return list(range(step_idx))
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -85,7 +70,6 @@ def build_context(
     step_idx:   int,
     tokenizer:  PreTrainedTokenizer,
     max_tokens: int | None = None,
-    strategy:   str = "dependency",
 ) -> dict[str, Any]:
     """Tokenise one (context, step) pair for GradNorm scoring.
  
@@ -134,7 +118,7 @@ def build_context(
     or by patching the template variable before calling build_context.
     """
     history      = traj.history
-    ctx_indices  = select_context(history, step_idx, strategy=strategy)
+    ctx_indices  = select_context(history, step_idx)
     # assert ctx_indices == list(range(step_idx)), "taking full context, no graph"
     step_content = history[step_idx].get("content", "").strip()
     step_content = _serialize_turns(history, [step_idx])
@@ -186,11 +170,10 @@ def separate_steps(
     step_idx:   int,
     tokenizer:  PreTrainedTokenizer,
     max_tokens: int | None = None,
-    strategy:   str = "dependency",
 ) -> dict[str, Any]:
 
     history      = traj.history
-    ctx_indices  = select_context(history, step_idx, strategy=strategy)
+    ctx_indices  = select_context(history, step_idx)
     step_content = _serialize_turns(history, [step_idx])
     assistant_msg = {"role": "assistant", "content": step_content}
 

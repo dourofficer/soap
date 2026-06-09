@@ -17,10 +17,8 @@ from safetensors import safe_open
 
 from src.svd.core import _run_svd, ranged_projection_svd
 from src.utils.utils import (
-    load_representations,
     RepresentationStore,
     RepresentationStores,
-    StoreKeeper,
     gather_configs_and_metrics
 )
 # Sweep helpers — assumed to live alongside the other utils. Move/import

@@ -78,6 +78,10 @@ def main():
     data_dir   = args.data_root    / args.subset
 
     output_dir.mkdir(parents=True, exist_ok=True)
+    svd_outpath = output_dir / f"svd_pooling-{args.pooling}_seed-{seed}.tsv"
+    if svd_outpath.exists(): 
+        print("[skipped] SVD file exists.")
+        return
 
     print(f"Model:              {args.model}")
     print(f"Subset:             {args.subset}")
@@ -130,9 +134,8 @@ def main():
     svd_accuracy = svd_accuracy[svd_accuracy["direction"] == "asc"]
     svd_accuracy = svd_accuracy.sort_values("step_acc_test", ascending=False)
 
-    svd_outpath = output_dir / f"svd_pooling-{args.pooling}_seed-{seed}.tsv"
-    if svd_outpath.exists(): print("[skipped] SVD file exists.")
-    else: svd_accuracy.to_csv(svd_outpath, sep="\t", index=False)
+    svd_accuracy.to_csv(svd_outpath, sep="\t", index=False)
+    print(f"Saved to {svd_outpath}")
 
 if __name__ == "__main__":
     main()
