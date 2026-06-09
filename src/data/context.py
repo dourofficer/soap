@@ -181,7 +181,7 @@ def build_context(
     return {"input_ids": full_ids["input_ids"], "ctx_len": ctx_len}
 
 
-def preprocess_context(
+def separate_steps(
     traj:       Trajectory,
     step_idx:   int,
     tokenizer:  PreTrainedTokenizer,
@@ -284,18 +284,6 @@ def preprocess_context(
 # Helpers
 # ─────────────────────────────────────────────────────────────────────────────
 
-def get_steps_with_successors(history: list[dict]) -> set[int]:
-    """Return the set of step indices that have at least one successor.
-
-    A step *s* has a successor if any other step lists *s* in its
-    dependency inputs.  Steps not in this set are leaf nodes.
-    """
-    deps = get_dependency_dict(derive_llm_inputs(history))
-    has_successor: set[int] = set()
-    for inputs in deps.values():
-        has_successor.update(inputs)
-    return has_successor
-
 def iter_scoreable_steps(trajectory: Trajectory) -> list[int]:
     """Return step indices that should receive a GradNorm score.
 
@@ -303,9 +291,5 @@ def iter_scoreable_steps(trajectory: Trajectory) -> list[int]:
     excluded.  Returns [1, 2, ..., T-1].
     """
     is_handcrafted = trajectory.history[0]['role'] == 'human'
-    if is_handcrafted:
-        deps = get_dependency_dict(derive_llm_inputs(trajectory.history))
-        sucs = "..." # intends to remove leaf steps.
-        return list(range(1, len(trajectory.history)))
-    else:
-        return list(range(len(trajectory.history)))
+    if is_handcrafted: return list(range(1, len(trajectory.history)))
+    else:              return list(range(len(trajectory.history)))

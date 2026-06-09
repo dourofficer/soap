@@ -19,8 +19,8 @@ from pathlib import Path
 import pandas as pd
 from tqdm.auto import tqdm
 
-from src.discount.weights import aggregate_attn
-from src.discount.discount import orient_svd_scores, apply_discount
+from src.rescore.weights import aggregate_attn
+from src.rescore.discount import orient_svd_scores, apply_discount
 from src.svd.reproduce import reproduce_svd
 from src.utils.utils import compute_metrics
 

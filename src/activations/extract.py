@@ -76,7 +76,6 @@ def extract_trajectory_hidden(
     max_tokens:       int,
     layers:           list[str] | str,   # list of ints or "all"
     pool:             str,               # "last" | "mean" | "all"
-    context_strategy: str = "dependency",
     context_fn:       Callable = build_context,
     pbar=None,
 ) -> dict[int, dict[str, Tensor]]:
@@ -104,7 +103,6 @@ def extract_trajectory_hidden(
             step_idx,
             tokenizer,
             max_tokens=max_tokens,
-            strategy=context_strategy,
         )
 
         input_ids      = encoded["input_ids"].to(device)
@@ -147,7 +145,6 @@ def extract_trajectories_hidden(
     max_tokens:       int,
     layers:           list[str] | str,   # list of ints or "all"
     pool:             str,               # "last" | "mean" | "all"
-    context_strategy: str = "dependency", # "dependency" | "all"
     context_fn:       Callable = build_context,
 ):
     pbar = tqdm(trajectories)
@@ -161,8 +158,7 @@ def extract_trajectories_hidden(
 
         hidden = extract_trajectory_hidden(
             traj, model, tokenizer, max_tokens,
-            layers, pool, context_strategy,
-            context_fn, pbar,
+            layers, pool, context_fn, pbar,
         )
 
         # Flatten to "{step_idx}.{shorthand}.{stat}" → Tensor
@@ -223,10 +219,6 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--device",      default=None)
     p.add_argument("--dtype",       choices=["float32", "bfloat16", "float16"], default="bfloat16")
     p.add_argument("--subset",      default=None)
-    p.add_argument(
-        "--context", choices=["dependency", "all"], default="dependency",
-        help="Context selection strategy for hand-crafted trajectories.",
-    )
     return p.parse_args()
 
 
@@ -302,7 +294,6 @@ def main():
         "max_tokens": args.max_tokens,
         "dtype":    args.dtype,
         "subset":   subset,
-        "context":  args.context,
     }
     (out_dir / "config.json").write_text(json.dumps(config, indent=2))
 
@@ -310,7 +301,7 @@ def main():
     t0   = time.perf_counter()
     extract_trajectories_hidden(
         trajectories, out_dir, model, tokenizer, args.max_tokens,
-        layers, args.pool, args.context, context_fn
+        layers, args.pool, context_fn
     )
 
     elapsed = time.perf_counter() - t0

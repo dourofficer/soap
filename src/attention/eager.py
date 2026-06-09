@@ -94,7 +94,7 @@ from transformers import (
 from safetensors.torch import save_file
 
 from ..data.trajectory import Trajectory, load_dataset
-from ..data.context    import iter_scoreable_steps, preprocess_context
+from ..data.context    import iter_scoreable_steps, separate_steps
 
 HUB = "/home/thanhdo/hub"
 MODELS = {
@@ -243,7 +243,7 @@ def extract_trajectory_attention(
     n_layers = len(attn_modules)
 
     for step_idx in iter_scoreable_steps(traj):
-        encoded     = preprocess_context(
+        encoded     = separate_steps(
             traj, step_idx, tokenizer,
             max_tokens=max_tokens, strategy=context,
         )
