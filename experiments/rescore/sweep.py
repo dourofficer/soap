@@ -8,8 +8,8 @@ applying the discount pass and recording step_acc / agent_acc on val + test.
 One output TSV per (model, subset) at
     {out_root}/{model}__{subset}__svd.tsv
 
-python -m src.experiments.rescore.sweep \
-    --config src/experiments/rescore/configs/default.yaml
+python -m experiments.rescore.sweep \
+    --config experiments/rescore/configs/default.yaml
 """
 from __future__ import annotations
 
@@ -96,6 +96,8 @@ def run_one_pair(
 
     out_root.mkdir(parents=True, exist_ok=True)
     out_path = out_root / f"{model}/{subset}.tsv"
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+
     if out_path.exists():
         print(f"[skip] already exists: {out_path}")
         return

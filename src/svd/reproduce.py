@@ -65,15 +65,7 @@ def _load_reps_and_svd(
     if key in _cache:
         return _cache[key]
 
-    rep_dir = _resolve_dir(
-        root_dir=reps_root,
-        model=model,
-        subset=subset,
-        rep_type=REP_TYPE,
-        loss=None,
-        temperature=None,
-        dir_type="representations"
-    )
+    rep_dir  = reps_root / model / subset
     data_dir = data_root / subset
 
     files = sorted(rep_dir.glob("*.safetensors"), key=lambda x: int(x.stem))

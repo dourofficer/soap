@@ -9,7 +9,8 @@ Per output TSV, 18 rows in three sections of 6 rows each
 Best = max (step_acc_test, agent_acc_test) lexicographically, per
 (pooling, seed). Rows within a section are sorted by the same key.
 
-python build_undiscounted_tables.py
+
+python -m experiments.reports.build_undiscounted_tables
 # or with overrides:
 python -m attribscope.utils.build_undiscounted_tables \
     --clf-root outputs/classifier/hidden \
@@ -24,8 +25,8 @@ from pathlib import Path
 
 import pandas as pd
 
-CLF_ROOT_DEFAULT = Path("attribscope/outputs/classifier/hidden")
-OUT_ROOT_DEFAULT = Path("outputs/tables/undiscounted")
+SVD_ROOT_DEFAULT = Path("outputs/projections")
+OUT_ROOT_DEFAULT = Path("outputs/fake-tables/undiscounted")
 
 MODELS  = ["deepseek-8b", "llama-3.1-8b", "qwen3-8b", "qwen3-14b"]
 SUBSETS = ["algorithm-generated", "hand-crafted"]
@@ -80,36 +81,22 @@ def section_svd(metrics_dir: Path) -> pd.DataFrame:
     return _sort_section(best[OUT_COLS])
 
 
-def section_classifier(metrics_dir: Path, labels: str) -> pd.DataFrame:
-    raw = _load_concat(metrics_dir, "classifier")
-    sub = raw[raw["labels"] == labels].rename(columns={
-        "val_step_acc":   "step_acc_val",
-        "val_agent_acc":  "agent_acc_val",
-        "test_step_acc":  "step_acc_test",
-        "test_agent_acc": "agent_acc_test",
-    })
-    best = _best_per_pooling_seed(sub).assign(strategy=f"classifier_{labels}")
-    return _sort_section(best[OUT_COLS])
-
-
 def build_table(metrics_dir: Path) -> pd.DataFrame:
     return pd.concat([
         section_svd(metrics_dir),
-        section_classifier(metrics_dir, "pseudo"),
-        section_classifier(metrics_dir, "oracle"),
     ], ignore_index=True)
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--clf-root", type=Path, default=CLF_ROOT_DEFAULT)
+    ap.add_argument("--clf-root", type=Path, default=SVD_ROOT_DEFAULT)
     ap.add_argument("--out-root", type=Path, default=OUT_ROOT_DEFAULT)
     args = ap.parse_args()
 
     args.out_root.mkdir(parents=True, exist_ok=True)
     for model in MODELS:
         for subset in SUBSETS:
-            metrics_dir = args.clf_root / model / "metrics" / subset
+            metrics_dir = args.clf_root / model / subset
             if not metrics_dir.exists():
                 print(f"skip (missing dir): {metrics_dir}")
                 continue
@@ -118,7 +105,9 @@ def main() -> None:
             except FileNotFoundError as e:
                 print(f"skip ({e})")
                 continue
-            dst = args.out_root / f"{model}__{subset}.tsv"
+            dst = args.out_root / f"{model}/{subset}.tsv"
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            
             table.to_csv(dst, sep="\t", index=False, na_rep="")
             print(f"wrote {dst}  ({len(table)} rows)")
 

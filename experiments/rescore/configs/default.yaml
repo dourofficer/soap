@@ -1,0 +1,16 @@
+models:  [deepseek-8b, llama-3.1-8b, qwen3-8b, qwen3-14b]
+subsets: [algorithm-generated, hand-crafted]
+
+undisc_root: outputs/fake-tables/undiscounted
+attn_root:   outputs/attention
+reps_root:   outputs/activations
+data_root:   data/ww
+out_root:    outputs/fake-tables/discounted/sweep
+
+device:   cuda
+n_ranges: 4
+
+# Sweep axes
+gammas:  [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+ws:      [1, 2, 3, 4, 5, all]
+orients: [negate, inverse, sigmoid]
