@@ -6,12 +6,15 @@ Entry point:
 
 CLI: spot-check a single row against the undiscounted table.
 
-python -m attribscope.discount.reproduce \
-    --table outputs/tables/undiscounted/qwen3-8b__hand-crafted.tsv \
+python -m src.svd.reproduce \
+    --table outputs-1006/undiscounted-splits/112/qwen3-8b/algorithm-generated/weighted_false.tsv \
     --row 0 \
-    --model qwen3-8b --subset hand-crafted \
-    --reps-root outputs/representation-full \
+    --model qwen3-8b --subset algorithm-generated \
+    --reps-root outputs/activations \
     --data-root data/ww \
+    --train-split 0.25 \
+    --val-split 0.25 \
+    --test-split 0.5 \
     --device cuda
 """
 from __future__ import annotations
@@ -27,19 +30,13 @@ import torch
 from src.svd.computation import precompute_svd
 from src.utils.utils import (
     load_representations, split_data,
-    _resolve_dir, compute_metrics,
+    compute_metrics,
 )
 from src.svd.computation import SCORING_FNS
 
 
 # ── Hyperparameters / paths ──────────────────────────────────────────────────
 N_COMPONENTS = 20
-
-# Default 40/20/40 train/val/test split. Override via reproduce_svd(...) kwargs
-# or the spot-check CLI.
-DEFAULT_TRAIN_SPLIT = 0.4
-DEFAULT_VAL_SPLIT   = 0.2
-DEFAULT_TEST_SPLIT  = 0.4
 
 REP_TYPE     = "hidden"
 WEIGHT_NAMES = "all"
@@ -154,9 +151,9 @@ def reproduce_svd(
     reps_root: Path, data_root: Path,
     device: str = "cuda",
     *,
-    train_split: float = DEFAULT_TRAIN_SPLIT,
-    val_split:   float = DEFAULT_VAL_SPLIT,
-    test_split:  float = DEFAULT_TEST_SPLIT,
+    train_split: float = None,
+    val_split:   float = None,
+    test_split:  float = None,
 ) -> ScoreBundle:
     """SVD direct-projection scores. Convention: lower = error.
 
@@ -188,12 +185,9 @@ def _parse_args() -> argparse.Namespace:
     ap.add_argument("--reps-root", required=True, type=Path)
     ap.add_argument("--data-root", required=True, type=Path)
     ap.add_argument("--device", default="cuda")
-    ap.add_argument("--train-split", type=float, default=DEFAULT_TRAIN_SPLIT,
-                    help=f"Train fraction (default {DEFAULT_TRAIN_SPLIT}).")
-    ap.add_argument("--val-split",   type=float, default=DEFAULT_VAL_SPLIT,
-                    help=f"Val fraction (default {DEFAULT_VAL_SPLIT}).")
-    ap.add_argument("--test-split",  type=float, default=DEFAULT_TEST_SPLIT,
-                    help=f"Test fraction (default {DEFAULT_TEST_SPLIT}). "
+    ap.add_argument("--train-split", type=float, default=None, help=f"Train fraction.")
+    ap.add_argument("--val-split",   type=float, default=None, help=f"Val fraction.")
+    ap.add_argument("--test-split",  type=float, default=None, help=f"Test fraction. "
                          "Must sum with train/val to 1.")
     return ap.parse_args()
 
@@ -202,7 +196,7 @@ def main() -> None:
     args = _parse_args()
     df  = pd.read_csv(args.table, sep="\t")
     row = df.iloc[args.row]
-    print(f"\nRow {args.row}: strategy={row['strategy']} weight={row['weight']} "
+    print(f"\nRow {args.row}: strategy={row['strategy']} position={row['position']} "
           f"pooling={row['pooling']} seed={int(row['seed'])}")
 
     if row["strategy"] != "svd":

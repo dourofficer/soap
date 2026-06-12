@@ -6,7 +6,7 @@ reproduce each row's val + test SVD-projection scores, then sweep
 applying the discount pass and recording step_acc / agent_acc on val + test.
 
 One output TSV per (model, subset) at
-    {out_root}/{model}__{subset}__svd.tsv
+    {out_root}/{model}/{subset}.tsv
 
 python -m experiments.rescore.sweep \
     --config experiments/rescore/configs/default.yaml
@@ -46,33 +46,32 @@ def _row_record(row, layer_range, gamma, w, orient, val_m, test_m) -> dict:
     v_step, v_agent = list(val_m.values())
     t_step, t_agent = list(test_m.values())
     return {
-        "strategy":  row["strategy"],
-        "weight":    row["weight"],
-        "pooling":   row["pooling"],
-        "method":    row["method"],
-        "c_begin":   row["c_begin"],
-        "c_end":     row["c_end"],
-        "centered":  row["centered"],
-        "threshold": row.get("threshold", ""),
-        "seed":      int(row["seed"]),
+        "strategy":    row["strategy"],
+        "position":    row["position"],          # was "weight"
+        "pooling":     row["pooling"],
+        "method":      row["method"],
+        "c_begin":     row["c_begin"],
+        "c_end":       row["c_end"],
+        "centered":    row["centered"],
+        "weighted":    row["weighted"],
+        "threshold":   row.get("threshold", ""),
+        "seed":        int(row["seed"]),
         "layer_range": layer_range,
-        "gamma":     gamma,
-        "w":         w,
-        "orient":    orient,
-        "undisc_step_acc_val":   row["step_acc_val"],
-        "undisc_agent_acc_val":  row["agent_acc_val"],
-        "undisc_step_acc_test":  row["step_acc_test"],
-        "undisc_agent_acc_test": row["agent_acc_test"],
-        "disc_step_acc_val":     v_step,
-        "disc_agent_acc_val":    v_agent,
-        "disc_step_acc_test":    t_step,
-        "disc_agent_acc_test":   t_agent,
+        "gamma":       gamma,
+        "w":           w,
+        "orient":      orient,
+        "undisc_step_acc_val":    row["step_acc_val"],
+        "undisc_agent_acc_val":   row["agent_acc_val"],
+        "undisc_step_acc_test":   row["step_acc_test"],
+        "undisc_agent_acc_test":  row["agent_acc_test"],
+        "disc_step_acc_val":      v_step,
+        "disc_agent_acc_val":     v_agent,
+        "disc_step_acc_test":     t_step,
+        "disc_agent_acc_test":    t_agent,
     }
 
 
-def run_one_pair(
-    model: str, subset: str, cfg: dict,
-) -> None:
+def run_one_pair(model: str, subset: str, cfg: dict) -> None:
     undisc_root = Path(cfg["undisc_root"])
     attn_root   = Path(cfg["attn_root"])
     reps_root   = Path(cfg["reps_root"])
@@ -83,8 +82,11 @@ def run_one_pair(
     gammas      = cfg["gammas"]
     ws          = cfg["ws"]
     orients     = cfg["orients"]
+    train_split = cfg["train_split"]
+    val_split   = cfg["val_split"]
+    test_split  = cfg["test_split"]
 
-    table_path = undisc_root / f"{model}/{subset}.tsv"
+    table_path = undisc_root / model / subset / cfg.get("undisc_file", "weighted_all.tsv")
     if not table_path.exists():
         print(f"[skip] missing undiscounted table: {table_path}")
         return
@@ -94,8 +96,7 @@ def run_one_pair(
         print(f"[skip] no svd rows in {table_path}")
         return
 
-    out_root.mkdir(parents=True, exist_ok=True)
-    out_path = out_root / f"{model}/{subset}.tsv"
+    out_path = out_root / model / subset / "svd.tsv"
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
     if out_path.exists():
@@ -111,7 +112,12 @@ def run_one_pair(
     n_per_row = len(orients) * len(weightings) * len(gammas) * len(ws)
     pbar = tqdm(total=len(rows) * n_per_row, desc=f"{model}/{subset} svd")
     for _, row in rows.iterrows():
-        bundle = reproduce_svd(row, model, subset, reps_root, data_root, device)
+        bundle = reproduce_svd(
+            row, model, subset, reps_root, data_root, device,
+            train_split=train_split,
+            val_split=val_split,
+            test_split=test_split,
+        )
 
         for orient in orients:
             v_o = orient_svd_scores(bundle.val_scores,  strategy=orient).cpu()

@@ -1,0 +1,21 @@
+# experiments/reports/configs/undiscounted_v2.yaml
+# Config for build_undiscounted_tables_v2.py
+#
+# All keys are optional — the script uses built-in defaults for anything omitted.
+# Inline overrides: append key=value args after --config, e.g.
+#   python -m experiments.reports.build_undiscounted_tables_v2 \
+#       --config experiments/reports/configs/undiscounted_v2.yaml \
+#       out_root=outputs/tables/my-run
+
+svd_root: outputs-1006/weighted-projections/112
+out_root: outputs-1006/undiscounted-splits/112
+
+models:
+  - deepseek-8b
+  - llama-3.1-8b
+  - qwen3-8b
+  - qwen3-14b
+
+subsets:
+  - algorithm-generated
+  - hand-crafted
