@@ -1,0 +1,21 @@
+models:  [deepseek-8b, llama-3.1-8b, qwen3-8b, qwen3-14b]
+subsets: [algorithm-generated, hand-crafted]
+
+undisc_root: outputs-1006/undiscounted-splits/424
+attn_root:   outputs/attention
+reps_root:   outputs/activations
+data_root:   data/ww
+out_root:    outputs-1006/discounted-splits/sweep/424
+
+device:   cuda
+n_ranges: 4
+
+# Data split fractions (must sum to 1.0)
+train_split: 0.4
+val_split:   0.2
+test_split:  0.4
+
+# Sweep axes
+gammas:  [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+ws:      [1, 2, 3, 4, 5, all]
+orients: [negate, inverse, sigmoid]

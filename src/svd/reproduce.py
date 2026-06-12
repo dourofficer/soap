@@ -75,6 +75,10 @@ class ScoreBundle:
 # ── Caching: avoid redoing the data-loading + SVD precompute per row ─────────
 _cache: dict[tuple, dict] = {}
 
+def clear_cache() -> None:
+    """Drop all cached reps + SVD bundles. Call between (model, subset) pairs
+    so resident memory stays bounded to a single table's worth."""
+    _cache.clear()
 
 def _load_reps_and_svd(
     model: str, subset: str, pooling: str, seed: int,

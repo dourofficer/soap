@@ -19,11 +19,12 @@ from pathlib import Path
 
 import pandas as pd
 import yaml
+import torch
 from tqdm.auto import tqdm
 
 from src.rescore.weights import aggregate_attn
 from src.rescore.discount import orient_svd_scores, apply_discount
-from src.svd.reproduce import reproduce_svd
+from src.svd.reproduce import reproduce_svd, clear_cache
 from src.utils.utils import compute_metrics
 
 
@@ -137,6 +138,10 @@ def run_one_pair(model: str, subset: str, cfg: dict) -> None:
 
     pd.DataFrame(records).to_csv(out_path, sep="\t", index=False)
     print(f"wrote {out_path}  ({len(records)} rows)")
+
+    clear_cache()
+    if device == "cuda":
+        torch.cuda.empty_cache()
 
 
 def main() -> None:
