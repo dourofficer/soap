@@ -16,10 +16,18 @@ DistMetric = Literal["l1", "l2", "cosine"]
 #     _, _, V = torch.svd_lowrank(G.float(), q=k, niter=10)
 #     return V.contiguous()
 
-def _run_svd(G: torch.Tensor, k: int) -> torch.Tensor:
-    """Top-k right singular vectors of G. Shape: (d, k)."""
-    _, _, Vh = torch.linalg.svd(G.float(), full_matrices=False)
-    return Vh[:k].T.contiguous()
+def _run_svd(G: torch.Tensor, k: int) -> tuple[torch.Tensor, torch.Tensor]:
+    """Top-k right singular vectors and singular values of G.
+
+    Returns
+    -------
+    V : Tensor of shape (d, k)
+        Right singular vectors, columns ordered by decreasing singular value.
+    S : Tensor of shape (k,)
+        Corresponding singular values, decreasing.
+    """
+    _, S, Vh = torch.linalg.svd(G.float(), full_matrices=False)
+    return Vh[:k].T.contiguous(), S[:k].contiguous()
 
 def projection_svd(
     R: torch.Tensor, # (T, d) matrix of row reps to score
@@ -49,13 +57,38 @@ def ranged_projection_svd(
     c_begin: int = 0,
     c_end:   int = 20,
     ref: torch.Tensor | None = None, # (d,) mean gradient for centering, if desired
+    *,
+    singular_values: torch.Tensor | None = None, # (c,) top-c singular values, required if weighted
+    weighted: bool = False,
 ) -> torch.Tensor:
+    """Mean squared projection of each row onto right singular vectors in [c_begin:c_end].
+
+    With `weighted=True`, each squared projection on V[:, c] is scaled by the
+    corresponding singular value sigma_c before averaging (HaloScope-style
+    scoring; Du et al. 2024):
+
+        tau_i = (1/|C|) sum_{c in C} sigma_c * <r_tilde_i, v_c>^2
+
+    With `weighted=False` (default), sigma_c is treated as 1, recovering the
+    unweighted mean squared projection.
+    """
     assert 0 <= c_begin < c_end <= V.shape[1], \
         f"Invalid range [{c_begin}:{c_end}] for V with {V.shape[1]} components"
+    if weighted:
+        assert singular_values is not None, \
+            "ranged_projection_svd: weighted=True requires `singular_values`"
+        assert singular_values.shape[0] >= c_end, (
+            f"ranged_projection_svd: singular_values has {singular_values.shape[0]} "
+            f"entries; need at least {c_end} to cover c_end={c_end}"
+        )
     R_f = R.float()
     if ref is not None:
         R_f = R_f - ref
-    scores = (R_f @ V[:, c_begin:c_end]).square().mean(dim=1).to(R.dtype)
+    proj_sq = (R_f @ V[:, c_begin:c_end]).square()
+    if weighted:
+        sigma = singular_values[c_begin:c_end].to(proj_sq)
+        proj_sq = proj_sq * sigma  # broadcast (T, |C|) * (|C|,)
+    scores = proj_sq.mean(dim=1).to(R.dtype)
     return scores
 
 def reconstruction_svd(

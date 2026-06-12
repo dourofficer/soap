@@ -35,12 +35,36 @@ from src.svd.computation import SCORING_FNS
 # ── Hyperparameters / paths ──────────────────────────────────────────────────
 N_COMPONENTS = 20
 
-# 40/20/40 train/val/test split via two passes of split_data.
-SPLIT_TRVAL_VS_TEST = 0.6      # 60% train+val, 40% test
-SPLIT_TRAIN_VS_VAL  = 2.0 / 3  # of the 60%, 2/3 train (=40%) + 1/3 val (=20%)
+# Default 40/20/40 train/val/test split. Override via reproduce_svd(...) kwargs
+# or the spot-check CLI.
+DEFAULT_TRAIN_SPLIT = 0.4
+DEFAULT_VAL_SPLIT   = 0.2
+DEFAULT_TEST_SPLIT  = 0.4
 
 REP_TYPE     = "hidden"
 WEIGHT_NAMES = "all"
+
+
+def _validate_and_derive_split_ratios(
+    train_split: float, val_split: float, test_split: float,
+) -> tuple[float, float]:
+    """Validate that splits sum to 1 and return the two two-way ratios
+    (trval_vs_test, train_vs_val) used by sequential split_data calls."""
+    total = train_split + val_split + test_split
+    if abs(total - 1.0) > 1e-6:
+        raise ValueError(
+            f"train/val/test splits must sum to 1, got "
+            f"{train_split} + {val_split} + {test_split} = {total}"
+        )
+    if min(train_split, val_split, test_split) <= 0:
+        raise ValueError(
+            f"all splits must be > 0, got "
+            f"train={train_split}, val={val_split}, test={test_split}"
+        )
+    trval        = train_split + val_split          # 1 - test_split
+    r_trval_test = trval                            # first pass: trval vs test
+    r_train_val  = train_split / trval              # second pass: train vs val out of trval
+    return r_trval_test, r_train_val
 
 
 @dataclass
@@ -58,10 +82,16 @@ _cache: dict[tuple, dict] = {}
 def _load_reps_and_svd(
     model: str, subset: str, pooling: str, seed: int,
     reps_root: Path, data_root: Path, device: str,
+    train_split: float, val_split: float, test_split: float,
 ) -> dict:
     """Load + split reps and run precompute_svd. Cached per
-    (model, subset, pooling, seed, reps_root, data_root)."""
-    key = (model, subset, pooling, seed, str(reps_root), str(data_root))
+    (model, subset, pooling, seed, reps_root, data_root, splits)."""
+    r_trval_test, r_train_val = _validate_and_derive_split_ratios(
+        train_split, val_split, test_split,
+    )
+
+    key = (model, subset, pooling, seed, str(reps_root), str(data_root),
+           train_split, val_split, test_split)
     if key in _cache:
         return _cache[key]
 
@@ -72,8 +102,8 @@ def _load_reps_and_svd(
     files = [file.name for file in files]
     assert files, f"No .safetensors files in {rep_dir}"
 
-    trval_files, test_files = split_data(files,       SPLIT_TRVAL_VS_TEST, seed)
-    train_files, val_files  = split_data(trval_files, SPLIT_TRAIN_VS_VAL,  seed)
+    trval_files, test_files = split_data(files,       r_trval_test, seed)
+    train_files, val_files  = split_data(trval_files, r_train_val,  seed)
 
     rk = dict(rep_dir=rep_dir, data_dir=data_dir,
               pooling=pooling, weight_names=WEIGHT_NAMES, device=device)
@@ -99,18 +129,19 @@ def _select_svd_scores(score_records, row) -> torch.Tensor:
     """Pick the SVD per-step score vector matching this row's config."""
     df = pd.DataFrame(score_records) if not isinstance(score_records, pd.DataFrame) else score_records
     mask = (
-        (df["weight"]   == row["weight"]) &
+        (df["position"]   == row["position"]) &
         (df["pooling"]  == row["pooling"]) &
         (df["method"]   == row["method"]) &
         (df["c_begin"]  == int(row["c_begin"])) &
         (df["c_end"]    == int(row["c_end"])) &
-        (df["centered"] == bool(row["centered"]))
+        (df["centered"] == bool(row["centered"])) &
+        (df["weighted"] == bool(row["weighted"]))
     )
     hits = df[mask]
     if len(hits) == 0:
         raise ValueError(
             f"no SVD score record matching "
-            f"{dict((c, row[c]) for c in ['weight','pooling','method','c_begin','c_end','centered'])}"
+            f"{dict((c, row[c]) for c in ['position','pooling','method','c_begin','c_end','centered','weighted'])}"
         )
     return torch.as_tensor(hits.iloc[0]["scores"]).float()
 
@@ -122,11 +153,20 @@ def reproduce_svd(
     model: str, subset: str,
     reps_root: Path, data_root: Path,
     device: str = "cuda",
+    *,
+    train_split: float = DEFAULT_TRAIN_SPLIT,
+    val_split:   float = DEFAULT_VAL_SPLIT,
+    test_split:  float = DEFAULT_TEST_SPLIT,
 ) -> ScoreBundle:
-    """SVD direct-projection scores. Convention: lower = error."""
+    """SVD direct-projection scores. Convention: lower = error.
+
+    Splits default to 40/20/40 (matching the original undiscounted-table
+    runs). Pass matching splits if reproducing a row from a non-default sweep.
+    """
     bundle = _load_reps_and_svd(
         model, subset, row["pooling"], int(row["seed"]),
         reps_root, data_root, device,
+        train_split, val_split, test_split,
     )
     val_scores  = _select_svd_scores(bundle["svd"]["val_scores"],  row).cpu()
     test_scores = _select_svd_scores(bundle["svd"]["test_scores"], row).cpu()
@@ -148,6 +188,13 @@ def _parse_args() -> argparse.Namespace:
     ap.add_argument("--reps-root", required=True, type=Path)
     ap.add_argument("--data-root", required=True, type=Path)
     ap.add_argument("--device", default="cuda")
+    ap.add_argument("--train-split", type=float, default=DEFAULT_TRAIN_SPLIT,
+                    help=f"Train fraction (default {DEFAULT_TRAIN_SPLIT}).")
+    ap.add_argument("--val-split",   type=float, default=DEFAULT_VAL_SPLIT,
+                    help=f"Val fraction (default {DEFAULT_VAL_SPLIT}).")
+    ap.add_argument("--test-split",  type=float, default=DEFAULT_TEST_SPLIT,
+                    help=f"Test fraction (default {DEFAULT_TEST_SPLIT}). "
+                         "Must sum with train/val to 1.")
     return ap.parse_args()
 
 
@@ -161,8 +208,13 @@ def main() -> None:
     if row["strategy"] != "svd":
         raise ValueError(f"expected strategy='svd', got {row['strategy']!r}")
 
-    bundle = reproduce_svd(row, args.model, args.subset,
-                           args.reps_root, args.data_root, args.device)
+    bundle = reproduce_svd(
+        row, args.model, args.subset,
+        args.reps_root, args.data_root, args.device,
+        train_split=args.train_split,
+        val_split=args.val_split,
+        test_split=args.test_split,
+    )
 
     # SVD: lower = error → negate for "higher = error" metric convention.
     val_m  = compute_metrics(-bundle.val_scores,  bundle.val_keeper,  ks=[1], direction="desc")

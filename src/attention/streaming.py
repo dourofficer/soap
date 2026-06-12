@@ -55,7 +55,6 @@ CLI example
         --input        data/ww \
         --output-root  outputs/attention \
         --max_tokens   2048 \
-        --context      all \
         --query-pool   mean \
         --device       auto \
         --dtype        bfloat16
@@ -284,7 +283,6 @@ def extract_trajectory_qk_attention(
     model:       PreTrainedModel,
     tokenizer:   PreTrainedTokenizer,
     max_tokens:  int,
-    context:     str,
     query_pool:  str          = "mean",
     pbar:        tqdm | None  = None,
 ) -> dict[str, Tensor]:
@@ -300,7 +298,7 @@ def extract_trajectory_qk_attention(
     for step_idx in iter_scoreable_steps(traj):
         encoded     = separate_steps(
             traj, step_idx, tokenizer,
-            max_tokens=max_tokens, strategy=context,
+            max_tokens=max_tokens,
         )
         input_ids   = encoded["input_ids"].to(device)
         step_tokens = encoded["step_tokens"]
@@ -393,10 +391,6 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--device",      default=None)
     p.add_argument("--dtype",       choices=["float32", "bfloat16", "float16"], default="bfloat16")
     p.add_argument(
-        "--context", choices=["dependency", "all"], default="dependency",
-        help="Context selection strategy for hand-crafted trajectories.",
-    )
-    p.add_argument(
         "--query-pool", choices=["mean", "last"], default="mean",
         help="Aggregation over query tokens in T_t.",
     )
@@ -446,7 +440,6 @@ def main() -> None:
         "model":      args.model,
         "subset":     args.subset,
         "max_tokens": args.max_tokens,
-        "context":    args.context,
         "query_pool": args.query_pool,
         "dtype":      args.dtype,
         "impl":       "qk_streaming",
@@ -462,7 +455,6 @@ def main() -> None:
         flat = extract_trajectory_qk_attention(
             traj, model, tokenizer,
             max_tokens=args.max_tokens,
-            context=args.context,
             query_pool=args.query_pool,
             pbar=pbar,
         )

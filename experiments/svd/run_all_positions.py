@@ -65,6 +65,11 @@ def parse_args():
     # misc
     parser.add_argument("--seed",   type=int, default=1)
     parser.add_argument("--device", type=str, default="cuda")
+
+    # train/val/test split ratios (must sum to 1)
+    parser.add_argument("--train-split", type=float, default=0.4)
+    parser.add_argument("--val-split",   type=float, default=0.2)
+    parser.add_argument("--test-split",  type=float, default=0.4)
     return parser.parse_args()
 
 
@@ -94,9 +99,15 @@ def main():
     files = [file.name for file in files] # silent failure if not included
     assert files, f"No .safetensors files in {rep_dir}"
 
-    # Split 4 : 2 : 4 (train : val : test)
-    train_files, test_files = split_data(files, 0.6, seed)
-    train_files, val_files  = split_data(train_files, 2/3, seed)
+    # Validate split ratios and derive the two sequential split_data ratios.
+    total = args.train_split + args.val_split + args.test_split
+    trval_frac = args.train_split + args.val_split          # vs test
+    train_vs_val_frac = args.train_split / trval_frac       # train out of trval
+
+    print(f"Splits:             train={args.train_split} val={args.val_split} test={args.test_split}")
+
+    train_files, test_files = split_data(files,       trval_frac,        seed)
+    train_files, val_files  = split_data(train_files, train_vs_val_frac, seed)
 
     print(f"Train trajectories: {len(train_files)}")
     print(f"Val trajectories:   {len(val_files)}")

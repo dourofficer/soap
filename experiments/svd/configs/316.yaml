@@ -10,13 +10,13 @@ seeds:    [1, 2, 3]
 
 reps_root:    outputs/activations
 data_root:    data/ww
-outputs_root: outputs/projections
+outputs_root: outputs-1006/weighted-projections/316
 device:       cuda
 
 positions: [all]  # list of layer shorthands, or [all]
 
 # train/val/test split ratios (must sum to 1)
 splits:
-  train: 0.4
-  val:   0.2
-  test:  0.4
+  train: 0.3
+  val:   0.1
+  test:  0.6

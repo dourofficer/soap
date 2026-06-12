@@ -1,12 +1,6 @@
 """
-CUDA_VISIBLE_DEVICES=0 python -m experiments.svd.sweep \
-    --config experiments/svd/configs/default.yaml
-
-CUDA_VISIBLE_DEVICES=1 python -m experiments.svd.sweep \
-    --config experiments/svd/configs/default.yaml \
-    --set models=[qwen3-8b] \
-    --set outputs_root=outputs/weighted-projections \
-    --dry-run
+CUDA_VISIBLE_DEVICES=0 python -m experiments.attention.sweep \
+    --config experiments/attention/configs/default.yaml
 """
 from __future__ import annotations
 
@@ -14,14 +8,13 @@ import argparse
 import shlex
 import subprocess
 import sys
-import itertools
 from pathlib import Path
 
 import yaml
 from rich.console import Console
 
 CONSOLE = Console()
-MODULE  = "experiments.svd.run_all_positions"
+MODULE  = "src.attention.streaming"
 
 
 def load_cfg(path: Path, overrides: list[str]) -> dict:
@@ -50,16 +43,20 @@ def format_command(module: str, argv: list[str]) -> str:
     return f"{head} \\\n    {args}"
 
 
-def run(argv: list[str], dry_run: bool) -> None:
+def run(argv: list[str]) -> bool:
+    """Returns True on success, False on failure (mirrors the bash || continue pattern)."""
     cmd = [sys.executable, "-m", MODULE, *argv]
     CONSOLE.print(format_command(MODULE, argv), style="green")
     CONSOLE.rule()
-    if not dry_run:
-        subprocess.run(cmd, check=True)
+    result = subprocess.run(cmd)
+    if result.returncode != 0:
+        CONSOLE.print(f"[bold red]FAILED[/] (exit {result.returncode}) — continuing...")
+        return False
+    return True
 
 
 def main() -> None:
-    p = argparse.ArgumentParser(prog="experiments.svd.sweep")
+    p = argparse.ArgumentParser(prog="experiments.attention.sweep")
     p.add_argument("--config", type=Path, required=True)
     p.add_argument("--set", dest="overrides", action="append", default=[],
                    metavar="KEY=VALUE")
@@ -68,26 +65,24 @@ def main() -> None:
 
     cfg = load_cfg(args.config, args.overrides)
 
-    splits = cfg.get("splits", {"train": 0.4, "val": 0.2, "test": 0.4})
+    for model in cfg["models"]:
+        for subset in cfg["subsets"]:
+            CONSOLE.rule(f"[bold]model={model} | subset={subset}[/]")
+            argv = [
+                "--model",       model,
+                "--subset",      subset,
+                "--input",       cfg["data_dir"],
+                "--output-root", cfg["output_root"],
+                "--max_tokens",  str(cfg.get("max_tokens", 8192)),
+                "--query-pool",  cfg.get("query_pool", "mean"),
+                "--device",      cfg.get("device", "auto"),
+                "--dtype",       cfg.get("dtype", "bfloat16"),
+            ]
+            CONSOLE.rule()
+            if not args.dry_run:
+                run(argv)
 
-    combos = list(itertools.product(
-        cfg["models"], cfg["subsets"], cfg["poolings"], cfg["seeds"]))
-    for i, (model, subset, pooling, seed) in enumerate(combos, 1):
-        CONSOLE.print(f"[{i}/{len(combos)}]", style="bold cyan")
-        run([
-            "--reps-root",    cfg["reps_root"],
-            "--data-root",    cfg["data_root"],
-            "--outputs-root", cfg["outputs_root"],
-            "--model",        model,
-            "--subset",       subset,
-            "--pooling",      pooling,
-            "--positions",    *cfg.get("positions", ["all"]),
-            "--seed",         str(seed),
-            "--device",       cfg["device"],
-            "--train-split",  str(splits["train"]),
-            "--val-split",    str(splits["val"]),
-            "--test-split",   str(splits["test"]),
-        ], args.dry_run)
+    CONSOLE.rule("[bold green]All runs complete[/]")
 
 
 if __name__ == "__main__":

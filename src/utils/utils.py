@@ -85,77 +85,10 @@ def get_all_rep_names(fp: Path) -> list[str]:
             names.add(name)
     return sorted(names)
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Main loader
-# ─────────────────────────────────────────────────────────────────────────────
-def load_singular_vectors(
-    base_dir: Path,
-    model: str,
-    subset: str,
-    pooling: str,
-    n_components_fit: int,
-    centered: bool,
-):
-    """Loads the V matrices from a fitted SVD."""
-    centered_str =  f"{'centered' if centered else 'raw'}"
-    svd_dir = base_dir / f"{model}/svd/{subset}"
-    V_file = f"{pooling}_c{n_components_fit}_{centered_str}/V.safetensors"
-    fp = svd_dir / V_file
-    assert fp.exists(), f"Missing SVD file: {fp}"
-    with safe_open(fp, framework="pt") as f:
-        data = {k: f.get_tensor(k) for k in f.keys()}
-    return data
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Modular loader helpers
-# ─────────────────────────────────────────────────────────────────────────────
-
-def _resolve_model_tag(model: str, loss: str, temperature: float) -> str:
-    if   loss == "ntp":        return f"{model}"
-    elif loss == "kl_temp":    return f"{model}-kl/temp_{temperature}"
-    elif loss == "kl_uniform": return f"{model}-kl/uniform"
-    else: raise ValueError(f"Unsupported loss: {loss}")
-
-def _resolve_dir(
-    root_dir:     Path, # e,g., outputs/ or /data/username/attrib/
-    model:        str, # llama-3.1-8b | qwen3-8b
-    subset:       str, # algorithm-generated | hand-crafted
-    rep_type:     str, # grads | hidden
-    loss:         str, # ntp | kl_uniform | kl_temp
-    temperature:  float | None, # None | None | 1.x
-    dir_type:     str, # representations | metrics
-):
-    """
-    Directory structure containing represntations | metrics from {reps_root}
-    .
-    ├── grads
-    │   ├── llama-3.1-8b/
-    │   ├── llama-3.1-8b-kl/
-    │   │   ├── temp_1.x/
-    │   │   └── uniform/
-    │   ├── qwen3-8b/
-    │   └── qwen3-8b-kl/
-    │       ├── temp_1.x/
-    │       └── uniform/
-    └── hidden
-        ├── llama-3.1-8b/
-        └── qwen3-8b/
-    
-    Depends on dir_type, the resolved dir will be `reps` or `metrics`
-    """
-    assert dir_type in ["representations", "metrics"], \
-        f"Unsupported directory type for resolving: {dir_type}"
-    assert rep_type in ["grads", "hidden"], f"Unsupported rep_type: {rep_type}"
-
-    if   rep_type == "grads":  model_tag = _resolve_model_tag(model, loss, temperature)
-    elif rep_type == "hidden": model_tag = model
-
-    if   dir_type == "representations": dir_tag = "reps"
-    elif dir_type == "metrics":         dir_tag = "metrics"
-
-    result = root_dir / rep_type  / model_tag / dir_tag / subset
-    result.mkdir(parents=True, exist_ok=True)
-    return result
+# ────────────────────────────────────────────────────────────────────────────
 
 def _resolve_files(rep_dir: Path, files: list[Path] | None) -> list[Path]:
     """Return the sorted list of .safetensors files to load."""
@@ -422,12 +355,13 @@ def gather_configs_and_metrics(
         for direction in ("asc", "desc"):
             m = compute_metrics(rec["scores"], keeper, ks, direction)
             rows.extend([{
-                "weight":    rec["weight"],
+                "position":  rec["position"],
                 "pooling":   rec["pooling"],
                 "method":    rec["method"],
                 "c_begin":   rec["c_begin"],
                 "c_end":     rec["c_end"],
                 "centered":  rec["centered"],
+                "weighted":  rec["weighted"],
                 "direction": direction,
                 "k":         k,
                 "step_acc":  m[f"step@{k}_{direction}"],

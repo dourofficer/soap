@@ -30,12 +30,6 @@ SCORING_FNS: dict[str, Callable] = {
     "proj": ranged_projection_svd
 }
 
-DEFAULT_POOLING = {
-    "hidden": ["mean", "last"],
-    "grads":  ["grad"],
-}
-
-
 def fit_one(store: RepresentationStore, n_components: int) -> dict:
     """Fit raw + centered SVD for a single RepresentationStore.
 
@@ -43,15 +37,21 @@ def fit_one(store: RepresentationStore, n_components: int) -> dict:
     -------
     {
       "V_raw":      Tensor(d, n_components),   # CPU
+      "S_raw":      Tensor(n_components,),     # CPU; singular values of G
       "V_centered": Tensor(d, n_components),   # CPU
+      "S_centered": Tensor(n_components,),     # CPU; singular values of G - mean
       "ref":        Tensor(d,),                # per-weight mean, CPU
     }
     """
     G    = store.R.float()
     mean = G.mean(dim=0)
+    V_raw,      S_raw      = _run_svd(G,        n_components)
+    V_centered, S_centered = _run_svd(G - mean, n_components)
     return {
-        "V_raw":      _run_svd(G,        n_components).cpu(),
-        "V_centered": _run_svd(G - mean, n_components).cpu(),
+        "V_raw":      V_raw.cpu(),
+        "S_raw":      S_raw.cpu(),
+        "V_centered": V_centered.cpu(),
+        "S_centered": S_centered.cpu(),
         "ref":        mean.cpu(),
     }
 
@@ -107,36 +107,47 @@ def score_one(
     R    = store.R.float().to(device)
     rows = []
 
-    # Projection-based scores over (centered × method × (c_begin, c_end))
+    # Projection-based scores over (centered × method × (c_begin, c_end) × weighted)
     get_bounds = lambda N: [(a, b) for a in range(N) for b in range(a + 1, N + 1)]
-    combos = iproduct((True, False), scoring_fns.items(), get_bounds(n_components))
-    for centered, (method, fn), (c_begin, c_end) in combos:
-        V      = svd_entry["V_centered" if centered else "V_raw"].to(device)
-        ref    = svd_entry["ref"].to(device) if centered else None
-        scores = fn(R, V, c_begin, c_end, ref).cpu().numpy()
+    combos = iproduct(
+        (True, False),                # centered
+        scoring_fns.items(),          # method
+        get_bounds(n_components),     # (c_begin, c_end)
+        (True, False),                # weighted (sigma-scaling toggle)
+    )
+    for centered, (method, fn), (c_begin, c_end), weighted in combos:
+        V   = svd_entry["V_centered" if centered else "V_raw"].to(device)
+        S   = svd_entry["S_centered" if centered else "S_raw"].to(device)
+        ref = svd_entry["ref"].to(device) if centered else None
+        scores = fn(
+            R, V, c_begin, c_end, ref,
+            singular_values=S, weighted=weighted,
+        ).cpu().numpy()
         rows.append({
-            "weight":   store.name,
+            "position":   store.name,
             "pooling":  store.pooling,
             "method":   method,
             "c_begin":  c_begin,
             "c_end":    c_end,
             "centered": centered,
+            "weighted": weighted,
             "scores":   scores,
         })
 
-    # Representation norm baselines (no SVD components involved)
+    # Representation norm baselines (no SVD components involved → weighted is N/A)
     for centered in (True, False):
         ref    = svd_entry["ref"].to(device) if centered else None
         R_eval = R - ref if ref is not None else R
         for norm_p, method_name in ((2, "norm_l2"), (1, "norm_l1")):
             norms = R_eval.norm(p=norm_p, dim=1).cpu().numpy()
             rows.append({
-                "weight":   store.name,
+                "position":   store.name,
                 "pooling":  store.pooling,
                 "method":   method_name,
                 "c_begin":  0,
                 "c_end":    0,
                 "centered": centered,
+                "weighted": False,
                 "scores":   norms,
             })
 
@@ -191,7 +202,7 @@ def precompute_svd(
     test_df = gather_configs_and_metrics(test_scores, keeper=test_reps.keeper, ks=[1])
     merged_df = pd.merge(
         val_df, test_df, suffixes=('_val', '_test'),
-        on=['weight', 'pooling', 'method', 'c_begin', 'c_end', 'centered', 'direction', 'k'],
+        on=['position', 'pooling', 'method', 'c_begin', 'c_end', 'centered', 'weighted', 'direction', 'k'],
     )
 
     return dict(

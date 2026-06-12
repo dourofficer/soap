@@ -222,7 +222,6 @@ def extract_trajectory_attention(
     model:       PreTrainedModel,
     tokenizer:   PreTrainedTokenizer,
     max_tokens:  int,
-    context:     str,                         # "dependency" | "all"
     query_pool:  str          = "mean",       # "mean" | "last"
     pbar:        tqdm | None  = None,
 ) -> dict[str, Tensor]:
@@ -245,7 +244,7 @@ def extract_trajectory_attention(
     for step_idx in iter_scoreable_steps(traj):
         encoded     = separate_steps(
             traj, step_idx, tokenizer,
-            max_tokens=max_tokens, strategy=context,
+            max_tokens=max_tokens,
         )
         input_ids   = encoded["input_ids"].to(device)
         step_tokens = encoded["step_tokens"]

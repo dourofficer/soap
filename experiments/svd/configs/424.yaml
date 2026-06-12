@@ -10,7 +10,7 @@ seeds:    [1, 2, 3]
 
 reps_root:    outputs/activations
 data_root:    data/ww
-outputs_root: outputs/projections
+outputs_root: outputs-1006/weighted-projections/424
 device:       cuda
 
 positions: [all]  # list of layer shorthands, or [all]
