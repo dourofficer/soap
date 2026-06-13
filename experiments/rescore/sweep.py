@@ -87,7 +87,8 @@ def run_one_pair(model: str, subset: str, cfg: dict) -> None:
     val_split   = cfg["val_split"]
     test_split  = cfg["test_split"]
 
-    table_path = undisc_root / model / subset / cfg.get("undisc_file", "weighted_all.tsv")
+    table_path = undisc_root / model / subset / cfg.get("undisc_file", "weighted_false.tsv")
+    print(f"Table Path: {table_path}")
     if not table_path.exists():
         print(f"[skip] missing undiscounted table: {table_path}")
         return
