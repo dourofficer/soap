@@ -343,10 +343,6 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--device",      default=None)
     p.add_argument("--dtype",       choices=["float32", "bfloat16", "float16"], default="bfloat16")
     p.add_argument(
-        "--context", choices=["dependency", "all"], default="dependency",
-        help="Context selection strategy for hand-crafted trajectories.",
-    )
-    p.add_argument(
         "--query-pool", choices=["mean", "last"], default="mean",
         help=(
             "Aggregation over query tokens in T_t. "
@@ -404,7 +400,6 @@ def main() -> None:
         "model":      args.model,
         "subset":     args.subset,
         "max_tokens": args.max_tokens,
-        "context":    args.context,
         "query_pool": args.query_pool,
         "dtype":      args.dtype,
     }, indent=2))
@@ -420,7 +415,6 @@ def main() -> None:
         flat = extract_trajectory_attention(
             traj, model, tokenizer,
             max_tokens=args.max_tokens,
-            context=args.context,
             query_pool=args.query_pool,
             pbar=pbar,
         )
