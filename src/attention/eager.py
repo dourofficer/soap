@@ -72,7 +72,6 @@ CLI example
         --input        data/ww \\
         --output-root  outputs/weighting_attn \\
         --max_tokens   8192 \\
-        --context      dependency \\
         --query-pool   mean \\
         --device       cuda \\
         --dtype        bfloat16
@@ -95,6 +94,7 @@ from safetensors.torch import save_file
 
 from ..data.trajectory import Trajectory, load_dataset
 from ..data.context    import iter_scoreable_steps, separate_steps
+from ..models import get_adapter
 
 HUB = "/home/thanhdo/hub"
 MODELS = {
@@ -102,6 +102,7 @@ MODELS = {
     "qwen3-8b":     f"{HUB}/Qwen/Qwen3-8B",
     "qwen3-4b":     f"{HUB}/Qwen/Qwen3-4B",
     "qwen3-14b":    f"{HUB}/Qwen/Qwen3-14B",
+    "qwen3.5-9b":   f"{HUB}/Qwen/Qwen3.5-9B",
     "deepseek-8b":  f"{HUB}/deepseek-ai/DeepSeek-R1-Distill-Llama-8B",
 }
 
@@ -222,11 +223,18 @@ def extract_trajectory_attention(
     model:       PreTrainedModel,
     tokenizer:   PreTrainedTokenizer,
     max_tokens:  int,
+    adapter,
     query_pool:  str          = "mean",       # "mean" | "last"
     pbar:        tqdm | None  = None,
 ) -> dict[str, Tensor]:
     """Per scored step: one forward pass with hooks installed, capturing
     aggregated attention mass to every in-graph predecessor step.
+
+    Hooks are installed only on the blocks the adapter exposes
+    (`extract_block_indices`): every block for Llama/Qwen3, only the
+    full-attention blocks for hybrid models such as Qwen3.5. The stored
+    L axis therefore indexes those blocks; their decoder indices are written
+    to the run's config.json as `attn_block_indices`.
 
     Returns a flat dict of safetensors-ready tensors keyed by
     "{step_idx}.{name}" for the whole trajectory.
@@ -234,17 +242,15 @@ def extract_trajectory_attention(
     flat: dict[str, Tensor] = {}
     device = next(model.parameters()).device
 
-    # Assumes Llama / Qwen / Mistral-style layout. Swap this list if you
-    # adapt the extractor to a different architecture.
-    attn_modules: list[nn.Module] = [
-        block.self_attn for block in model.model.layers
-    ]
-    n_layers = len(attn_modules)
+    layers       = adapter.decoder_layers(model)
+    block_idxs   = adapter.extract_block_indices(model)
+    attn_modules = [(i, layers[i].self_attn) for i in block_idxs]   # (block_idx, module)
+    template_kw  = adapter.template_kwargs()
 
     for step_idx in iter_scoreable_steps(traj):
         encoded     = separate_steps(
             traj, step_idx, tokenizer,
-            max_tokens=max_tokens,
+            max_tokens=max_tokens, template_kwargs=template_kw,
         )
         input_ids   = encoded["input_ids"].to(device)
         step_tokens = encoded["step_tokens"]
@@ -277,11 +283,11 @@ def extract_trajectory_attention(
         handles = [
             mod.register_forward_hook(
                 _make_attn_hook(
-                    layer_idx=l, query_idx=query_idx, key_mask=key_mask,
+                    layer_idx=bi, query_idx=query_idx, key_mask=key_mask,
                     query_pool=query_pool, out_per_head=out_per_head,
                 ),
             )
-            for l, mod in enumerate(attn_modules)
+            for bi, mod in attn_modules
         ]
 
         try:
@@ -294,17 +300,17 @@ def extract_trajectory_attention(
             for h in handles:
                 h.remove()
 
-        # Sanity-check: every layer's hook should have fired exactly once.
-        if len(out_per_head) != n_layers:
+        # Sanity-check: every hooked block should have fired exactly once.
+        if len(out_per_head) != len(attn_modules):
             raise RuntimeError(
-                f"Captured {len(out_per_head)}/{n_layers} layers at step "
+                f"Captured {len(out_per_head)}/{len(attn_modules)} layers at step "
                 f"{step_idx} of {traj.filename}; hook misfire?"
             )
 
-        # Stack per-layer summaries → (L, H, n_ctx). Iterate by index to
-        # guard against dict-iteration-order surprises.
+        # Stack per-layer summaries → (L, H, n_ctx), L = #extracted blocks,
+        # ordered as in attn_modules (= block_idxs).
         per_head = torch.stack(
-            [out_per_head[l] for l in range(n_layers)], dim=0,
+            [out_per_head[bi] for bi, _ in attn_modules], dim=0,
         ).float().contiguous()                                       # (L, H, n_ctx)
 
         # Derived views.
@@ -369,21 +375,16 @@ def main() -> None:
         "float16":  torch.float16,
     }[args.dtype]
 
-    # ── Model + tokenizer ─────────────────────────────────────────────────
+    # ── Model + tokenizer/processor (architecture-aware) ───────────────────
     model_path = MODELS[args.model]
-    print(f"Loading tokenizer: {model_path}")
-    tokenizer = AutoTokenizer.from_pretrained(model_path)
+    adapter    = get_adapter(model_path)
 
-    # `attn_implementation="eager"` is mandatory: SDPA and FlashAttention
+    # eager=True forces attn_implementation="eager": SDPA / FlashAttention
     # don't materialise the post-softmax probabilities our hooks read.
     print(f"Loading model → {args.device} ({args.dtype}, eager attention)")
-    model = AutoModelForCausalLM.from_pretrained(
-        model_path,
-        torch_dtype=torch_dtype,
-        device_map=device_map,
-        attn_implementation="eager",
+    model, tokenizer = adapter.load(
+        model_path, torch_dtype, device_map, eager=True,
     )
-    model.eval()
 
     # ── Data ──────────────────────────────────────────────────────────────
     trajectories = load_dataset(args.input, subset=args.subset)
@@ -402,6 +403,7 @@ def main() -> None:
         "max_tokens": args.max_tokens,
         "query_pool": args.query_pool,
         "dtype":      args.dtype,
+        "attn_block_indices": adapter.extract_block_indices(model),
     }, indent=2))
 
     # ── Extract ───────────────────────────────────────────────────────────
@@ -415,6 +417,7 @@ def main() -> None:
         flat = extract_trajectory_attention(
             traj, model, tokenizer,
             max_tokens=args.max_tokens,
+            adapter=adapter,
             query_pool=args.query_pool,
             pbar=pbar,
         )

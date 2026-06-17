@@ -38,6 +38,8 @@ import torch
 from torch import Tensor
 from transformers import PreTrainedModel
 
+from ..models.base import find_decoder, num_hidden_layers
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Shorthand ↔ tuple-index helpers
@@ -191,26 +193,13 @@ def _apply_pool(
 # ─────────────────────────────────────────────────────────────────────────────
 
 def _get_final_norm(model: PreTrainedModel):
-    """Retrieve model.model.norm from a HuggingFace CausalLM.
+    """Retrieve the final RMSNorm from a HuggingFace model.
 
-    Valid for Qwen / Llama / Mistral style architectures where the transformer
-    body lives at model.model and the final RMSNorm is model.model.norm.
-    Raises RuntimeError with a descriptive message if the attribute is absent.
+    Uses ``find_decoder`` so it works for both plain CausalLMs
+    (``model.model.norm``) and multimodal wrappers that nest the decoder under
+    ``model.model.language_model``.
     """
-    inner = getattr(model, "model", None)
-    if inner is None:
-        raise RuntimeError(
-            "model.model not found. This extractor assumes a HuggingFace "
-            "CausalLM where the transformer body is at model.model "
-            "(Qwen / Llama / Mistral layout)."
-        )
-    norm = getattr(inner, "norm", None)
-    if norm is None:
-        raise RuntimeError(
-            "model.model.norm not found. Cannot apply the final RMSNorm. "
-            "Check the model architecture."
-        )
-    return norm
+    return find_decoder(model).norm
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -252,7 +241,7 @@ def extract_hidden(
     was_training = model.training
     model.eval()
 
-    n_layers  = model.config.num_hidden_layers
+    n_layers  = num_hidden_layers(model.config)
     valid     = set(all_shorthands(n_layers))
     normed_sh = f"act/{n_layers - 1}_normed"   # e.g. "act/35_normed"
 

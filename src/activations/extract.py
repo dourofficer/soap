@@ -43,6 +43,7 @@ import argparse
 import json
 import sys
 import time
+import functools
 from collections import OrderedDict
 from typing import Any, Callable
 from pathlib import Path
@@ -62,6 +63,7 @@ from ..data.context import (
     iter_scoreable_steps, 
     build_context, 
 )
+from ..models import get_adapter
 
 from .core import extract_hidden
 
@@ -243,27 +245,27 @@ def main():
     if len(layers) == 1 and layers[0] == "all": 
         layers = layers[0]
 
-    # ── Load model ────────────────────────────────────────────────────────────
-    print(f"Loading tokenizer: {args.model}")
-    tokenizer = AutoTokenizer.from_pretrained(args.model)
-
+    # ── Load model (architecture-aware) ───────────────────────────────────────
+    adapter = get_adapter(args.model)
     print(f"Loading model → {args.device} ({args.dtype})")
-    model = AutoModelForCausalLM.from_pretrained(
-        args.model,
-        torch_dtype=torch_dtype,
-        # device_map={"": device},
-        device_map=device_map,
-    )
-    model.eval()
+    model, tokenizer = adapter.load(args.model, torch_dtype, device_map)
 
     n_params = sum(p.numel() for p in model.parameters())
-    n_layers = model.config.num_hidden_layers
+    n_layers = adapter.num_layers(model)
     print(f"  {n_params / 1e9:.2f}B parameters  |  {n_layers} transformer layers.")
 
-    # ── Context builder ──────────────────────────────────────────────────────
-    model_key  = Path(args.model).parts[-1]
-    # context_fn = CONTEXT_FNS[model_key]
-    context_fn = build_context
+    # ── Resolve "all" to the adapter's extractable blocks ─────────────────────
+    # For Llama/Qwen3 this is every block; for hybrid models (e.g. Qwen3.5) it is
+    # only the full-attention blocks. Embedding + final-normed are always kept.
+    if layers == "all":
+        blocks = adapter.extract_block_indices(model)
+        layers = ["embed"] + [f"act/{i}" for i in blocks] + [f"act/{n_layers - 1}_normed"]
+        print(f"  Extractable blocks: {blocks}")
+
+    # ── Context builder (carries template kwargs, e.g. enable_thinking=False) ──
+    context_fn = functools.partial(
+        build_context, template_kwargs=adapter.template_kwargs(),
+    )
 
     # ── Validate --layers against actual model depth ──────────────────────────
     if layers != "all":

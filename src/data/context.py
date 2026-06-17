@@ -63,10 +63,11 @@ def _serialize_turns(history: list[dict], indices: list[int]) -> str:
 # ─────────────────────────────────────────────────────────────────────────────
 
 def build_context(
-    traj:       Trajectory,
-    step_idx:   int,
-    tokenizer:  PreTrainedTokenizer,
-    max_tokens: int | None = None,
+    traj:            Trajectory,
+    step_idx:        int,
+    tokenizer:       PreTrainedTokenizer,
+    max_tokens:      int | None = None,
+    template_kwargs: dict | None = None,
 ) -> dict[str, Any]:
     """Tokenise one (context, step) pair for GradNorm scoring.
  
@@ -120,6 +121,7 @@ def build_context(
     step_content = history[step_idx].get("content", "").strip()
     step_content = _serialize_turns(history, [step_idx])
     assistant_msg = {"role": "assistant", "content": step_content}
+    tk = template_kwargs or {}
  
     def _apply(indices: list[int]) -> tuple:
         """Tokenise [user_msg, assistant_msg] and the user-only prefix."""
@@ -129,12 +131,14 @@ def build_context(
             tokenize              = True,
             add_generation_prompt = False,
             return_tensors        = "pt",
+            **tk,
         )
         prefix_ids = tokenizer.apply_chat_template(
             [user_msg],
             tokenize              = True,
             add_generation_prompt = True,
             return_tensors        = "pt",
+            **tk,
         )
         return full_ids, prefix_ids
  
@@ -163,16 +167,18 @@ def build_context(
 
 
 def separate_steps(
-    traj:       Trajectory,
-    step_idx:   int,
-    tokenizer:  PreTrainedTokenizer,
-    max_tokens: int | None = None,
+    traj:            Trajectory,
+    step_idx:        int,
+    tokenizer:       PreTrainedTokenizer,
+    max_tokens:      int | None = None,
+    template_kwargs: dict | None = None,
 ) -> dict[str, Any]:
 
     history      = traj.history
     ctx_indices  = select_context(history, step_idx)
     step_content = _serialize_turns(history, [step_idx])
     assistant_msg = {"role": "assistant", "content": step_content}
+    tk = template_kwargs or {}
 
     def _apply(indices: list[int]) -> tuple:
         """Tokenise [user_msg, assistant_msg] and the user-only prefix."""
@@ -182,12 +188,14 @@ def separate_steps(
             tokenize              = True,
             add_generation_prompt = False,
             return_tensors        = "pt",
+            **tk,
         )
         prefix_ids = tokenizer.apply_chat_template(
             [user_msg],
             tokenize              = True,
             add_generation_prompt = True,
             return_tensors        = "pt",
+            **tk,
         )
         return full_ids, prefix_ids
 
