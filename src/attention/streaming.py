@@ -73,13 +73,15 @@ from ..data.trajectory import Trajectory, load_dataset
 from ..data.context    import iter_scoreable_steps, separate_steps
 from ..models import get_adapter
 
-HUB = "/home/thanhdo/hub"
+# HUB = "/home/thanhdo/hub"
+HUB = "/data/hoang/resources/models"
 MODELS = {
     "llama-3.1-8b": f"{HUB}/meta-llama/Llama-3.1-8B-Instruct",
     "qwen3-8b":     f"{HUB}/Qwen/Qwen3-8B",
     "qwen3-4b":     f"{HUB}/Qwen/Qwen3-4B",
     "qwen3-14b":    f"{HUB}/Qwen/Qwen3-14B",
     "qwen3.5-9b":   f"{HUB}/Qwen/Qwen3.5-9B",
+    "qwen3.5-27b":  f"{HUB}/Qwen/Qwen3.5-27B",
     "deepseek-8b":  f"{HUB}/deepseek-ai/DeepSeek-R1-Distill-Llama-8B",
 }
 
