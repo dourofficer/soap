@@ -117,8 +117,6 @@ def build_context(
     """
     history      = traj.history
     ctx_indices  = select_context(history, step_idx)
-    # assert ctx_indices == list(range(step_idx)), "taking full context, no graph"
-    step_content = history[step_idx].get("content", "").strip()
     step_content = _serialize_turns(history, [step_idx])
     assistant_msg = {"role": "assistant", "content": step_content}
     tk = template_kwargs or {}
@@ -162,7 +160,6 @@ def build_context(
             return {"input_ids": full_ids["input_ids"], "ctx_len": ctx_len}
  
     ctx_len = prefix_ids["input_ids"].shape[1]
-    # breakpoint()
     return {"input_ids": full_ids["input_ids"], "ctx_len": ctx_len}
 
 

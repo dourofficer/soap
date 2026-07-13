@@ -1,0 +1,7 @@
+# SVD stage — CORRECT-Error. Shared knobs (models, subsets, data_root, splits,
+# seeds) come from experiments/datasets/correct-error.yaml.
+dataset: correct-error
+
+device:    cuda
+poolings:  [mean, last]
+positions: [all]   # list of layer shorthands, or [all]

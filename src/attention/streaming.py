@@ -69,33 +69,18 @@ from transformers.modeling_utils import ALL_ATTENTION_FUNCTIONS
 from transformers.integrations.sdpa_attention import sdpa_attention_forward
 from safetensors.torch import save_file
 
-from ..data.trajectory import Trajectory, load_dataset
-from ..data.context    import iter_scoreable_steps, separate_steps
+# [data_v2 swap] rollback: uncomment the two ..data lines, delete the ..data_v2 ones
+# from ..data.trajectory import Trajectory, load_dataset
+# from ..data.context    import iter_scoreable_steps, separate_steps
+from ..data_v2.trajectory import Trajectory, load_dataset
+from ..data_v2.context    import iter_scoreable_steps, separate_steps
 from ..models import get_adapter
+from ..utils.metadata import extract_metadata
+from ._common import build_key_mask
 
-# HUB = "/home/thanhdo/hub"
-HUB = "/data/hoang/resources/models"
-MODELS = {
-    "llama-3.1-8b": f"{HUB}/meta-llama/Llama-3.1-8B-Instruct",
-    "qwen3-8b":     f"{HUB}/Qwen/Qwen3-8B",
-    "qwen3-4b":     f"{HUB}/Qwen/Qwen3-4B",
-    "qwen3-14b":    f"{HUB}/Qwen/Qwen3-14B",
-    "qwen3.5-9b":   f"{HUB}/Qwen/Qwen3.5-9B",
-    "qwen3.5-27b":  f"{HUB}/Qwen/Qwen3.5-27B",
-    "deepseek-8b":  f"{HUB}/deepseek-ai/DeepSeek-R1-Distill-Llama-8B",
-}
-
-
-def _extract_metadata(traj: Trajectory) -> dict:
-    return {
-        "filename":      traj.filename,
-        "question_id":   traj.question_id,
-        "mistake_agent": traj.mistake_agent,
-        "mistake_step":  str(traj.mistake_step),
-        "level":         traj.level,
-        "subset":        traj.subset,
-        "question":      traj.question,
-    }
+# Model paths are resolved by the caller (the sweep driver, from the dataset
+# manifest's `model_paths`) and passed via `--model-path`. `--model` stays the
+# shorthand used for the output directory name + config metadata.
 
 
 def _repeat_kv(x: Tensor, n_rep: int) -> Tensor:
@@ -105,21 +90,6 @@ def _repeat_kv(x: Tensor, n_rep: int) -> Tensor:
     bsz, n_kv, slen, head_dim = x.shape
     x = x[:, :, None].expand(bsz, n_kv, n_rep, slen, head_dim)
     return x.reshape(bsz, n_kv * n_rep, slen, head_dim)
-
-
-def _build_key_mask(
-    ctx_step_ids: list[int],
-    step_tokens:  dict[int, list[int]],
-    seq_len:      int,
-    device:       torch.device,
-) -> Tensor:
-    """Build the (n_ctx, N) one-hot mask used to sum-over-T_i in one matmul."""
-    n_ctx = len(ctx_step_ids)
-    M = torch.zeros(n_ctx, seq_len, device=device, dtype=torch.float32)
-    for j, i in enumerate(ctx_step_ids):
-        idx = torch.tensor(step_tokens[i], device=device, dtype=torch.long)
-        M[j].index_fill_(0, idx, 1.0)
-    return M
 
 
 # ──────────────────────────────────────────────────────────────────────────
@@ -227,7 +197,7 @@ def extract_trajectory_qk_attention(
             ]))
 
         query_idx = torch.tensor(step_tokens[step_idx], device=device, dtype=torch.long)
-        key_mask  = _build_key_mask(ctx_step_ids, step_tokens, seq_len, device)
+        key_mask  = build_key_mask(ctx_step_ids, step_tokens, seq_len, device)
 
         _STREAM.out_per_head = {}
         _STREAM.query_idx    = query_idx
@@ -273,7 +243,10 @@ def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(
         description="Extract aggregated attention mass via a low-memory sdpa override.",
     )
-    p.add_argument("--model",       required=True, choices=list(MODELS))
+    p.add_argument("--model",       required=True,
+                   help="Model shorthand (used for the output dir + metadata).")
+    p.add_argument("--model-path",  required=True,
+                   help="Resolved HF name/local path to load (from manifest model_paths).")
     p.add_argument("--subset",      default=None)
     p.add_argument("--input",       required=True, help="Dataset directory.")
     p.add_argument("--output-root", required=True, help="Output directory.")
@@ -311,7 +284,7 @@ def main() -> None:
         "float16":  torch.float16,
     }[args.dtype]
 
-    model_path = MODELS[args.model]
+    model_path = args.model_path
     adapter    = get_adapter(model_path)
     print(f"Loading model -> {args.device} ({args.dtype}, sdpa + streaming override)")
     model, tokenizer = adapter.load(model_path, torch_dtype, device_map)  # eager=False -> sdpa
@@ -354,7 +327,7 @@ def main() -> None:
 
         save_file(
             flat, out_path,
-            metadata={"payload_metadata": json.dumps(_extract_metadata(traj))},
+            metadata={"payload_metadata": json.dumps(extract_metadata(traj))},
         )
 
 

@@ -1,0 +1,13 @@
+# Activations stage — traceelephant. Shared knobs come from
+# experiments/datasets/traceelephant.yaml; this file holds only the stage axes.
+dataset: traceelephant
+
+device: auto
+dtype:  bfloat16
+context: all
+
+layers: all
+pool:   all
+
+start_idx: 0
+end_idx:   null

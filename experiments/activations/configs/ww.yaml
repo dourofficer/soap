@@ -1,0 +1,12 @@
+# Activations stage — Who&When. Shared knobs from experiments/datasets/ww.yaml.
+dataset: ww
+
+device: auto
+dtype:  bfloat16
+context: all
+
+layers: all
+pool:   all
+
+start_idx: 0
+end_idx:   null

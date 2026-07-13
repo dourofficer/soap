@@ -14,13 +14,13 @@ DEVICE="${DEVICE:-auto}"                     # 'auto' shards the 27B across GPUs
 QUERY_POOL="${QUERY_POOL:-mean}"
 
 # --model is a MODELS-dict key here (not a path), unlike the representation CLI.
-MODELS=(qwen3.5-27b qwen3.5-9b)
+MODELS=(qwen3.5-9b)
 SUBSETS=(hand-crafted algorithm-generated)
 
 for name in "${MODELS[@]}"; do
   for subset in "${SUBSETS[@]}"; do
     echo "=== attention | $name | $subset -> $OUT_ROOT/$name/$subset ==="
-    CUDA_VISIBLE_DEVICES=3,4,5,6 python -m src.attention.streaming \
+    CUDA_VISIBLE_DEVICES=3 python -m src.attention.streaming \
       --model       "$name" \
       --input       "$INPUT" \
       --subset      "$subset" \

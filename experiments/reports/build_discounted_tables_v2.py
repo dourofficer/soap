@@ -1,48 +1,40 @@
 """Build discounted result tables (SVD only) — one TSV per (model, subset).
 
 Reduces the discount sweep to the best config per (pooling, seed), mirroring
-the layout/argument handling of build_undiscounted_tables_v2.py.
+build_undiscounted_tables_v2.py.
 
 Per (model, subset), reads
-    sweep_root/{model}/{subset}/svd.tsv          (experiments.rescore.sweep output)
+    sweep_root/{model}/{subset}/svd.tsv          (src.rescore.run output)
 and writes
     out_root/{model}/{subset}/svd.tsv
 
-Each output has 6 rows (2 poolings x 3 seeds). Best per (pooling, seed) =
-argmax (disc_step_acc_test, disc_agent_acc_test) lexicographically. Rows are
-sorted (pooling [last, mean], seed) and annotated with the winning discount
-hyperparameters (svd_orient, layer_range, gamma, w) plus undisc/disc/diff
-accuracies.
+Best per (pooling, seed) = argmax (disc_step_acc_test, disc_agent_acc_test)
+lexicographically. Rows sorted (pooling [last, mean], seed), annotated with the
+winning discount hyperparameters (svd_orient, layer_range, gamma, w) plus
+undisc/disc/diff accuracies.
+
+Roots come from the dataset manifest when the config declares ``dataset:``:
+    sweep_root = discounted-splits/sweep/<tag>,  out_root = discounted-splits/reduced/<tag>.
+Explicit ``sweep_root`` / ``out_root`` / ``models`` / ``subsets`` still override.
 
 Usage:
-    python -m experiments.reports.build_discounted_tables_v2
     python -m experiments.reports.build_discounted_tables_v2 \
-        --config experiments/reports/configs/discounted_v2.yaml \
-        --set sweep_root="outputs-1006/discounted-splits/sweep/424" \
-        --set out_root="outputs-1006/discounted-splits/reduced/424"
+        --config experiments/reports/configs/discounted_v2_correct-error.yaml
 """
-
 from __future__ import annotations
 
 import argparse
 from pathlib import Path
 
 import pandas as pd
-import yaml
 
-# ── Defaults (overridable via config / CLI) ──────────────────────────────────
-SWEEP_ROOT_DEFAULT = Path("outputs/tables/discounted/sweep")
-OUT_ROOT_DEFAULT   = Path("outputs/tables/discounted/reduced")
-
-MODELS_DEFAULT  = ["deepseek-8b", "llama-3.1-8b", "qwen3-8b", "qwen3-14b"]
-SUBSETS_DEFAULT = ["algorithm-generated", "hand-crafted"]
-
-POOLING_ORDER = ["last", "mean"]
-GROUP_KEYS    = ["pooling", "seed"]
+from experiments._common.config import load_yaml, resolve
+from experiments._common import paths
+from experiments.reports._common import best_per_group, sort_section
 
 OUT_COLS = [
-    "strategy", "position", "pooling", "method", "c_begin", "c_end",
-    "centered", "weighted", "threshold", "seed",
+    "seed", "pooling",
+    "position", "c_begin", "c_end", "centered",
     "undisc_step_acc_val", "undisc_agent_acc_val",
     "undisc_step_acc_test", "undisc_agent_acc_test",
     "svd_orient", "layer_range", "gamma", "w",
@@ -51,23 +43,8 @@ OUT_COLS = [
     "diff_step_acc_test", "diff_agent_acc_test",
 ]
 
-
-# ── Core logic ───────────────────────────────────────────────────────────────
-def _best_per_pooling_seed(df: pd.DataFrame) -> pd.DataFrame:
-    return (df.sort_values(["disc_step_acc_test", "disc_agent_acc_test"],
-                           ascending=False, kind="mergesort")
-              .groupby(GROUP_KEYS, as_index=False, sort=False)
-              .first())
-
-
-def _sort_section(df: pd.DataFrame) -> pd.DataFrame:
-    df = df.copy()
-    df["pooling"] = pd.Categorical(df["pooling"],
-                                   categories=POOLING_ORDER, ordered=True)
-    out = (df.sort_values(["pooling", "seed"], kind="mergesort")
-             .reset_index(drop=True))
-    out["pooling"] = out["pooling"].astype(str)
-    return out
+SORT_METRICS = ["disc_step_acc_test", "disc_agent_acc_test"]
+GROUP_KEYS   = ["pooling", "seed"]
 
 
 def build_table(svd_path: Path) -> pd.DataFrame:
@@ -75,42 +52,29 @@ def build_table(svd_path: Path) -> pd.DataFrame:
     if "orient" in raw.columns:
         raw = raw.rename(columns={"orient": "svd_orient"})
 
-    best = _best_per_pooling_seed(raw)
+    best = best_per_group(raw, SORT_METRICS, GROUP_KEYS)
     best["diff_step_acc_test"]  = best["disc_step_acc_test"]  - best["undisc_step_acc_test"]
     best["diff_agent_acc_test"] = best["disc_agent_acc_test"] - best["undisc_agent_acc_test"]
-    best = _sort_section(best)
+    best = sort_section(best)
 
     cols = [c for c in OUT_COLS if c in best.columns]
     return best[cols]
 
 
-# ── Config / CLI ─────────────────────────────────────────────────────────────
-def load_cfg(path: Path | None, overrides: list[str]) -> dict:
-    cfg = yaml.safe_load(path.read_text()) if path else {}
-    for ov in overrides:
-        key, _, val = ov.partition("=")
-        parts, node = key.split("."), cfg
-        for p in parts[:-1]:
-            node = node.setdefault(p, {})
-        node[parts[-1]] = yaml.safe_load(val)
-    return cfg
-
-
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--config", type=Path, default=None,
-                    help="YAML config file (all keys optional)")
+    ap.add_argument("--config", type=Path, default=None)
     ap.add_argument("--set", dest="overrides", action="append", default=[],
                     metavar="KEY=VALUE")
     args = ap.parse_args()
 
-    cfg = load_cfg(args.config, args.overrides)
+    cfg = resolve(load_yaml(args.config, args.overrides))
 
-    sweep_root = Path(cfg.get("sweep_root", SWEEP_ROOT_DEFAULT))
-    out_root   = Path(cfg.get("out_root", OUT_ROOT_DEFAULT))
-    models     = cfg.get("models",  MODELS_DEFAULT)
-    subsets    = cfg.get("subsets", SUBSETS_DEFAULT)
+    sweep_root = Path(cfg["sweep_root"]) if cfg.get("sweep_root") else paths.rescore_sweep_root(cfg)
+    out_root   = Path(cfg["out_root"])   if cfg.get("out_root")   else paths.disc_root(cfg)
+    models     = cfg["models"]
+    subsets    = cfg["subsets"]
 
     out_root.mkdir(parents=True, exist_ok=True)
 

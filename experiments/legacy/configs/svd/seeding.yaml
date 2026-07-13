@@ -1,0 +1,19 @@
+models:
+  - qwen3.5-9b
+
+subsets:  [algorithm-generated, hand-crafted]
+poolings: [mean, last]
+seeds:    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+reps_root:    outputs-1906/activations
+data_root:    data/ww
+outputs_root: outputs-1906/weighted-projections/325
+device:       cuda
+
+positions: [all]
+
+# train/val/test split ratios (must sum to 1)
+splits:
+  train: 0.3
+  val:   0.2
+  test:  0.5

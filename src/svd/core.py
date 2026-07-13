@@ -10,12 +10,6 @@ DistMetric = Literal["l1", "l2", "cosine"]
 #   Score = projection onto (or residual from) an SVD subspace.
 # ═══════════════════════════════════════════════════════════════════
 
-# def _run_svd(G: torch.Tensor, k: int) -> torch.Tensor:
-#     """Top-k right singular vectors of G. Shape: (d, k)."""
-#     torch.manual_seed(100)
-#     _, _, V = torch.svd_lowrank(G.float(), q=k, niter=10)
-#     return V.contiguous()
-
 def _run_svd(G: torch.Tensor, k: int) -> tuple[torch.Tensor, torch.Tensor]:
     """Top-k right singular vectors and singular values of G.
 

@@ -1,0 +1,12 @@
+# Reproduce/apply stage — Who&When. Shared knobs from experiments/datasets/ww.yaml.
+dataset: ww
+
+device:   cuda
+n_ranges: 4
+
+select: best
+split:  test
+top_k:  null
+
+method:   proj
+weighted: false

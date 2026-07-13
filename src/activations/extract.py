@@ -58,10 +58,17 @@ from transformers import (
 )
 from safetensors.torch import save_file
 
-from ..data.trajectory import Trajectory, load_dataset
-from ..data.context import (
-    iter_scoreable_steps, 
-    build_context, 
+# [data_v2 swap] rollback: uncomment the two ..data blocks below, delete the ..data_v2 ones
+# from ..data.trajectory import Trajectory, load_dataset
+from ..data_v2.trajectory import Trajectory, load_dataset
+from ..utils.metadata import extract_metadata
+# from ..data.context import (
+#     iter_scoreable_steps,
+#     build_context,
+# )
+from ..data_v2.context import (
+    iter_scoreable_steps,
+    build_context,
 )
 from ..models import get_adapter
 
@@ -172,21 +179,9 @@ def extract_trajectories_hidden(
         }
         assert flat_dict, f"No hidden states extracted for trajectory {traj.filename}"
         header_metadata = {
-            "payload_metadata": json.dumps(_extract_metadata(traj))
+            "payload_metadata": json.dumps(extract_metadata(traj))
         }
         save_file(flat_dict, out_path, metadata=header_metadata)
-
-
-def _extract_metadata(traj: Trajectory) -> dict:
-    return {
-        "filename":      traj.filename,
-        "question_id":   traj.question_id,
-        "mistake_agent": traj.mistake_agent,
-        "mistake_step":  str(traj.mistake_step),
-        "level":         traj.level,
-        "subset":        traj.subset,
-        "question":      traj.question,
-    }
 
 
 # ─────────────────────────────────────────────────────────────────────────────

@@ -11,6 +11,7 @@ dependencies = [
     "asyncio>=4.0.0",
     "datasets>=4.8.2",
     "dotenv>=0.9.9",
+    "faiss-cpu>=1.12.0",
     "ipykernel>=7.2.0",
     "ipython>=8.38.0",
     "ipywidgets>=8.1.8",
@@ -19,14 +20,17 @@ dependencies = [
     "pyyaml>=6.0.3",
     "scikit-learn>=1.7.2",
     "scipy>=1.15.3",
+    "sentence-transformers>=4.1.0",
     "torch>=2.10.0",
     "torchvision>=0.25.0",
     "transformers>=5.3.0",
+    "vllm>=0.19.1",
 ]
  
 [tool.hatch.build.targets.wheel]
-# Include every top-level directory as an importable package.
-# Add future directories (e.g. "baselines", "analysis") here as they appear.
+# The code lives in src/ and is imported as `from src.…` (invoked via
+# `python -m src.…` / `python -m experiments.…` from the repo root).
 packages = [
-    "attribscope"
+    "src",
+    "experiments",
 ]

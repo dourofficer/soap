@@ -1,15 +1,12 @@
-"""
-data.py ― Dataset loading, step parsing, and context construction
-           for Who&When GradNorm evaluation.
+"""src/data/trajectory.py — Trajectory dataclass + dataset loading.
 
 Public API
 ----------
-Trajectory          dataclass holding one failure instance
-load_dataset()      load a JSON file → list[Trajectory]
-select_context()    ← PLACEHOLDER: return which history indices serve as context
-build_context()     tokenise one (context, step) pair via apply_chat_template
-custom_build_context()  ← PLACEHOLDER: drop-in replacement for build_context
-iter_scoreable_steps()  steps that should receive a GradNorm score
+Trajectory      dataclass holding one failure instance (a Who&When-style trace)
+load_dataset()  load a subset directory of JSON files → list[Trajectory]
+
+Context construction (select_context / build_context / separate_steps /
+iter_scoreable_steps) lives in src/data/context.py.
 """
 from __future__ import annotations
 
@@ -91,7 +88,6 @@ def load_dataset(
     """
 
     path = Path(path) / subset
-    # import pdb; pdb.set_trace()
     filenames = _get_sorted_json_files(path)
     raw = [(filename, _load_json_data(path / filename)) for filename in filenames]
 

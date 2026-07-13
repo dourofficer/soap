@@ -156,7 +156,6 @@ def _load_trajectory_file(
         for local_row, step_idx in enumerate(steps):
             for w in weight_names:
                 tensors[w].append(f.get_tensor(f"{step_idx}.{pooling}.{w}"))
-                # breakpoint()
             step_indices.append(StepIndex(
                 row        = row_offset + local_row,
                 traj_idx   = traj_idx,
@@ -178,7 +177,6 @@ def _build_stores(
     device:       torch.device,
 ) -> RepresentationStores:
     """Stack accumulated tensors and wrap everything in RepresentationStores."""
-    # breakpoint()
     stores = {
         w: RepresentationStore(
             R       = torch.stack(tensors).to(device),
@@ -219,7 +217,6 @@ def load_representations(
     subset = data_dir.parts[-1]
 
     files        = _resolve_files(rep_dir, files)
-    # breakpoint()
     weight_names = _resolve_weight_names(weight_names, ref_file=files[0])
 
     collections: dict[str, list[torch.Tensor]] = {w: [] for w in weight_names}

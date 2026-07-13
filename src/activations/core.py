@@ -1,5 +1,4 @@
-"""
-attribscope/reps/hidden.py — Hidden-state extraction along the residual stream.
+"""src/activations/core.py — Hidden-state extraction along the residual stream.
 
 Public API
 ----------
