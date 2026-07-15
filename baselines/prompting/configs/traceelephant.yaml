@@ -23,8 +23,10 @@ start_idx: 0
 end_idx:   null
 
 model_paths:
-  qwen3.5-9b:  /data/hoang/resources/models/Qwen/Qwen3.5-9B
-  deepseek-8b: /data/hoang/resources/models/deepseek-ai/DeepSeek-R1-Distill-Llama-8B
+  # qwen3.5-9b:  /data/hoang/resources/models/Qwen/Qwen3.5-9B
+  # deepseek-8b: /data/hoang/resources/models/deepseek-ai/DeepSeek-R1-Distill-Llama-8B
+  qwen3.5-9b:   ../hub/Qwen/Qwen3.5-9B
+  deepseek-8b:  ../hub/deepseek-ai/DeepSeek-R1-Distill-Llama-8B
 
 # Corrected tokenizer for deepseek-8b: its checkpoint tokenizer_config sets
 # tokenizer_class=LlamaTokenizerFast, which makes transformers build a

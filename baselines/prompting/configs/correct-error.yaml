@@ -1,6 +1,6 @@
 models:  [qwen3.5-9b, deepseek-8b]
-# subsets: [arc, gaia, hotpot, math500, mmlu_pro, musique, wikimqa]
-subsets: [wikimqa]
+subsets: [arc, gaia, hotpot, math500, mmlu_pro, musique, wikimqa]
+# subsets: [wikimqa]
 methods: [all_at_once, step_by_step, binary_search]
 
 data_dir:     data/correct-error
@@ -19,15 +19,17 @@ enable_thinking: false
 # truncate_prompt_tokens below to avoid erroring on the rare longer prompt).
 max_model_len:          131072
 truncate_prompt_tokens: null
-gpu_memory_utilization: 0.90
+gpu_memory_utilization: 0.45
 tensor_parallel_size:   1
 
 start_idx: 0
 end_idx:   null
 
 model_paths:
-  qwen3.5-9b:  /data/hoang/resources/models/Qwen/Qwen3.5-9B
-  deepseek-8b: /data/hoang/resources/models/deepseek-ai/DeepSeek-R1-Distill-Llama-8B
+  # qwen3.5-9b:  /data/hoang/resources/models/Qwen/Qwen3.5-9B
+  # deepseek-8b: /data/hoang/resources/models/deepseek-ai/DeepSeek-R1-Distill-Llama-8B
+  qwen3.5-9b:   ../hub/Qwen/Qwen3.5-9B
+  deepseek-8b:  ../hub/deepseek-ai/DeepSeek-R1-Distill-Llama-8B
 
 # Corrected tokenizer for deepseek-8b: its checkpoint tokenizer_config sets
 # tokenizer_class=LlamaTokenizerFast, which makes transformers build a

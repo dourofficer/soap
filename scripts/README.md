@@ -133,6 +133,15 @@ DATASET=correct-error GPU=0 ./scripts/run_analysis.sh
 DATASET=correct-error GPU=0 ./scripts/reproduce.sh          # validate
 ```
 
+## End-to-end all datasets (one GPU)
+
+```bash
+GPU=2 bash ./scripts/extraction/deepseek-8b_activations.sh
+GPU=2 bash ./scripts/extraction/deepseek-8b_attention.sh
+GPU=3 bash ./scripts/extraction/qwen3.5-9b_activations.sh
+GPU=3 bash ./scripts/extraction/qwen3.5-9b_attention.sh
+```
+
 ## Tips
 
 - **Preview first.** Prefix any command with `DRY_RUN=1` to see exactly what will run.

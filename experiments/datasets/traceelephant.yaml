@@ -13,11 +13,17 @@ models: [qwen3.5-9b, deepseek-8b, llama-3.1-8b, qwen3-8b]
 #   llama-3.1-8b: /home/thanhdo/hub/meta-llama/Llama-3.1-8B-Instruct
 #   deepseek-8b:  /home/thanhdo/hub/deepseek-ai/DeepSeek-R1-Distill-Llama-8B
 
+# model_paths:
+#   qwen3.5-9b:   /data/hoang/resources/models/Qwen/Qwen3.5-9B
+#   qwen3-8b:     /data/hoang/resources/models/Qwen/Qwen3-8B
+#   llama-3.1-8b: /data/hoang/resources/models/meta-llama/Llama-3.1-8B-Instruct
+#   deepseek-8b:  /data/hoang/resources/models/deepseek-ai/DeepSeek-R1-Distill-Llama-8B
+
 model_paths:
-  qwen3.5-9b:   /data/hoang/resources/models/Qwen/Qwen3.5-9B
-  qwen3-8b:     /data/hoang/resources/models/Qwen/Qwen3-8B
-  llama-3.1-8b: /data/hoang/resources/models/meta-llama/Llama-3.1-8B-Instruct
-  deepseek-8b:  /data/hoang/resources/models/deepseek-ai/DeepSeek-R1-Distill-Llama-8B
+  qwen3.5-9b:   ../hub/Qwen/Qwen3.5-9B
+  qwen3-8b:     ../hub/Qwen/Qwen3-8B
+  llama-3.1-8b: ../hub/meta-llama/Llama-3.1-8B-Instruct
+  deepseek-8b:  ../hub/deepseek-ai/DeepSeek-R1-Distill-Llama-8B
 
 subsets: [magentic, captain]
 

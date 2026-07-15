@@ -1,4 +1,4 @@
-models:  [qwen3.5-9b, deepseek-8b, llama-3.1-8b, qwen3-8b]
+models:  [qwen3.5-9b, deepseek-8b, llama-3.1-8b, qwen3-8b, qwen3-14b, qwen3-27b]
 subsets: [arc, gaia, hotpot, math500, mmlu_pro, musique, wikimqa]
 methods: [chief]
 
