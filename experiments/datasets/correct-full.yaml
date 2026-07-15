@@ -1,0 +1,36 @@
+# Dataset manifest — single source of truth for the CORRECT-Full dataset:
+# CORRECT-Error with all distribution subsets merged into one `magentic` subset
+# (every trajectory comes from the Magentic-One system, mirroring how Who&When /
+# TraceElephant name subsets by agentic system). Built by ./merge_correct_full.py;
+# provenance in data/correct-full/filename_map.csv.
+#
+# Output roots are DERIVED from this file by experiments/_common/paths.py:
+#   outputs-correct-full/{activations,attention,weighted-projections/325,...}
+# (base = outputs-<name>; split-tag 325 derived from splits 0.3/0.2/0.5).
+
+name:      correct-full
+data_root: data/correct-full
+
+# Only the models with merged outputs on disk.
+models: [qwen3.5-9b, deepseek-8b]
+
+model_paths:
+  qwen3.5-9b:   ../hub/Qwen/Qwen3.5-9B
+  qwen3-8b:     ../hub/Qwen/Qwen3-8B
+  llama-3.1-8b: ../hub/meta-llama/Llama-3.1-8B-Instruct
+  deepseek-8b:  ../hub/deepseek-ai/DeepSeek-R1-Distill-Llama-8B
+
+subsets: [magentic]
+
+# Per-step context window — MUST be shared by activations + attention so w_{i,t}
+# and S(s_i) use the same predecessor window.
+max_tokens: 8192
+
+# train/val/test split ratios (must sum to 1). Tag "325" is derived from these
+# and baked into every split-tagged output root.
+splits:
+  train: 0.3
+  val:   0.2
+  test:  0.5
+
+seeds: [1, 2, 3]

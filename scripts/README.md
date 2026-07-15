@@ -11,6 +11,9 @@ scripts/
   run_analysis.sh       3. svd → undiscounted tables → rescore → discounted tables
   reproduce.sh          4. re-run the pipeline for the best config (validate / apply) [GPU]
   _common.sh            shared knobs + helpers (sourced, not run directly)
+
+  extraction/           per-model fan-outs of steps 1–2 over all datasets
+  scoring/              per-model fan-outs of step 3 over all datasets
 ```
 
 Typical order: `gen_embeddings.sh` and `extract_attention.sh` first (they can run
@@ -133,13 +136,54 @@ DATASET=correct-error GPU=0 ./scripts/run_analysis.sh
 DATASET=correct-error GPU=0 ./scripts/reproduce.sh          # validate
 ```
 
-## End-to-end all datasets (one GPU)
+## Fanning out across datasets × models
+
+`scripts/run_analysis.sh` takes one `DATASET` and one GPU per invocation.
+`scripts/scoring/` wraps it to loop over models × datasets:
+
+```
+scripts/scoring/
+  run_scoring.sh            generic MODELS × DATASETS loop (configure both via env)
+  deepseek-8b_analysis.sh   thin wrapper, model pinned
+  qwen3.5-9b_analysis.sh    thin wrapper, model pinned
+```
+
+`run_scoring.sh` reads two extra knobs on top of the shared ones, plus `STAGES`:
+
+| Var        | Default                       | Meaning                                     |
+|------------|-------------------------------|---------------------------------------------|
+| `MODELS`   | `qwen3.5-9b deepseek-8b`      | Space-separated shorthands; looped one at a time. |
+| `DATASETS` | `ww traceelephant correct-error` | Space-separated datasets; looped inner.     |
+
+```bash
+# Everything: both models × all 3 datasets, sequential on GPU 0
+./scripts/scoring/run_scoring.sh
+
+# Pick models and datasets explicitly
+MODELS="deepseek-8b" DATASETS="ww correct-error" GPU=1 ./scripts/scoring/run_scoring.sh
+
+# Preview, or re-run only part of the chain
+DRY_RUN=1 ./scripts/scoring/run_scoring.sh
+STAGES="rescore disc" ./scripts/scoring/run_scoring.sh
+```
+
+Both report builders write per `(model, subset)` — `out_root/<model>/<subset>/` —
+so looping models produces the same files as one combined run; nothing is
+overwritten. The loop **fails fast**: a failing `(model, dataset)` aborts the rest.
+
+## End-to-end all datasets (two GPUs)
+
+Extraction first (steps 1–2), then scoring (step 3). One model per GPU, so the two
+columns can run in parallel:
 
 ```bash
 GPU=2 bash ./scripts/extraction/deepseek-8b_activations.sh
 GPU=2 bash ./scripts/extraction/deepseek-8b_attention.sh
+GPU=2 bash ./scripts/scoring/deepseek-8b_analysis.sh
+
 GPU=3 bash ./scripts/extraction/qwen3.5-9b_activations.sh
 GPU=3 bash ./scripts/extraction/qwen3.5-9b_attention.sh
+GPU=3 bash ./scripts/scoring/qwen3.5-9b_analysis.sh
 ```
 
 ## Tips

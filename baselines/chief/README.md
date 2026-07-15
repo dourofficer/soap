@@ -108,6 +108,8 @@ unless you pass `--set overwrite=true` (or `--overwrite` to `predict`).
 bash baselines/chief/scripts/run_chief.sh 4
 
 # Narrow it, or forward overrides:
+MODELS="qwen3.5-9b"  bash baselines/chief/scripts/run_chief.sh 2
+MODELS="deepseek-8b"  bash baselines/chief/scripts/run_chief.sh 3
 MODELS="qwen3.5-9b" DATASETS="ww" bash baselines/chief/scripts/run_chief.sh 0
 bash baselines/chief/scripts/run_chief.sh 4 --set overwrite=true
 

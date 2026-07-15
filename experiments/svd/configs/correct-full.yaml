@@ -1,0 +1,7 @@
+# SVD stage — CORRECT-Full. Shared knobs (models, subsets, data_root, splits,
+# seeds) come from experiments/datasets/correct-full.yaml.
+dataset: correct-full
+
+device:    cuda
+poolings:  [mean, last]
+positions: [all]   # list of layer shorthands, or [all]
