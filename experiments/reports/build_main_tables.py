@@ -9,17 +9,19 @@ grid), filling:
   * `SVD` / `CRR` rows from the reduced CRR tables
     `<reduced_root>/<model>/<subset>/svd.tsv` (undiscounted / discounted test acc),
   * `All-at-once` / `Step-by-step` / `Binary search` rows from the VLLM prompting
-    predictions `<pred_root>/<model>/<subset>/predictions_method-*.jsonl`.
+    predictions `<pred_root>/<model>/<subset>/predictions_method-*.jsonl`,
+  * `CHIEF` row from `<chief_root>/<model>/<subset>/predictions_method-chief.jsonl`
+    (same row schema as the prompting predictions, so it scores identically).
 
 Fairness: every cell is a plain mean over the SAME `chosen_seeds`, on the SAME
 per-seed **test** split (reproduced with `baselines.prompting.report.val_test_ids`,
 byte-identical to `src/svd/reproduce.py`; canonical `qwen3.5-9b` reps id-list,
 splits 0.3/0.2/0.5). Cells are `%.4f` fractions (0-1), test-only.
 
-Seed selection per dataset:
-  * If the spec pins `seeds` (e.g. Who&When → {4,5,6}), those are used verbatim.
-  * Otherwise the dataset-wide top-`--select-seeds` seeds are chosen by CRR
-    `disc_step_acc_test` (same procedure the old builder used).
+Seed selection follows the same protocol for every dataset: the dataset-wide
+top-`--select-seeds` seeds are chosen by the CRR-over-SVD improvement
+`diff_step_acc_test` (= CRR - SVD), with CRR `disc_step_acc_test` as the
+tiebreak. A spec may still pin `seeds` to override that, but none currently does.
 
 Missing data degrades gracefully:
   * No reduced table for a (model, subset) → its SVD/CRR cells are left blank
@@ -60,10 +62,15 @@ METHOD_SKELETON = [
     (SECTION, "Ours"),
     ("SVD", "SVD"), ("CRR", "CRR"),
 ]
-ROW_TO_METHOD = {
-    "All-at-once": "all_at_once",
-    "Step-by-step": "step_by_step",
-    "Binary search": "binary_search",
+# Row label -> (spec key holding the predictions root, method name on disk).
+# CHIEF and CORRECT write the same row schema as the prompting sweep, so they
+# score through the identical path — only the root differs.
+ROW_TO_PRED = {
+    "All-at-once":   ("pred_root", "all_at_once"),
+    "Step-by-step":  ("pred_root", "step_by_step"),
+    "Binary search": ("pred_root", "binary_search"),
+    "CHIEF":         ("chief_root", "chief"),
+    "CORRECT":       ("correct_root", "correct"),
 }
 
 PROVENANCE_COLS = ["pooling", "position", "c_begin", "c_end", "centered",
@@ -77,6 +84,8 @@ DATASETS: dict[str, dict] = {
         "reduced_root": "outputs-correct-error/discounted-splits/reduced/325",
         "out_root":     "outputs-correct-error",
         "pred_root":    "outputs-correct-error/prompting",
+        "chief_root":   "outputs-correct-error/chief",
+        "correct_root": "outputs-correct-error/correct",
         "reps_root":    "outputs-correct-error/activations",
         "models":  [("Qwen3.5-9B", "qwen3.5-9b"), ("Deepseek-8B", "deepseek-8b")],
         "subsets": [("ARC", "arc"), ("GAIA", "gaia"), ("Hotpot", "hotpot"),
@@ -84,26 +93,39 @@ DATASETS: dict[str, dict] = {
                     ("Musique", "musique"), ("WikiMQA", "wikimqa")],
         # seeds: derived from CRR ranking (top --select-seeds).
     },
+    "correct-full": {
+        "reduced_root": "outputs-correct-full/discounted-splits/reduced/325",
+        "out_root":     "outputs-correct-full",
+        "pred_root":    "outputs-correct-full/prompting",
+        "chief_root":   "outputs-correct-full/chief",
+        "correct_root": "outputs-correct-full/correct",
+        "reps_root":    "outputs-correct-full/activations",
+        "models":  [("Qwen3.5-9B", "qwen3.5-9b"), ("Deepseek-8B", "deepseek-8b")],
+        "subsets": [("Magentic", "magentic")],
+        # seeds: derived from CRR ranking (top --select-seeds).
+    },
     "traceelephant": {
         "reduced_root": "outputs-traceelephant/discounted-splits/reduced/325",
         "out_root":     "outputs-traceelephant",
         "pred_root":    "outputs-traceelephant/prompting",
+        "chief_root":   "outputs-traceelephant/chief",
+        "correct_root": "outputs-traceelephant/correct",
         "reps_root":    "outputs-traceelephant/activations",
         "models":  [("Qwen3.5-9B", "qwen3.5-9b"), ("Deepseek-8B", "deepseek-8b")],
         "subsets": [("magentic", "magentic"), ("captain", "captain")],
         # seeds: derived from CRR ranking (top --select-seeds).
     },
     "ww": {
-        # SVD/CRR reduced tables are added later; until this dir is populated the
-        # SVD/CRR rows stay blank. reps for the split live under outputs-1906.
         "reduced_root": "outputs-ww/discounted-splits/reduced/325",
         "out_root":     "outputs-ww",
         "pred_root":    "outputs-ww/prompting",
-        "reps_root":    "outputs-1906/activations",
+        "chief_root":   "outputs-ww/chief",
+        "correct_root": "outputs-ww/correct",
+        "reps_root":    "outputs-ww/activations",
         "models":  [("Qwen3.5-9B", "qwen3.5-9b"), ("Deepseek-8B", "deepseek-8b")],
         "subsets": [("Algorithm-Generated", "algorithm-generated"),
                     ("Hand-Crafted", "hand-crafted")],
-        "seeds": [4, 5, 6],          # pinned (Who&When), per user
+        # seeds: derived from CRR ranking (top --select-seeds).
     },
 }
 
@@ -168,7 +190,12 @@ def build_dataset(name: str, spec: dict, n_select: int):
                 f"[{name}] no reduced tables under {reduced_root} and no pinned "
                 f"`seeds` in the spec — cannot determine which seeds to average.")
         seeds = sorted({s for cell in selected.values() for s in cell})
-        ranking = sorted(seeds, key=seed_means, reverse=True)
+        # Rank by diff (CRR - SVD) first, discounted (CRR) test step-acc as tiebreak.
+        # seed_means returns (disc, diff); reverse the pair so diff is primary.
+        def rank_key(seed: int) -> tuple[float, float]:
+            disc, diff = seed_means(seed)
+            return (diff, disc)
+        ranking = sorted(seeds, key=rank_key, reverse=True)
         chosen_seeds = set(ranking[:n_select])
 
     def svdcrr_cell(mk: str, sk: str, col: str) -> float | None:
@@ -181,11 +208,14 @@ def build_dataset(name: str, spec: dict, n_select: int):
 
 # ── Prompting-baseline cells ─────────────────────────────────────────────────
 
-def baseline_cells(spec: dict, model_key: str, subset_key: str, method: str,
-                   chosen_seeds: set[int]) -> tuple[float, float] | None:
+def baseline_cells(spec: dict, root_key: str, model_key: str, subset_key: str,
+                   method: str, chosen_seeds: set[int]) -> tuple[float, float] | None:
     """(step_mean, agent_mean) over chosen_seeds on the test split, or None."""
+    root = spec.get(root_key)
+    if not root:
+        return None
     reps_dir = Path(spec["reps_root"]) / SPLIT_MODEL / subset_key
-    pred_file = Path(spec["pred_root"]) / model_key / subset_key / f"predictions_method-{method}.jsonl"
+    pred_file = Path(root) / model_key / subset_key / f"predictions_method-{method}.jsonl"
     if not reps_dir.exists() or not pred_file.exists():
         return None
 
@@ -237,10 +267,10 @@ def write_main_table(path: Path, spec: dict, svdcrr_cell, chosen_seeds: set[int]
                 ag = "undisc_agent_acc_test" if kind == "SVD" else "disc_agent_acc_test"
                 for _, sk in subsets:
                     metrics += [_cell(svdcrr_cell(mk, sk, sp)), _cell(svdcrr_cell(mk, sk, ag))]
-            elif label in ROW_TO_METHOD:
-                method = ROW_TO_METHOD[label]
+            elif label in ROW_TO_PRED:
+                root_key, method = ROW_TO_PRED[label]
                 for _, sk in subsets:
-                    c = baseline_cells(spec, mk, sk, method, chosen_seeds)
+                    c = baseline_cells(spec, root_key, mk, sk, method, chosen_seeds)
                     metrics += [_cell(c[0]), _cell(c[1])] if c else ["", ""]
             else:
                 metrics = blank_metrics()
@@ -299,8 +329,8 @@ def run(name: str, n_select: int) -> None:
     for disp_model, mk in spec["models"]:
         for disp_sub, sk in spec["subsets"]:
             parts = []
-            for label, method in ROW_TO_METHOD.items():
-                c = baseline_cells(spec, mk, sk, method, chosen_seeds)
+            for label, (root_key, method) in ROW_TO_PRED.items():
+                c = baseline_cells(spec, root_key, mk, sk, method, chosen_seeds)
                 parts.append(f"{label}={fmt(c[0])}/{fmt(c[1])}" if c else f"{label}=--")
             print(f"    {disp_model:12s} {disp_sub:20s} | " + " | ".join(parts))
     print(f"[{name}] wrote results_table.tsv under {out_root}/\n")

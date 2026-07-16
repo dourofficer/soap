@@ -1,0 +1,3 @@
+strategy	position	pooling	method	c_begin	c_end	centered	weighted	threshold	seed	sel_by	step_acc_val	agent_acc_val	step_acc_test	agent_acc_test
+svd	act/15	mean	proj	0	11	False	False		1	test	0.3111111111111111	0.6222222222222222	0.30434782608695654	0.6304347826086957
+svd	act/15	mean	proj	0	9	False	False		1	val	0.3333333333333333	0.6222222222222222	0.2391304347826087	0.6521739130434783
