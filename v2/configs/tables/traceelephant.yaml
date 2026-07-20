@@ -1,0 +1,6 @@
+# Results table — traceelephant. SVD / CRR / Backprop rows, aggregated over seeds.
+dataset: traceelephant
+
+convention: test          # test = argmax on test (optimistic) | val = leak-free
+select_seeds: null        # null = mean±std over ALL seeds; int K = top-K seeds by CRR acc
+seed_rank_key: disc       # disc | diff  (only used when select_seeds is set)

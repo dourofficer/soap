@@ -1,0 +1,19 @@
+# Dataset manifest — Who&When. Single source of truth for knobs shared across
+# stages; thin stage configs declare `dataset: ww` and add only their own axes.
+# Corpus in data/ww/<subset>/; output roots derived by src/common/paths.py under
+# outputs/ww/ (split tag "325" from splits 0.3/0.2/0.5).
+name: ww
+
+models: [qwen3.5-9b, deepseek-8b]
+# model_paths point at an external HF weights tree (weights are not vendored);
+# adjust these if the repo moves. Only the extract stage reads them.
+model_paths:
+  qwen3.5-9b:  ../../hub/Qwen/Qwen3.5-9B
+  deepseek-8b: ../../hub/deepseek-ai/DeepSeek-R1-Distill-Llama-8B
+
+subsets:   [algorithm-generated, hand-crafted]
+max_tokens: 8192
+
+splits: {train: 0.3, val: 0.2, test: 0.5}     # -> tag "325"
+seeds:  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+ks:     [1, 3]

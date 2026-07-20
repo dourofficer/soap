@@ -194,7 +194,8 @@ def build_dataset(name: str, spec: dict, n_select: int):
         # seed_means returns (disc, diff); reverse the pair so diff is primary.
         def rank_key(seed: int) -> tuple[float, float]:
             disc, diff = seed_means(seed)
-            return (diff, disc)
+            return (disc, diff)
+            # return (diff, disc)
         ranking = sorted(seeds, key=rank_key, reverse=True)
         chosen_seeds = set(ranking[:n_select])
 

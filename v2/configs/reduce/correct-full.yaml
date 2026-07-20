@@ -1,0 +1,6 @@
+# Reduce stage — CORRECT-Full. Selects best config per seed in both conventions.
+dataset: correct-full
+
+stage: both                       # base | crr | both
+headline_methods: [proj, resid, angres, maha]   # norms excluded from headline
+base_top_k: 1                     # top-K base rows per seed fed to the rescore sweep

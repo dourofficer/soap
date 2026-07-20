@@ -1,0 +1,121 @@
+model	dataset	subset	convention	stage	seed	pooling	step_acc_test	agent_acc_test	layer_range	gamma	w	svd_orient
+deepseek-8b	correct-full	magentic	val	svd	1	mean	0.5403949730700179	0.7019748653500898				
+deepseek-8b	correct-full	magentic	val	crr	1	mean	0.5403949730700179	0.7001795332136446	0-8	0.1	1	sigmoid
+deepseek-8b	correct-full	magentic	val	svd	2	mean	0.5565529622980251	0.7055655296229802				
+deepseek-8b	correct-full	magentic	val	crr	2	mean	0.5547576301615799	0.6894075403949731	8-16	0.2	4	inverse
+deepseek-8b	correct-full	magentic	val	svd	3	mean	0.5314183123877917	0.7163375224416517				
+deepseek-8b	correct-full	magentic	val	crr	3	mean	0.5350089766606823	0.7091561938958707	0-8	0.2	1	sigmoid
+deepseek-8b	correct-full	magentic	test	svd	1	mean	0.5493716337522442	0.7073608617594255				
+deepseek-8b	correct-full	magentic	test	crr	1	mean	0.5529622980251346	0.7091561938958707	0-8	0.1	2	sigmoid
+deepseek-8b	correct-full	magentic	test	svd	2	mean	0.5745062836624776	0.7073608617594255				
+deepseek-8b	correct-full	magentic	test	crr	2	mean	0.585278276481149	0.7127468581687613	0-8	0.1	1	sigmoid
+deepseek-8b	correct-full	magentic	test	svd	3	mean	0.5601436265709157	0.7235188509874326				
+deepseek-8b	correct-full	magentic	test	crr	3	mean	0.5601436265709157	0.7235188509874326	0-8	0.0	1	negate
+deepseek-8b	ww	algorithm-generated	val	svd	1	mean	0.2857142857142857	0.4761904761904761				
+deepseek-8b	ww	algorithm-generated	val	crr	1	mean	0.3333333333333333	0.5238095238095238	0-8	0.1	4	sigmoid
+deepseek-8b	ww	algorithm-generated	val	svd	2	mean	0.3015873015873015	0.4444444444444444				
+deepseek-8b	ww	algorithm-generated	val	crr	2	last	0.2063492063492063	0.4444444444444444	24-32	0.4	2	negate
+deepseek-8b	ww	algorithm-generated	val	svd	3	mean	0.2539682539682539	0.4285714285714285				
+deepseek-8b	ww	algorithm-generated	val	crr	3	mean	0.3015873015873015	0.4444444444444444	8-16	0.3	1	negate
+deepseek-8b	ww	algorithm-generated	test	svd	1	mean	0.3968253968253968	0.6507936507936508				
+deepseek-8b	ww	algorithm-generated	test	crr	1	mean	0.3968253968253968	0.6666666666666666	0-8	0.1	1	inverse
+deepseek-8b	ww	algorithm-generated	test	svd	2	mean	0.4126984126984127	0.5873015873015873				
+deepseek-8b	ww	algorithm-generated	test	crr	2	mean	0.4126984126984127	0.5873015873015873	0-8	0.0	1	negate
+deepseek-8b	ww	algorithm-generated	test	svd	3	mean	0.4444444444444444	0.5873015873015873				
+deepseek-8b	ww	algorithm-generated	test	crr	3	mean	0.4761904761904761	0.5873015873015873	0-8	0.1	1	inverse
+deepseek-8b	ww	hand-crafted	val	svd	1	mean	0.1034482758620689	0.5517241379310345				
+deepseek-8b	ww	hand-crafted	val	crr	1	mean	0.1379310344827586	0.5517241379310345	0-8	0.3	all	negate
+deepseek-8b	ww	hand-crafted	val	svd	2	last	0.1379310344827586	0.6206896551724138				
+deepseek-8b	ww	hand-crafted	val	crr	2	last	0.1034482758620689	0.6206896551724138	16-24	0.4	2	inverse
+deepseek-8b	ww	hand-crafted	val	svd	3	last	0.1034482758620689	0.5517241379310345				
+deepseek-8b	ww	hand-crafted	val	crr	3	last	0.1034482758620689	0.5517241379310345	0-8	0.0	1	negate
+deepseek-8b	ww	hand-crafted	test	svd	1	last	0.3448275862068966	0.6206896551724138				
+deepseek-8b	ww	hand-crafted	test	crr	1	last	0.3448275862068966	0.6206896551724138	0-8	0.0	1	negate
+deepseek-8b	ww	hand-crafted	test	svd	2	last	0.3103448275862069	0.7241379310344828				
+deepseek-8b	ww	hand-crafted	test	crr	2	mean	0.3448275862068966	0.7931034482758621	24-32	0.5	all	negate
+deepseek-8b	ww	hand-crafted	test	svd	3	last	0.2758620689655172	0.5172413793103449				
+deepseek-8b	ww	hand-crafted	test	crr	3	last	0.3103448275862069	0.5517241379310345	0-8	0.1	all	negate
+deepseek-8b	traceelephant	magentic	val	svd	1	mean	0.1304347826086956	0.6521739130434783				
+deepseek-8b	traceelephant	magentic	val	crr	1	mean	0.1739130434782608	0.6304347826086957	8-16	0.1	2	negate
+deepseek-8b	traceelephant	magentic	val	svd	2	mean	0.3043478260869565	0.6521739130434783				
+deepseek-8b	traceelephant	magentic	val	crr	2	mean	0.3043478260869565	0.6521739130434783	0-8	0.0	1	negate
+deepseek-8b	traceelephant	magentic	val	svd	3	mean	0.2826086956521739	0.6521739130434783				
+deepseek-8b	traceelephant	magentic	val	crr	3	mean	0.2826086956521739	0.6521739130434783	0-8	0.0	1	negate
+deepseek-8b	traceelephant	magentic	test	svd	1	mean	0.3043478260869565	0.6304347826086957				
+deepseek-8b	traceelephant	magentic	test	crr	1	mean	0.3043478260869565	0.6304347826086957	0-8	0.0	1	negate
+deepseek-8b	traceelephant	magentic	test	svd	2	mean	0.3260869565217391	0.6956521739130435				
+deepseek-8b	traceelephant	magentic	test	crr	2	mean	0.3260869565217391	0.6956521739130435	0-8	0.0	1	negate
+deepseek-8b	traceelephant	magentic	test	svd	3	mean	0.2826086956521739	0.6521739130434783				
+deepseek-8b	traceelephant	magentic	test	crr	3	mean	0.3043478260869565	0.6956521739130435	24-32	0.3	5	sigmoid
+deepseek-8b	traceelephant	captain	val	svd	1	last	0.1860465116279069	0.5581395348837209				
+deepseek-8b	traceelephant	captain	val	crr	1	last	0.1860465116279069	0.6046511627906976	16-24	0.1	5	sigmoid
+deepseek-8b	traceelephant	captain	val	svd	2	last	0.1627906976744186	0.5348837209302325				
+deepseek-8b	traceelephant	captain	val	crr	2	last	0.1627906976744186	0.5348837209302325	0-8	0.0	1	negate
+deepseek-8b	traceelephant	captain	val	svd	3	last	0.2093023255813953	0.627906976744186				
+deepseek-8b	traceelephant	captain	val	crr	3	last	0.2093023255813953	0.627906976744186	0-8	0.0	1	negate
+deepseek-8b	traceelephant	captain	test	svd	1	last	0.3488372093023256	0.627906976744186				
+deepseek-8b	traceelephant	captain	test	crr	1	last	0.3488372093023256	0.627906976744186	0-8	0.0	1	negate
+deepseek-8b	traceelephant	captain	test	svd	2	last	0.3255813953488372	0.6744186046511628				
+deepseek-8b	traceelephant	captain	test	crr	2	last	0.3488372093023256	0.7209302325581395	0-8	0.3	all	negate
+deepseek-8b	traceelephant	captain	test	svd	3	mean	0.4418604651162791	0.6744186046511628				
+deepseek-8b	traceelephant	captain	test	crr	3	mean	0.4883720930232558	0.6976744186046512	8-16	0.4	3	negate
+qwen3.5-9b	correct-full	magentic	val	svd	1	mean	0.5565529622980251	0.7127468581687613				
+qwen3.5-9b	correct-full	magentic	val	crr	1	mean	0.5583482944344704	0.7127468581687613	2-4	0.1	5	sigmoid
+qwen3.5-9b	correct-full	magentic	val	svd	2	mean	0.5637342908438061	0.7091561938958707				
+qwen3.5-9b	correct-full	magentic	val	crr	2	mean	0.5619389587073609	0.7073608617594255	0-2	0.2	5	sigmoid
+qwen3.5-9b	correct-full	magentic	val	svd	3	mean	0.5601436265709157	0.7235188509874326				
+qwen3.5-9b	correct-full	magentic	val	crr	3	mean	0.5637342908438061	0.725314183123878	0-2	0.1	4	inverse
+qwen3.5-9b	correct-full	magentic	test	svd	1	mean	0.5565529622980251	0.7127468581687613				
+qwen3.5-9b	correct-full	magentic	test	crr	1	mean	0.5619389587073609	0.7145421903052065	4-6	0.1	1	sigmoid
+qwen3.5-9b	correct-full	magentic	test	svd	2	mean	0.5637342908438061	0.7091561938958707				
+qwen3.5-9b	correct-full	magentic	test	crr	2	mean	0.5691202872531418	0.7127468581687613	0-2	0.1	1	inverse
+qwen3.5-9b	correct-full	magentic	test	svd	3	mean	0.5601436265709157	0.7235188509874326				
+qwen3.5-9b	correct-full	magentic	test	crr	3	mean	0.5655296229802513	0.725314183123878	6-8	0.3	4	sigmoid
+qwen3.5-9b	ww	algorithm-generated	val	svd	1	mean	0.238095238095238	0.4285714285714285				
+qwen3.5-9b	ww	algorithm-generated	val	crr	1	mean	0.238095238095238	0.4126984126984127	4-6	0.4	1	inverse
+qwen3.5-9b	ww	algorithm-generated	val	svd	2	mean	0.3174603174603174	0.492063492063492				
+qwen3.5-9b	ww	algorithm-generated	val	crr	2	mean	0.3333333333333333	0.492063492063492	0-2	0.1	1	inverse
+qwen3.5-9b	ww	algorithm-generated	val	svd	3	mean	0.2698412698412698	0.4761904761904761				
+qwen3.5-9b	ww	algorithm-generated	val	crr	3	mean	0.3015873015873015	0.4603174603174603	2-4	0.2	1	negate
+qwen3.5-9b	ww	algorithm-generated	test	svd	1	last	0.4126984126984127	0.5873015873015873				
+qwen3.5-9b	ww	algorithm-generated	test	crr	1	mean	0.492063492063492	0.5873015873015873	6-8	0.8	1	inverse
+qwen3.5-9b	ww	algorithm-generated	test	svd	2	mean	0.3809523809523809	0.5714285714285714				
+qwen3.5-9b	ww	algorithm-generated	test	crr	2	mean	0.4126984126984127	0.5873015873015873	4-6	0.5	1	inverse
+qwen3.5-9b	ww	algorithm-generated	test	svd	3	mean	0.4126984126984127	0.5714285714285714				
+qwen3.5-9b	ww	algorithm-generated	test	crr	3	mean	0.4444444444444444	0.6031746031746031	0-2	0.6	1	inverse
+qwen3.5-9b	ww	hand-crafted	val	svd	1	mean	0.1379310344827586	0.5517241379310345				
+qwen3.5-9b	ww	hand-crafted	val	crr	1	mean	0.1379310344827586	0.5517241379310345	0-2	0.0	1	negate
+qwen3.5-9b	ww	hand-crafted	val	svd	2	mean	0.1379310344827586	0.4827586206896552				
+qwen3.5-9b	ww	hand-crafted	val	crr	2	mean	0.1379310344827586	0.4827586206896552	0-2	0.0	1	negate
+qwen3.5-9b	ww	hand-crafted	val	svd	3	mean	0.1724137931034483	0.5517241379310345				
+qwen3.5-9b	ww	hand-crafted	val	crr	3	mean	0.1724137931034483	0.5517241379310345	0-2	0.0	1	negate
+qwen3.5-9b	ww	hand-crafted	test	svd	1	mean	0.3448275862068966	0.6896551724137931				
+qwen3.5-9b	ww	hand-crafted	test	crr	1	mean	0.3448275862068966	0.6896551724137931	0-2	0.0	1	negate
+qwen3.5-9b	ww	hand-crafted	test	svd	2	last	0.3448275862068966	0.8620689655172413				
+qwen3.5-9b	ww	hand-crafted	test	crr	2	last	0.3448275862068966	0.8620689655172413	0-2	0.0	1	negate
+qwen3.5-9b	ww	hand-crafted	test	svd	3	mean	0.2758620689655172	0.5517241379310345				
+qwen3.5-9b	ww	hand-crafted	test	crr	3	mean	0.3448275862068966	0.5517241379310345	6-8	0.3	1	negate
+qwen3.5-9b	traceelephant	magentic	val	svd	1	mean	0.1521739130434782	0.6086956521739131				
+qwen3.5-9b	traceelephant	magentic	val	crr	1	last	0.108695652173913	0.5869565217391305	6-8	0.6	all	negate
+qwen3.5-9b	traceelephant	magentic	val	svd	2	mean	0.1956521739130435	0.717391304347826				
+qwen3.5-9b	traceelephant	magentic	val	crr	2	mean	0.1739130434782608	0.6739130434782609	0-2	0.3	1	negate
+qwen3.5-9b	traceelephant	magentic	val	svd	3	mean	0.1739130434782608	0.6521739130434783				
+qwen3.5-9b	traceelephant	magentic	val	crr	3	mean	0.108695652173913	0.782608695652174	2-4	0.5	1	negate
+qwen3.5-9b	traceelephant	magentic	test	svd	1	mean	0.217391304347826	0.6956521739130435				
+qwen3.5-9b	traceelephant	magentic	test	crr	1	mean	0.2391304347826087	0.7391304347826086	4-6	0.4	4	inverse
+qwen3.5-9b	traceelephant	magentic	test	svd	2	last	0.2391304347826087	0.6086956521739131				
+qwen3.5-9b	traceelephant	magentic	test	crr	2	mean	0.2391304347826087	0.717391304347826	0-2	0.9	1	inverse
+qwen3.5-9b	traceelephant	magentic	test	svd	3	last	0.217391304347826	0.5434782608695652				
+qwen3.5-9b	traceelephant	magentic	test	crr	3	last	0.2391304347826087	0.5434782608695652	0-2	0.1	2	sigmoid
+qwen3.5-9b	traceelephant	captain	val	svd	1	mean	0.1162790697674418	0.5348837209302325				
+qwen3.5-9b	traceelephant	captain	val	crr	1	mean	0.1395348837209302	0.5813953488372093	4-6	0.3	3	inverse
+qwen3.5-9b	traceelephant	captain	val	svd	2	mean	0.2093023255813953	0.4883720930232558				
+qwen3.5-9b	traceelephant	captain	val	crr	2	mean	0.2093023255813953	0.4883720930232558	0-2	0.0	1	negate
+qwen3.5-9b	traceelephant	captain	val	svd	3	last	0.0697674418604651	0.4418604651162791				
+qwen3.5-9b	traceelephant	captain	val	crr	3	mean	0.2558139534883721	0.627906976744186	0-2	0.9	2	inverse
+qwen3.5-9b	traceelephant	captain	test	svd	1	mean	0.2790697674418604	0.6976744186046512				
+qwen3.5-9b	traceelephant	captain	test	crr	1	mean	0.3023255813953488	0.6976744186046512	0-2	0.1	1	inverse
+qwen3.5-9b	traceelephant	captain	test	svd	2	mean	0.3720930232558139	0.5348837209302325				
+qwen3.5-9b	traceelephant	captain	test	crr	2	mean	0.4418604651162791	0.5813953488372093	0-2	0.3	1	inverse
+qwen3.5-9b	traceelephant	captain	test	svd	3	mean	0.4186046511627907	0.627906976744186				
+qwen3.5-9b	traceelephant	captain	test	crr	3	mean	0.4418604651162791	0.6511627906976745	0-2	0.3	1	inverse

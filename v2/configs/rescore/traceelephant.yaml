@@ -1,0 +1,15 @@
+# Rescore (CRR) sweep — CORRECT-Full. Reads the reduced base table, discounts /
+# backprops across the axes below (all gammas vectorized). orients apply only to
+# asc methods; distance methods (resid/angres/maha) auto-use orient=none.
+dataset: traceelephant
+
+device:   cuda
+poolings: [mean, last]
+n_ranges: 4
+base_table: base_test.tsv        # base_val.tsv for a leak-free sweep
+
+gammas:      [0.0, 0.1, 0.2, 0.4, 0.6, 0.8, 1.0]   # 0.0 = built-in identity check
+ws:          [1, 2, 3, 4, 5, all]
+orients:     [negate, inverse, sigmoid]            # asc rows only
+score_norms: [none, center]                        # zscore supported, opt-in
+strategies:  [discount, backprop]

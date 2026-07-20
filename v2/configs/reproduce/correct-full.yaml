@@ -1,0 +1,12 @@
+# Reproduce stage — correct-full. Re-runs frozen winners and writes PER-STEP scores
+# (base / oriented / normalized / final + rank) for inspection and plotting.
+dataset: correct-full
+
+device:   cuda
+poolings: [mean, last]
+n_ranges: 4
+
+tables: [base_test, crr_test, backprop_test]   # which reduced winners to reproduce
+split:  test                                    # val | test | all ('all' = apply mode)
+select: all                                     # all seeds' winners | best (single row)
+verify: true                                    # assert reproduced == recorded accuracy
