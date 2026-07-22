@@ -1,0 +1,86 @@
+# Phase-1 collection with Qwen3.5-35B-A3B as the agent backbone.
+#
+#   python datagen/collect/run_batch.py --config collect-qwen35b --dry-run
+#   python datagen/collect/run_batch.py --config collect-qwen35b
+#
+# Self-contained: tune this file without affecting the other backbones.
+# Endpoints are the one thing NOT set here — they come from serve.yaml.
+#
+# Served with a tool-call parser, so it drives BOTH harnesses, same as the 9B.
+
+backbone: qwen3.5-35b-a3b
+
+# ── Harnesses ─────────────────────────────────────────────────────────────────
+# Each runs in its own venv: Magentic-One needs autogen 0.7, Captain-Agent
+# imports a vendored autogen 0.2 fork, and neither can share attribscope's.
+harnesses:
+  magentic:
+    root:   datagen/TraceElephant/code/agent_system/Magentic-One
+    python: .venv/bin/python
+    driver: run_pool.py
+    # MultimodalWebSurfer is deliberately absent: it sends screenshots (needs a
+    # vision backbone) and drives headful Chromium.
+    agents: fs,coder,executor
+
+  captain:
+    root:   datagen/TraceElephant/code/agent_system/Captain-Agent
+    python: .venv/bin/python
+    driver: scripts/run_pool.py
+    # The vendored autogen is imported from the harness repo root.
+    pythonpath: "."
+
+# ── What to run ───────────────────────────────────────────────────────────────
+# Mirrors the 9B tiers so the two Qwen backbones stay directly comparable —
+# same pools, same limits, same reps. See collect-qwen.yaml for the
+# difficulty-weighting rationale.
+matrix:
+  # NOTE: only the web-native pools are active. The others are commented out
+  # rather than deleted so the full matrix can be restored in one edit.
+  #   - gsm8k / math500 / arc / mmlu-pro are self-contained (76-84% solved with
+  #     NO web access) and need no Serper budget, but yield shallow trajectories
+  #     (arc max 6 steps, median 4-5) with little attribution signal.
+  #   - hotpotqa / 2wikimqa / musique score 9-31% only because pools/prepare.py
+  #     drops their supporting-context paragraphs, turning reading comprehension
+  #     into closed-book trivia. Re-enable them once context is added, not before.
+  # Rich, tool-forcing tasks: the highest-value trajectories.
+  - harnesses: [magentic, captain]
+    pools:     [gaia, assistantbench]
+    limit:     null
+    reps:      1
+  # Multi-step reasoning; moderate delegation.
+  # - harnesses: [magentic, captain]
+  #   pools:     [math500, mmlu-pro]
+  #   limit:     300
+  #   reps:      1
+  # Cheap breadth; mostly shallow trajectories, kept for distribution coverage.
+  # - harnesses: [magentic, captain]
+  #   pools:     [hotpotqa, 2wikimqa, musique, arc, gsm8k]
+  #   limit:     150
+  #   reps:      1
+
+# ── Execution ─────────────────────────────────────────────────────────────────
+# Lower than the 8-9B configs: one 35B MoE replica serves fewer concurrent
+# requests before queueing, so piling on subprocesses just inflates per-task
+# latency and pushes runs into their timeouts. Raise if the endpoint is idle.
+concurrency: 32
+# Cores each task may use. Libraries in the harness stacks size thread pools
+# from the visible CPU count (chromadb's tokio runtime opened one worker per
+# core: ~682 threads per Captain process on this 240-core box, which hit the
+# cgroup pid limit and made chromadb fail with EAGAIN). Pinning affinity caps
+# every such pool at once: ~13 threads per task at 4 cores. Harness runs are
+# I/O bound on the vLLM endpoint, so oversubscription here is harmless.
+cpus_per_task: 4
+max_round:   20
+retries:     1               # re-attempts for a timed-out or crashed run
+timeout_s:
+  default:        900
+  gaia:           2400       # captain averaged ~19 min on a gaia task
+  assistantbench: 2400
+out_root: datagen/runs
+
+# Judge settings are read by judge/rejudge.py. Keep `out_root` and `judge` in
+# step with the other collect configs — every backbone writes into the same run
+# tree and is judged in one pass.
+judge:
+  endpoint: qwen3.5-9b
+  f1_threshold: 0.6

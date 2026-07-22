@@ -50,6 +50,10 @@ class MetaAgent(ConversableAgent):
                         "description": """[REQUIRED] The task that needs the experts to solve by conversation.""",
                     }
                 },
+                # Without this, "[REQUIRED]" lived only in the prose of each
+                # description, so constrained decoding could not enforce it and
+                # models silently omitted `group_name`, killing the call.
+                "required": ["group_name", "execution_task"],
             },
         },
     }

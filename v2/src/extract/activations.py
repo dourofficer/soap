@@ -1,15 +1,70 @@
-"""Extract pooled hidden states along the residual stream . One .safetensors per trajectory with flat keys
-``{step}.{pool}.{shorthand}`` and a ``payload_metadata`` header — the exact schema
-src.stores.load_representations consumes.
+"""Extract pooled hidden states along the residual stream — stage 1 of the pipeline.
 
-Shorthands: tuple idx 0 = ``embed``; idx k+1 = ``act/k``; final = ``act/{N-1}_normed``.
+WHAT THIS PRODUCES AND WHY
+--------------------------
+Everything downstream scores a step through ONE vector ``v_t`` per (step, layer,
+pooling). This stage produces those vectors: for each scoreable step it runs a single
+forward pass over ``[context .. that step]`` and pools the step's own hidden states at
+each layer of the residual stream.
 
-    # from v2/ (writes into the inputs tree so downstream stages read it directly)
+The framing matters. We are not asking the proxy model to *judge* the step; we are
+reading the state it is in *while producing* the step, with the real trajectory as
+context. So the step's content sits in the assistant slot (see ``src.data.context``) and
+ONLY that step's tokens are pooled — pooling context tokens would describe the history
+instead of the step.
+
+One forward pass per step is deliberate, and is the dominant cost of the project: each
+step is encoded with exactly the prefix that preceded it, so ``v_t`` never sees the
+future. Encoding a whole trajectory once and slicing would be far cheaper but changes
+the semantics of every vector.
+
+LAYER SHORTHAND (and the off-by-one that bites)
+-----------------------------------------------
+HuggingFace returns ``hidden_states`` as a tuple of ``num_hidden_layers + 1`` tensors.
+This module maps that tuple to stable names:
+
+    tuple idx 0     -> "embed"              embedding output, before any block
+    tuple idx k+1   -> "act/k"              residual stream AFTER block k
+    (derived)       -> "act/{N-1}_normed"   final residual through the model's final norm
+
+So ``act/k`` is tuple index ``k+1``, NOT ``k``. Raw residuals are stored pre-norm; the
+normed variant exists only for the last layer and needs its own pass through the final
+norm because it shares a tuple index with ``act/{N-1}``. The attention stage indexes
+attention BLOCKS instead, so layer indices are not interchangeable between the stages.
+
+For hybrid architectures the adapter decides which blocks are extractable — Qwen3.5
+interleaves linear-attention and full-attention layers and only the latter are kept, so
+"all layers" means 8 positions there versus 32 for a dense Llama-style model.
+
+POOLING
+-------
+``last`` takes the step's final token (what the model ends up representing); ``mean``
+averages over all of the step's tokens (steadier for long steps). Both are written
+(``--pool all``) so that pooling stays an ordinary hyperparameter downstream instead of
+a choice frozen at extraction time.
+
+OUTPUT SCHEMA
+-------------
+One ``.safetensors`` per trajectory: flat keys ``{step}.{pool}.{shorthand}`` in fp16,
+plus a ``payload_metadata`` JSON header with the gold labels. This is exactly what
+``src.stores.load_representations`` consumes — it enumerates steps from these keys and
+reads ``mistake_step`` from the header.
+
+fp16 on disk halves a large artifact and is harmless for ranking, but every consumer
+must float BEFORE arithmetic: scoring in fp16 rounds scores and flips near-ties (see
+``src.score.svd.score_config``).
+
+Trajectories whose output already exists are skipped, so extraction is resumable.
+
+    # from v2/
     python -m src.extract.activations \
         --model qwen3.5-9b --model-path ../../hub/Qwen/Qwen3.5-9B \
         --input data/correct-full --subset magentic \
         --output outputs/correct-full/activations/qwen3.5-9b/magentic \
         --pool all --layers all --max_tokens 8192
+
+    # or for a whole dataset, driven by the manifest:
+    DATASET=correct-full ./scripts/extract.sh
 """
 from __future__ import annotations
 
@@ -46,11 +101,22 @@ def all_shorthands(n_layers: int) -> list[str]:
 
 # ── pooling ─────────────────────────────────────────────────────────────────
 def pool_last(h: Tensor, ctx_len: int) -> Tensor:
+    """Hidden state of the step's LAST token.
+
+    ``h`` is (seq_len, hidden_dim) for the whole sequence; the step occupies
+    ``[ctx_len:]``. Single samples are never padded, so ``h[-1]`` is the last real token.
+    The assert guards the degenerate case of a step with no tokens of its own.
+    """
     assert h.shape[0] > ctx_len
     return h[-1].half().cpu()
 
 
 def pool_mean(h: Tensor, ctx_len: int) -> Tensor:
+    """Mean hidden state over the step's OWN tokens (positions ``[ctx_len:]``).
+
+    Averaged in fp32 before the fp16 cast: summing many fp16 values loses precision
+    quickly, and long steps can contribute hundreds of tokens.
+    """
     assert h.shape[0] > ctx_len
     return h[ctx_len:].float().mean(dim=0).half().cpu()
 
@@ -67,6 +133,16 @@ def _apply_pool(h, ctx_len, pool) -> dict[str, Tensor]:
 
 # ── forward pass + pool ─────────────────────────────────────────────────────
 def extract_hidden(model, input_ids, attention_mask, ctx_len, layers, pool, final_norm):
+    """One forward pass; return ``{"{pool}.{shorthand}": vector}`` for the wanted layers.
+
+    Runs with ``use_cache=False`` (nothing is generated, so a KV cache is pure overhead)
+    and ``output_hidden_states=True`` under ``no_grad``.
+
+    ``act/{N-1}_normed`` is handled apart from the raw residuals because it is not a
+    distinct tuple entry: it is the LAST residual pushed through the model's final norm.
+    That is the representation the LM head actually sees, which makes it worth storing
+    even though it duplicates a tuple index.
+    """
     n_layers = num_hidden_layers(model.config)
     valid = set(all_shorthands(n_layers))
     normed_sh = f"act/{n_layers - 1}_normed"

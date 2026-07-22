@@ -7,3 +7,20 @@ outputs*/
 download/
 logs/
 data/elephant.zip
+
+# datagen: generated artifacts (regenerable; large)
+# raw harness runs (runs/, plus dated or archived variants like runs-2107/)
+datagen/runs*/
+# prepared question pools + GAIA attachments
+datagen/pools/data/
+# vLLM server logs + pidfiles
+datagen/serve/logs/
+# patched tokenizer copies (fix_tokenizer.py)
+datagen/serve/tokenizers/
+# patched chat templates (fix_chat_template.py)
+datagen/serve/chat_templates/
+# generated from serve.yaml
+datagen/configs/oai_config_list.json
+# converted corpora
+data/synthetic/
+data/synthetic-err/

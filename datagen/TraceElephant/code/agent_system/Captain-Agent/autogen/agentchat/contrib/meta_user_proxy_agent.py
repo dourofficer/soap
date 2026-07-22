@@ -314,12 +314,23 @@ Collect information from the general task, follow the suggesstions from manager 
         return {"group_name": group_name, "agent_count": len(agent_list), "agent_configs": agent_configs}
         self._default_group_name = default_group_name
 
-    def _run_autobuild(self, group_name: str, execution_task: str, building_task: str = "") -> str:
+    def _run_autobuild(self, group_name: str = "", execution_task: str = "", building_task: str = "") -> str:
         """
         Build a group of agents by AutoBuild to solve the task.
         This function requires the nested_mode_config to contain the autobuild_init_config,
             autobuild_llm_config, group_chat_llm_config.
+
+        `group_name` defaults to "" rather than being required: the tool schema
+        did not list it under `required`, so models routinely omit it and the
+        call died with a TypeError before any work happened (~49% of runs on a
+        9B backbone). The value is discarded on the next line anyway whenever a
+        default group name was configured. `execution_task` is checked
+        explicitly so a genuinely unusable call reports why and can be retried.
         """
+        if not execution_task:
+            raise ValueError(
+                "seek_experts_help requires `execution_task`: the task the experts "
+                "should solve. Call it again with that field filled in.")
         group_name = self._default_group_name or group_name
         print("==> Running AutoBuild...", flush=True)
         print("\n==> Building task: ", building_task, flush=True)

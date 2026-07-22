@@ -1,19 +1,74 @@
-"""Streaming attention-mass extraction (low memory).
+"""Streaming attention-mass extraction — stage 2, the causal signal.
 
-Overrides the registered ``sdpa`` attention with a wrapper that delegates the real
-output to genuine SDPA (so memory stays O(N)) and separately reduces step-t query
-attention into per-predecessor mass — never materialising (N,N). Handles Llama-3.1 /
-Qwen3 and hybrid Qwen3.5 (only full-attention layers dispatch through sdpa).
+WHAT THIS PRODUCES AND WHY
+--------------------------
+The rescoring strategies need a dependency structure: how much did step ``t`` actually
+*rely on* step ``i``? We take the model's own answer — the fraction of step ``t``'s query
+attention that lands on the tokens of predecessor step ``i``:
 
-Output schema (consumed by src.rescore.weights.aggregate_attn):
-    "{step}.raw_attn"           (L, n_ctx)     "{step}.ctx_indices"        (n_ctx,)
-    "{step}.raw_attn_per_head"  (L, H, n_ctx)  "{step}.attn_residual_mass" (L,)
+    m_{i,t} = mean over t's query tokens of  sum_{q in tokens(i)} A[query, q]
+
+This is a *measurement*, not a model we impose: it reads which earlier steps the proxy
+was looking at while producing this one. Aggregating to STEP granularity (rather than
+keeping token-level attention) is what makes it usable — attribution is per step, so
+token-level detail would only be summed away later at much greater cost.
+
+WHY THE SDPA OVERRIDE (the central trick)
+-----------------------------------------
+The obvious route, ``output_attentions=True``, materialises the full ``(1, H, N, N)``
+post-softmax matrix for EVERY layer inside one forward. At 8k tokens with 32 heads that
+is tens of GB per layer — it simply OOMs on the long trajectories this project cares
+about.
+
+We also do not hand-reconstruct Q/K from the weights: that is fragile across
+architectures (gated projections, partial RoPE, per-head norms, GQA) and silently wrong
+when an assumption breaks.
+
+Instead we temporarily swap the *registered* ``sdpa`` attention function for a wrapper.
+The wrapper receives the query/key tensors the model is **about to attend with** — already
+projected, gated, per-head-normed and RoPE'd by the module itself, so they are correct
+for whatever architecture is loaded — then:
+
+  1. delegates to the genuine ``sdpa_attention_forward`` so the model's own forward is
+     completely unaffected and memory stays O(N);
+  2. separately slices Q down to just the SCORED step's rows and scores those against the
+     full K, applying the causal mask and softmax by hand.
+
+Peak attention memory is therefore ``O(H * |T_t| * N)`` instead of ``O(H * N^2)`` — the
+scored step is short, so this is a small multiple of the sequence rather than its square.
+
+Hybrid models come out right for free: only full-softmax-attention layers dispatch
+through the attention interface, so on Qwen3.5 (3 Gated-DeltaNet layers per 1 attention
+layer) the wrapper is simply never called on the linear-attention layers. The stored
+``L`` axis is exactly the full-attention layers, and their decoder indices are recorded
+in ``config.json`` as ``attn_block_indices``. NOTE: this means ``L`` indexes ATTENTION
+BLOCKS, not the activation stage's layer positions — the two are not interchangeable,
+and ``layer_range`` labels downstream refer to these rows.
+
+OUTPUT SCHEMA (consumed by ``src.rescore.weights.aggregate_attn``)
+------------------------------------------------------------------
+    "{step}.raw_attn"           (L, n_ctx)     head-averaged mass into each predecessor
+    "{step}.raw_attn_per_head"  (L, H, n_ctx)  same, per head (kept for head analysis)
+    "{step}.attn_residual_mass" (L,)           mass NOT landing in any predecessor step
+    "{step}.ctx_indices"        (n_ctx,)       which history step each column refers to
+
+``attn_residual_mass`` is the leftover after bucketing: attention that went to the
+template scaffolding, the step's own tokens, or an attention sink rather than to a
+predecessor step. A step with high residual mass barely consulted its context — useful
+on its own, and a sanity check that the buckets are not silently losing mass.
+
+Rows are NOT normalised here; normalisation over predecessors happens at aggregation
+time, after a layer band is chosen. Text-only: no vision tower is run, so nothing but
+the text stack reaches the override.
 
     # from v2/
     python -m src.extract.attention \
         --model qwen3.5-9b --model-path ../../hub/Qwen/Qwen3.5-9B \
         --input data/correct-full --subset magentic \
         --output-root outputs/correct-full/attention --max_tokens 8192
+
+    # or for a whole dataset, driven by the manifest:
+    DATASET=correct-full ./scripts/extract.sh
 """
 from __future__ import annotations
 
@@ -35,7 +90,15 @@ from ..models import get_adapter
 
 
 def build_key_mask(ctx_step_ids, step_tokens, seq_len, device) -> Tensor:
-    """(n_ctx, N) one-hot mask summing token positions per predecessor step."""
+    """(n_ctx, N) one-hot mask: row j marks every token position belonging to step j.
+
+    Bucketing token-level attention into per-step mass is then a single matmul
+    ``A_t @ M.T`` instead of a Python loop over steps — which matters because this runs
+    once per layer per step. Rows are disjoint by construction (``src.data.context``
+    guarantees every token belongs to exactly one step), so no attention is double
+    counted, and positions in no row (template scaffolding, the scored step itself)
+    simply fall out into the residual mass.
+    """
     M = torch.zeros(len(ctx_step_ids), seq_len, device=device, dtype=torch.float32)
     for j, i in enumerate(ctx_step_ids):
         idx = torch.tensor(step_tokens[i], device=device, dtype=torch.long)
@@ -44,6 +107,12 @@ def build_key_mask(ctx_step_ids, step_tokens, seq_len, device) -> Tensor:
 
 
 def _repeat_kv(x: Tensor, n_rep: int) -> Tensor:
+    """Expand grouped-query KV heads so each query head has its own K.
+
+    Under GQA/MQA several query heads share one KV head, so ``key`` arrives with fewer
+    heads than ``query``. The genuine SDPA path handles that internally; our manual
+    score computation needs them aligned, so KV heads are repeated to match.
+    """
     if n_rep == 1:
         return x
     b, n_kv, s, d = x.shape
@@ -63,26 +132,57 @@ _STREAM = _StreamState()
 
 @torch.no_grad()
 def _reduce(module, query, key, scaling):
+    """Bucket ONE layer's step-t attention into per-predecessor mass.
+
+    ``query``/``key`` are (1, H, N, d), post-projection and post-RoPE — exactly what the
+    model is about to attend with, which is why no architecture-specific reconstruction
+    is needed here.
+
+    The whole point is that ``scores`` is (H, |T_t|, N), never (H, N, N): we keep only the
+    rows of the scored step. Steps:
+
+      1. slice Q to the scored step's token positions (``query_idx``);
+      2. score against the FULL K and apply the model's own scaling;
+      3. re-apply causality by hand — a query at absolute position p may not see keys at
+         positions > p. This must be done explicitly because we bypassed SDPA's internal
+         mask; without it, the softmax would normalise over future tokens and the
+         resulting distribution would be wrong;
+      4. softmax in fp32 (the model may run in bf16; normalising a distribution in bf16
+         loses meaningful precision);
+      5. pool over the step's query tokens — ``mean`` treats the step as a whole, ``last``
+         uses only its final token;
+      6. bucket into predecessor steps with one matmul against the key mask.
+
+    Result is (H, n_ctx) per layer, moved to CPU immediately so GPU memory stays flat
+    across layers.
+    """
     n_q, n_kv = query.shape[1], key.shape[1]
     if n_q != n_kv:
         key = _repeat_kv(key, n_q // n_kv)
     dev = query.device
     qi = _STREAM.query_idx.to(dev, non_blocking=True)
     km = _STREAM.key_mask.to(dev, non_blocking=True)
-    q_t = query[0].index_select(1, qi)
-    k_full = key[0]
+    q_t = query[0].index_select(1, qi)                       # (H, |T_t|, d)
+    k_full = key[0]                                          # (H, N, d)
     scale = scaling if scaling is not None else query.shape[-1] ** -0.5
-    scores = torch.matmul(q_t, k_full.transpose(-1, -2)) * scale
+    scores = torch.matmul(q_t, k_full.transpose(-1, -2)) * scale   # (H, |T_t|, N)
+    # Causal mask: key position must not exceed the query's absolute position.
     N = k_full.shape[1]
     key_pos = torch.arange(N, device=dev)
-    not_causal = key_pos[None, :] > qi[:, None]
+    not_causal = key_pos[None, :] > qi[:, None]              # (|T_t|, N)
     scores = scores.masked_fill(not_causal[None], float("-inf"))
-    probs = torch.softmax(scores.float(), dim=-1)
+    probs = torch.softmax(scores.float(), dim=-1)            # (H, |T_t|, N)
     A_t = probs.mean(dim=1) if _STREAM.query_pool == "mean" else probs[:, -1, :]
-    _STREAM.out_per_head[module.layer_idx] = (A_t @ km.T).cpu()
+    _STREAM.out_per_head[module.layer_idx] = (A_t @ km.T).cpu()    # (H, n_ctx)
 
 
 def _streaming_sdpa(module, query, key, value, attention_mask, scaling=None, dropout=0.0, **kw):
+    """Drop-in for ``sdpa_attention_forward``: real output first, our reduction second.
+
+    Delegating to the genuine implementation keeps the model's forward bit-for-bit
+    unchanged — the reduction is a pure side-channel and can never perturb the states the
+    activation stage reads.
+    """
     out = sdpa_attention_forward(module, query, key, value, attention_mask,
                                  scaling=scaling, dropout=dropout, **kw)
     if _STREAM.armed:
@@ -92,6 +192,13 @@ def _streaming_sdpa(module, query, key, value, attention_mask, scaling=None, dro
 
 @contextmanager
 def _override_sdpa():
+    """Install the wrapper in the global attention registry for one forward pass.
+
+    The swap is global, so it is scoped to a context manager and restored in ``finally``:
+    leaving it installed would silently add work to every later forward in the process.
+    The ``_STREAM.armed`` flag is a second guard, so even an unexpected dispatch outside
+    an extraction reduces nothing.
+    """
     orig = ALL_ATTENTION_FUNCTIONS["sdpa"]
     ALL_ATTENTION_FUNCTIONS["sdpa"] = _streaming_sdpa
     try:
@@ -126,16 +233,27 @@ def extract_trajectory(traj, model, tokenizer, max_tokens, adapter, query_pool="
         oph = _STREAM.out_per_head
         if not oph:
             raise RuntimeError(f"no attention captured at step {step_idx} of {traj.filename}")
+        # Stack captured layers in decoder order -> (L, H, n_ctx). For hybrid models only
+        # full-attention blocks were ever called, so L is exactly those.
         blocks = sorted(oph)
         per_head = torch.stack([oph[i] for i in blocks], dim=0).float().contiguous()
-        flat[f"{step_idx}.raw_attn"] = per_head.mean(dim=1).contiguous()
+        flat[f"{step_idx}.raw_attn"] = per_head.mean(dim=1).contiguous()   # head-average
         flat[f"{step_idx}.raw_attn_per_head"] = per_head
+        # Each head's row sums to <= 1 over predecessors; the shortfall is attention that
+        # went to scaffolding / the step's own tokens / sinks. Averaged over heads.
         flat[f"{step_idx}.attn_residual_mass"] = (1.0 - per_head.sum(dim=-1).mean(dim=-1)).contiguous()
         flat[f"{step_idx}.ctx_indices"] = torch.tensor(ctx_step_ids, dtype=torch.long)
     return flat
 
 
 def _force_sdpa(model):
+    """Pin the attention implementation to 'sdpa' so the override is actually hit.
+
+    A checkpoint may default to flash-attention or eager; either would bypass the
+    registry entry we replace, and the extraction would silently capture nothing (which
+    ``extract_trajectory`` turns into a hard error rather than empty output). Multimodal
+    wrappers keep a separate ``text_config``, so both configs are set.
+    """
     cfgs = {id(model.config): model.config}
     tc = getattr(model.config, "text_config", None)
     if tc is not None:

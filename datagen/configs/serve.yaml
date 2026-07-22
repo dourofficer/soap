@@ -1,0 +1,115 @@
+# vLLM endpoint registry — the single source of truth for every model role in
+# the datagen pipeline (agent backbones, judge, injector, verifier, replay
+# oracle). Roles reference models by the keys below; swapping in a bigger
+# served model is a one-line change here plus a role reassignment.
+#
+# Launch with:  ./datagen/serve/launch_vllm.sh <model-key> [more keys...]
+# Verify with:  python datagen/serve/smoke.py --model <model-key>
+
+# The vLLM CLI to serve with. Qwen3.5 needs a recent vLLM; the repo venv
+# already registers Qwen3_5ForConditionalGeneration (vllm 0.19.1, verified via
+# ModelRegistry), so its CLI is the default. If a model fails to load here,
+# build a nightly venv and point this at its `vllm` binary:
+#   uv venv datagen/.venv-vllm && \
+#   VIRTUAL_ENV=datagen/.venv-vllm uv pip install vllm \
+#     --torch-backend=auto --extra-index-url https://wheels.vllm.ai/nightly
+# (`python -m vllm` is not a valid entrypoint — use the console script.)
+vllm_bin: .venv/bin/vllm
+
+log_dir: datagen/serve/logs
+
+models:
+  qwen3.5-9b:
+    path: ../hub/Qwen/Qwen3.5-9B
+    served_model_name: qwen3.5-9b
+    # Qwen3.5's bundled chat template raises `No user query found in messages.`
+    # for system+assistant-only message lists, which autogen 0.2 (Captain-Agent)
+    # sends on every expert turn after the first — the run then 400s, retries
+    # 3x and yields empty turns. This patched copy drops that guard only; normal
+    # user-containing chats render byte-identically. The checkpoint is untouched.
+    #   python datagen/serve/fix_chat_template.py --model qwen3.5-9b
+    chat_template: datagen/serve/chat_templates/qwen3.5-9b.jinja
+    port: 8765
+    gpus: "3"                 # CUDA_VISIBLE_DEVICES; GPUs are shared on this box
+    tensor_parallel_size: 1
+    # The Qwen3.5 recipe supports up to 262144. We cap far lower: agent
+    # trajectories fit easily and KV cache is the binding constraint on a
+    # shared GPU. Raise if a harness starts hitting context limits.
+    max_model_len: 65536
+    gpu_memory_utilization: 0.35
+    extra_args:
+      # Per the official Qwen3.5 vLLM recipe.
+      - --reasoning-parser
+      - qwen3
+      - --enable-auto-tool-choice
+      - --tool-call-parser
+      - qwen3_coder
+      # Qwen3.5-9B is Qwen3_5ForConditionalGeneration (multimodal). We never
+      # send images — WebSurfer is excluded from every team — so skip the
+      # vision encoder and free the memory for KV cache.
+      - --language-model-only
+
+  qwen3.5-35b-a3b:
+    path: ../hub/Qwen/Qwen3.5-35B-A3B
+    served_model_name: qwen3.5-35b-a3b
+    # Qwen3.5's bundled chat template raises `No user query found in messages.`
+    # for system+assistant-only message lists, which autogen 0.2 (Captain-Agent)
+    # sends on every expert turn after the first — the run then 400s, retries
+    # 3x and yields empty turns. This patched copy drops that guard only; normal
+    # user-containing chats render byte-identically. The checkpoint is untouched.
+    #   python datagen/serve/fix_chat_template.py --model qwen3.5-35b-a3b
+    chat_template: datagen/serve/chat_templates/qwen3.5-35b-a3b.jinja
+    port: 8767
+    # Needs a GPU largely to itself: 67 GB of weights, unlike the 8-9B pair.
+    gpus: "0"
+    tensor_parallel_size: 1
+    max_model_len: 65536
+    # Far above the 0.35 the small models use, and it must be: 67 GB of weights
+    # is already 0.47 of an H200, so anything under ~0.55 cannot load at all.
+    # 0.80 leaves ~48 GB for KV cache. Drop it (or move GPUs) if this card has
+    # to be shared.
+    gpu_memory_utilization: 0.80
+    extra_args:
+      # Same recipe as the 9B — this is Qwen3.5, just the MoE variant
+      # (Qwen3_5MoeForConditionalGeneration, 256 experts / 8 active).
+      - --reasoning-parser
+      - qwen3
+      - --enable-auto-tool-choice
+      - --tool-call-parser
+      - qwen3_coder
+      # Multimodal arch; we never send images, so skip the vision encoder.
+      - --language-model-only
+
+  deepseek-8b:
+    path: ../hub/deepseek-ai/DeepSeek-R1-Distill-Llama-8B
+    # The checkpoint declares tokenizer_class=LlamaTokenizerFast next to a
+    # ByteLevel-BPE tokenizer.json; transformers 5.x resolves that to a class
+    # that skips the ByteLevel decoder, so completions come back as raw byte
+    # tokens ("Ċ" for newline, "Ġ" for space) and every trajectory would be
+    # garbage. This directory is the same tokenizer.json with the declared
+    # class corrected — regenerate with:
+    #   python datagen/serve/fix_tokenizer.py --model deepseek-8b
+    tokenizer: datagen/serve/tokenizers/deepseek-8b
+    served_model_name: deepseek-8b
+    port: 8766
+    gpus: "4"
+    tensor_parallel_size: 1
+    max_model_len: 32768
+    gpu_memory_utilization: 0.35
+    extra_args:
+      # Keeps <think> blocks in `reasoning_content` instead of `content`, so
+      # logged trajectory steps stay clean.
+      - --reasoning-parser
+      - deepseek_r1
+      # NO --enable-auto-tool-choice: R1-Distill-Llama-8B is not tool-call
+      # trained. Harness teams for this backbone must avoid tool-calling agents
+      # (see collect.yaml `agents`).
+
+# Role → endpoint assignment. Every consumer resolves through
+# datagen/common.py:resolve_endpoint, so a role can also take an inline
+# {base_url, model} dict pointing at an external server.
+roles:
+  judge:    qwen3.5-9b       # success/failure re-judging (Phase 1)
+  injector: qwen3.5-9b       # Phase 2
+  verifier: qwen3.5-9b       # Phase 2
+  oracle:   qwen3.5-9b       # Phase 2 replay corrections
