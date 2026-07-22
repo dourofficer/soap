@@ -12,7 +12,7 @@ data/elephant.zip
 # raw harness runs (runs/, plus dated or archived variants like runs-2107/)
 datagen/runs*/
 # prepared question pools + GAIA attachments
-datagen/pools/data/
+# datagen/pools/data/
 # vLLM server logs + pidfiles
 datagen/serve/logs/
 # patched tokenizer copies (fix_tokenizer.py)
