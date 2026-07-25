@@ -1,167 +1,212 @@
-"""CRR rescoring runner for one (model, subset).
+"""Rescore (CRR) sweep runner — one long/tidy TSV per (model, subset).
 
-Filters the undiscounted table to strategy=='svd', reproduces each row's val+test
-SVD-projection scores, then sweeps (layer_range, gamma, w, orient) applying the
-single-pass discount and recording step/agent accuracy on val + test. Writes one
-TSV at {out_root}/{model}/{subset}/svd.tsv.
+Reads the reduced base table (``base_table``), reproduces each base row's val+test
+per-step scores, then sweeps orient x score_norm x layer_range x w x strategy and,
+for ALL gammas at once (vectorized W matmuls + batched metrics), records undiscounted
+and discounted step@k/agent@k on val + test.
 
-This is the runner the rescore sweep shells out to (was the in-process body of
-``experiments/rescore/sweep.py``). One process per (model, subset) keeps the
-reproduce cache bounded to a single table's worth.
+Weights are built ONCE per (model, subset, seed) split (WCache); orientation is
+auto-restricted per row (distance methods use ``none``). Writes
+``outputs/<ds>/rescore/<tag>/<model>/<subset>/sweep.tsv``.
 
-    python -m src.rescore.run \
-        --model qwen3.5-9b --subset gaia \
-        --undisc-root outputs-correct-error/undiscounted-splits/325 \
-        --attn-root   outputs-correct-error/attention \
-        --reps-root   outputs-correct-error/activations \
-        --data-root   data/correct-error \
-        --out-root    outputs-correct-error/discounted-splits/sweep/325 \
-        --device cuda --n-ranges 4 \
-        --gammas 0.1 0.2 0.3 --ws 1 2 3 all --orients negate inverse sigmoid \
-        --train-split 0.3 --val-split 0.2 --test-split 0.5
+    # from v2/  (run the base reduction first)
+    python -m src.reports.reduce --config configs/reduce/correct-full.yaml --set stage=base
+    python -m src.rescore.run    --config configs/rescore/correct-full.yaml
 """
 from __future__ import annotations
-
-import argparse
-from itertools import product
-from pathlib import Path
 
 import pandas as pd
 import torch
 from tqdm.auto import tqdm
 
-from src.rescore.weights import aggregate_attn
-from src.rescore.discount import orient_svd_scores, apply_discount
-from src.svd.reproduce import reproduce_svd, clear_cache
-from src.utils.utils import compute_metrics
+from ..common import paths
+from ..common.cli import base_parser, load_and_narrow
+from ..common.provenance import RunTimer
+from ..metrics import KeeperContext, compute_metrics_batch
+from ..stores import load_representations, split_files, list_rep_files
+from ..score.svd import fit_one, score_config, N_COMPONENTS
+from ..score.ensemble import member_positions, ens_score_vec, ENSEMBLE_POSITION
+from .weights import aggregate_attn, WCache, coerce_w
+from .strategies import orient, allowed_orients, normalize_scores, STRATEGIES, discount_loop
+from ..score.scorers import native_direction
+
+SWEEP_COLS = [
+    "seed", "pooling", "position", "method", "c_begin", "c_end", "centered", "weighted",
+    "direction", "orient", "score_norm", "strategy", "layer_range", "gamma", "w",
+    "undisc_step_acc_val", "undisc_agent_acc_val", "undisc_step_acc_test", "undisc_agent_acc_test",
+    "disc_step_acc_val", "disc_agent_acc_val", "disc_step_acc_test", "disc_agent_acc_test",
+]
 
 
-def _range_label(lo: int, hi: int) -> str:
-    return f"{lo}-{hi}"
+def _base_rows(cfg, model, subset) -> pd.DataFrame | None:
+    p = paths.reduced_root(cfg) / model / subset / cfg.get("base_table", "base_test.tsv")
+    if not p.exists():
+        return None
+    return pd.read_csv(p, sep="\t")
 
 
-def _parse_w(x: str):
-    """Sweep values for w are ints or the literal 'all'."""
-    return x if x == "all" else int(x)
+def _undisc_from_row(row) -> dict:
+    """Undiscounted reference = the base row's OWN recorded metrics.
 
-
-def _row_record(row, layer_range, gamma, w, orient, val_m, test_m) -> dict:
-    v_step, v_agent = list(val_m.values())
-    t_step, t_agent = list(test_m.values())
+    Deliberately NOT recomputed from the oriented score: orientation is part of the
+    rescoring method, not of the baseline, and a saturating orient (sigmoid on
+    large-magnitude scores) collapses the ranking to a tie, which would make the
+    "no correction" reference meaningless. Being orient-independent also means the
+    improvement column compares every orient against the same baseline."""
     return {
-        "strategy":    row["strategy"],
-        "position":    row["position"],
-        "pooling":     row["pooling"],
-        "method":      row["method"],
-        "c_begin":     row["c_begin"],
-        "c_end":       row["c_end"],
-        "centered":    row["centered"],
-        "weighted":    row["weighted"],
-        "threshold":   row.get("threshold", ""),
-        "seed":        int(row["seed"]),
-        "layer_range": layer_range,
-        "gamma":       gamma,
-        "w":           w,
-        "orient":      orient,
         "undisc_step_acc_val":   row["step_acc_val"],
         "undisc_agent_acc_val":  row["agent_acc_val"],
         "undisc_step_acc_test":  row["step_acc_test"],
         "undisc_agent_acc_test": row["agent_acc_test"],
-        "disc_step_acc_val":     v_step,
-        "disc_agent_acc_val":    v_agent,
-        "disc_step_acc_test":    t_step,
-        "disc_agent_acc_test":   t_agent,
     }
 
 
-def run_one_pair(args) -> None:
-    undisc_root = Path(args.undisc_root)
-    attn_root   = Path(args.attn_root)
-    reps_root   = Path(args.reps_root)
-    data_root   = Path(args.data_root)
-    out_root    = Path(args.out_root)
+def run_pair(cfg, model, subset, rec) -> None:
+    device = cfg.get("device", "cuda")
+    ks = cfg["ks"]
+    gammas = list(cfg["gammas"])
+    ws = list(cfg["ws"])
+    orients = list(cfg["orients"])
+    score_norms = list(cfg.get("score_norms", ["none"]))
+    strategies = list(cfg.get("strategies", ["discount"]))
+    n_ranges = cfg.get("n_ranges", 4)
+    poolings = cfg["poolings"]
 
-    table_path = undisc_root / args.model / args.subset / args.undisc_file
-    print(f"Table Path: {table_path}")
-    if not table_path.exists():
-        print(f"[skip] missing undiscounted table: {table_path}")
+    base = _base_rows(cfg, model, subset)
+    if base is None or len(base) == 0:
+        print(f"[skip] no base table for {model}/{subset}")
         return
-    rows = pd.read_csv(table_path, sep="\t")
-    rows = rows[rows["strategy"] == "svd"].reset_index(drop=True)
-    if len(rows) == 0:
-        print(f"[skip] no svd rows in {table_path}")
-        return
-
-    out_path = out_root / args.model / args.subset / "svd.tsv"
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    if out_path.exists():
-        print(f"[skip] already exists: {out_path}")
+    from ..reports.reduce import sweep_name
+    out = paths.rescore_root(cfg) / model / subset / sweep_name(cfg)
+    if out.exists() and not cfg.get("force"):
+        print(f"[skip] {out}")
         return
 
-    weightings, bounds = aggregate_attn(
-        attn_root, args.model, args.subset, n_ranges=args.n_ranges, device="cpu",
-    )
-    range_labels = [_range_label(lo, hi) for (lo, hi) in bounds]
+    rep_dir = paths.reps_root(cfg) / model / subset
+    data_dir = paths.data_root(cfg) / subset
+    files = list_rep_files(rep_dir)
+    weightings, bounds = aggregate_attn(paths.attn_root(cfg), model, subset,
+                                        n_ranges=n_ranges, device=device)
+    range_labels = [f"{lo}-{hi}" for lo, hi in bounds]
 
-    ws = [_parse_w(w) for w in args.ws]
-
+    # ── The sweep ────────────────────────────────────────────────────────────
+    # Nesting is ordered by COST, outermost = most expensive to recompute, so that each
+    # expensive artifact is built once and amortised over everything inside it:
+    #
+    #   seed          -> reloads representations and re-splits (seconds of I/O + GPU)
+    #     base row    -> refits/reproduces the base score vector
+    #       orient    -> a cheap elementwise map of that vector
+    #         norm    -> a cheap per-trajectory affine map
+    #           range -> selects which cached W set to use
+    #             w   -> selects which cached W set to use
+    #               strategy -> one matmul
+    #                 gamma  -> NOT a loop: all gammas are one broadcast (see below)
+    #
+    # Two things deliberately sit OUTSIDE the row loop because they do not depend on the
+    # base score at all: the attention aggregation (per model/subset) and the W matrices
+    # (per seed x range x w). Rebuilding W inside the sweep — as a naive implementation
+    # does — repeats the same ragged Python construction for every (row, orient, norm,
+    # gamma) combination; hoisting it is the single biggest win in the stage.
+    #
+    # Gamma is not a loop level: discount/backprop are affine in gamma, so one matmul
+    # yields the whole gamma curve at once and the metric pass scores all of them in a
+    # single batched call. The output is still written LONG (one row per gamma) so the
+    # sweep table keeps a flat, groupable schema.
     records = []
-    n_per_row = len(args.orients) * len(weightings) * len(args.gammas) * len(ws)
-    pbar = tqdm(total=len(rows) * n_per_row, desc=f"{args.model}/{args.subset} svd")
-    for _, row in rows.iterrows():
-        bundle = reproduce_svd(
-            row, args.model, args.subset, reps_root, data_root, args.device,
-            train_split=args.train_split,
-            val_split=args.val_split,
-            test_split=args.test_split,
-        )
-        for orient in args.orients:
-            v_o = orient_svd_scores(bundle.val_scores,  strategy=orient).cpu()
-            t_o = orient_svd_scores(bundle.test_scores, strategy=orient).cpu()
-            for r_idx, weighting in enumerate(weightings):
-                for gamma, w in product(args.gammas, ws):
-                    v_d = apply_discount(v_o, bundle.val_keeper,  weighting, gamma=gamma, w=w)
-                    t_d = apply_discount(t_o, bundle.test_keeper, weighting, gamma=gamma, w=w)
-                    val_m  = compute_metrics(v_d, bundle.val_keeper,  ks=[1], direction="desc")
-                    test_m = compute_metrics(t_d, bundle.test_keeper, ks=[1], direction="desc")
-                    records.append(_row_record(
-                        row, range_labels[r_idx], gamma, w, orient, val_m, test_m,
-                    ))
-                    pbar.update(1)
-    pbar.close()
+    for seed, seed_rows in base.groupby("seed"):
+        parts = split_files(files, cfg["splits"], int(seed))
+        load = lambda fl: load_representations(rep_dir, data_dir, poolings=poolings,
+                                               files=fl, device=device)
+        train, val, test = load(parts["train"]), load(parts["val"]), load(parts["test"])
+        val_ctx, test_ctx = KeeperContext(val.keeper), KeeperContext(test.keeper)
+        val_WC = WCache(weightings, val.keeper, ws, device=device)
+        test_WC = WCache(weightings, test.keeper, ws, device=device)
+        fit_cache: dict = {}
 
-    pd.DataFrame(records).to_csv(out_path, sep="\t", index=False)
-    print(f"wrote {out_path}  ({len(records)} rows)")
+        for _, row in tqdm(list(seed_rows.iterrows()), desc=f"{model}/{subset} s{seed}", leave=False):
+            pooling, position, method = row["pooling"], row["position"], row["method"]
+            cb, ce = int(row["c_begin"]), int(row["c_end"])
+            cen, wt = bool(row["centered"]), bool(row["weighted"])
 
-    clear_cache()
-    if args.device == "cuda":
-        torch.cuda.empty_cache()
+            def _fit(pos):
+                k = (pooling, pos)
+                if k not in fit_cache:
+                    fit_cache[k] = fit_one(train.stores[k].R, N_COMPONENTS)
+                return fit_cache[k]
+
+            if position == ENSEMBLE_POSITION:
+                members = member_positions(train.positions())
+                fits = {p: _fit(p) for p in members}
+                trainR = {p: train.stores[(pooling, p)].R for p in members}
+                s_val = ens_score_vec(method, cb, ce, cen, wt, members, fits, trainR,
+                                      {p: val.stores[(pooling, p)].R for p in members})
+                s_test = ens_score_vec(method, cb, ce, cen, wt, members, fits, trainR,
+                                       {p: test.stores[(pooling, p)].R for p in members})
+            else:
+                entry = _fit(position)
+                s_val = score_config(val.stores[(pooling, position)].R, entry, method, cb, ce, cen, wt)
+                s_test = score_config(test.stores[(pooling, position)].R, entry, method, cb, ce, cen, wt)
+            is_ens = position == ENSEMBLE_POSITION
+            direction = "desc" if is_ens else native_direction(method, row.get("direction"))
+            undisc = _undisc_from_row(row)          # base metric, orient-independent
+            # ens-mid3 scores are already 'higher = error' -> no orientation.
+            row_orients = ["none"] if is_ens else allowed_orients(method, orients)
+
+            for orient_name in row_orients:
+                ov, ot = orient(s_val, orient_name), orient(s_test, orient_name)
+                for snorm in score_norms:
+                    nv = normalize_scores(ov, val.keeper, snorm)
+                    nt = normalize_scores(ot, test.keeper, snorm)
+                    for r_idx, label in enumerate(range_labels):
+                        for w in ws:
+                            vmats, tmats = val_WC.mats(r_idx, w), test_WC.mats(r_idx, w)
+                            for strat in strategies:
+                                fn = STRATEGIES[strat]
+                                # (N, G) -> transpose to (G, N): gammas are the batch dim.
+                                Sv = fn(nv, val.keeper, vmats, gammas).T.contiguous()
+                                St = fn(nt, test.keeper, tmats, gammas).T.contiguous()
+                                vm = compute_metrics_batch(Sv, None, ks, "desc", ctx=val_ctx)
+                                tm = compute_metrics_batch(St, None, ks, "desc", ctx=test_ctx)
+                                for gi, gamma in enumerate(gammas):
+                                    records.append({
+                                        "seed": int(seed), "pooling": pooling, "position": position,
+                                        "method": method, "c_begin": cb, "c_end": ce,
+                                        "centered": cen, "weighted": wt, "direction": direction,
+                                        "orient": orient_name, "score_norm": snorm, "strategy": strat,
+                                        "layer_range": label, "gamma": gamma, "w": w,
+                                        **undisc,
+                                        "disc_step_acc_val": vm["step@1_desc"][gi],
+                                        "disc_agent_acc_val": vm["agent@1_desc"][gi],
+                                        "disc_step_acc_test": tm["step@1_desc"][gi],
+                                        "disc_agent_acc_test": tm["agent@1_desc"][gi],
+                                    })
+        del train, val, test, val_WC, test_WC
+        if device == "cuda":
+            torch.cuda.empty_cache()
+
+    df = pd.DataFrame(records)[SWEEP_COLS]
+    out.parent.mkdir(parents=True, exist_ok=True)
+    df.to_csv(out, sep="\t", index=False)
+    rec.add_output(out)
+    print(f"  wrote {out}  ({len(df)} rows)")
 
 
-def parse_args() -> argparse.Namespace:
-    p = argparse.ArgumentParser(description=__doc__,
-                                formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--model",  required=True)
-    p.add_argument("--subset", required=True)
-    p.add_argument("--undisc-root", required=True)
-    p.add_argument("--attn-root",   required=True)
-    p.add_argument("--reps-root",   required=True)
-    p.add_argument("--data-root",   required=True)
-    p.add_argument("--out-root",    required=True)
-    p.add_argument("--undisc-file", default="weighted_false.tsv")
-    p.add_argument("--device",   default="cuda")
-    p.add_argument("--n-ranges", type=int, default=4)
-    p.add_argument("--gammas",  nargs="+", type=float, required=True)
-    p.add_argument("--ws",      nargs="+", type=str,   required=True)
-    p.add_argument("--orients", nargs="+", type=str,   required=True)
-    p.add_argument("--train-split", type=float, required=True)
-    p.add_argument("--val-split",   type=float, required=True)
-    p.add_argument("--test-split",  type=float, required=True)
-    return p.parse_args()
+def run(cfg) -> None:
+    with RunTimer(cfg, "rescore") as rec:
+        rec.note(gammas=cfg["gammas"], ws=cfg["ws"], orients=cfg["orients"],
+                 score_norms=cfg.get("score_norms", ["none"]),
+                 strategies=cfg.get("strategies", ["discount"]))
+        for model in cfg["models"]:
+            for subset in cfg["subsets"]:
+                if cfg.get("dry_run"):
+                    print(f"[dry] rescore {model}/{subset}")
+                    continue
+                run_pair(cfg, model, subset, rec)
 
 
 def main() -> None:
-    run_one_pair(parse_args())
+    args = base_parser(__doc__).parse_args()
+    run(load_and_narrow(args))
 
 
 if __name__ == "__main__":

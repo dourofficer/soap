@@ -220,18 +220,39 @@ already-judged runs are skipped unless `--force`.
 
 ## 5. Conversion
 
+For the SVD-fit corpus, convert **every valid run regardless of outcome** —
+fitting is unsupervised, so successes carry signal too and no rejudge pass is
+needed first:
+
 ```bash
-python datagen/convert.py --outcome fail --mixed --dry-run   # counts first
-python datagen/convert.py --outcome fail --mixed
-python datagen/convert.py --exclude-pools gaia --mixed
-python datagen/convert.py --outcome success --out-root data/synthetic-ok
+python datagen/convert.py --outcome all --mixed --dry-run   # counts first
+python datagen/convert.py --outcome all --mixed             # -> data/synthetic/
 ```
 
-Failures are the default: the benchmarks this corpus stands in for are
-all-failure. Successes are wanted later, as Phase-2 injection candidates.
+Other selections:
+
+```bash
+python datagen/convert.py --outcome fail --mixed        # failure-only (needs verdicts)
+python datagen/convert.py --outcome success --out-root data/synthetic-ok   # Phase-2 candidates
+python datagen/convert.py --exclude-pools gaia --mixed
+```
+
+`--outcome fail`/`success` require a verdict per run, so run `rejudge.py`
+first; `--outcome all` does not.
+
+**Provenance.** Every output subset is named `<harness>-<backbone>`
+(`magentic-qwen9b`, `captain-qwen35b`, …), and every trajectory JSON carries
+`pool`, `backbone`, `harness` and `outcome` fields (the loader ignores unknown
+keys), so its origin — task pool, agent system, generator backbone, run result
+— survives any downstream merge. Each subset also gets a `filename_map.csv`
+(`file, question_ID, pool, backbone, harness, outcome, run_dir`) mapping every
+`<N>.json` back to its raw run directory. `outcome` comes from `verdict.json`
+when present, else the in-run `judge.json` — the latter is the permissive
+substring judge, so treat it as approximate until `rejudge.py` has run
+(re-converting afterwards refreshes the field).
 
 `--mixed` also materializes a merged subset so a combined SVD fit needs no
-loader changes. Every subset gets a `filename_map.csv` back to its run dirs.
+loader changes.
 
 Unlabeled trajectories carry `mistake_step = -1`, which makes them
 **fit-only**: `compute_metrics` skips them when counting hits but still counts

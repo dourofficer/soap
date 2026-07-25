@@ -17,7 +17,9 @@ REPO_ROOT = DATAGEN_DIR.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from experiments._common.config import load_yaml  # noqa: E402
+# The v2 restructure moved the shared config loader from experiments/_common
+# to src/common; the function is unchanged.
+from src.common.config import load_yaml  # noqa: E402
 
 CONFIGS_DIR = DATAGEN_DIR / "configs"
 POOLS_DIR = DATAGEN_DIR / "pools" / "data"

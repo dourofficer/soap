@@ -6,6 +6,86 @@ backbones, then converts the failures into an unlabeled corpus for SVD fitting.
 **To run any of it, see [SCRIPTS.md](SCRIPTS.md).** This file is the reference
 for *what the pieces are* and the non-obvious behaviour of the environment.
 
+## Installation
+
+Four environments, deliberately separate: the main repo venv serves the models
+and runs the pipeline; each harness has its own venv (Magentic-One needs autogen
+0.7, Captain-Agent imports a vendored autogen 0.2 fork, and neither can share
+the other's or the repo's); Chromium runs in a Docker image. All commands are
+run from the repo root. `uv` is assumed (`pip install uv` otherwise).
+
+### 1. Main repo venv (serving + pipeline)
+
+Already provisioned as `.venv` (vllm 0.19.1, transformers 5.13, datasets 4.8).
+It serves the vLLM endpoints and runs `pools/`, `collect/`, `judge/`,
+`convert.py`. If recreating:
+
+```bash
+uv sync         # from pyproject.toml at the repo root
+```
+
+Model checkpoints are expected under `../hub/` (a sibling of the repo):
+`Qwen/Qwen3.5-9B`, `Qwen/Qwen3.5-35B-A3B`,
+`deepseek-ai/DeepSeek-R1-Distill-Llama-8B`. Paths live in `configs/serve.yaml`.
+
+### 2. Magentic-One venv (Python 3.12)
+
+```bash
+cd datagen/TraceElephant/code/agent_system/Magentic-One
+uv venv --python 3.12 .venv
+VIRTUAL_ENV=.venv uv pip install \
+  autogen-agentchat "autogen-ext[openai,file-surfer,docker]" \
+  python-dotenv "playwright>=1.48.0"
+cd -
+```
+
+The `playwright` **client only** — the browser binary and its system libs live
+in the Docker image (step 4). The shipped `requirements.txt` is a full pip
+freeze (tensorflow, vllm 0.7, ray) and is not what this driver needs.
+
+### 3. Captain-Agent venv (Python 3.10)
+
+```bash
+cd datagen/TraceElephant/code/agent_system/Captain-Agent
+uv venv --python 3.10 .venv
+# vendored autogen 0.2 deps + autobuild retriever
+VIRTUAL_ENV=.venv uv pip install \
+  "openai>=1.3" diskcache termcolor flaml "numpy>=1.17,<2" python-dotenv \
+  tiktoken "pydantic>=1.10,<3,!=2.6.0" docker sentence-transformers chromadb pandas
+# tool-library imports (arxiv, markdownify, pptx, textract, …)
+VIRTUAL_ENV=.venv uv pip install \
+  mammoth markdownify arxiv pymupdf wikipedia-api python-pptx pandas scipy \
+  sympy pillow textract openpyxl
+VIRTUAL_ENV=.venv uv pip install "pip<24.1"   # REQUIRED — see below
+cd -
+```
+
+`pip<24.1` is mandatory: Captain's code executor pip-installs the tool
+library's requirements before every run, and `textract==1.6.5` declared an
+invalid requirement that pip ≥24.1 refuses, poisoning every pip call in the
+venv. (uv venvs also ship no `pip` at all, which fails the same way.)
+
+### 4. Browser container
+
+```bash
+docker pull mcr.microsoft.com/playwright:v1.61.0-noble
+```
+
+The tag **must match** the `playwright` client in the Magentic-One venv
+(1.61.0). Starting and using it is covered in SCRIPTS.md §2b.
+
+### 5. Configuration
+
+- **Serper key (Captain web search).** Put `SERPER_API_KEY=<key>` in
+  `datagen/TraceElephant/code/agent_system/Captain-Agent/.env`. Without it
+  `perform_web_search` raises and teams fall back to parametric knowledge.
+- **Derived files.** After editing `serve.yaml`, regenerate the patched
+  tokenizer, patched chat template and Captain's `OAI_CONFIG_LIST`
+  (SCRIPTS.md §2). These are gitignored and must exist before serving.
+
+Verify the whole stack with `python datagen/serve/smoke.py --all --wait` (models)
+and `curl -s http://127.0.0.1:9222/json/version` (browser).
+
 ## Status
 
 Phase 1 complete. Four cells collected over `gaia` + `assistantbench`

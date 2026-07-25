@@ -130,7 +130,7 @@ def verdict_of(run_dir: Path) -> tuple[bool | None, str]:
 # ── conversion ────────────────────────────────────────────────────────────────
 
 def convert_run(harness: str, backbone: str, pool: str, run_dir: Path,
-                stats: Counter) -> dict | None:
+                stats: Counter, outcome: str = "unknown") -> dict | None:
     summary = json.loads((run_dir / "summary.json").read_text())
     history = normalize_history(summary.get("history", []), harness)
 
@@ -151,9 +151,13 @@ def convert_run(harness: str, backbone: str, pool: str, run_dir: Path,
         "level": summary.get("level", -1) if summary.get("level") is not None else -1,
         "system": SYSTEM_INTRO.get(harness, harness),
         "subset": subset,
+        # Provenance — the loader ignores unknown keys, so a trajectory always
+        # says where it came from: task pool, agent system, generator backbone,
+        # and how the run ended ("success" / "fail" / "unknown" when unjudged).
         "pool": pool,
         "backbone": backbone,
         "harness": harness,
+        "outcome": outcome,
     }
 
 
@@ -164,8 +168,10 @@ def main() -> int:
     ap.add_argument("--out-root", default="data/synthetic",
                     help="dataset root (default: %(default)s)")
     ap.add_argument("--outcome", choices=["fail", "success", "all"], default="fail",
-                    help="which runs to convert; 'fail' matches the all-failure "
-                         "distribution of the benchmarks (default: %(default)s)")
+                    help="which runs to convert. 'fail' matches the all-failure "
+                         "distribution of the benchmarks; 'all' takes every valid "
+                         "run regardless of verdict (SVD fitting is unsupervised) "
+                         "and needs no rejudge pass (default: %(default)s)")
     ap.add_argument("--min-steps", type=int, default=2,
                     help="drop trajectories with fewer turns (default: %(default)s)")
     ap.add_argument("--max-steps", type=int, default=None)
@@ -193,18 +199,27 @@ def main() -> int:
             continue
 
         is_correct, method = verdict_of(run_dir)
-        if is_correct is None:
-            stats["skipped_no_verdict"] += 1
-            continue
-        if args.outcome == "fail" and is_correct:
-            stats["skipped_success"] += 1
-            continue
-        if args.outcome == "success" and not is_correct:
-            stats["skipped_failure"] += 1
-            continue
-        stats[f"verdict_via_{method.split()[0]}"] += 1
+        if args.outcome == "all":
+            # SVD fitting is unsupervised, so no verdict is required — every
+            # structurally valid run converts. The outcome is still recorded
+            # when one is available (verdict.json, else the in-run judge.json).
+            if is_correct is not None:
+                stats[f"verdict_via_{method.split()[0]}"] += 1
+        else:
+            if is_correct is None:
+                stats["skipped_no_verdict"] += 1
+                continue
+            if args.outcome == "fail" and is_correct:
+                stats["skipped_success"] += 1
+                continue
+            if args.outcome == "success" and not is_correct:
+                stats["skipped_failure"] += 1
+                continue
+            stats[f"verdict_via_{method.split()[0]}"] += 1
 
-        traj = convert_run(harness, backbone, pool, run_dir, stats)
+        outcome = "unknown" if is_correct is None else ("success" if is_correct else "fail")
+        stats[f"outcome_{outcome}"] += 1
+        traj = convert_run(harness, backbone, pool, run_dir, stats, outcome)
         if traj is None:
             continue
         n = len(traj["history"])
@@ -237,7 +252,8 @@ def main() -> int:
                 json.dumps(traj, ensure_ascii=False, indent=2), encoding="utf-8")
             rows.append({"file": f"{i}.json", "question_ID": traj["question_ID"],
                          "pool": traj["pool"], "backbone": traj["backbone"],
-                         "harness": traj["harness"], "run_dir": str(run_dir)})
+                         "harness": traj["harness"], "outcome": traj["outcome"],
+                         "run_dir": str(run_dir)})
         with (sub_dir / "filename_map.csv").open("w", newline="") as fh:
             w = csv.DictWriter(fh, fieldnames=list(rows[0]))
             w.writeheader()

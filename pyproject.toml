@@ -1,36 +1,24 @@
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
- 
+
 [project]
-name = "attribscope"
-version = "0.1.0"
+name = "attribscope-v2"
+version = "0.2.0"
 requires-python = ">=3.10"
+# v2 reuses the parent repo's environment (uv.lock). No install needed: every
+# runner is invoked as `python -m src.<stage>...` FROM the v2/ directory,
+# which puts v2/ on sys.path so `src` imports directly.
 dependencies = [
-    "accelerate>=1.13.0",
-    "asyncio>=4.0.0",
-    "datasets>=4.8.2",
-    "dotenv>=0.9.9",
-    "faiss-cpu>=1.12.0",
-    "ipykernel>=7.2.0",
-    "ipython>=8.38.0",
-    "ipywidgets>=8.1.8",
-    "matplotlib>=3.10.9",
-    "openai>=2.33.0",
-    "pyyaml>=6.0.3",
-    "scikit-learn>=1.7.2",
-    "scipy>=1.15.3",
-    "sentence-transformers>=4.1.0",
+    "numpy",
+    "pandas>=2.0",
+    "pyyaml>=6.0",
+    "rich",
+    "safetensors",
     "torch>=2.10.0",
-    "torchvision>=0.25.0",
     "transformers>=5.3.0",
-    "vllm>=0.19.1",
+    "tqdm",
 ]
- 
+
 [tool.hatch.build.targets.wheel]
-# The code lives in src/ and is imported as `from src.…` (invoked via
-# `python -m src.…` / `python -m experiments.…` from the repo root).
-packages = [
-    "src",
-    "experiments",
-]
+packages = ["src"]

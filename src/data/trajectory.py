@@ -1,42 +1,36 @@
-"""src/data/trajectory.py — Trajectory dataclass + dataset loading.
+"""Trajectory dataclass + dataset loading.
 
-Public API
-----------
-Trajectory      dataclass holding one failure instance (a Who&When-style trace)
-load_dataset()  load a subset directory of JSON files → list[Trajectory]
+    from src.data import load_dataset
+    trajs = load_dataset("data/correct-full", subset="magentic")
 
-Context construction (select_context / build_context / separate_steps /
-iter_scoreable_steps) lives in src/data/context.py.
+Each JSON has: history (ordered turns; step t == history[t], 0-indexed), question_ID,
+mistake_agent, mistake_step (string index into history), level, subset. Turn roles are
+agent/system names; mistake_agent matches a turn's role.
 """
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable
-from ..utils.common import _get_sorted_json_files, _load_json_data
-
-from transformers import PreTrainedTokenizer
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Data structures
-# ─────────────────────────────────────────────────────────────────────────────
+# ── directory helpers (ported from src/utils/common.py) ─────────────────────
+def _sorted_json_files(directory: Path) -> list[str]:
+    """JSON filenames sorted numerically by their digits (1.json, 2.json, ...)."""
+    files = [f for f in os.listdir(directory) if f.endswith(".json")]
+    return sorted(files, key=lambda x: int("".join(filter(str.isdigit, x)) or 0))
 
+
+def _load_json(path: Path):
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+# ── data structure ──────────────────────────────────────────────────────────
 @dataclass
 class Trajectory:
-    """One Who&When failure instance.
-
-    Attributes
-    ----------
-    question_id   : unique ID string from the dataset.
-    history       : raw history list; step t == history[t] (0-indexed).
-    mistake_agent : ground-truth agent name (matches a history[t]["role"]).
-    mistake_step  : ground-truth step index (0-indexed into history).
-    level         : difficulty level.
-    subset        : "algo" | "handcrafted" (or "unknown" if absent in JSON).
-    question      : original user question string.
-    """
+    """One failure instance (a Who&When / CORRECT / TraceElephant-style trace)."""
     filename:      str
     question_id:   str
     history:       list[dict]
@@ -45,67 +39,23 @@ class Trajectory:
     level:         int
     subset:        str
     question:      str
-    system:        str
+    system:        str | None
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Dataset loading
-# ─────────────────────────────────────────────────────────────────────────────
-
-def load_dataset(
-    path: str | Path = "ww",
-    subset: str | None = None,
-) -> list[Trajectory]:
-    """Load the Who&When dataset from a JSON file.
-
-    Parameters
-    ----------
-    path   : path to the data directory
-    subset : optional filter — "algo" | "handcrafted".
-             Pass None to return everything.
-
-    Returns
-    -------
-    list[Trajectory]
-
-    Expected JSON schema per item
-    ------------------------------
-    {
-        "history":       [{"role": str, "content": str}, ...],
-        "mistake_agent": str,
-        "mistake_step":  str | int,   # parsed to int; 0-indexed
-        "question_ID":   str,
-        "level":         int,          # optional
-        "subset":        str,          # optional; "algorithm-generated" | "hand-crafted"
-        "question":      str           # optional
-    }
-
-    Notes
-    -----
-    If the JSON file does not contain a "subset" key (e.g., separate files per
-    subset), supply the subset label via the `subset` argument *as a filter*
-    only, or pre-tag the items before calling this function.
-    """
-
-    path = Path(path) / subset
-    filenames = _get_sorted_json_files(path)
-    raw = [(filename, _load_json_data(path / filename)) for filename in filenames]
-
+def load_dataset(path: str | Path, subset: str | None = None) -> list[Trajectory]:
+    """Load ``<path>/<subset>/*.json`` into a list of Trajectory (numerically sorted)."""
+    root = Path(path) / subset
     trajectories: list[Trajectory] = []
-    for filename, item in raw:
+    for filename in _sorted_json_files(root):
+        item = _load_json(root / filename)
         system_description = None
         if subset == "algorithm-generated":
-            system = item.get("system_prompt")
             prefix = "## Your role\n"
-            agents = [
-                f"{name}: {description[len(prefix):].strip()}"
-                for name, description
-                in system.items()
-            ]
-            system_description = "\n\n".join(agents)
-        elif subset == "hand-crafted":
-            pass
-        traj = Trajectory(
+            system_description = "\n\n".join(
+                f"{name}: {desc[len(prefix):].strip()}"
+                for name, desc in item.get("system_prompt", {}).items()
+            )
+        trajectories.append(Trajectory(
             filename      = filename,
             question_id   = item["question_ID"],
             history       = item["history"],
@@ -115,7 +65,18 @@ def load_dataset(
             subset        = subset,
             question      = item.get("question", ""),
             system        = system_description,
-        )
-        trajectories.append(traj)
-
+        ))
     return trajectories
+
+
+def extract_metadata(traj: Trajectory) -> dict:
+    """Trajectory-metadata header written into every .safetensors payload."""
+    return {
+        "filename":      traj.filename,
+        "question_id":   traj.question_id,
+        "mistake_agent": traj.mistake_agent,
+        "mistake_step":  str(traj.mistake_step),
+        "level":         traj.level,
+        "subset":        traj.subset,
+        "question":      traj.question,
+    }
