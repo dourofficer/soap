@@ -1,0 +1,73 @@
+% Paste into experiments.tex. Requires booktabs, multirow, and the existing \cmark/\xmark/\PH macros.
+% Assumes \best{} is defined for bolding best results.
+
+\begin{table*}[t]
+\centering
+\footnotesize
+\caption{Step-level failure attribution accuracy (\%) in the \emph{without-ground-truth} setting.
+All prompt-based and adapted baselines are reproduced under the same two proxy/judge models.
+TF: training-free; AF: annotation-free.
+Agent-level results are in Appendix Table~\ref{tab:main-agent}.
+Best result per column in \best{bold}.}
+\label{tab:main}
+\begin{tabular}{l cc ccc ccc}
+\toprule
+ & & & \multicolumn{3}{c}{\textbf{Qwen3.5-9B}} & \multicolumn{3}{c}{\textbf{DeepSeek-R1-Distill-Llama-8B}} \\
+\cmidrule(lr){4-6}\cmidrule(lr){7-9}
+Method & TF & AF & WW-AG & WW-HC & TBD & WW-AG & WW-HC & TBD \\
+\midrule
+Random & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH & \PH \\
+\addlinespace[4pt]
+\multicolumn{9}{l}{\emph{Prompt-based methods}} \\
+\quad All-at-Once~\citep{whoandwhen} & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH & \PH \\
+\quad Step-by-Step~\citep{whoandwhen} & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH & \PH \\
+\quad Binary Search~\citep{whoandwhen} & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH & \PH \\
+\quad ECHO~\citep{echo} & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH & \PH \\
+\quad CORRECT~\citep{correct} & \cmark & \xmark & \PH & \PH & \PH & \PH & \PH & \PH \\
+\quad A2P~\citep{a2p} & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH & \PH \\
+\quad FALAT~\citep{falat} & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH & \PH \\
+\addlinespace[4pt]
+\multicolumn{9}{l}{\emph{Trained / fine-tuned attributors}} \\
+\quad AgenTracer-8B~\citep{agentracer} & \xmark & \xmark & \PH & \PH & \PH & \PH & \PH & \PH \\
+\quad Aegis~\citep{aegis} & \xmark & \xmark & \PH & \PH & \PH & \PH & \PH & \PH \\
+\addlinespace[4pt]
+\multicolumn{9}{l}{\emph{Adapted step-level verifier}} \\
+\quad Qwen-PRM (adapted)~\citep{processbench} & \xmark & \cmark & \PH & \PH & \PH & \PH & \PH & \PH \\
+\addlinespace[4pt]
+\multicolumn{9}{l}{\emph{Per-step representation scoring (ours)}} \\
+\quad SVD base ($\gamma{=}0$) & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH & \PH \\
+\quad \crr{} (SVD) & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH & \PH \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+% Notes on filling:
+% ──────────────────
+% 1. WW-AG = Who&When Algorithm-Generated, WW-HC = Who&When Hand-Crafted.
+%    TBD = placeholder for the second dataset (e.g., TracerTraj or CORRECT-Error subset).
+%    Replace "TBD" in the header once the dataset is chosen.
+%
+% 2. All baselines must be reproduced under both Qwen3.5-9B and DeepSeek-R1-Distill-Llama-8B
+%    in the wo/GT setting for fair comparison. For prompt-based methods, the two models serve
+%    as the judge LLM. For CRR/SVD, they serve as the proxy model.
+%
+% 3. AgenTracer-8B and Aegis are pre-trained models — they run as-is on the test data,
+%    so the "backbone" columns indicate what judge/proxy was used in *our reproduction*,
+%    not what they were trained on. Footnote this in the caption if needed.
+%    Alternatively, if these models cannot be re-run under the two backbones (since they are
+%    fixed checkpoints), report their single set of numbers in both columns and mark with a
+%    dagger (†) in the caption: "† Model is a fixed checkpoint; numbers are backbone-independent."
+%
+% 4. Qwen-PRM (adapted): use Qwen2.5-Math-PRM-7B. The step with the lowest correctness
+%    score is predicted as the decisive error. Mark TF=✗ (pre-trained, just not on this task),
+%    AF=✓ (no failure-attribution-specific annotations needed).
+%
+% 5. CORRECT: mark AF=✗ because it requires an annotated schema library built from labeled
+%    failure trajectories. The schemas are retrieved at inference time, not used for training,
+%    so TF=✓ is correct.
+%
+% 6. For CRR rows, report mean ± std across validation splits, as in the current manuscript.
+%
+% 7. For methods where reproduction is infeasible (e.g., ECHO requires Claude API at scale),
+%    either (a) drop from this table and move to Table 2 (reported numbers), or
+%    (b) use a comparable open-source model and footnote the substitution.

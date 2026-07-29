@@ -1,6 +1,0 @@
-# SVD stage — Who&When. Shared knobs from experiments/datasets/ww.yaml.
-dataset: ww
-
-device:    cuda
-poolings:  [mean, last]
-positions: [all]

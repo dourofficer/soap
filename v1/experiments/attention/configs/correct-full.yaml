@@ -1,9 +1,0 @@
-# Attention stage — CORRECT-Full. Shared knobs (incl. max_tokens, which must
-# match activations) come from experiments/datasets/correct-full.yaml.
-# NOTE: merged attention already exists (migrated from correct-error by
-# ./merge_correct_full.py); this config is only for future re-extraction.
-dataset: correct-full
-
-device:     auto
-dtype:      bfloat16
-query_pool: mean   # "mean" | "last"

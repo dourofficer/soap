@@ -1,7 +1,0 @@
-# SVD stage — traceelephant. Shared knobs (incl. the 10 seeds) come from
-# experiments/datasets/traceelephant.yaml.
-dataset: traceelephant
-
-device:    cuda
-poolings:  [mean, last]
-positions: [all]

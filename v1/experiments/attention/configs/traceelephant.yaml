@@ -1,7 +1,0 @@
-# Attention stage — traceelephant. Shared knobs come from
-# experiments/datasets/traceelephant.yaml (max_tokens must match activations).
-dataset: traceelephant
-
-device:     auto
-dtype:      bfloat16
-query_pool: mean

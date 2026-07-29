@@ -1,0 +1,13 @@
+\section{Problem Setup}
+\label{sec:setup}
+
+Let $\traj = (s_1, \ldots, s_T)$ be a trajectory of a turn-based multi-agent system, with each step $s_t$ attributed to an agent $a_t \in \{1, \ldots, K\}$. A failed trajectory is annotated with a \emph{decisive-error step} $t^\star \in \{1, \ldots, T\}$---the earliest step at which an irrecoverable mistake was introduced---and the responsible agent $a_{t^\star}$. Given $\traj$ and the task description, the failure-attribution task~\citep{whoandwhen} is to predict $\hat{t}$ as an estimator of $t^\star$, with the corresponding agent prediction $\hat{a} = a_{\hat{t}}$.
+
+We assume access to a proxy language model $\proxy$, distinct from the model that generated $\traj$, exposing intermediate hidden states and post-softmax attention probabilities. $\proxy$ is used without adaptation or supervision on failure-attribution data. This setting reflects practice: trajectories are often produced by proprietary models whose internals are inaccessible, whereas open-weight proxies are freely inspectable.
+
+\paragraph{Per-step scoring view.} Rather than predicting $\hat t$ directly, we produce a scalar score $\Stilde(s_t)\in\mathbb{R}$ for every step and rank within the trajectory, so that
+\begin{equation}
+  \hat{t} \;=\; \arg\max_{t \in \{1,\ldots,T\}}\; \Stilde(s_t),
+  \label{eq:prediction}
+\end{equation}
+and the top-$k$ scored steps form a ranked candidate set for triage. We report both the top-1 prediction in \eqref{eq:prediction} and ranked-set metrics (\S\ref{sec:experiments}).

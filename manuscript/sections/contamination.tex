@@ -1,0 +1,22 @@
+\section{The Downstream-Contamination Problem}
+\label{sec:contam}
+
+Before introducing our method, we establish the obstacle it is designed to overcome. The argument is independent of any particular scorer and explains a puzzling pattern in prior results.
+
+\paragraph{Why anomaly accumulates downstream.} Any per-step scorer that conditions on context evaluates $s_t$ together with its predecessors $s_{<t}$. Because the decisive error at $t^\star$ corrupts the state that all later steps build on, the corruption persists in the inputs to every $s_t$ with $t>t^\star$. The scorer therefore registers elevated anomaly not only at $t^\star$ but throughout the downstream suffix. The naive predictor $\arg\max_t \Sbase(s_t)$ then frequently selects a late step that is contaminated by---rather than the source of---the failure.
+
+\paragraph{A systematic phenomenon.} If contamination drives errors, predictions should land \emph{after} the true error. We quantify this with the prediction offset $\hat{t}-t^\star$. Figure~\ref{fig:offset} plots its distribution under a base scorer on the hand-crafted subset of Who\&When [need careful checking]
+% the mass is concentrated at positive offsets, confirming a systematic late bias rather than symmetric noise. The effect is most pronounced on long trajectories, where the downstream suffix is longest. This offers a concrete explanation for the central finding of \citet{whoandwhen}---high agent-level but near-random step-level accuracy: a scorer can identify that an agent erred while mislocating \emph{when}, because the anomaly it senses is the contaminated tail, not the originating step.
+
+\paragraph{Why the per-step view is the right lens.} The diagnosis above is only available once attribution is framed as a score field. A single point verdict offers no offset distribution to inspect and nothing to recalibrate. A per-step score, by contrast, can be \emph{rescored}: if we can estimate how much of $s_t$'s anomaly is inherited from its predecessors, we can subtract it. This is precisely what \crr{} does (\S\ref{sec:method}), and Figure~\ref{fig:offset}(b) previews the result---the offset distribution recentered toward zero.
+
+\begin{figure}[t]
+\centering
+\framebox[\linewidth]{\parbox[c][4.5cm][c]{0.95\linewidth}{\centering\itshape
+[Figure placeholder: \texttt{fig/offset\_histogram.pdf}]\\[4pt]
+(a) Prediction-offset histogram $\hat t - t^\star$ under the base scorer (positive-skewed, late bias).\quad
+(b) Same distribution after \crr{} (recentered toward $0$).\\
+Hand-crafted subset, proxy = Qwen3-8B. Optionally inset: a per-step score trace for one trajectory, base vs.\ \crr{}.}}
+\caption{Downstream contamination is measurable and correctable. Under a naive per-step scorer, predicted decisive-error steps land systematically \emph{after} the ground-truth step $t^\star$; \crr{} removes inherited anomaly and recenters the offset distribution.}
+\label{fig:offset}
+\end{figure}

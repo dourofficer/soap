@@ -1,0 +1,298 @@
+% !TeX root = ../main.tex
+% \section{Proof of Proposition~\ref{prop:earliest}}
+% \label{app:proof}
+
+% [Proof to be completed.] State the forward-propagation model of inherited anomaly, the assumption that intrinsic anomaly is supported only at $t^\star$, and derive the threshold $\gamma^\star$ at which the residual subtraction makes $\Stilde$ peak at $t^\star$. Provide a short intuition paragraph before the formal argument, per the conference checklist.
+
+\section{With-Ground-Truth Baselines}
+\label{app:gt}
+
+Table~\ref{tab:gt} repeats Table~\ref{tab:main} in the \emph{with-ground-truth} setting, where the prompting and voting baselines are additionally given the correct answer to the task as a reference signal~\citep{whoandwhen}. \crr{} uses no ground-truth answer and is shown at its without-ground-truth numbers for reference; the comparison illustrates that it remains competitive with answer-aided baselines despite using strictly less information.
+
+\begin{table}[h]
+\centering
+\footnotesize
+\caption{Failure attribution in the \emph{with-ground-truth} setting (baselines given the correct task answer), proxy = Qwen3-8B. \crr{} uses no ground-truth answer (shown at its without-GT numbers). Counterpart to Table~\ref{tab:main}.}
+\label{tab:gt}
+\begin{tabular}{l c c c c}
+\toprule
+ & \multicolumn{2}{c}{Algorithm-Generated} & \multicolumn{2}{c}{Hand-Crafted} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Method & Agent & Step & Agent & Step \\
+\midrule
+All-at-Once~\citep{whoandwhen}    & \PH & \PH & \PH & \PH \\
+Step-by-Step~\citep{whoandwhen}   & \PH & \PH & \PH & \PH \\
+Binary Search~\citep{whoandwhen}  & \PH & \PH & \PH & \PH \\
+ECHO~\citep{echo}                 & \PH & \PH & \PH & \PH \\
+CORRECT~\citep{correct}           & \PH & \PH & \PH & \PH \\
+\crr{} (no GT, for reference)     & \PH & \PH & \PH & \PH \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Agent-level plug-and-play.} Table~\ref{tab:plugin-agent} is the agent-level counterpart of Table~\ref{tab:plugin}.
+
+\begin{table}[h]
+\centering
+\footnotesize
+\caption{Agent-Level Accuracy with and without \crr{}. Agent-level counterpart of Table~\ref{tab:plugin}.}
+\label{tab:plugin-agent}
+\begin{tabular}{l l c c c c}
+\toprule
+ & & \multicolumn{2}{c}{Norm} & \multicolumn{2}{c}{SVD} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+Proxy & Subset & Base & $+$\crr{} & Base & $+$\crr{} \\
+\midrule
+\multirow{2}{*}{Qwen3-8B}     & Algorithm-Generated & \PH & \PH & \PH & \PH \\
+                              & Hand-Crafted        & \PH & \PH & \PH & \PH \\
+\multirow{2}{*}{Llama-3.1-8B} & Algorithm-Generated & \PH & \PH & \PH & \PH \\
+                              & Hand-Crafted        & \PH & \PH & \PH & \PH \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Ranked-Candidate Metrics}
+
+\begin{table}[h]
+\centering
+\footnotesize
+\caption{Ranked-candidate metrics (step@5, MRR, agent@3). Single-verdict baselines emit one step and cannot populate a ranked set; \crr{} returns an ordered shortlist. Proxy = Qwen3-8B.}
+\label{tab:ranked}
+\begin{tabular}{l c c c c c c}
+\toprule
+ & \multicolumn{3}{c}{Algorithm-Generated} & \multicolumn{3}{c}{Hand-Crafted} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+Method & step@5 & MRR & agent@3 & step@5 & MRR & agent@3 \\
+\midrule
+Best base scorer ($\gamma{=}0$) & \PH & \PH & \PH & \PH & \PH & \PH \\
+\crr{}                          & \PH & \PH & \PH & \PH & \PH & \PH \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Step-Level Accuracy with Tolerance}
+
+\begin{table}[h]
+\centering
+\footnotesize
+\caption{Step-Level Accuracy with tolerance $\pm1$ and $\pm2$ for the main methods (hand-crafted, Qwen3-8B).}
+\label{tab:tolerance}
+\begin{tabular}{l c c c}
+\toprule
+Method & Exact & $\pm1$ & $\pm2$ \\
+\midrule
+All-at-Once                     & \PH & \PH & \PH \\
+Step-by-Step                    & \PH & \PH & \PH \\
+Binary Search                   & \PH & \PH & \PH \\
+Best base scorer ($\gamma{=}0$) & \PH & \PH & \PH \\
+\crr{}                          & \best{\PH} & \best{\PH} & \best{\PH} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Different Random Split}
+
+\begin{table}[h]
+\centering
+\footnotesize
+\caption{Robustness to the random split. Step-Level Accuracy under a different seed; cf.\ Table~\ref{tab:plugin}.}
+\label{tab:split}
+\begin{tabular}{l l c c c c}
+\toprule
+ & & \multicolumn{2}{c}{Norm} & \multicolumn{2}{c}{SVD} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+Proxy & Subset & Base & $+$\crr{} & Base & $+$\crr{} \\
+\midrule
+Qwen3-8B & Hand-Crafted & \PH & \PH & \PH & \PH \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Single-Pass vs.\ Cascading Discount}
+
+\begin{table}[h]
+\centering
+\footnotesize
+\caption{Effect of reading the original $\Sbase(s_i)$ (single-pass, default) vs.\ the rescored $\Stilde(s_i)$ (cascading) in \eqref{eq:crr}. Step-Level Accuracy, hand-crafted, Qwen3-8B.}
+\label{tab:cascade}
+\begin{tabular}{l c c}
+\toprule
+Variant & Algorithm-Generated & Hand-Crafted \\
+\midrule
+Single-pass (default) & \PH & \PH \\
+Cascading             & \PH & \PH \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Dependency-Weight Source}
+
+\begin{table}[h]
+\centering
+\footnotesize
+\caption{Attention-mass weights (\eqref{eq:weight}) vs.\ hidden-state-similarity weights for $w_{i,t}$. Step-Level Accuracy.}
+\label{tab:weightsrc}
+\begin{tabular}{l c c}
+\toprule
+Weight source & Algorithm-Generated & Hand-Crafted \\
+\midrule
+Hidden-state similarity & \PH & \PH \\
+Attention mass (ours)   & \best{\PH} & \best{\PH} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% \section{Attention Extraction Choices}
+
+% \begin{table}[h]
+% \centering
+% \footnotesize
+% \caption{Post-softmax vs.\ pre-softmax attention, and eager vs.\ SDPA extractor agreement (validation diff $\sim$$10^{-4}$). Step-Level Accuracy and wall-clock per trajectory.}
+% \label{tab:attnchoice}
+% \begin{tabular}{l c c}
+% \toprule
+% Variant & Step-Level Acc & Time / traj.\ (s) \\
+% \midrule
+% Post-softmax, eager (reference) & \PH & \PH \\
+% Post-softmax, SDPA Q/K          & \PH & \PH \\
+% Pre-softmax $QK^\top$           & \PH & \PH \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+
+\section{Context Selection}
+
+\begin{table}[h]
+\centering
+\footnotesize
+\caption{Context selection for representation and attention extraction: all predecessors vs.\ dependency-graph predecessors (hand-crafted only). Step-Level Accuracy.}
+\label{tab:context}
+\begin{tabular}{l c c}
+\toprule
+Context & Base & $+$\crr{} \\
+\midrule
+All predecessors        & \PH & \PH \\
+Dependency graph        & \PH & \PH \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Pooling and Layer Sweep}
+
+\begin{table}[h]
+\centering
+\footnotesize
+\caption{Base-representation pooling ($\phi$) and layer $l^\star$ for the SVD base scorer. Step-Level Accuracy, hand-crafted, Qwen3-8B.}
+\label{tab:layer}
+\begin{tabular}{l c c c c}
+\toprule
+Pooling & early $l^\star$ & mid $l^\star$ & late $l^\star$ & best \\
+\midrule
+Mean & \PH & \PH & \PH & \PH \\
+Last & \PH & \PH & \PH & \PH \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Compute and Efficiency}
+
+\begin{table}[h]
+\centering
+\footnotesize
+\caption{Cost comparison. \crr{} requires one forward pass per step and no training; LLM-as-judge costs are token-dominated. Numbers per the hand-crafted subset.}
+\label{tab:cost}
+\begin{tabular}{l c c c}
+\toprule
+Method & Training & Tokens / traj. & Time / traj.\ (s) \\
+\midrule
+All-at-Once                  & none & \PH & \PH \\
+Step-by-Step                 & none & \PH & \PH \\
+Binary Search                & none & \PH & \PH \\
+Fine-tuned attributor        & \PH  & \PH & \PH \\
+\crr{} (extraction $+$ rescore) & none & \PH & \PH \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% \section{Statistical-Level Attribution}
+
+% \begin{figure}[h]
+% \centering
+% \framebox[\linewidth]{\parbox[c][3.2cm][c]{0.95\linewidth}{\centering\itshape
+% [Figure placeholder: \texttt{fig/agent\_histogram.pdf}]\\[4pt]
+% Histogram of predicted vs.\ ground-truth failure-responsible agents aggregated over the hand-crafted subset, base scorer vs.\ \crr{}.}}
+% \caption{Aggregate (statistical-level) attribution. Even when instance-level localization is hard, the predicted distribution of responsible agents aligns with ground truth.}
+% \label{fig:aghist}
+% \end{figure}
+
+\section{Hybrid with LLM-as-Judge}
+
+\begin{table}[h]
+\centering
+\footnotesize
+\caption{Combining \crr{} with an LLM judge (e.g., restrict the judge to \crr{}'s top-$k$ candidates). Step-Level Accuracy and token cost, hand-crafted.}
+\label{tab:hybrid}
+\begin{tabular}{l c c}
+\toprule
+Method & Step-Level Acc & Tokens / traj. \\
+\midrule
+Step-by-Step (alone)        & \PH & \PH \\
+\crr{} (alone)              & \PH & \PH \\
+\crr{} $\to$ judge (top-$k$) & \best{\PH} & \PH \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Robustness to the SVD Reference}
+
+\begin{table}[h]
+\centering
+\footnotesize
+\caption{Robustness of \crr{} to the source of the SVD reference matrix $R$ (different fitting splits / pooled across subsets). Step-Level Accuracy, hand-crafted.}
+\label{tab:refrobust}
+\begin{tabular}{l c}
+\toprule
+Reference source & Step-Level Acc \\
+\midrule
+In-subset train split  & \PH \\
+Pooled across subsets  & \PH \\
+Held-out trajectories  & \PH \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Qualitative Case Study}
+
+\begin{figure}[h]
+\centering
+\framebox[\linewidth]{\parbox[c][3.6cm][c]{0.95\linewidth}{\centering\itshape
+[Figure placeholder: \texttt{fig/case\_study.pdf}]\\[4pt]
+One hand-crafted trajectory. Per-step base score peaks at a late, contaminated step; \crr{} recenters the peak onto the ground-truth decisive step $t^\star$. Annotate the responsible agent and the inherited-anomaly subtraction.}}
+\caption{Case study illustrating the contamination correction on a single trajectory.}
+\label{fig:case}
+\end{figure}
+\section{Proxy Models and Per-Model Results}
+\label{app:proxies}
+
+We evaluate \crr{} on six proxy models spanning the Qwen and Llama families and scales from 8B to 27B. Table~\ref{tab:proxies} reports the per-model breakdown of the SVD base scorer and \crr{} on both subsets (without ground truth). The SVD base scorer is consistently competitive across models, and \crr{} consistently improves it, confirming that our conclusions are not tied to a single proxy.
+
+\begin{table}[h]
+\centering
+\footnotesize
+\caption{Per-model Step-Level Accuracy (without ground truth), SVD base scorer vs.\ \crr{}. Final model identifiers to be confirmed.}
+\label{tab:proxies}
+\begin{tabular}{l c c c c}
+\toprule
+ & \multicolumn{2}{c}{Algorithm-Generated} & \multicolumn{2}{c}{Hand-Crafted} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Proxy model & Base & $+$\crr{} & Base & $+$\crr{} \\
+\midrule
+Qwen3-8B                       & \PH & \PH & \PH & \PH \\
+Llama-3.1-8B-Instruct          & \PH & \PH & \PH & \PH \\
+DeepSeek-R1-Distill-Llama-8B   & \PH & \PH & \PH & \PH \\
+Qwen3-14B                      & \PH & \PH & \PH & \PH \\
+Qwen-family (larger, $\sim$9B)  & \PH & \PH & \PH & \PH \\
+Qwen-family (larger, $\sim$27B) & \PH & \PH & \PH & \PH \\
+\bottomrule
+\end{tabular}
+\end{table}
