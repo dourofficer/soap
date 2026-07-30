@@ -1,12 +1,32 @@
 % !TeX root = ../main.tex
 % =====================================================================
-% Experiments section — rewrite v2.
-% Changes: Table 1 merges without-/with-GT into one cell ("wo / w");
-% backbone is a separator row (no backbone column); separate w/GT table
-% removed; cross-dataset transfer as a heatmap; "CRR lift across model
-% scales" figure (scalability variant kept commented); analysis is three
-% ablations. Descriptions are purpose/structure only — no results stated.
-% Conventions: \PH placeholder, \best{} best-per-column, \cmark/\xmark.
+% Experiments section — v2.1 (review-comment revision).
+% Descriptions are purpose/structure only — NO result interpretation;
+% \TODO{Results and analysis.} marks every spot where analysis text goes.
+%
+% Conventions:
+%   * Headline metric: Step-Level Accuracy on the test split, mean +- std
+%     over THREE seeds for every dataset (10-seed runs are internal
+%     stability checks only, not reported).
+%   * Method categories everywhere: Prompt-based methods / Trained LLM
+%     attributors / Representation-based methods (OAT, SVD base, RECAP).
+%   * GT policy: each baseline reported under its stronger ground-truth
+%     setting, marked per-cell with \gtmark; \recap{} never uses GT;
+%     full breakdown in Appendix app:gt.
+%   * Ablations: one axis varied, all else fixed to the validation-
+%     selected configuration (stated once in the Analysis preamble).
+%   * Structure: Setup / Main Results / Analysis (synthetic + ablations).
+%
+% Macros required in main.tex:
+%   \newcommand{\recap}{RECAP}
+%   \newcommand{\second}[1]{\underline{#1}}
+%   \newcommand{\gtmark}{$^{\dagger}$}
+% Already defined: \PH, \best{}, \cmark, \xmark, \ms{}{}, \TODO{}.
+%
+% Labels: tab:main, tab:scorers, fig:scale, fig:transfer, tab:synth,
+% tab:attnsel, fig:gamma, fig:layers, fig:bands, fig:datasize.
+% TODO(bib): add an `oat` entry; `raffles`, `graphtracer`, `traceelephant`
+% keys confirmed present.
 % =====================================================================
 \section{Experiments}
 \label{sec:experiments}
@@ -14,210 +34,230 @@
 \subsection{Setup}
 \label{sec:exp:setup}
 
-% \paragraph{Datasets.} We evaluate on four failure-attribution benchmarks, each providing per-trajectory annotations of the decisive-error step and the responsible agent.
-% \textbf{Who\&When}~\citep{whoandwhen}, reported on its two subsets separately: \emph{algorithm-generated} (short trajectories, $\le 10$ steps) and \emph{hand-crafted} (long trajectories, $\sim$$50$ steps on average, up to $130$).
-% \textbf{CORRECT-Error}~\citep{correct}, $2{,}226$ Magentic-One failure trajectories spanning seven tasks (GAIA, HotpotQA, MuSiQue, 2WikiMultihopQA, ARC, MATH-500, MMLU-Pro) and two generator models (GPT-4o-mini, GPT-5-Nano), each labeled with a single decisive error and the task answer; step-level accuracy is scored by strict exact match.
-% \textbf{ElephantTrace}~\citep{elephant} (denoted \emph{Elephant}), $220$ expert-validated failure traces from three multi-agent systems (Captain-Agent, Magentic-One, SWE-Agent) over GAIA, AssistantBench, and SWE-Bench Verified, distinguished by \emph{full-observability} traces (agent inputs and outputs, inter-agent messages, and tool logs) rather than output-only logs.
-% The four benchmarks span short and long trajectories and QA- and code-centric domains, letting us test whether the contamination correction holds beyond a single length or task regime.
-\paragraph{Datasets.} We evaluate on four failure-attribution benchmarks, each providing per-trajectory annotations of the decisive-error step and the responsible agent: \textbf{Who\&When}~\citep{whoandwhen}, \textbf{CORRECT-Error}~\citep{correct}, and \textbf{ElephantTrace}~\citep{elephant} (denoted \emph{Elephant}); see Appendix~\ref{app:datasets} for details. The four benchmarks span short and long trajectories and QA- and code-centric domains, letting us test whether the contamination correction holds beyond a single length or task regime.
-% TODO: confirm exact task names/spellings for CORRECT-Error; confirm citation keys \citep{correct}, \citep{elephant} exist in the .bib.
+\paragraph{Datasets.} We evaluate on three failure-attribution benchmarks comprising five evaluation subsets, each providing per-trajectory annotations of the decisive-error step and the responsible agent: \text{Who\&When}~\citep{whoandwhen}, with its \emph{algorithm-generated} (\text{WW-AG}, 126 trajectories) and \emph{hand-crafted} (\text{WW-HC}, 58) subsets; \text{CORRECT-Error}~\citep{correct} (\text{CE}, 2{,}226 trajectories); and \text{TraceElephant}~\citep{traceelephant}, with its Captain-Agent (\text{TE-Cap}, 85) and Magentic-One (\text{TE-Mag}, 91) subsets. Together they span short and long trajectories, QA- and code-centric domains, and four generating systems. Each subset is partitioned \emph{by trajectory} into train/validation/test splits of $30/20/50\%$. Full dataset statistics and preprocessing details appear in Appendix~\ref{app:datasets}.
 
-\paragraph{Metrics.} Following \citet{whoandwhen}, \textbf{Step-Level Accuracy} and \textbf{Agent-Level Accuracy}. We report Step-Level first throughout, meanwhile tolerance ($\pm1,\pm2$) and ranked-set metrics (step@$k$, MRR) are deferred to the appendix.
+\paragraph{Metrics.} Following \citet{whoandwhen}, our headline metric is \textbf{Step-Level Accuracy}: the fraction of trajectories whose predicted decisive step exactly matches the annotation. Agent-Level Accuracy, ranked-set metrics (step@$k$, MRR), and tolerance variants ($\pm1,\pm2$) are deferred to Appendix~\ref{app:metrics}.
 
-\paragraph{Baselines.} We compare against, in three families:
-(i)~\emph{prompt-based} methods --- \textbf{All-at-Once}, \textbf{Step-by-Step}, \textbf{Binary Search}~\citep{whoandwhen}, the voting method \textbf{ECHO}~\citep{echo}, the schema-retrieval method \textbf{CORRECT}~\citep{correct}, and the dependency-search methods \textbf{FALAT}~\citep{falat} and \textbf{CHIEF}~\citep{chief};
-(ii)~a \emph{trained attributor}, \textbf{AgenTracer}~\citep{agentracer}, fine-tuned on annotated failure trajectories;
-(iii)~an \emph{adapted step-level verifier}, \textbf{Qwen-PRM}, an off-the-shelf process reward model applied zero-shot as a per-step scorer.
-A \textbf{Random} predictor is included as a floor. To ensure a fair comparison, all prompt-based and adapted baselines are reproduced under the same two backbone models used by \crr{} (below), rather than transcribed from their original papers.
-% TODO: confirm \citep{falat},\citep{chief} keys; FALAT and CHIEF are concurrent work — decide whether to also flag them as such in Related Work.
+\paragraph{Baselines.} We compare against three families:
+(i)~\emph{prompt-based methods} --- All-at-Once, Step-by-Step, Binary Search~\citep{whoandwhen}, the voting method ECHO~\citep{echo}, the schema-retrieval method CORRECT~\citep{correct}, the fault-reasoning judge RAFFLES~\citep{raffles}, and the causal-graph method CHIEF~\citep{chief};
+(ii)~\emph{trained LLM attributors} --- AgenTracer~\citep{agentracer} and GraphTracer~\citep{graphtracer}, attributors fine-tuned with reinforcement learning, both reproduced;
+(iii)~a \emph{representation-based method} --- OAT~\citep{oat}, a one-class tracer trained on successful trajectories, the same family as \recap{}.
+Some baselines can additionally be given the ground-truth task answer; for each baseline we report the \emph{stronger} of the two settings, marking cells that use the answer with \gtmark{}, and provide the complete with-/without-GT breakdown in Appendix~\ref{app:gt}. \recap{} never consults the task answer. CORRECT additionally consumes the gold error annotations of other trajectories through its retrieval protocol (footnoted in Table~\ref{tab:main}). A Random predictor, computed analytically from trajectory lengths, is included as a floor.
+% TODO: ECHO is not yet reproduced — finish or cut the row before submission.
 
-\paragraph{Implementation details.} \crr{} reads a proxy language model $\proxy$ that did not generate the trajectories, exposing hidden states and post-softmax attention. We use two backbones throughout, \textbf{Qwen3.5-8B}~\citep{qwen3} and \textbf{DeepSeek-R1-Distill-Llama-8B}~\citep{deepseekr1}; the same two models serve as the judge/proxy for the reproduced baselines. The SVD reference $R$ is fit on a train split; the discount $\gamma$, attention layer band $L^\star$, and SVD component band $\mathcal{C}$ are selected on a held-out validation split and fixed for test. Scores are ranked within each trajectory (\eqref{eq:prediction}); unless noted we report the single validation-selected configuration, mean over runs.
-% TODO: fix exact model IDs and run count (e.g. "over 3 seeds"); state Elephant long-context handling.
+\paragraph{Implementation details.} \recap{} reads a proxy language model $\proxy$ that did not generate the trajectories, exposing hidden states and post-softmax attention. We use two backbones throughout, Qwen3.5-9B~\citep{qwen3} and DeepSeek-R1-Distill-Llama-8B~\citep{deepseekr1}. To ensure a fair comparison, all baselines are reproduced under the same two backbones rather than transcribed from their original papers. The SVD reference $R$ is fit on the train split. All results are reported as mean $\pm$ std over three random seeds, each seed drawing an independent train/validation/test partition.
+% NOTE: 10-seed runs on WW/TE are internal stability checks only.
+% TODO: fix exact model IDs once final.
 
-\subsection{Main results}
+\subsection{Main Results}
 \label{sec:exp:main}
 
-\paragraph{Competitiveness across settings and baselines.} Table~\ref{tab:main} is the central comparison: it places \crr{} against every baseline family on all four benchmarks, under both backbones, and---within each cell---under both the without-ground-truth and with-ground-truth settings, reported as \texttt{[wo-GT] / [w-GT]}. This single table therefore serves two purposes at once: it measures how \crr{} compares to methods that operate on the same information (the without-GT number), and it tests whether \crr{}, which never consults the task answer, remains competitive with baselines that are additionally handed it (the with-GT number). \TODO{Complete reproducing of all baselines, including the w/ GT variants of CRR}
-\TODO{}
+\paragraph{Comparison with competitive baselines.} Table~\ref{tab:main} is the central comparison: it places \recap{} against all three baseline families on all five subsets, under both backbones. Each cell is a single step-level accuracy; baselines whose stronger setting uses the ground-truth answer are marked with \gtmark{} (Appendix~\ref{app:gt} reports both settings), and agent-level results for the same grid appear in Appendix~\ref{app:metrics}. \TODO{Results and analysis.}
+
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.05}
+\caption{Step-level accuracy (\%) across all subsets; mean over three seeds (std in Appendix). Each cell reports a single number: for baselines with a ground-truth-answer variant we show the stronger setting, marked \gtmark{} when the answer is used; the complete with-/without-GT breakdown is in Appendix~\ref{app:gt}. \textbf{TF}: training-free; \textbf{AF}: annotation-free. \recap{} never uses the answer. Best per column in \best{bold}, second best \second{underlined}.}
+\label{tab:main}
+\begin{tabular}{@{}l cc ccccc@{}}
+\toprule
+Method & TF & AF & WW-AG & WW-HC & CE & TE-Cap & TE-Mag \\
+\midrule
+Random & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH \\
+\midrule
+\multicolumn{8}{c}{Backbone: Qwen3.5-9B}\\
+\midrule
+\multicolumn{8}{@{}l}{\textit{Prompt-based methods}}\\
+\quad All-at-Once~\citep{whoandwhen}   & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH \\
+\quad Step-by-Step~\citep{whoandwhen}  & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH \\
+\quad Binary Search~\citep{whoandwhen} & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH \\
+\quad ECHO~\citep{echo}                & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH \\
+\quad CORRECT~\citep{correct}          & \cmark & \xmark & \PH & \PH & \PH & \PH & \PH \\
+\quad RAFFLES~\citep{raffles}          & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH \\
+\quad CHIEF~\citep{chief}              & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH \\
+\addlinespace[2pt]
+\multicolumn{8}{@{}l}{\textit{Trained LLM attributors}}\\
+\quad AgenTracer~\citep{agentracer}    & \xmark & \xmark & \PH & \PH & \PH & \PH & \PH \\
+\quad GraphTracer~\citep{graphtracer}  & \xmark & \xmark & \PH & \PH & \PH & \PH & \PH \\
+\addlinespace[2pt]
+\multicolumn{8}{@{}l}{\textit{Representation-based methods}}\\
+\quad OAT~\citep{oat}                  & \xmark & \cmark & \PH & \PH & \PH & \PH & \PH \\
+\quad SVD base (ours)                  & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH \\
+\quad \recap{} (ours)                  & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH \\
+\midrule
+\multicolumn{8}{c}{Backbone: DeepSeek-R1-Distill-Llama-8B}\\
+\midrule
+\multicolumn{8}{@{}l}{\textit{Prompt-based methods}}\\
+\quad All-at-Once~\citep{whoandwhen}   & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH \\
+\quad Step-by-Step~\citep{whoandwhen}  & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH \\
+\quad Binary Search~\citep{whoandwhen} & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH \\
+\quad ECHO~\citep{echo}                & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH \\
+\quad CORRECT~\citep{correct}          & \cmark & \xmark & \PH & \PH & \PH & \PH & \PH \\
+\quad RAFFLES~\citep{raffles}          & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH \\
+\quad CHIEF~\citep{chief}              & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH \\
+\addlinespace[2pt]
+\multicolumn{8}{@{}l}{\textit{Trained LLM attributors}}\\
+\quad AgenTracer~\citep{agentracer}    & \xmark & \xmark & \PH & \PH & \PH & \PH & \PH \\
+\quad GraphTracer~\citep{graphtracer}  & \xmark & \xmark & \PH & \PH & \PH & \PH & \PH \\
+\addlinespace[2pt]
+\multicolumn{8}{@{}l}{\textit{Representation-based methods}}\\
+\quad OAT~\citep{oat}                  & \xmark & \cmark & \PH & \PH & \PH & \PH & \PH \\
+\quad SVD base (ours)                  & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH \\
+\quad \recap{} (ours)                  & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH \\
+\bottomrule
+\end{tabular}
+% NOTES:
+% - gtmark placement is decided per cell once both settings are measured.
+% - TF/AF marks for RAFFLES and OAT are best guesses — verify.
+% - AgenTracer/GraphTracer AF flags depend on the training-data design; footnote.
+\end{table}
+
+\paragraph{Does the effect of backprop rescoring hold across base scorers?} Table~\ref{tab:scorers} applies the identical rescoring layer on top of three per-step base scorers --- the norm baselines $\ell_1$ and $\ell_2$, and our SVD-projection scorer --- on all five subsets and both backbones, using the same validation and test splits as Table~\ref{tab:main}. Its purpose is to test whether the correction is a property of the rescoring mechanism rather than of one particular scorer; further implementation details are in Appendix~\ref{app:anchors}. \TODO{Results and analysis.}
 
 \begin{table}[t]
 \centering
 \footnotesize
-\setlength{\tabcolsep}{3pt}
-\caption{Failure-attribution accuracy (\%) across all settings. Each cell reports \texttt{[without-GT] / [with-GT]}; an empty second slot marks an inapplicable with-GT setting. All prompt-based and adapted baselines are reproduced under the same two backbone/judge models. \textbf{TF}: training-free (no fine-tuning); \textbf{AF}: annotation-free (no labeled failure-attribution data; \textbf{GT}: given the correct task answer as reference. Best without-GT step-level result per column in \best{bold}.}
-\label{tab:main}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{l c c cc cc cc cc}
+\setlength{\tabcolsep}{2.5pt}
+\caption{Backprop rescoring across base scorers: step-level accuracy (\%) before ($S$) and after ($+\recap{}$) rescoring, on the splits of Table~\ref{tab:main}. The SVD-projection row equals the \recap{} entry of Table~\ref{tab:main} by construction.}
+\label{tab:scorers}
+\begin{tabular}{@{}l cc cc cc cc cc@{}}
 \toprule
- & & & \multicolumn{2}{c}{WW-AG} & \multicolumn{2}{c}{WW-HC} & \multicolumn{2}{c}{Correct-Error} & \multicolumn{2}{c}{ElephantTrace} \\
-\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}\cmidrule(lr){10-11}
-Method & TF & AF & Step & Agent & Step & Agent & Step & Agent & Step & Agent \\
+ & \multicolumn{2}{c}{WW-AG} & \multicolumn{2}{c}{WW-HC} & \multicolumn{2}{c}{CE} & \multicolumn{2}{c}{TE-Cap} & \multicolumn{2}{c}{TE-Mag} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}\cmidrule(lr){10-11}
+Base scorer & $S$ & $+\recap{}$ & $S$ & $+\recap{}$ & $S$ & $+\recap{}$ & $S$ & $+\recap{}$ & $S$ & $+\recap{}$ \\
 \midrule
-Random & \cmark & \cmark & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH \\
+\multicolumn{11}{c}{Backbone: Qwen3.5-9B}\\
 \midrule
-\multicolumn{11}{l}{\emph{Backbone: Qwen3.5-9B}}\\
-\multicolumn{11}{l}{\quad\emph{Prompt-based methods}}\\
-All-at-Once~\citep{whoandwhen}   & \cmark & \cmark & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH \\
-Step-by-Step~\citep{whoandwhen}  & \cmark & \cmark & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH \\
-Binary Search~\citep{whoandwhen} & \cmark & \cmark & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH \\
-ECHO~\citep{echo}                & \cmark & \cmark & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH \\
-CORRECT~\citep{correct}          & \cmark & \xmark & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH \\
-FAMAS~\citep{falat}              & \cmark & \cmark & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH \\
-CHIEF~\citep{chief}              & \cmark & \cmark & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH \\
-\multicolumn{11}{l}{\quad\emph{Trained / adapted}}\\
-AgenTracer~\citep{agentracer}    & \xmark & \xmark & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH \\
-Qwen-PRM (adapted)               & \xmark & \cmark & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH \\
-\multicolumn{11}{l}{\quad\emph{Ours}}\\
-SVD base                         & \cmark & \cmark & 41.8 & 56.6 & 23.0 & 70.1 & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH \\
-\crr{}                           & \cmark & \cmark & 45.0 & 59.3 & 27.6 & 70.1 & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH \\
+Norm $\ell_1$         & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH \\
+Norm $\ell_2$         & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH \\
+SVD projection (ours) & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH \\
 \midrule
-\multicolumn{11}{l}{\emph{Backbone: DeepSeek-R1-Distill-Llama-8B}}\\
-\multicolumn{11}{l}{\quad\emph{Prompt-based methods}}\\
-All-at-Once~\citep{whoandwhen}   & \cmark & \cmark & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH \\
-Step-by-Step~\citep{whoandwhen}  & \cmark & \cmark & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH \\
-Binary Search~\citep{whoandwhen} & \cmark & \cmark & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH \\
-ECHO~\citep{echo}                & \cmark & \cmark & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH \\
-CORRECT~\citep{correct}          & \cmark & \xmark & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH \\
-FAMAS~\citep{falat}              & \cmark & \cmark & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH \\
-CHIEF~\citep{chief}              & \cmark & \cmark & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH \\
-\multicolumn{11}{l}{\quad\emph{Trained / adapted}}\\
-AgenTracer~\citep{agentracer}    & \xmark & \xmark & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH \\
-Qwen-PRM (adapted)               & \xmark & \cmark & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH \\
-% \multicolumn{11}{l}{\quad\emph{Ours}}\\
-% \crr{}                           & \cmark & \cmark & \best{\PH} & \PH & \best{\PH} & \PH & \best{\PH} & \PH & \best{\PH} & \PH \\
-\multicolumn{11}{l}{\quad\emph{Ours}}\\
-SVD base                         & \cmark & \cmark & 35.5 & 48.7 & 26.4 & 64.4 & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH \\
-\crr{}                           & \cmark & \cmark & 40.2 & 54.5 & 31.0 & 62.1 & \PH/\PH & \PH/\PH & \PH/\PH & \PH/\PH \\
-
+\multicolumn{11}{c}{Backbone: DeepSeek-R1-Distill-Llama-8B}\\
+\midrule
+Norm $\ell_1$         & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH \\
+Norm $\ell_2$         & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH \\
+SVD projection (ours) & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH \\
 \bottomrule
-\end{tabular}}
-% NOTES:
-% - Cell format is [without-GT]/[with-GT]. Leave the 2nd slot empty for any method
-%   with no with-GT variant (confirm which of AgenTracer / Qwen-PRM apply).
-% - TF/AF marks for FALAT, CHIEF, Qwen-PRM are best guesses — verify.
-% - Std deviations omitted here for width; report them in an appendix copy.
-% - Best-per-column bold refers to the without-GT step-level number.
+\end{tabular}
 \end{table}
 
-\paragraph{Cross-dataset transferability.} Figure~\ref{fig:transfer} probes whether the correction is specific to the benchmark it was tuned on. We fit the SVD reference and select $\gamma$ on a \emph{source} dataset and evaluate on a \emph{target} dataset, sweeping all source--target pairs among the four benchmarks. \TODO{Insert actual results analysis, the figure will be a heatmap}
+\paragraph{Scalability to larger backbones.} Figure~\ref{fig:scale} evaluates whether the methods scale with the backbone model, comparing \recap{} (and its base scorer) against one representative per baseline family --- All-at-Once (prompt-based), AgenTracer (trained), and OAT (representation-based) --- with every method instantiated on Qwen3.5-9B, Qwen3.5-14B, and Qwen3.5-27B. Staying within one model family isolates the effect of scale. Evaluation is on WW-AG and WW-HC. \TODO{Results and analysis.}
+% TODO: confirm All-at-Once as the prompting representative (most stable per Who&When).
+
+\begin{figure}[t]
+\centering
+\framebox[\linewidth]{\parbox[c][3.4cm][c]{0.95\linewidth}{\centering\itshape
+[Figure placeholder: \texttt{fig/scalability.pdf}]\\[4pt]
+Step-level accuracy vs.\ backbone scale (9B $\to$ 14B $\to$ 27B, Qwen3.5 family); one line per method (\recap{}, SVD base, All-at-Once, AgenTracer, OAT); one panel per subset (WW-AG, WW-HC); shaded $\pm1$ std over seeds.}}
+\caption{Scalability of \recap{} and representative baselines to larger backbones.}
+\label{fig:scale}
+\end{figure}
+
+\paragraph{Does \recap{} generalize across data distributions?} Figure~\ref{fig:transfer} probes whether a fitted \recap{} is specific to the distribution it was tuned on. For each source--target pair among the five subsets, we fit the SVD reference on the \emph{source's} train split and freeze the source's selected configuration, then evaluate on the \emph{target's} test split; dependency weights are always computed from the target trajectories' own attention. The diagonal therefore reproduces the in-domain setting. Backbone: Qwen3.5-9B. \TODO{Results and analysis.}
 
 \begin{figure}[t]
 \centering
 \framebox[\linewidth]{\parbox[c][3.8cm][c]{0.95\linewidth}{\centering\itshape
 [Figure placeholder: \texttt{fig/cross\_dataset\_heatmap.pdf}]\\[4pt]
-Heatmap of step-level accuracy: rows $=$ source dataset (SVD reference and $\gamma$ fitted here), columns $=$ target dataset (evaluated here); diagonal $=$ in-domain. Backbone $=$ Qwen3.5-8B.}}
-\caption{Cross-dataset transferability of \crr{} across source--target pairs.}
+$5\times5$ heatmap of step-level accuracy: rows $=$ source subset (reference and configuration fitted here), columns $=$ target subset (evaluated here); diagonal $=$ in-domain. Backbone $=$ Qwen3.5-9B.}}
+\caption{Cross-distribution generalization of \recap{} across source--target subset pairs.}
 \label{fig:transfer}
 \end{figure}
 
-\paragraph{Consistency of the \crr{} improvement across model scales.} Figure~\ref{fig:scale} isolates the contribution of the rescoring as the proxy grows. Fixing the SVD base scorer, we plot base vs.\ $+$\crr{} step-level accuracy across a range of proxy scales, as a grouped-bar (column) figure with one pair of bars per model. Its purpose is to show that the correction is a property of the method rather than of a single backbone size---i.e.\ that \crr{} improves the base scorer consistently from the 8B backbones up to the largest proxies considered. \TODO{Insert actual results analysis}
-% TODO: fix the model set spanning scales, e.g. Qwen3.5-8B, DeepSeek-R1-Distill-Llama-8B,
-%       Qwen3.5-27B, DeepSeek-R1-Distill-Qwen-32B; pick the reported subset (or average).
+\paragraph{Fitting the reference on synthetic trajectories.} The reference $R$ requires only \emph{unlabeled} trajectories, which raises the fully self-contained scenario in which no corpus from the target system is available for fitting. Table~\ref{tab:synth} evaluates this scenario on all five subsets: we replace the train-split trajectories with synthetic ones generated by a multi-agent harness and fit $R$ on them, keeping the validation and test splits of Table~\ref{tab:main} unchanged. We test two generators: (1)~the proxy model itself, Qwen3.5-9B, and (2)~a stronger model, Qwen3.5-35B-A3B, probing whether higher-quality generation yields better accuracy. Unlike the benchmark corpora, which contain failures only, the generated trajectories are used as-is, regardless of task success. Generation details are in Appendix~\ref{app:synth}. \TODO{Results and analysis.}
 
-\begin{figure}[t]
+\begin{table}[t]
 \centering
-\framebox[\linewidth]{\parbox[c][3.0cm][c]{0.95\linewidth}{\centering\itshape
-[Figure placeholder: \texttt{fig/crr\_lift\_across\_scales.pdf}]\\[4pt]
-Grouped bars of step-level accuracy, base scorer vs.\ $+$\crr{}, one pair per proxy scale (8B$\to$32B).}}
-\caption{The \crr{} improvement over the base scorer holds across model scales.}
-\label{fig:scale}
-\end{figure}
-
-% ---------------------------------------------------------------------
-% ALTERNATIVE to the figure above: pure scalability to larger LLMs.
-% Uncomment to use INSTEAD of "Consistency of the CRR improvement across scales".
-% ---------------------------------------------------------------------
-% \paragraph{Scalability to larger LLMs.} To assess scalability, Figure~\ref{fig:scale-alt}
-% evaluates \crr{} on larger reasoning models---Qwen3.5-27B and DeepSeek-R1-Distill-Qwen-32B---
-% and, where compute and faithful baseline reproduction permit, compares \crr{} against the
-% baselines at these scales. It is reported as a column figure over model size. Its purpose is
-% to verify that \crr{}'s accuracy is retained (or improves) as the proxy scales up.
-% \begin{figure}[t]
-% \centering
-% \framebox[\linewidth]{\parbox[c][3.0cm][c]{0.95\linewidth}{\centering\itshape
-% [Figure placeholder: \texttt{fig/scalability\_larger\_llms.pdf}]\\[4pt]
-% Step-level accuracy vs.\ proxy size for \crr{} (and, if available, baselines) on
-% Qwen3.5-27B and DeepSeek-R1-Distill-Qwen-32B.}}
-% \caption{Scalability of \crr{} to larger reasoning models.}
-% \label{fig:scale-alt}
-% \end{figure}
+\footnotesize
+\setlength{\tabcolsep}{2.5pt}
+\caption{Fitting the SVD reference on real vs.\ synthetic trajectories: step-level accuracy (\%) before ($S$) and after ($+\recap{}$) rescoring, backbone Qwen3.5-9B. Only the reference-fit corpus changes; validation and test splits are those of Table~\ref{tab:main}.}
+\label{tab:synth}
+\begin{tabular}{@{}l cc cc cc cc cc@{}}
+\toprule
+ & \multicolumn{2}{c}{WW-AG} & \multicolumn{2}{c}{WW-HC} & \multicolumn{2}{c}{CE} & \multicolumn{2}{c}{TE-Cap} & \multicolumn{2}{c}{TE-Mag} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}\cmidrule(lr){10-11}
+Reference corpus & $S$ & $+\recap{}$ & $S$ & $+\recap{}$ & $S$ & $+\recap{}$ & $S$ & $+\recap{}$ & $S$ & $+\recap{}$ \\
+\midrule
+Real (train split)             & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH \\
+Synthetic (Qwen3.5-9B)         & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH \\
+Synthetic (Qwen3.5-35B-A3B)    & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH & \PH \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{Analysis}
 \label{sec:exp:analysis}
 
-\paragraph{SVD base-scorer hyperparameters.} \TODO{put at the end of this section.} We study the four design choices of the base scorer that \crr{} wraps, i.e., representation pooling, layer position, singular-vector selection, and mean-centering. For each value of the hyperparameter under study we select the best remaining hyperparameters and report accuracy at that setting. Each hyperparameter is shown as one panel of Figure~\ref{fig:svd}, and within every panel we plot \emph{both} the base scorer and $+$\crr{}. \TODO{Insert actual results analysis}
+The remaining analyses ablate the individual components of \recap{}, all under the same protocol: starting from the validation-selected configuration of Table~\ref{tab:main} (Appendix~\ref{app:anchors}), we vary exactly one axis and hold every other hyperparameter fixed; the anchor's own value therefore appears as one point of every sweep and coincides with the main-table result. Unless stated otherwise, ablations use backbone Qwen3.5-9B on WW-AG and WW-HC; DeepSeek-8B mirrors are in Appendix~\ref{app:deepseek-ablations}.
 
-\begin{figure}[t]
-\centering
-\framebox[\linewidth]{\parbox[c][4.2cm][c]{0.95\linewidth}{\centering\itshape
-[Figure placeholder: \texttt{fig/svd\_hparams.pdf}]\\[4pt]
-Four panels---(a) pooling $\phi$, (b) layer position, (c) singular-vector selection $\mathcal{C}$, (d) centering on/off. Each panel: step-level accuracy of Base vs.\ $+$\crr{}, with the plotted hyperparameter varied and the remaining ones fixed to their validation-best. Backbone $=$ Qwen3.5-8B.}}
-\caption{Retrospective ablation of the SVD base-scorer hyperparameters, with the \crr{} lift overlaid.}
-\label{fig:svd}
-\end{figure}
-
-\paragraph{Discounting function.} \TODO{should be at top} We ablate the two components of the correction---the construction of the attention-derived dependency weights $w_{i,t}$ and the discount strength $\gamma$---and report each across both backbones and both Who\&When subsets. The continuous $\gamma$ sweep is shown as a line figure (Figure~\ref{fig:gamma}); the discrete attention-weight-selection variants are shown as a compact table (Table~\ref{tab:attnsel}) over the same four conditions. \TODO{Insert actual results analysis}
-
-\begin{figure}[t]
-\centering
-\framebox[\linewidth]{\parbox[c][3.2cm][c]{0.95\linewidth}{\centering\itshape
-[Figure placeholder: \texttt{fig/gamma\_sweep.pdf}]\\[4pt]
-Step-level accuracy vs.\ discount strength $\gamma\in[0,1]$, one line per backbone, one panel per subset; $\gamma{=}0$ recovers the base scorer.}}
-\caption{Sensitivity to the discount strength $\gamma$ across models and subsets.}
-\label{fig:gamma}
-\end{figure}
+\paragraph{Context window of the dependency weights.} Table~\ref{tab:attnsel} varies how many predecessor steps each step's dependency weights cover: only the $w$ highest-attention predecessors are kept (renormalized), $w \in \{1,3,5,\text{all}\}$, compared against uniform weights over all predecessors and the immediate predecessor only. \TODO{Results and analysis.}
 
 \begin{table}[t]
 \centering
 \footnotesize
 \setlength{\tabcolsep}{4pt}
-\caption{Attention-weight construction for $w_{i,t}$, across both backbones and both subsets. Step-Level Accuracy.}
+\caption{Context window of the dependency weights: step-level accuracy (\%), all other hyperparameters fixed to the validation-selected configuration. The anchor's setting is marked $^{\star}$ once known.}
 \label{tab:attnsel}
 \begin{tabular}{l cc cc}
 \toprule
- & \multicolumn{2}{c}{Qwen3.5-8B} & \multicolumn{2}{c}{DeepSeek-8B} \\
+ & \multicolumn{2}{c}{Qwen3.5-9B} & \multicolumn{2}{c}{DeepSeek-8B} \\
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}
-Weight construction & Alg.-gen & Hand-craft & Alg.-gen & Hand-craft \\
+Weight construction & WW-AG & WW-HC & WW-AG & WW-HC \\
 \midrule
-Attention-mass, renormalized (\crr{}) & \PH & \PH & \PH & \PH \\
-Uniform over predecessors             & \PH & \PH & \PH & \PH \\
-Immediate predecessor only            & \PH & \PH & \PH & \PH \\
+Attention mass, top-$w{=}1$      & \PH & \PH & \PH & \PH \\
+Attention mass, top-$w{=}3$      & \PH & \PH & \PH & \PH \\
+Attention mass, top-$w{=}5$      & \PH & \PH & \PH & \PH \\
+Attention mass, all predecessors & \PH & \PH & \PH & \PH \\
+\midrule
+Uniform over predecessors        & \PH & \PH & \PH & \PH \\
+Immediate predecessor only       & \PH & \PH & \PH & \PH \\
 \bottomrule
 \end{tabular}
-% TODO: align rows with the exact weight variants you ablate (e.g., attention-layer band).
 \end{table}
 
-\paragraph{Quantity of unlabeled reference data.} Because the SVD reference is fit on \emph{unlabeled} trajectories, we study how the amount of reference data affects the scorer. Fixing the test split at $50\%$, we vary the fraction of unlabeled data used to fit the reference from $10\%$ to $40\%$, applied to both the algorithm-generated and hand-crafted subsets, and report base vs.\ $+$\crr{} step-level accuracy (Figure~\ref{fig:datasize}). The purpose is to characterise the data-efficiency of the base scorer and whether the \crr{} lift is preserved in the low-reference-data regime, without requiring any labels. \TODO{Insert actual results analysis}
+\paragraph{Propagation strength $\gamma$.} Figure~\ref{fig:gamma} sweeps the propagation strength $\gamma \in [0,1]$; $\gamma{=}0$ recovers the base scorer exactly, providing the reference level in each panel. This is the one ablation shown for both backbones, as sensitivity to $\gamma$ across models is itself of interest. \TODO{Results and analysis.}
 
-\TODO{add synthetic data experiment}
+\begin{figure}[t]
+\centering
+\framebox[\linewidth]{\parbox[c][3.2cm][c]{0.95\linewidth}{\centering\itshape
+[Figure placeholder: \texttt{fig/gamma\_sweep.pdf}]\\[4pt]
+Step-level accuracy vs.\ propagation strength $\gamma\in[0,1]$; one line per backbone, one panel per subset (WW-AG, WW-HC); $\gamma{=}0$ marks the base scorer; shaded $\pm1$ std over seeds.}}
+\caption{Sensitivity of \recap{} to the propagation strength $\gamma$.}
+\label{fig:gamma}
+\end{figure}
+
+\paragraph{Representation layer position.} Figure~\ref{fig:layers} varies the layer $l^\star$ from which per-step representations are pooled, from the embedding layer through every transformer block to the final normed states, and reports the \emph{final} (post-rescoring) accuracy at each position alongside the base scorer, with the mid-depth layer ensemble shown as a reference. A companion panel varies the attention layer band $L^\star$ used to build the dependency weights, which is a distinct axis. \TODO{Results and analysis.}
+
+\begin{figure}[t]
+\centering
+\framebox[\linewidth]{\parbox[c][3.4cm][c]{0.95\linewidth}{\centering\itshape
+[Figure placeholder: \texttt{fig/layer\_sweep.pdf}]\\[4pt]
+(a) Step-level accuracy vs.\ representation layer index (embedding $\to$ final), lines for Base and $+\recap{}$, layer-ensemble anchor as a horizontal reference; panels WW-AG / WW-HC. (b) Companion bars: accuracy per attention layer band $L^\star$. Backbone $=$ Qwen3.5-9B.}}
+\caption{Effect of the representation layer and the attention layer band on \recap{}.}
+\label{fig:layers}
+\end{figure}
+
+\paragraph{Selection of singular vectors.} Figure~\ref{fig:bands} varies the singular-vector band $\mathcal{C} = [c_{\text{begin}}, c_{\text{end}})$ over all contiguous bands and reports final accuracy per band as a triangular heatmap, with the validation-selected band marked. Shown for WW-HC; WW-AG appears in Appendix~\ref{app:deepseek-ablations}. \TODO{Results and analysis.}
+
+\begin{figure}[t]
+\centering
+\framebox[\linewidth]{\parbox[c][3.4cm][c]{0.95\linewidth}{\centering\itshape
+[Figure placeholder: \texttt{fig/band\_heatmap.pdf}]\\[4pt]
+Triangular heatmap of step-level accuracy over $(c_{\text{begin}}, c_{\text{end}})$, all contiguous bands within the leading $20$ components; anchor band outlined. Subset $=$ WW-HC, backbone $=$ Qwen3.5-9B.}}
+\caption{Effect of the singular-vector band $\mathcal{C}$ on \recap{}.}
+\label{fig:bands}
+\end{figure}
+
+\paragraph{Quantity of unlabeled reference data.} Because the reference is fit on unlabeled trajectories, Figure~\ref{fig:datasize} characterizes data efficiency: with the validation ($20\%$) and test ($50\%$) splits fixed as in the main setting, we fit $R$ on random subsamples of the train split covering $\{10, 20, 30\}\%$ of the corpus (per-seed subsampling), and report base and rescored accuracy at each fraction. \TODO{Results and analysis.}
+% NOTE: WW-HC has 58 trajectories, so the 10% point fits on ~6 — expect wide std; show it.
 
 \begin{figure}[t]
 \centering
 \framebox[\linewidth]{\parbox[c][3.0cm][c]{0.95\linewidth}{\centering\itshape
 [Figure placeholder: \texttt{fig/unlabeled\_data\_size.pdf}]\\[4pt]
-Step-level accuracy vs.\ fraction of unlabeled reference data ($10\%\to40\%$), test fixed at $50\%$; one panel per subset (algorithm-generated, hand-crafted), Base vs.\ $+$\crr{}.}}
-\caption{Effect of unlabeled reference-data quantity on the base scorer and \crr{}.}
+Step-level accuracy vs.\ fraction of the corpus used to fit the reference ($10\%\to30\%$), validation ($20\%$) and test ($50\%$) fixed; lines for Base and $+\recap{}$; panels WW-AG / WW-HC; backbone $=$ Qwen3.5-9B.}}
+\caption{Effect of the quantity of unlabeled reference data.}
 \label{fig:datasize}
 \end{figure}
-% TODO: hand-crafted has only 58 trajectories (10% ~ 6); consider whether the low end
-% is meaningful or should start at a higher fraction.
-
-% ---------------------------------------------------------------------
-% NOTE: the "effect of the rescoring function" figures from the prior plan
-% (offset histogram + average-lift bar) are NOT in this 5.3 structure.
-% If you still want them, uncomment below (or move the offset histogram to
-% contamination.tex). Description kept purpose-only.
-% ---------------------------------------------------------------------
-% \paragraph{Effect of the rescoring function.} To isolate what the rescoring buys over the
-% base scorer, Figure~\ref{fig:rescore}(a) shows the population-level prediction-offset
-% distribution $\hat t - t^\star$ for base vs.\ \crr{}, and (b) the average per-sample lift of
-% \crr{} over the base scorer.
-% \begin{figure}[t]
-% \centering
-% \framebox[\linewidth]{\parbox[c][3.8cm][c]{0.95\linewidth}{\centering\itshape
-% [Figure placeholder: \texttt{fig/rescoring\_effect.pdf}]\\[4pt]
-% (a) Prediction-offset histogram $\hat t - t^\star$, base vs.\ \crr{}. (b) Average per-sample
-% step-level lift of \crr{} over the base scorer. Backbone $=$ Qwen3.5-8B.}}
-% \caption{Effect of the rescoring function.}
-% \label{fig:rescore}
-% \end{figure}

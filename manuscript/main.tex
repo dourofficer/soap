@@ -5,7 +5,7 @@
 % Optional math commands from https://github.com/goodfeli/dlbook_notation.
 \input{math_commands.tex}
 
-\usepackage{hyperref}
+% \usepackage{hyperref} 
 \usepackage{url}
 \usepackage{amsmath,amssymb}
 \usepackage{amsthm}
@@ -19,12 +19,37 @@
 \newcommand{\xmark}{\ding{55}}
 \newcommand{\best}[1]{\textbf{#1}}
 \newcommand{\crr}{CRR}
+\newcommand{\recap}{\textsc{ReCAP}}
 \newcommand{\traj}{\tau}
 \newcommand{\Sbase}{S}
 \newcommand{\Stilde}{\widetilde{S}}
 \newcommand{\proxy}{\mathcal{M}}
 \newcommand{\ms}[2]{\ensuremath{#1_{\,\pm #2}}}
 \newcommand{\TODO}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
+\newcommand{\note}[1]{\textcolor{blue}{[Finn: #1]}} 
+
+\definecolor{greyC}{RGB}{180,180,180}
+\definecolor{greyL}{RGB}{235,235,235}
+\definecolor{Gray}{gray}{0.9}
+
+\definecolor{mydarkred}{rgb}{0.6,0,0}
+\definecolor{myblue}{HTML}{268BD2}
+\definecolor{mygreen}{HTML}{658354}
+\definecolor{orangeinplot}{HTML}{e29c7a}
+\definecolor{purpleinplot}{HTML}{7676a4}
+\definecolor{greeninplot}{HTML}{288308}
+\definecolor{mydarkblue}{rgb}{0,0.08,0.45}
+
+
+
+% \SetKwInOut{KwRequire}{Require}
+% \SetKwInOut{KwEnsure}{Ensure}
+% \DontPrintSemicolon
+
+\usepackage[colorlinks,
+linkcolor=mydarkred,
+citecolor=myblue]{hyperref}
+
 
 \newtheorem{proposition}{Proposition}
 \newtheorem{assumption}{Assumption}
@@ -104,8 +129,8 @@ acknowledgments, including those to funding agencies, go at the end of the paper
 \bibliography{iclr2026_conference}
 \bibliographystyle{iclr2026_conference}
 
-\appendix
-\include{sections/appendix}
+% \appendix
+% \include{sections/appendix}
 
 
 \end{document}
