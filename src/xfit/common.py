@@ -27,9 +27,90 @@ def load_config(overrides: list[str] | None = None) -> dict:
     return load_yaml(CONFIG_PATH, overrides)
 
 
-def source_tag(source: str) -> str:
-    """Split-tag naming every xfit-derived root, e.g. ``captain-qwen9b`` -> ``xfit-captain-qwen9b``."""
-    return f"xfit-{source}"
+# ── evaluation setting (legacy ceiling test vs paper protocol) ───────────────
+REAL_SOURCE = "real"    # pseudo-source: fit on the target's OWN train split
+
+PAPER_DEFAULTS = {
+    "tag_prefix": "xfitp", "fit": "aligned", "real_row": True, "assert_real": "error",
+    "convention": "test", "base_table_convention": "test",
+    "seed_policy": "main-top3", "seeds": [1, 2, 3], "ensemble": True,
+    "table_scorers": ["proj"], "targets": {},
+}
+_PAPER_CHOICES = {
+    "fit": ("aligned", "all"), "assert_real": ("error", "warn", "off"),
+    "convention": ("test", "val"), "base_table_convention": ("test", "val"),
+    "seed_policy": ("main-top3", "literal"),
+}
+
+
+def setting(cfg: dict) -> str:
+    s = cfg.get("setting", "legacy")
+    if s not in ("legacy", "paper"):
+        raise SystemExit(f"setting must be legacy|paper, got {s!r}")
+    return s
+
+
+def paper_cfg(cfg: dict) -> dict:
+    """``cfg['paper']`` with defaults filled and enum knobs validated."""
+    pc = {**PAPER_DEFAULTS, **(cfg.get("paper") or {})}
+    for key, choices in _PAPER_CHOICES.items():
+        if pc[key] not in choices:
+            raise SystemExit(f"paper.{key} must be one of {choices}, got {pc[key]!r}")
+    return pc
+
+
+def paper_targets(cfg: dict):
+    """Yield (harness, dataset, subset) over the paper-eligible targets."""
+    for harness, tgts in paper_cfg(cfg)["targets"].items():
+        for tgt in tgts:
+            yield harness, tgt["dataset"], tgt["subset"]
+
+
+def paper_jobs(cfg: dict):
+    """Yield (source, dataset, subset) for every paper cell: the Real pseudo-source
+    (once per target, first — its reductions gate everything in ``verify``), then the
+    harness-matched synthetic generators."""
+    pc = paper_cfg(cfg)
+    for harness, dataset, subset in paper_targets(cfg):
+        if pc["real_row"]:
+            yield REAL_SOURCE, dataset, subset
+        for gen in ("q9", "q35"):
+            source = cfg["sources"].get(harness, {}).get(gen)
+            if source:
+                yield source, dataset, subset
+
+
+def paper_seeds(cfg: dict, dataset: str) -> list[int]:
+    """The seeds a paper run computes and the table averages.
+
+    ``literal`` — ``paper.seeds`` as given. ``main-top3`` — reproduce the extended main
+    table's selection exactly (top-3 seeds by mean disc_step_acc_test over the in-dist
+    ``crr_ext_proj_test.tsv`` cells), so the Real row's mean equals ``results_extended``.
+    """
+    pc = paper_cfg(cfg)
+    if pc["seed_policy"] == "literal":
+        return [int(s) for s in pc["seeds"]]
+    from ..reports.main_table import SUBSET_DISPLAY, _selection_cells, _choose_seeds
+    m = dict(load_manifest(dataset))
+    m["dataset"] = dataset
+    selected, have = _selection_cells(m, SUBSET_DISPLAY[dataset], "crr_ext_proj_test.tsv")
+    if not have:
+        raise SystemExit(
+            f"paper.seed_policy=main-top3 needs the in-dist reduced tables for {dataset} "
+            f"(crr_ext_proj_test.tsv) — run the main pipeline first, or use literal seeds.")
+    return sorted(_choose_seeds(selected, 3))
+
+
+def source_tag(source: str, cfg: dict | None = None) -> str:
+    """Split-tag naming every xfit-derived root.
+
+    Legacy (default): ``captain-qwen9b`` -> ``xfit-captain-qwen9b``. Under the paper
+    setting the prefix comes from ``paper.tag_prefix`` (default ``xfitp``) so the two
+    settings' outputs coexist on disk and can never silently mix.
+    """
+    if cfg is None or setting(cfg) != "paper":
+        return f"xfit-{source}"
+    return f"{paper_cfg(cfg)['tag_prefix']}-{source}"
 
 
 def synth_reps_dir(proxy: str, source: str) -> Path:

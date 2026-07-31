@@ -16,6 +16,9 @@ base reductions (default + per-scorer ``ext_<scorer>`` variants) via ``reduce_ba
 """
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 import pandas as pd
 import torch
 from tqdm.auto import tqdm
@@ -24,10 +27,13 @@ from ..common import paths
 from ..metrics import KeeperContext
 from ..stores import load_representations, split_files, split_data, list_rep_files
 from ..score.svd import fit_one, score_from_entry, N_COMPONENTS
+from ..score.ensemble import member_positions, ensemble_rows
 from ..score.run import OUT_COLS
 from ..reports.reduce import reduce_base
+from . import align, prov
 from .common import (load_config, source_tag, synth_reps_dir, synth_data_dir,
-                     iter_sources, targets_for, target_cfg)
+                     iter_sources, targets_for, target_cfg,
+                     setting, paper_cfg, paper_jobs, paper_seeds, REAL_SOURCE)
 
 
 # ── synthetic SVD entries (fit once per proxy x source) ──────────────────────
@@ -99,9 +105,122 @@ def score_target(proxy, source, dataset, subset, entries, cfg, device, force=Fal
             torch.cuda.empty_cache()
 
 
+# ── paper setting: per-(target, seed) fits with the standard 325 partition ───
+def fit_entries_files(rep_dir, data_dir, files, poolings, n_comp, device):
+    """Fit every (pooling, position) on a file subset; also return the loaded stores
+    (the ensemble's z-statistics come from the fit corpus, so the raw R is needed)."""
+    reps = load_representations(rep_dir, data_dir, poolings=poolings, files=files,
+                                device=device)
+    entries = {(p, pos): fit_one(reps.stores[(p, pos)].R, n_comp)
+               for p in poolings for pos in reps.positions()}
+    return entries, reps
+
+
+def _align_path(tcfg, subset, seed) -> Path:
+    return paths.scores_root(tcfg) / "_align" / f"{subset}-seed{seed}.json"
+
+
+def resolve_fit(proxy, source, dataset, subset, seed, parts, cfg,
+                rep_dir, data_dir, record_align=False):
+    """(fit_rep_dir, fit_data_dir, fit_files) for one paper cell.
+
+    Real pseudo-source -> the target's own train split (exactly the main pipeline's
+    fit). Synthetic -> the question-aligned per-seed subsample (or the whole fit pool
+    under ``paper.fit: all``)."""
+    pc = paper_cfg(cfg)
+    if source == REAL_SOURCE:
+        return rep_dir, data_dir, list(parts["train"])
+    s_rep, s_data = synth_reps_dir(proxy, source), synth_data_dir(source)
+    if pc["fit"] == "all":
+        return s_rep, s_data, None
+    stems = [Path(f).stem for f in parts["train"]]
+    json_files, report = align.fit_files(dataset, subset, seed, source, stems, cfg["pools"])
+    tcfg = target_cfg(dataset, subset, cfg, split_tag=source_tag(source, cfg))
+    p = _align_path(tcfg, subset, seed)
+    if record_align:
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(json.dumps(report, indent=2))
+    elif p.exists():
+        recorded = json.loads(p.read_text())["files"]
+        assert recorded == json_files, (
+            f"alignment drift for {dataset}/{subset} seed={seed} source={source}: "
+            f"recomputed fit set differs from the one the score stage recorded ({p})")
+    return s_rep, s_data, [f.replace(".json", ".safetensors") for f in json_files]
+
+
+def score_target_paper(proxy, source, dataset, subset, cfg, device, force=False) -> list:
+    pc = paper_cfg(cfg)
+    tcfg = target_cfg(dataset, subset, cfg, split_tag=source_tag(source, cfg))
+    methods, poolings = cfg["methods"], cfg["poolings"]
+    ks, n_comp = cfg["ks"], cfg.get("n_components", N_COMPONENTS)
+
+    rep_dir = paths.reps_root(tcfg) / proxy / subset
+    data_dir = paths.data_root(tcfg) / subset
+    files = list_rep_files(rep_dir)
+
+    written = []
+    for seed in paper_seeds(cfg, dataset):
+        out = paths.scores_root(tcfg) / proxy / subset / f"seed-{seed}.tsv"
+        if out.exists() and not force:
+            print(f"[skip] {out}")
+            continue
+
+        parts = split_files(files, tcfg["splits"], seed)   # the standard 325 partition
+        fit_dir, fit_data, fit_fl = resolve_fit(proxy, source, dataset, subset, seed,
+                                                parts, cfg, rep_dir, data_dir,
+                                                record_align=True)
+        entries, fit_reps = fit_entries_files(fit_dir, fit_data, fit_fl,
+                                              poolings, n_comp, device)
+
+        load = lambda fl: load_representations(rep_dir, data_dir, poolings=poolings,
+                                               files=fl, device=device)
+        val, test = load(parts["val"]), load(parts["test"])
+        val_ctx, test_ctx = KeeperContext(val.keeper), KeeperContext(test.keeper)
+        positions = val.positions()
+        missing = [(p, pos) for p in poolings for pos in positions
+                   if (p, pos) not in entries]
+        if missing:
+            raise SystemExit(f"fit {source}/{proxy} missing positions {missing[:3]}...")
+
+        # Same emission structure as src.score.run: positions, then (if enabled) the
+        # ens-mid3 rows appended per pooling — ordering is load-bearing for the
+        # stable-sort tie-breaks the Real-row assert depends on.
+        rows = []
+        for pooling in poolings:
+            fits = {}
+            for position in positions:
+                entry = entries[(pooling, position)]
+                fits[position] = entry
+                rows += score_from_entry(
+                    pooling, position, entry,
+                    val.stores[(pooling, position)].R, test.stores[(pooling, position)].R,
+                    val_ctx, test_ctx, methods, [False], ks,
+                    n_components=n_comp, device=None)
+            if pc["ensemble"]:
+                members = member_positions(positions)
+                rows += ensemble_rows(
+                    pooling, members, fits,
+                    {p: fit_reps.stores[(pooling, p)].R for p in members},
+                    {p: val.stores[(pooling, p)].R for p in members},
+                    {p: test.stores[(pooling, p)].R for p in members},
+                    val_ctx, test_ctx, methods, [False], ks, n_components=n_comp)
+        for r in rows:
+            r["seed"] = seed
+        df = pd.DataFrame(rows)[OUT_COLS].sort_values(
+            "step_acc_test", ascending=False, kind="mergesort")
+        out.parent.mkdir(parents=True, exist_ok=True)
+        df.to_csv(out, sep="\t", index=False)
+        written.append(out)
+        print(f"  wrote {out}  ({len(df)} rows)")
+        del val, test, entries, fit_reps
+        if device.startswith("cuda"):
+            torch.cuda.empty_cache()
+    return written
+
+
 # ── base reductions for one target under a synthetic fit ─────────────────────
 def reduce_target(source, dataset, subset, cfg) -> None:
-    tag = source_tag(source)
+    tag = source_tag(source, cfg)
     # default reduction -> base_{test,val} + base_by_method_{test,val} (feeds the SVD cell).
     reduce_base(target_cfg(dataset, subset, cfg, split_tag=tag,
                            headline_methods=list(cfg["methods"])))
@@ -111,12 +230,54 @@ def reduce_target(source, dataset, subset, cfg) -> None:
                                headline_methods=[scorer], variant=f"ext_{scorer}"))
 
 
+def run_paper(cfg, only_proxy=None, only_source=None, only_dataset=None,
+              device="cuda", force=False, do_score=True, do_reduce=True) -> None:
+    """Paper-setting score phase: one SVD fit per (proxy, source|real, target, seed)."""
+    if device == "cuda" and not torch.cuda.is_available():
+        device = "cpu"
+    proxies = [only_proxy] if only_proxy else list(cfg["proxies"])
+    jobs = [(s, d, sub) for s, d, sub in paper_jobs(cfg)
+            if only_source in (None, s) and only_dataset in (None, d)]
+    if not jobs:
+        print("[paper] no jobs after narrowing")
+        return
+    outputs_by_ds: dict[str, list] = {}
+    if do_score:
+        # guard BEFORE scoring: a knob change over a half-populated tag must refuse,
+        # not silently mix skipped old TSVs with a fresh stamp.
+        for source, dataset, subset in jobs:
+            tcfg = target_cfg(dataset, subset, cfg, split_tag=source_tag(source, cfg))
+            prov.ensure_tag_config(paths.scores_root(tcfg), cfg, force=force)
+        for proxy in proxies:
+            for source, dataset, subset in tqdm(jobs, desc=f"paper/{proxy}", leave=False):
+                print(f"== paper fit {proxy} on {source} -> {dataset}/{subset} ==")
+                written = score_target_paper(proxy, source, dataset, subset, cfg,
+                                             device, force=force)
+                outputs_by_ds.setdefault(dataset, []).extend(written)
+        for source, dataset, subset in jobs:
+            tcfg = target_cfg(dataset, subset, cfg, split_tag=source_tag(source, cfg))
+            prov.write_tag_config(paths.scores_root(tcfg), cfg,
+                                  seeds=paper_seeds(cfg, dataset))
+    if do_reduce:
+        for source, dataset, subset in dict.fromkeys(jobs):
+            tcfg = target_cfg(dataset, subset, cfg, split_tag=source_tag(source, cfg))
+            prov.ensure_tag_config(paths.scores_root(tcfg), cfg, force=force)
+            reduce_target(source, dataset, subset, cfg)
+    for dataset, outs in outputs_by_ds.items():
+        subset = next(sub for _, d, sub in jobs if d == dataset)
+        prov.record(cfg, target_cfg(dataset, subset, cfg), "score", outs)
+
+
 def run(cfg, only_proxy=None, only_source=None, only_dataset=None,
         device="cuda", force=False, do_score=True, do_reduce=True) -> None:
     """Score (per proxy) then reduce (over ALL proxies). The two phases are separable so
     the scoring of different (proxy, source) cells can run concurrently on separate GPUs
     with ``do_reduce=False``, and a single serial ``do_score=False`` pass then reduces
     over every proxy's TSVs without the reduction writes racing across jobs."""
+    if setting(cfg) == "paper":
+        return run_paper(cfg, only_proxy=only_proxy, only_source=only_source,
+                         only_dataset=only_dataset, device=device, force=force,
+                         do_score=do_score, do_reduce=do_reduce)
     if device == "cuda" and not torch.cuda.is_available():
         device = "cpu"
     proxies = [only_proxy] if only_proxy else list(cfg["proxies"])

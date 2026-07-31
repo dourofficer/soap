@@ -50,13 +50,13 @@ def extract_source(proxy, model, tokenizer, layers, final_norm, context_fn,
     trajs = [t for t in load_dataset(str(synth_data_dir(source).parent), subset=source)
              if t.filename in keep]
     out_dir = synth_reps_dir(proxy, source)
+    print(f"[extract] {proxy}/{source}: {len(trajs)} trajs (pools={pools})")
+    if dry:
+        return 0
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "config.json").write_text(json.dumps(
         {"proxy": proxy, "source": source, "pools": pools, "layers": layers,
          "pool": "all", "max_tokens": max_tokens, "n_trajs": len(trajs)}, indent=2))
-    print(f"[extract] {proxy}/{source}: {len(trajs)} trajs (pools={pools})")
-    if dry:
-        return 0
 
     written = 0
     t0 = time.perf_counter()

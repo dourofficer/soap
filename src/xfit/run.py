@@ -17,10 +17,10 @@ import argparse
 
 import torch
 
-from .common import load_config
-from . import extract, score, rescore, table
+from .common import load_config, setting
+from . import extract, score, rescore, table, table_paper, verify
 
-STAGES = ["extract", "score", "rescore", "table"]
+STAGES = ["extract", "score", "rescore", "verify", "table"]
 
 
 def main() -> None:
@@ -37,7 +37,11 @@ def main() -> None:
     args = p.parse_args()
 
     cfg = load_config(args.overrides)
+    paper = setting(cfg) == "paper"
     want = STAGES if args.stage == "all" else [args.stage]
+    if args.stage == "all":
+        # legacy has no verify stage; paper needs no extraction (fit-pool reps shared).
+        want = [s for s in want if s != ("verify" if not paper else "extract")]
     dev = args.gpu if args.gpu in ("auto", "cpu") else f"cuda:{args.gpu}"
 
     if "extract" in want:
@@ -52,8 +56,10 @@ def main() -> None:
     if "rescore" in want:
         rescore.run(cfg, only_proxy=args.proxy, only_source=args.source,
                     only_dataset=args.dataset, device=dev, force=args.force)
+    if "verify" in want and paper:
+        verify.run(cfg, only_dataset=args.dataset)
     if "table" in want:
-        table.run(cfg, only_dataset=args.dataset)
+        (table_paper if paper else table).run(cfg, only_dataset=args.dataset)
 
 
 if __name__ == "__main__":

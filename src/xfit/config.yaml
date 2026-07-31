@@ -45,6 +45,38 @@ targets:
     - {dataset: correct-error, subset: musique}
     - {dataset: correct-error, subset: wikimqa}
 
+# ── evaluation setting ───────────────────────────────────────────────────────
+# legacy — the original ceiling test: fit on ALL extracted fit-pool trajectories,
+#          5/5 val/test target split, no ensemble rows, roots tagged xfit-<source>.
+# paper  — the manuscript protocol (tab:synth): keep the standard 325 partition
+#          (real val 20% selects, real test 50% reports — byte-identical to the main
+#          tables), discard the real train split, and fit on a per-seed synthetic
+#          subsample matched to the train split's size and questions. ens-mid3 rows
+#          are emitted so the selection universe is IDENTICAL to the main run, and a
+#          Real pseudo-source re-runs the real train split through this same code
+#          path — it must reproduce the main reduced values exactly (src.xfit.verify).
+#          Roots tagged <tag_prefix>-<source> / <tag_prefix>-real, coexisting with legacy.
+setting: legacy
+
+paper:
+  tag_prefix: xfitp            # xfitp-<source> + xfitp-real
+  fit: aligned                 # aligned | all (debug escape hatch: whole fit pool)
+  real_row: true               # recompute the Real row through this exact code path
+  assert_real: error           # error | warn | off — Real row vs the 325 artifacts
+  convention: test             # test | val — which selection the table/verify report
+  base_table_convention: test  # sweep seeding table (main uses test; keep for parity)
+  seed_policy: main-top3       # main-top3 (results_extended's seeds) | literal
+  seeds: [1, 2, 3]             # used when seed_policy: literal
+  ensemble: true               # emit + rescore ens-mid3 (selection-universe parity)
+  table_scorers: [proj]        # scorers reported by results_synthfit_paper.tsv
+  targets:                     # paper-eligible targets; correct-* deferred (no
+    captain:                   # question-alignment join exists for them yet)
+      - {dataset: ww,            subset: algorithm-generated}
+      - {dataset: traceelephant, subset: captain}
+    magentic:
+      - {dataset: ww,            subset: hand-crafted}
+      - {dataset: traceelephant, subset: magentic}
+
 # ── scoring axes (base SVD) ──────────────────────────────────────────────────
 methods: [proj, resid, angres]     # maha intentionally excluded (see documents/SCORERS.md)
 poolings: [mean, last]
