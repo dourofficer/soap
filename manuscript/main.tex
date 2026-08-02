@@ -21,13 +21,14 @@
 \newcommand{\xmark}{\ding{55}}
 \newcommand{\best}[1]{\textbf{#1}}
 \newcommand{\crr}{CRR}
-\newcommand{\recap}{\textsc{ReCAP}}
+\usepackage{xspace}
+\newcommand{\soap}{\textsc{Soap}\xspace}
 \newcommand{\traj}{\tau}
 \newcommand{\Sbase}{S}
 \newcommand{\Stilde}{\widetilde{S}}
 \newcommand{\proxy}{\mathcal{M}}
 \newcommand{\ms}[2]{\ensuremath{#1_{\,\pm #2}}}
-\newcommand{\TODO}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
+\newcommand{\TODO}[1]{\textcolor{red}{[TODO: #1]}}
 \newcommand{\note}[1]{\textcolor{blue}{[Finn: #1]}} 
 
 
@@ -44,7 +45,18 @@
 \definecolor{mydarkblue}{rgb}{0,0.08,0.45}
 
 
+\usepackage[most]{tcolorbox}
 
+\newtcolorbox{methodbox}{
+  colback=black!2,
+  colframe=black!55,
+  boxrule=0.5pt,
+  arc=0pt,
+  left=5pt,
+  right=5pt,
+  top=4pt,
+  bottom=4pt
+}
 % \SetKwInOut{KwRequire}{Require}
 % \SetKwInOut{KwEnsure}{Ensure}
 % \DontPrintSemicolon
@@ -117,22 +129,23 @@ Nanyang Technological University, Singapore \\
 
 \input{sections/abstract}
 \input{sections/introduction}
+\input{sections/related}
 \input{sections/setup}
 % \input{sections/contamination}
 \input{sections/method}
 \input{sections/experiments}
-\input{sections/related}
+
 \input{sections/conclusion}
 
-\subsubsection*{Acknowledgments}
-Use unnumbered third level headings for the acknowledgments. All
-acknowledgments, including those to funding agencies, go at the end of the paper.
+% \subsubsection*{Acknowledgments}
+% Use unnumbered third level headings for the acknowledgments. All
+% acknowledgments, including those to funding agencies, go at the end of the paper.
 
 
 \bibliography{iclr2026_conference}
 \bibliographystyle{iclr2026_conference}
 
-% \appendix
+\appendix
 % \include{sections/appendix}
 
 

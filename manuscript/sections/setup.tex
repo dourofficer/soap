@@ -1,13 +1,99 @@
 \section{Problem Setup}
 \label{sec:setup}
 
-Let $\traj = (s_1, \ldots, s_T)$ be a trajectory of a turn-based multi-agent system, with each step $s_t$ attributed to an agent $a_t \in \{1, \ldots, K\}$. A failed trajectory is annotated with a \emph{decisive-error step} $t^\star \in \{1, \ldots, T\}$---the earliest step at which an irrecoverable mistake was introduced---and the responsible agent $a_{t^\star}$. Given $\traj$ and the task description, the failure-attribution task~\citep{whoandwhen} is to predict $\hat{t}$ as an estimator of $t^\star$, with the corresponding agent prediction $\hat{a} = a_{\hat{t}}$.
+We formalize the task of localizing the decisive error in a failed agent trajectory.
 
-We assume access to a proxy language model $\proxy$, distinct from the model that generated $\traj$, exposing intermediate hidden states and post-softmax attention probabilities. $\proxy$ is used without adaptation or supervision on failure-attribution data. This setting reflects practice: trajectories are often produced by proprietary models whose internals are inaccessible, whereas open-weight proxies are freely inspectable.
+\textbf{Agent trajectory.}
+Let $x$ denote a task description and let
+$\traj=(s_1,\ldots,s_T)$ be the resulting trajectory of a multi-agent system.
+Each step $s_t$ contains the action or message produced at turn $t$ and is associated with an agent
+$a_t\in\{1,\ldots,K\}$.
+For evaluation, a failed trajectory is paired with a gold decisive-error index
+$t^\star\in\{1,\ldots,T\}$, corresponding to the earliest step at which the error responsible for the eventual task failure is introduced.
+The responsible agent is therefore $a_{t^\star}$.
 
-\paragraph{Per-step scoring view.} Rather than predicting $\hat t$ directly, we produce a scalar score $\Stilde(s_t)\in\mathbb{R}$ for every step and rank within the trajectory, so that
+Our framework extracts step representations and attention patterns using a frozen language model $\proxy$.
+When the model that generates the trajectory exposes its internal states, $\proxy$ can be the generating model itself.
+Otherwise, $\proxy$ can be a separate open-weight proxy model, allowing the framework to analyze trajectories produced by proprietary agents whose internals are inaccessible.
+In either case, $\proxy$ is used without fine-tuning on failure-attribution data.
+
+\textbf{Failure attribution.}
+Given the task description $x$ and a failed trajectory $\traj$, the goal of failure attribution is to estimate the decisive-error step~\citep{whoandwhen}.
+The learner predicts an index $\hat{t}$ as an estimator of $t^\star$, with the corresponding responsible-agent prediction
+$
+    \hat{a}=a_{\hat{t}}.
+$
+
+Rather than predicting the decisive-error index directly, we assign each step a scalar attribution score
+$\Stilde(s_t)\in\mathbb{R}$, where a larger value indicates that the step is more likely to have introduced the failure.
+The top-1 prediction is
+$
+    \hat{t}
+    =
+    \arg\max_{t\in\{1,\ldots,T\}}
+    \Stilde(s_t).
+    $
+Sorting the scores further produces a ranked list of candidate steps for failure triage.
+We evaluate both top-1 localization and ranked-set performance in
+\S\ref{sec:experiments}.
+
+
+\textbf{Step-unlabeled failure trajectories.}
+In addition to the test trajectory, we assume access to a reference collection of failed trajectories
+$
+    \mathcal{D}_{\mathrm{fail}}
+    =
+    \{
+    \traj^{(n)}
+    \}_{n=1}^{N},
+    \traj^{(n)}
+    =
+    (s^{(n)}_1,\ldots,s^{(n)}_{T_n}).
+$
+The task-level outcome of each trajectory is known: every trajectory in
+$\mathcal{D}_{\mathrm{fail}}$ ends in failure.
+However, no step-level annotation is available to identify which step introduced the failure or which agent was responsible. We therefore model the pooled steps in $\mathcal{D}_{\mathrm{fail}}$ as an unlabeled contamination mixture~\citep{huber1964robust}
 \begin{equation}
-  \hat{t} \;=\; \arg\max_{t \in \{1,\ldots,T\}}\; \Stilde(s_t),
-  \label{eq:prediction}
+    P_{\mathrm{fail}}
+    =
+    (1-\pi)P_{\mathrm{ord}}
+    +
+    \pi P_{\mathrm{err}},
+    \label{eq:step-contamination}
 \end{equation}
-and the top-$k$ scored steps form a ranked candidate set for triage. We report both the top-1 prediction in \eqref{eq:prediction} and ranked-set metrics (\S\ref{sec:experiments}).
+where $P_{\mathrm{ord}}$ denotes the marginal distribution of ordinary steps,
+$P_{\mathrm{err}}$ denotes that of decisive-error steps, and
+$\pi\in(0,1)$ is an unknown contamination proportion.
+Equivalently, each trajectory has an unobserved error set
+$\mathcal{E}^{(n)}\subseteq\{1,\ldots,T_n\}$, typically containing a single decisive step, such that
+$s_t^{(n)}\sim P_{\mathrm{err}}$ when $t\in\mathcal{E}^{(n)}$ and
+$s_t^{(n)}\sim P_{\mathrm{ord}}$ otherwise.
+Eqn.~\ref{eq:step-contamination} characterizes the marginal composition of the pooled steps; it does not assume that steps within a trajectory are temporally independent.
+
+Our method uses $\mathcal{D}_{\mathrm{fail}}$ only to construct the reference representation space, without observing
+$\mathcal{E}^{(n)}$ or any responsible-agent annotations.
+Gold step-level labels are used only for \textit{evaluation} and, when applicable,
+\textit{hyperparameter selection} on a disjoint validation split.
+
+
+
+
+% \textbf{Per-step scoring formulation.}
+
+
+
+
+
+% \section{Problem Setup}
+% \label{sec:setup}
+
+% Let $\traj = (s_1, \ldots, s_T)$ be a trajectory of a turn-based multi-agent system, with each step $s_t$ attributed to an agent $a_t \in \{1, \ldots, K\}$. A failed trajectory is annotated with a \emph{decisive-error step} $t^\star \in \{1, \ldots, T\}$---the earliest step at which an irrecoverable mistake was introduced---and the responsible agent $a_{t^\star}$. Given $\traj$ and the task description, the failure-attribution task~\citep{whoandwhen} is to predict $\hat{t}$ as an estimator of $t^\star$, with the corresponding agent prediction $\hat{a} = a_{\hat{t}}$.
+
+% We assume access to a proxy language model $\proxy$, distinct from the model that generated $\traj$, exposing intermediate hidden states and post-softmax attention probabilities. $\proxy$ is used without adaptation or supervision on failure-attribution data. This setting reflects practice: trajectories are often produced by proprietary models whose internals are inaccessible, whereas open-weight proxies are freely inspectable.
+
+% \paragraph{Per-step scoring view.} Rather than predicting $\hat t$ directly, we produce a scalar score $\Stilde(s_t)\in\mathbb{R}$ for every step and rank within the trajectory, so that
+% \begin{equation}
+%   \hat{t} \;=\; \arg\max_{t \in \{1,\ldots,T\}}\; \Stilde(s_t),
+%   \label{eq:prediction}
+% \end{equation}
+% and the top-$k$ scored steps form a ranked candidate set for triage. We report both the top-1 prediction in \eqref{eq:prediction} and ranked-set metrics (\S\ref{sec:experiments}).

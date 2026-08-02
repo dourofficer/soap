@@ -2,29 +2,118 @@
 \section{Introduction}
 \label{sec:intro}
 
-% problem introduction
-Multi-agent systems (MAS) powered by large language models (LLMs) have emerged as a transformative paradigm across a wide range of domains, including coding~\citep{qian2023chatdev,hong2023metagpt}, scientific discovery~\citep{lu2024aiscientist,ghafarollahi2024sciagents}, and general-purpose real-world problem solving~\citep{wu2024autogen,fourney2024magenticone}. Yet as these systems grow in both capability and complexity, ensuring their reliability in deployment remains a critical open challenge~\citep{pan2025map,mast}. In particular, when a system fails to complete a task, pinpointing the precise step and responsible agent that first triggered the failure within a long execution trajectory, a problem known as \emph{failure attribution}~\citep{whoandwhen}, is a crucial first step toward monitoring, diagnosing, and ultimately improving these systems~\citep{epperson2025interactive}.
-
-%  challenges in common methods
-Unfortunately, automated failure attribution in MAS remains an open challenge. Existing studies broadly follow two strategies. LLM-as-a-judge approaches locate the decisive step in under 10\% of cases in the hardest setting~\citep{whoandwhen}, and later adjacent work~\citep{echo, chief, falat, correct} leaves accuracy suboptimal while depending on proprietary models and many inference calls. Training a dedicated attributor via reinforcement learning~\citep{agentracer, graphtracer} improves on prompting, but demands compute-intensive training and suffers from the ambiguous and expensive nature of data annotation. Beyond these limitations, both strategies share a deeper problem: they treat trajectories purely as text objects, leaving the rich signal in model internals unused despite hidden representations being freely inspectable via open-weight models.
-
-% motivation for using internals and tackling the error propagation problem
-A concurrent work, OAT~\citep{oat}, \hl{offers the first evidence that internal signal is informative: training a neural \textit{controlled differential equation} over a proxy LLM's hidden representations to model the flow of successful trajectories, and flagging steps of a failure trajectory whose representations deviate from this learned flow. However, this approach relies on the availability of successful trajectories and it targets a coarser output, identifying contributing steps rather than pinpointing the earliest decisive step.} More fundamentally, no existing approach explicitly models how the failure signal propagates: since each step conditions on prior outputs, a single upstream error corrupts all subsequent steps~\citep{gao2025singleormulti}, making downstream steps appear erroneous merely by inheritance. Distinguishing root-cause from inherited failure thus requires explicitly modeling this downstream contamination. Motivated by this, we introduce \textbf{\textsc{ReCAP}} (\textbf{Re}scoring with \textbf{C}ausal \textbf{A}ttention back\textbf{P}ropagation), a training-free framework that operates on model internals rather than surface text and proceeds in two phases: local scoring, then rescoring by backpropagating anomaly along attention-derived dependencies.
-
-% method details
-The local scoring phase draws the signal directly from hidden states. For each step, we compute a per-step anomaly score from the layer activations of an off-the-shelf proxy model, one that did not generate the trajectory, requiring no labels and no access to the generating system's internals. \hl{This rests on our observation that decisive error steps often coincide with internally atypical generations, echoing findings in reliable machine learning that internal signals such as activations can capture abnormality} ~\citep{gradnorm, sal}. Concretely, we factorize the step representations using singular value decomposition \hl{(SVD), which helps identify latent subspaces that capture the structure shared by typical generations}. We then surface error steps by measuring the departure of each step's representation from this subspace.
-
-%  method details (discounting formulation, kept for reference)
-% The rescoring phase then addresses the downstream contamination problem of the local scores, as a step conditioned on a corrupted context may appear highly anomalous without being the decisive error. \crr{} disentangles the decisive errors from inherited ones by subtracting from each step's score the portion inherited from causally upstream steps. The key insight is that the proxy's own attention reveals how much each step borrows from its predecessors: converting the attention mass a step routes back to earlier steps into dependency weights yields a per-step estimate of inherited anomaly, subtracted under a discount strength. After rescoring, intrinsic anomaly dominates at its origin while the contaminated tail is reduced, exposing the actual root-cause step.
-
-%  method details (backpropagation formulation)
-The rescoring phase then addresses the downstream contamination problem of the local scores, as a step conditioned on a corrupted context may appear highly anomalous without being the decisive error. \textsc{ReCAP} disentangles the decisive errors from inherited ones by returning each step's inherited anomaly to the upstream steps it came from. \hl{The key insight is that the proxy's own attention reveals how much each step borrows from its predecessors: converting the attention mass a step routes back to earlier steps into dependency weights yields a per-step estimate of inherited anomaly, returned to its upstream sources under a propagation strength.} After rescoring, anomaly accumulates at its origin and the decisive step rises above the contaminated tail, exposing the actual root-cause step.
 
 
-Extensive experimental results on contemporary LLMs confirm that \textsc{ReCAP} effectively improves performance across diverse datasets spanning different multi-agent systems (Section~\ref{sec:exp:main}). Compared to state-of-the-art methods, we consistently improve decisive-error detection accuracy at step level on the challenging Who\&When~\citep{whoandwhen}, TraceElephant~\citep{traceelephant}, and CORRECT-Error~\citep{correct} benchmarks. Specifically, on the representative benchmark Who\&When~\citep{whoandwhen}, \textsc{ReCAP} improves step-level accuracy by up to X\% over the second-best method and achieves state-of-the-art performance of Y\%. Furthermore, we conduct comprehensive ablations on the key components of our methodology (Section~\ref{sec:exp:analysis}) and extend our inquiry to showcase \textsc{ReCAP}'s generalization across different model scales and cross-dataset settings (Section~\ref{sec:exp:main}). To summarize our key contributions: \note{Need revision}
+When an LLM-based agent fails on a long-horizon task, identifying \emph{where the failure began} is essential for debugging, auditing, and improving the agent.
+An agent trajectory may contain dozens or even hundreds of reasoning, communication, and tool-use steps, while only one early decision introduces the error that ultimately causes task failure.
+Manually tracing such trajectories is prohibitively expensive and prone to inconsistency, especially as agents are increasingly deployed for software engineering, scientific discovery, and other complex tasks~\citep{yao2023react,wang2024surveyagents}.
+This motivates the problem of \emph{failure attribution}: given a failed trajectory, identify the decisive step that introduced the failure~\citep{whoandwhen}.
+
+
+
+Failure attribution is fundamentally challenging.
+Existing methods typically rely either on prompting powerful LLM judges, which incurs substantial inference cost and can be unreliable over long trajectories~\citep{whoandwhen,echo,chief,falat,correct}, or on post-training attribution models using failure trajectories with step-level annotations~\citep{agentracer,graphtracer}.
+Such annotations are costly and often ambiguous, since identifying the decisive step may require substantial domain expertise.
+OAT~\citep{oat} alleviates this burden by learning the latent dynamics of successful trajectories and detecting deviations from the learned flow.
+However, it has no access to failure trajectories during training, and therefore \textit{models only what successful behavior looks like}.
+Moreover, its success-only reference set must be verified and may become stale as agents and task distributions evolve.
+This motivates a complementary question:
+
+\vspace{-0.5em}
+\begin{center}
+\textbf{Can failed trajectories themselves enable failure attribution
+without step-level annotations?}
+\end{center}
+
+
+Failed trajectories provide a complementary source of supervision.
+In many agentic systems, whether a task has failed can be determined from execution outcomes or task evaluators, while identifying the step responsible for that failure remains costly.
+We therefore consider a collection of \emph{step-unlabeled failure trajectories}, i.e.,  every trajectory is known to have failed, but no step is annotated as decisive or non-decisive.
+Each trajectory consequently contains an unlabeled mixture of ordinary steps and the decisive error.
+Unlike OAT~\citep{oat}, such a failure-conditioned dataset directly exposes the behaviors that arise when agents fail.
+Yet harnessing this information is non-trivial: without step-level membership labels, the learner must extract a meaningful failure signal without knowing which step introduced the failure.
+The first challenge is therefore to \emph{identify decisive-error evidence from a step-level unlabeled mixture within failed trajectories}.
+
+
+
+
+
+
+
+
+
+
+
+A second challenge is that the step exhibiting the strongest failure signal need not be the step that introduced the failure. Agent trajectories are autoregressive because each step is generated from preceding observations and actions. Once an error occurs, later steps operate on a corrupted context and may produce failed tool calls, contradictory reasoning, or repeated recovery attempts. These downstream consequences can be more conspicuous than the original error. For example, a plausible but incorrect tool argument may trigger a sequence of visible error messages and unsuccessful retries, causing a conventional per-step scorer to select the final retry rather than the initial incorrect action. We refer to this phenomenon as \emph{downstream contamination}. \textcolor{blue}{Add a wrapfigure illustrating an early incorrect action followed by anomalous downstream retries.} Recent methods reconstruct dependencies through LLM prompting or specialized training, then perform graph search or backtracking~\citep{falat,chief,graphtracer}, which introduce substantial inference or training overhead. This motivates a lightweight alternative that extracts soft dependencies from the model to separate root causes from downstream effects.
+
+
+
+
+
+
+In this paper, we propose \soap{} (\textbf{S}pectral sc\textbf{O}ring with
+ \textbf{A}ttention-guided \textbf{P}ropagation), a framework for decisive-error localization from step-unlabeled failure trajectories.
+At a high level, \soap consists of two components.
+\textbf{First}, it constructs a \emph{spectral reference space} from step representations extracted from the failure trajectories.
+Each step receives a base error score according to its projection onto a selected band of singular directions.
+This produces a step-level signal without requiring decisive-error annotations or a separate collection of verified successful trajectories. \textbf{Second}, \soap addresses downstream contamination through
+\emph{dependency-aware rescoring}.
+We derive a soft dependency graph from models' attention patterns, where each edge approximates how strongly a later step draws on an earlier one.
+Rather than treating downstream failure signals as independent and competing evidence, \soap propagates them backward toward the preceding steps on which they depend.
+An earlier step is therefore promoted when anomalous downstream behavior is systematically built upon it.
+
+
+
+
+We evaluate \soap on \TODO{benchmarks} using \TODO{agent systems and proxy models}.
+Across \TODO{number} evaluation settings, \soap consistently improves decisive-step localization over different competitive baselines.
+In particular, \soap improves \TODO{primary metric} by \TODO{result} over the strongest baseline on \TODO{benchmark}.
+Ablation studies further show that both spectral step scoring and attention-guided rescoring contribute to the improvements, which cannot be explained by simply favoring earlier steps or uniformly aggregating downstream scores.
+\TODO{see my comments in the exp section.} Our main contributions are summarized as follows:
 
 \begin{itemize}
-  \item We identify and quantify \emph{downstream error contamination}: because a decisive error corrupts every subsequent step, a local scorer is biased toward steps \emph{after} the true error.
-  \item We propose \textsc{ReCAP}, a training-free and generator-agnostic framework that recasts failure attribution as \emph{unsupervised per-step anomaly scoring} over proxy-model representations. Unlike concurrent representation-based work that must be trained on curated successful executions~\citep{oat}, \textsc{ReCAP} requires no training and no successful trajectories: its reference statistics are estimated from unlabeled trajectories---in our benchmarks, the failure logs themselves. \textsc{ReCAP} pairs a local anomaly scorer with an attention-weighted causal rescoring layer that backpropagates each step's anomaly to its upstream sources to recover the earliest decisive step. Despite using no labels, it is competitive with methods that require fine-tuning or strong LLM judges (\S\ref{sec:method}).
-  \item Extensive experiments across multiple proxy models and three failure-attribution benchmarks (Who\&When, TraceElephant, and CORRECT-Error) demonstrate that \textsc{ReCAP} consistently improves both agent- and step-level attribution at no additional supervision cost, and analysis confirms that the gains generalize across model scales and cross-dataset settings (\S\ref{sec:experiments}).
+    \item We formulate decisive-error localization from
+    \emph{step-unlabeled trajectories} within failed trajectories.
+    This setting exploits trajectory-level failure signals while requiring neither decisive-error annotations nor a carefully verified successful trajectories.
+
+    \item We identify \emph{downstream contamination} as a central obstacle to decisive-error localization, i.e., later steps may exhibit stronger failure signals because they inherit an earlier mistake, causing independent per-step scorers to systematically localize failures too late.
+
+    \item We propose \soap, a novel framework performing spectral step scoring with attention-derived dependency propagation.
+    Extensive experiments and ablations on \TODO{benchmarks} demonstrate when and why \soap improves attribution. The results
+provide insights into leveraging step-unlabeled failure trajectories for agentic failure attribution.
 \end{itemize}
+
+
+
+
+
+
+
+
+
+% problem introduction
+% Multi-agent systems (MAS) powered by large language models (LLMs) have emerged as a transformative paradigm across a wide range of domains, including coding~\citep{qian2023chatdev,hong2023metagpt}, scientific discovery~\citep{lu2024aiscientist,ghafarollahi2024sciagents}, and general-purpose real-world problem solving~\citep{wu2024autogen,fourney2024magenticone}. Yet as these systems grow in both capability and complexity, ensuring their reliability in deployment remains a critical open challenge~\citep{pan2025map,mast}. In particular, when a system fails to complete a task, pinpointing the precise step and responsible agent that first triggered the failure within a long execution trajectory, a problem known as \emph{failure attribution}~\citep{whoandwhen}, is a crucial first step toward monitoring, diagnosing, and ultimately improving these systems~\citep{epperson2025interactive}.
+
+%  challenges in common methods
+% Unfortunately, automated failure attribution in MAS remains an open challenge. Existing studies broadly follow two strategies. LLM-as-a-judge approaches locate the decisive step in under 10\% of cases in the hardest setting~\citep{whoandwhen}, and later adjacent work~\citep{echo, chief, falat, correct} leaves accuracy suboptimal while depending on proprietary models and many inference calls. Training a dedicated attributor via reinforcement learning~\citep{agentracer, graphtracer} improves on prompting, but demands compute-intensive training and suffers from the ambiguous and expensive nature of data annotation. Beyond these limitations, both strategies share a deeper problem: they treat trajectories purely as text objects, leaving the rich signal in model internals unused despite hidden representations being freely inspectable via open-weight models.
+
+% % motivation for using internals and tackling the error propagation problem
+% A concurrent work, OAT~\citep{oat}, \hl{offers the first evidence that internal signal is informative: training a neural \textit{controlled differential equation} over a proxy LLM's hidden representations to model the flow of successful trajectories, and flagging steps of a failure trajectory whose representations deviate from this learned flow. However, this approach relies on the availability of successful trajectories and it targets a coarser output, identifying contributing steps rather than pinpointing the earliest decisive step.} More fundamentally, no existing approach explicitly models how the failure signal propagates: since each step conditions on prior outputs, a single upstream error corrupts all subsequent steps~\citep{gao2025singleormulti}, making downstream steps appear erroneous merely by inheritance. Distinguishing root-cause from inherited failure thus requires explicitly modeling this downstream contamination. Motivated by this, we introduce \textbf{\textsc{ReCAP}} (\textbf{Re}scoring with \textbf{C}ausal \textbf{A}ttention back\textbf{P}ropagation), a training-free framework that operates on model internals rather than surface text and proceeds in two phases: local scoring, then rescoring by backpropagating anomaly along attention-derived dependencies.
+
+% % method details
+% The local scoring phase draws the signal directly from hidden states. For each step, we compute a per-step anomaly score from the layer activations of an off-the-shelf proxy model, one that did not generate the trajectory, requiring no labels and no access to the generating system's internals. \hl{This rests on our observation that decisive error steps often coincide with internally atypical generations, echoing findings in reliable machine learning that internal signals such as activations can capture abnormality} ~\citep{gradnorm, sal}. Concretely, we factorize the step representations using singular value decomposition \hl{(SVD), which helps identify latent subspaces that capture the structure shared by typical generations}. We then surface error steps by measuring the departure of each step's representation from this subspace.
+
+% %  method details (discounting formulation, kept for reference)
+% % The rescoring phase then addresses the downstream contamination problem of the local scores, as a step conditioned on a corrupted context may appear highly anomalous without being the decisive error. \crr{} disentangles the decisive errors from inherited ones by subtracting from each step's score the portion inherited from causally upstream steps. The key insight is that the proxy's own attention reveals how much each step borrows from its predecessors: converting the attention mass a step routes back to earlier steps into dependency weights yields a per-step estimate of inherited anomaly, subtracted under a discount strength. After rescoring, intrinsic anomaly dominates at its origin while the contaminated tail is reduced, exposing the actual root-cause step.
+
+% %  method details (backpropagation formulation)
+% The rescoring phase then addresses the downstream contamination problem of the local scores, as a step conditioned on a corrupted context may appear highly anomalous without being the decisive error. \textsc{ReCAP} disentangles the decisive errors from inherited ones by returning each step's inherited anomaly to the upstream steps it came from. \hl{The key insight is that the proxy's own attention reveals how much each step borrows from its predecessors: converting the attention mass a step routes back to earlier steps into dependency weights yields a per-step estimate of inherited anomaly, returned to its upstream sources under a propagation strength.} After rescoring, anomaly accumulates at its origin and the decisive step rises above the contaminated tail, exposing the actual root-cause step.
+
+
+% Extensive experimental results on contemporary LLMs confirm that \textsc{ReCAP} effectively improves performance across diverse datasets spanning different multi-agent systems (Section~\ref{sec:exp:main}). Compared to state-of-the-art methods, we consistently improve decisive-error detection accuracy at step level on the challenging Who\&When~\citep{whoandwhen}, TraceElephant~\citep{traceelephant}, and CORRECT-Error~\citep{correct} benchmarks. Specifically, on the representative benchmark Who\&When~\citep{whoandwhen}, \textsc{ReCAP} improves step-level accuracy by up to X\% over the second-best method and achieves state-of-the-art performance of Y\%. Furthermore, we conduct comprehensive ablations on the key components of our methodology (Section~\ref{sec:exp:analysis}) and extend our inquiry to showcase \textsc{ReCAP}'s generalization across different model scales and cross-dataset settings (Section~\ref{sec:exp:main}). To summarize our key contributions: \note{Need revision}
+
+% \begin{itemize}
+%   \item We identify and quantify \emph{downstream error contamination}: because a decisive error corrupts every subsequent step, a local scorer is biased toward steps \emph{after} the true error.
+%   \item We propose \textsc{ReCAP}, a training-free and generator-agnostic framework that recasts failure attribution as \emph{unsupervised per-step anomaly scoring} over proxy-model representations. Unlike concurrent representation-based work that must be trained on curated successful executions~\citep{oat}, \textsc{ReCAP} requires no training and no successful trajectories: its reference statistics are estimated from unlabeled trajectories---in our benchmarks, the failure logs themselves. \textsc{ReCAP} pairs a local anomaly scorer with an attention-weighted causal rescoring layer that backpropagates each step's anomaly to its upstream sources to recover the earliest decisive step. Despite using no labels, it is competitive with methods that require fine-tuning or strong LLM judges (\S\ref{sec:method}).
+%   \item Extensive experiments across multiple proxy models and three failure-attribution benchmarks (Who\&When, TraceElephant, and CORRECT-Error) demonstrate that \textsc{ReCAP} consistently improves both agent- and step-level attribution at no additional supervision cost, and analysis confirms that the gains generalize across model scales and cross-dataset settings (\S\ref{sec:experiments}).
+% \end{itemize}

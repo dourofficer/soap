@@ -1,67 +1,282 @@
-\section{Method: Causal Residual Rescoring}
+% !TeX root = ../main.tex
+% =====================================================================
+% Method section — ReCAP (backprop formulation), v2 (review revision).
+%   * Written against the \soap macro; labels sec:method:recap and
+%     eq:recap (renamed from sec:method:crr / eq:crr — grep old names).
+%   * Review edits: mean pooling only (no \phi / last-token option);
+%     mean-centering removed; orientation abstracted to a map \rho;
+%     set-size normalizations |.| replaced by \operatorname*{mean}
+%     (needs amsmath); spectrum-structure and attention-asymmetry
+%     explanations commented out, not deleted; Properties paragraph
+%     commented out; contamination paragraph simplified.
+% =====================================================================
+\section{\soap: Spectral Scoring with Attention-Guided Propagation}
 \label{sec:method}
 
-Our pipeline produces, for every step $s_t$, a scalar score $\Stilde(s_t)$ whose argmax is the predicted decisive-error step (\eqref{eq:prediction}). The score is the output of \emph{Causal Residual Rescoring} (\crr{}; \S\ref{sec:method:crr}), which corrects an off-the-shelf per-step base score $\Sbase$ (\S\ref{sec:method:base}) using attention-derived causal-dependency weights $w_{i,t}$ (\S\ref{sec:method:weights}).
 
-\subsection{Per-step representations and base scoring}
+In this section, we introduce \soap, a framework for localizing the
+decisive error from step-unlabeled failure trajectories.
+At a high level, \soap consists of two components.
+\textit{First}, we construct a spectral reference space from the step representations
+in $\mathcal{D}_{\mathrm{fail}}$ and derive a base error score for each step
+(\S\ref{sec:method:base}).
+\textit{Second}, we estimate soft dependencies between steps from the attention patterns
+of the model and propagate downstream error evidence toward the
+earlier steps on which it depends
+(\S\ref{sec:method:weights}).
+The resulting score $\Stilde(s_t)$ estimates how likely step $s_t$ is to have
+introduced the failure.
+
+\subsection{Spectral step scoring from unlabeled failure trajectories}
 \label{sec:method:base}
 
-\paragraph{Representation extraction.} For each step $s_t$, we form an input by concatenating the predecessor steps $s_1,\ldots,s_{t-1}$ with $s_t$ and run a single forward pass of $\proxy$. Let $\mathcal{T}_t$ denote the token positions occupied by $s_t$ and let $h^{(l)}_p \in \mathbb{R}^d$ be the hidden state at layer $l$ and position $p$. We pool over the step's own positions at a chosen layer $l^\star$:
-\begin{equation}
-  v_t \;=\; \phi\!\left(\bigl\{ h^{(l^\star)}_p : p \in \mathcal{T}_t \bigr\}\right) \in \mathbb{R}^d,
-  \label{eq:embedding}
-\end{equation}
-where $\phi$ is mean pooling or the final-token state; $\phi$ and $l^\star$ are hyperparameters (\S\ref{sec:experiments}).
+The reference collection $\mathcal{D}_{\mathrm{fail}}$ contains many ordinary
+steps but only a small number of decisive errors within each trajectory.
+Consequently, the representations from LLM $\mathcal{M}$ are dominated by recurring patterns
+of ordinary agent behavior, while decisive-error steps form a sparse,
+unlabeled component.
+Our key idea is to characterize this representation space through spectral
+decomposition and score each step according to its alignment with selected
+spectral directions.
 
-\paragraph{SVD projection score.} We score $v_t$ by its squared projection onto a band of right singular vectors of a reference matrix $R\in\mathbb{R}^{N\times d}$ of step embeddings. Let $R = U\Sigma V^\top$ be the thin SVD, with columns of $V$ ordered by decreasing singular value. Leading components capture coarse shared structure (prose style, agent voice, formatting) and trailing components capture noise; the directions separating erroneous from non-erroneous steps lie in a contiguous mid-spectrum band $\mathcal{C}=\{c_\text{begin},\ldots,c_\text{end}-1\}$ that is selected as a hyperparameter. We define the projection magnitude
-\begin{equation}
-  \pi(v_t) \;=\; \frac{1}{|\mathcal{C}|} \sum_{c \in \mathcal{C}} \bigl\langle \tilde{v}_t,\, V_{:,c} \bigr\rangle^{2},
-  \label{eq:proj}
-\end{equation}
-where $\tilde{v}_t = v_t - \bar{v}$ if mean-centering is enabled ($\bar v$ the mean row of $R$) and $\tilde v_t=v_t$ otherwise. Erroneous steps yield \emph{smaller} projection magnitudes on the selected band, so we set the base score
-\begin{equation}
-  \Sbase(s_t) \;:=\; -\pi(v_t),
-  \label{eq:base-score}
-\end{equation}
-so that larger $\Sbase$ is more error-like, consistent with \eqref{eq:prediction}. A norm baseline replaces $\pi(v_t)$ with $\|v_t\|_2$; the rescoring below is agnostic to the form of $\Sbase$.
+\textbf{Step representation.}
+For a trajectory $\traj=(s_1,\ldots,s_T)$, we encode each step in the context
+in which it was produced.
+Specifically, for step $s_t$, we provide the model $\proxy$ with the task
+description and the trajectory context
+$
+    z_t = [x; s_1;\ldots;s_t].
+$
+Let $\mathcal{T}_t$ denote the token positions corresponding to $s_t$ in
+$z_t$, and let $h_p^{(l)}\in\mathbb{R}^d$ be the hidden representation at
+layer $l$ and token position $p$.
+We obtain the $d$-dimensional step representation by mean-pooling over the tokens belonging
+to the current step:
+$
+    v_t
+    =
+    \frac{1}{|\mathcal{T}_t|}
+    \sum_{p\in\mathcal{T}_t}
+    h_p^{(l)}
+    \in\mathbb{R}^d.
+$
 
-\subsection{Attention-mass dependency weights}
+\textbf{Spectral reference space.}
+We apply the same representation extraction procedure to every step in the
+reference collection $\mathcal{D}_{\mathrm{fail}}$.
+Let
+$
+    M=\sum_{n=1}^{N}T_n
+$
+be the total number of reference steps.
+We stack their representations into $R=[(v_t^{(n)})^\top]_{n\in[N],\,t\in[T_n]}\in\mathbb{R}^{M\times d}$ where $v_t^{(n)}$ is representation of the $t$-th step in the $n$-th sequence or trajectory. We then compute its  singular value decomposition
+\begin{equation}
+    R = U\Sigma V^\top.
+    \label{eq:reference-svd}
+\end{equation}
+The columns of $V$ describe orthogonal directions of variation among the
+unlabeled steps, ordered by decreasing singular value. 
+
+
+Importantly, the reference set $R$ is dominated by ordinary steps because
+each failure trajectory typically contains \textit{only a small number of
+decisive errors}.
+Consequently, the leading singular directions may primarily encode
+frequent shared structure, such as  response style,
+trajectory format, and common tool-use patterns.
+Conversely, components at the extreme tail may contain irrelevant variation.
+We therefore do not assume that the most informative signal must lie in
+the leading components.
+Instead, we consider a contiguous spectral band to represent the decisive-error information
+$
+    \mathcal{C}
+    =
+    \{c_{\mathrm{begin}},\ldots,c_{\mathrm{end}}-1\},
+$ whose boundaries are selected as described in
+\S\ref{sec:experiments}.
+
+
+\textbf{Spectral base score.}
+For a step representation $v_t$, we measure its average squared projection
+onto the selected spectral band:
+\begin{equation}
+    \pi_{\mathcal{C}}(v_t)
+    =
+    \frac{1}{|\mathcal{C}|}
+    \sum_{c\in\mathcal{C}}
+    \left\langle v_t,V_{:,c}\right\rangle^2.
+    \label{eq:proj}
+\end{equation}
+Empirically, decisive-error steps exhibit smaller projection magnitudes on
+the selected directions than ordinary steps.\textcolor{blue}{add a distribuiton plot here.}
+We therefore define
+$ 
+    \Sbase(s_t)
+    =
+    -\pi_{\mathcal{C}}(v_t)
+$ \textcolor{blue}{check?} so that a larger score indicates stronger decisive-error
+evidence. Note that $R$ is constructed solely from the step-unlabeled reference
+collection where \textit{no decisive-error or responsible-agent annotation is used}.
+
+
+\subsection{Dependency-aware rescoring}
 \label{sec:method:weights}
 
-\crr{} requires, for every ordered pair $(i,t)$ with $i<t$, a non-negative coefficient $w_{i,t}$ quantifying how strongly step $t$ depends on step $i$. We derive it from the proxy's post-softmax attention on the same per-step inputs. Let $A^{(l,h)}\in[0,1]^{N\times N}$ be the causally masked attention at layer $l$, head $h$, row-stochastic over keys. The attention mass routed from step $t$ into step $i$ is
-\begin{equation}
-  m^{(l,h)}_{i,t} \;=\; \frac{1}{|\mathcal{T}_t|} \sum_{p \in \mathcal{T}_t} \sum_{q \in \mathcal{T}_i} A^{(l,h)}_{p,q}.
-  \label{eq:attn-mass-lh}
-\end{equation}
-The asymmetry is deliberate: averaging over $\mathcal{T}_t$ gives the typical mass a step-$t$ query routes into step $i$, while summing over $\mathcal{T}_i$ retains the total probability landing in step $i$; dividing also by $|\mathcal{T}_i|$ would penalize long predecessors at fixed routing intensity, the opposite of the dependency we want. We aggregate over heads and a selected layer band $L^\star$,
-\begin{equation}
-  m_{i,t} \;=\; \frac{1}{|L^\star|\,H} \sum_{l \in L^\star} \sum_{h=1}^{H} m^{(l,h)}_{i,t},
-  \label{eq:attn-mass-agg}
-\end{equation}
-and renormalize over predecessors into a row-stochastic weight,
-\begin{equation}
-  w_{i,t} \;=\; \frac{m_{i,t}}{\sum_{j < t} m_{j,t}}.
-  \label{eq:weight}
-\end{equation}
-The renormalization absorbs any mass routed to non-predecessor positions (BOS, chat-template tokens, $s_t$'s own tokens). A softmax-sharpening variant $w_{i,t}=\mathrm{softmax}_j(m_{j,t}/\tau)_i$ is also supported (ablated in \S\ref{sec:experiments}).
+\textbf{Attention-guided step dependencies.} The base score in Eqn.~\ref{eq:proj} evaluates each step independently
+and therefore cannot distinguish an error source from its downstream
+consequences.
+Once a decisive error occurs, later steps may inherit the corrupted
+context and exhibit stronger failure signals than the original error.
+An earlier step is therefore more plausible as the root cause when
+subsequent anomalous steps depend strongly on it.
+To capture this structure, we construct a soft dependency graph over
+the target trajectory.
 
-\subsection{Causal residual rescoring}
-\label{sec:method:crr}
-\paragraph{Downstream contamination problem.} Any per-step scorer that conditions on context evaluates $s_t$ together with its predecessors $s_{<t}$. Because the decisive error at $t^\star$ corrupts the state that all later steps build on, the corruption persists in the inputs to every $s_t$ with $t>t^\star$. The scorer therefore registers elevated anomaly not only at $t^\star$ but throughout the downstream suffix. The naive predictor $\arg\max_t \Sbase(s_t)$ then frequently selects a late step that is contaminated by the root cause failure. If contamination drives errors, predictions should land \emph{after} the true error. We quantify this with the prediction offset $\hat{t}-t^\star$. Figure~\ref{fig:offset} plots its distribution under a base scorer on the hand-crafted subset of Who\&When \TODO{Use a motivating example instead}
-\paragraph{Formulation.} Motivated by the downstream contamination phenomenon, we seek a score that keeps the intrinsic anomaly of $s_t$ but subtracts the portion attributable to causally upstream steps:
+
+
+For every pair $(i,t)$ with $i<t$, we define a non-negative coefficient
+$w_{i,t}$ that measures how strongly the later step $s_t$ depends on the
+earlier step $s_i$.
+We derive this coefficient from the post-softmax attention produced by
+$\proxy$. Specifically, we aggregate the attention routed from tokens in $s_t$ to
+tokens in $s_i$, yielding
+an attention mass $m_{i,t}$.
+We then normalize over all predecessor steps:
 \begin{equation}
-  \Stilde(s_t) \;=\; \Sbase(s_t) \;-\; \gamma \sum_{i < t} w_{i,t}\, \Sbase(s_i), \qquad \Stilde(s_1) = \Sbase(s_1),
-  \label{eq:crr}
+    w_{i,t}
+    =
+    \frac{m_{i,t}}
+         {\sum_{j<t}m_{j,t}},
+    \qquad i<t.
+    \label{eq:dependency-weight}
 \end{equation}
-where $\gamma \in [0,1]$ controls the correction strength. Setting $\gamma=0$ recovers the base scorer; $\gamma=1$ subtracts a full attention-weighted predecessor mean. The discount reads the \emph{original} $\Sbase(s_i)$, not the rescored value, so corrections do not cascade through the trajectory (we ablate a cascading variant in \S\ref{sec:experiments}). The prediction follows from \eqref{eq:prediction}.
+Thus, $\sum_{i<t}w_{i,t}=1$, and $w_{i,t}$ represents the relative
+dependency of step $s_t$ on predecessor $s_i$. The resulting weights provide soft evidence about which preceding
+steps contribute to the proxy model's representation of a later step. They require neither repeated LLM prompting, which introduces
+substantial inference cost~\citep{whoandwhen,oat}, nor explicit
+dependency reconstruction through LLM-based graph reasoning
+~\citep{falat,chief}, nor task-specific post-training on attributed
+failure trajectories~\citep{agentracer,graphtracer}.
 
-\paragraph{Properties.} \crr{} introduces a single new continuous hyperparameter $\gamma$ on top of the attention layer band $L^\star$. It requires no training data, no fine-tuning of $\proxy$, and no per-trajectory calibration: scores are ranked within each trajectory independently, sidestepping calibration across trajectories of differing length and domain.
 
-% \subsection{Why \crr{} recovers the earliest error}
-% \label{sec:method:theory}
 
-% \begin{proposition}[informal]
-% \label{prop:earliest}
-% Suppose the base score decomposes as an intrinsic term plus an inherited term that propagates forward through the dependency weights $w_{i,t}$, and that the decisive step $t^\star$ has strictly positive intrinsic anomaly while downstream steps have zero intrinsic anomaly. Then there exists $\gamma^\star\in(0,1]$ such that for all $\gamma\ge\gamma^\star$, $\Stilde$ is maximized at $t^\star$.
-% \end{proposition}
-% A formal statement and proof appear in Appendix~\ref{app:proof}; the intuition is that the residual subtraction removes exactly the forward-propagated component, leaving the intrinsic anomaly to dominate at its source.
+
+
+
+\textbf{Rescoring.}
+Given the dependency weights, we treat the error signal of a downstream
+step as additional evidence for the earlier steps on which it depends.
+For each step $s_i$, we compute the dependency-weighted average of the
+base scores of its downstream dependents:
+\begin{equation}
+    B_i
+    =
+    \frac{
+        \sum_{t>i}
+        w_{i,t}\,\Sbase(s_t)
+    }{
+        \epsilon+\sum_{t>i}w_{i,t}
+    },
+    \qquad
+    B_T=0,
+    \label{eq:backward-evidence}
+\end{equation}
+where $\epsilon>0$ ensures numerical stability.
+We then combine the step's local error signal with the downstream evidence attributed to it:
+\begin{equation}
+    \Stilde(s_i)
+    =
+    \Sbase(s_i)
+    +
+    \gamma B_i,
+    \qquad
+    \gamma\in[0,1].
+    \label{eq:recap}
+\end{equation}
+Here, $\gamma$ controls the strength of dependency-aware rescoring, and
+$\gamma=0$ recovers the base score.
+
+The normalization in Eqn.~\ref{eq:backward-evidence} produces a
+dependency-weighted average, which prevents an early or frequently attended step from receiving a
+large correction merely because it has many downstream steps.
+Instead, a step is promoted when the later steps that depend on it
+consistently exhibit strong failure signals.
+Conversely, an anomalous downstream step contributes little evidence to
+a predecessor on which it places little dependency weight.
+
+
+Finally, we predict the decisive-error step and the corresponding
+responsible agent as
+\begin{equation}
+    \hat{t}
+    =
+    \arg\max_{i\in\{1,\ldots,T\}}
+    \Stilde(s_i),
+    \qquad
+    \hat{a}
+    =
+    a_{\hat{t}}.
+    \label{eq:prediction}
+\end{equation}
+
+
+
+% \newpage
+% Our pipeline produces, for every step $s_t$, a scalar score $\Stilde(s_t)$ whose argmax is the predicted decisive-error step (\eqref{eq:prediction}). The score is the output of \soap's rescoring phase (\S\ref{sec:method:recap}), which corrects an off-the-shelf per-step base score $\Sbase$ (\S\ref{sec:method:base}) by backpropagating each step's anomaly to its upstream sources along attention-derived causal-dependency weights $w_{i,t}$ (\S\ref{sec:method:weights}).
+
+% \subsection{Per-step representations and base scoring}
+% \label{sec:method:base}
+
+% \textbf{Representation extraction.} For each step $s_t$, we form an input by concatenating the predecessor steps $s_1,\ldots,s_{t-1}$ with $s_t$ and run a single forward pass of $\proxy$. Let $\mathcal{T}_t$ denote the token positions occupied by $s_t$ and let $h^{(l)}_p \in \mathbb{R}^d$ be the hidden state at layer $l$ and position $p$. We mean-pool the hidden states over the step's own positions at a chosen layer $l^\star$:
+% \begin{equation}
+%   v_t \;=\; \operatorname*{mean}_{p \in \mathcal{T}_t}\; h^{(l^\star)}_p \;\in\; \mathbb{R}^d,
+%   \label{eq:embedding}
+% \end{equation}
+% where the layer $l^\star$ is a hyperparameter (\S\ref{sec:experiments}).
+
+% \textbf{SVD projection score.} We score $v_t$ by its squared projection onto a band of right singular vectors of a reference matrix $R\in\mathbb{R}^{N\times d}$ of step embeddings. Let $R = U\Sigma V^\top$ be the thin SVD, with columns of $V$ ordered by decreasing singular value. The directions that separate erroneous from non-erroneous steps lie in a contiguous band $\mathcal{C}=\{c_\text{begin},\ldots,c_\text{end}-1\}$ of singular vectors, selected as a hyperparameter.
+% % Leading components capture coarse shared structure (prose style, agent voice, formatting) and trailing components capture noise; the informative band therefore sits in the mid-spectrum.
+% We define the projection magnitude
+% \begin{equation}
+%   \pi(v_t) \;=\; \operatorname*{mean}_{c \in \mathcal{C}}\; \bigl\langle v_t,\, V_{:,c} \bigr\rangle^{2}.
+%   \label{eq:proj}
+% \end{equation}
+% Erroneous steps yield \emph{smaller} projection magnitudes on the selected band, so we obtain the base score by passing $\pi$ through a monotonically decreasing orientation map $\rho$ (e.g., $\rho(x)=-x$):
+% \begin{equation}
+%   \Sbase(s_t) \;:=\; \rho\bigl(\pi(v_t)\bigr),
+%   \label{eq:base-score}
+% \end{equation}
+% so that larger $\Sbase$ is more error-like, consistent with \eqref{eq:prediction}. A norm baseline replaces $\pi(v_t)$ with $\|v_t\|_2$; the rescoring below is agnostic to the form of $\Sbase$.
+
+% \subsection{Attention-mass dependency weights}
+% \label{sec:method:weights}
+
+% \soap requires, for every ordered pair $(i,t)$ with $i<t$, a non-negative coefficient $w_{i,t}$ quantifying how strongly step $t$ depends on step $i$. We derive it from the proxy's post-softmax attention on the same per-step inputs. Let $A^{(l,h)}\in[0,1]^{N\times N}$ be the causally masked attention at layer $l$, head $h$, row-stochastic over keys. The attention mass routed from step $t$ into step $i$ is the mass a typical step-$t$ query places on step $i$'s positions:
+% \begin{equation}
+%   m^{(l,h)}_{i,t} \;=\; \operatorname*{mean}_{p \in \mathcal{T}_t}\; \sum_{q \in \mathcal{T}_i} A^{(l,h)}_{p,q}.
+%   \label{eq:attn-mass-lh}
+% \end{equation}
+% % The asymmetry is deliberate: averaging over $\mathcal{T}_t$ gives the typical mass a step-$t$ query routes into step $i$, while summing over $\mathcal{T}_i$ retains the total probability landing in step $i$; dividing also by $|\mathcal{T}_i|$ would penalize long predecessors at fixed routing intensity, the opposite of the dependency we want.
+% We average over heads and a selected layer band $L^\star$,
+% \begin{equation}
+%   m_{i,t} \;=\; \operatorname*{mean}_{l \in L^\star,\; h}\; m^{(l,h)}_{i,t},
+%   \label{eq:attn-mass-agg}
+% \end{equation}
+% and renormalize over predecessors into a row-stochastic weight,
+% \begin{equation}
+%   w_{i,t} \;=\; \frac{m_{i,t}}{\sum_{j < t} m_{j,t}}.
+%   \label{eq:weight}
+% \end{equation}
+% The renormalization absorbs any mass routed to non-predecessor positions (BOS, chat-template tokens, $s_t$'s own tokens). A softmax-sharpening variant $w_{i,t}=\mathrm{softmax}_j(m_{j,t}/\tau)_i$ is also supported (ablated in \S\ref{sec:experiments}).
+
+% \subsection{Rescoring by causal attention backpropagation}
+% \label{sec:method:recap}
+% \textbf{Downstream contamination problem.} A per-step scorer evaluates each step $s_t$ together with the steps that precede it. Once the decisive error occurs at $t^\star$, every later step is generated from a context that already contains the mistake, so the scorer registers elevated anomaly not only at $t^\star$ but at many steps after it. Taking the argmax of $\Sbase$ therefore often returns a late step that merely inherits the corruption, rather than the step that introduced it. Figure~\ref{fig:offset} illustrates this on the hand-crafted subset of Who\&When: base-scorer predictions land systematically \emph{after} the annotated decisive step. \TODO{Use a motivating example instead}
+% \textbf{Formulation.} Motivated by the downstream contamination phenomenon, we treat the contaminated suffix not as noise to be suppressed but as evidence to be returned to its source: each step's anomaly is backpropagated along the dependency weights to the upstream steps it was inherited from. Concretely, every step collects the anomaly of its dependents, weighted by how strongly they attended to it:
+% \begin{equation}
+%   \Stilde(s_i) \;=\; \Sbase(s_i) \;+\; \gamma\, \frac{\sum_{t>i} w_{i,t}\, \Sbase(s_t)}{\sum_{t>i} w_{i,t}}, \qquad \Stilde(s_T) = \Sbase(s_T),
+%   \label{eq:recap}
+% \end{equation}
+% where $\gamma \in [0,1]$ controls the propagation strength. Setting $\gamma=0$ recovers the base scorer exactly; the final step, having no dependents, is left unchanged. The normalization by the total attention received, $\sum_{t>i} w_{i,t}$, keeps the correction honest: without it, any heavily attended step---a plan, a restatement of the task---would accumulate blame simply for being popular. Dividing by attention received turns the correction into the mean anomaly of a step's dependents per unit of attention, so a step is promoted only when its dependents are anomalous \emph{relative to how much they leaned on it}. The right-hand side reads the original $\Sbase$, never the rescored value, so the correction is single-pass and does not cascade through the trajectory. As a result, a decisive error whose own representation looks unremarkable is still promoted whenever the steps built on it are broken---which is precisely what makes an error decisive. The prediction follows from \eqref{eq:prediction}.
+
+% \textbf{Properties.} \soap introduces a single new continuous hyperparameter $\gamma$ on top of the attention layer band $L^\star$. It requires no training data, no fine-tuning of $\proxy$, and no per-trajectory calibration: scores are ranked within each trajectory independently, sidestepping calibration across trajectories of differing length and domain.
