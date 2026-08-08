@@ -30,6 +30,13 @@ THINK_CLOSE = "</think>"
 THINK_CLOSE_BLOCK = "\n" + THINK_CLOSE + "\n\n"
 
 _SEP = "\n\n"                 # separator between serialized turns
+
+# Sentinel context-bucket id for the pinned GT block in with-GT mode. It labels the
+# block's token span in ``step_tokens`` so attention buckets it as a predecessor, but it
+# is never a scoreable step: no activation entry is ever written under it, and
+# ``src.rescore.weights.build_W`` drops it (no keeper row) exactly like the unscored
+# ``human`` question turn of hand-crafted trajectories.
+GT_STEP = -1
 _SENTINEL = ""         # private-use marker to split the user scaffolding
 
 
@@ -55,6 +62,15 @@ def _serialize_turns(history: list[dict], indices: list[int]) -> str:
         content = turn.get("content", "").strip()
         parts.append(f"[{role}] - Step {i}: {content}")
     return _SEP.join(parts)
+
+
+def _gt_block_text(traj) -> str:
+    """The pinned with-GT prefix. Phrasing matches the prompting baselines
+    (baselines/prompting/methods.py) so the proxy sees the answer in the same register;
+    it contains no ``[role] - Step i:`` substring, so it cannot collide with a turn."""
+    gt = (traj.ground_truth or "").strip()
+    assert gt, f"GT mode requires a non-empty ground_truth ({traj.filename})"
+    return f"The problem is: {traj.question}\nThe Answer for the problem is: {gt}"
 
 
 def iter_scoreable_steps(trajectory: Trajectory) -> list[int]:
@@ -86,10 +102,17 @@ def _ids(tokenizer: PreTrainedTokenizer, text: str) -> list[int]:
 
 
 # ── core build ──────────────────────────────────────────────────────────────
-def _build(traj, step_idx, tokenizer, max_tokens, template_kwargs) -> dict[str, Any]:
+def _build(traj, step_idx, tokenizer, max_tokens, template_kwargs,
+           with_gt: bool = False) -> dict[str, Any]:
     """Assemble input_ids from independently-tokenised pieces.
 
     Returns ``{input_ids, ctx_len, step_tokens, hard_truncated}``.
+
+    With ``with_gt=True`` the context becomes ``[question, answer] + [s_1..s_t]``: the
+    GT block sits right after ``open_ids``, is PINNED (the truncation loop below only
+    drops real context turns), and is recorded in ``step_tokens`` under ``GT_STEP`` so
+    attention treats it as a predecessor bucket that is never scored. It is part of the
+    head, so ``ctx_len`` covers it and pooling never reads its tokens.
 
     WHY ASSEMBLE RATHER THAN TOKENISE THE WHOLE STRING
     --------------------------------------------------
@@ -128,12 +151,16 @@ def _build(traj, step_idx, tokenizer, max_tokens, template_kwargs) -> dict[str, 
     close_ids = _ids(tokenizer, closing_text)
     sep_ids = _ids(tokenizer, _SEP)
     content_ids = _ids(tokenizer, _serialize_turns(history, [step_idx]))
+    gt_ids = _ids(tokenizer, _gt_block_text(traj)) if with_gt else []
 
     def assemble(indices: list[int]) -> tuple[list[int], dict[int, list[int]]]:
         head = list(open_ids)
         spans: dict[int, list[int]] = {}
+        if gt_ids:
+            spans[GT_STEP] = list(range(len(head), len(head) + len(gt_ids)))
+            head += gt_ids
         for k, i in enumerate(indices):
-            if k > 0:
+            if k > 0 or gt_ids:
                 head += sep_ids
             chunk = _ids(tokenizer, _serialize_turns(history, [i]))
             spans[i] = list(range(len(head), len(head) + len(chunk)))
@@ -154,6 +181,9 @@ def _build(traj, step_idx, tokenizer, max_tokens, template_kwargs) -> dict[str, 
     # Caveat worth knowing when interpreting long-trajectory results: the task question
     # is turn 0, so it is the FIRST thing dropped. `select_context` is the hook to
     # change that policy (e.g. pin turn 0 and drop from the middle instead).
+    # In with-GT mode the pinned GT block is NOT in ctx_indices, so it survives every
+    # drop; only the degenerate tail-keep below can cut into it (and then step_tokens
+    # holds just the scored step, so no phantom GT bucket is emitted).
     if max_tokens is not None:
         while len(head_ids) + len(content_ids) > max_tokens and ctx_indices:
             ctx_indices = ctx_indices[1:]
@@ -183,15 +213,20 @@ def _build(traj, step_idx, tokenizer, max_tokens, template_kwargs) -> dict[str, 
 
 
 # ── public builders ─────────────────────────────────────────────────────────
-def build_context(traj, step_idx, tokenizer, max_tokens=None, template_kwargs=None):
+def build_context(traj, step_idx, tokenizer, max_tokens=None, template_kwargs=None,
+                  with_gt=False):
     """Tokenise one (context, scored-step) pair. Returns {input_ids (1,L), ctx_len}."""
-    b = _build(traj, step_idx, tokenizer, max_tokens, template_kwargs)
+    b = _build(traj, step_idx, tokenizer, max_tokens, template_kwargs, with_gt=with_gt)
     ids = torch.tensor(b["input_ids"], dtype=torch.long).unsqueeze(0)
     return {"input_ids": ids, "ctx_len": b["ctx_len"]}
 
 
-def separate_steps(traj, step_idx, tokenizer, max_tokens=None, template_kwargs=None):
-    """Like build_context but also returns step_tokens: history step -> token positions."""
-    b = _build(traj, step_idx, tokenizer, max_tokens, template_kwargs)
+def separate_steps(traj, step_idx, tokenizer, max_tokens=None, template_kwargs=None,
+                   with_gt=False):
+    """Like build_context but also returns step_tokens: history step -> token positions.
+
+    In with-GT mode ``step_tokens`` additionally holds the pinned GT block's span under
+    the ``GT_STEP`` sentinel (unless the degenerate tail-keep truncation removed it)."""
+    b = _build(traj, step_idx, tokenizer, max_tokens, template_kwargs, with_gt=with_gt)
     ids = torch.tensor(b["input_ids"], dtype=torch.long).unsqueeze(0)
     return {"input_ids": ids, "ctx_len": b["ctx_len"], "step_tokens": b["step_tokens"]}

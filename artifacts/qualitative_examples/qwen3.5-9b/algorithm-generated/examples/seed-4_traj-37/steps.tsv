@@ -1,0 +1,7 @@
+model	subset	seed	split	traj_idx	n_steps	step_idx	role	base	oriented	normalized	final	base_rank	final_rank	is_gold	is_base_pred	is_soap_pred
+qwen3.5-9b	algorithm-generated	4	test	37	6	0	Cubing_Expert	58.32023239135742	0.017146708443760872	0.017146708443760872	0.023773055523633957	3	3	False	False	False
+qwen3.5-9b	algorithm-generated	4	test	37	6	1	Cubing_Expert	58.64078903198242	0.01705297641456127	0.01705297641456127	0.03254960477352142	4	1	True	False	True
+qwen3.5-9b	algorithm-generated	4	test	37	6	2	Verification_Expert	38.718101501464844	0.025827713310718536	0.025827713310718536	0.025827713310718536	1	2	False	True	False
+qwen3.5-9b	algorithm-generated	4	test	37	6	3	Computer_terminal	257.3028564453125	0.0038864705711603165	0.0038864705711603165	0.0038864705711603165	6	6	False	False	False
+qwen3.5-9b	algorithm-generated	4	test	37	6	4	Verification_Expert	53.23345184326172	0.018785180523991585	0.018785180523991585	0.018785180523991585	2	4	False	False	False
+qwen3.5-9b	algorithm-generated	4	test	37	6	5	Geometry_Expert	224.66799926757812	0.00445101223886013	0.00445101223886013	0.00445101223886013	5	5	False	False	False

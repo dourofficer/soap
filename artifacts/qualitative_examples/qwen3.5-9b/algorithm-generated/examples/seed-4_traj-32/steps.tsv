@@ -1,0 +1,11 @@
+model	subset	seed	split	traj_idx	n_steps	step_idx	role	base	oriented	normalized	final	base_rank	final_rank	is_gold	is_base_pred	is_soap_pred
+qwen3.5-9b	algorithm-generated	4	test	32	10	0	SpeciesSightingsData_Expert	99.4608383178711	0.01005420833826065	0.01005420833826065	0.019244063645601273	9	5	False	False	False
+qwen3.5-9b	algorithm-generated	4	test	32	10	1	SpeciesSightingsData_Expert	48.28611755371094	0.02070988528430462	0.02070988528430462	0.03137887269258499	3	1	True	False	True
+qwen3.5-9b	algorithm-generated	4	test	32	10	2	Computer_terminal	98.33895874023438	0.010168910026550293	0.010168910026550293	0.010168910026550293	8	9	False	False	False
+qwen3.5-9b	algorithm-generated	4	test	32	10	3	DataVerification_Expert	39.37880325317383	0.025394372642040253	0.025394372642040253	0.025394372642040253	1	3	False	True	False
+qwen3.5-9b	algorithm-generated	4	test	32	10	4	Computer_terminal	60.19133758544922	0.016613686457276344	0.016613686457276344	0.025769848376512527	5	2	False	False	False
+qwen3.5-9b	algorithm-generated	4	test	32	10	5	AlligatorBiology_Expert	45.096309661865234	0.022174762561917305	0.022174762561917305	0.022174762561917305	2	4	False	False	False
+qwen3.5-9b	algorithm-generated	4	test	32	10	6	DataVerification_Expert	98.05088806152344	0.010198785923421383	0.010198785923421383	0.010198785923421383	7	8	False	False	False
+qwen3.5-9b	algorithm-generated	4	test	32	10	7	Computer_terminal	286.7349853515625	0.003487540874630213	0.003487540874630213	0.003487540874630213	10	10	False	False	False
+qwen3.5-9b	algorithm-generated	4	test	32	10	8	SpeciesSightingsData_Expert	53.43621063232422	0.018713902682065964	0.018713902682065964	0.018713902682065964	4	6	False	False	False
+qwen3.5-9b	algorithm-generated	4	test	32	10	9	Computer_terminal	65.52964782714844	0.01526026800274849	0.01526026800274849	0.01526026800274849	6	7	False	False	False

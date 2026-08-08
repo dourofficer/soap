@@ -1,0 +1,46 @@
+# exp-august protocol config — traceelephant, WITH-GT setting.
+# Identical to traceelephant.yaml except `gt: true`: artifact reads (reps/attention/
+# scores) come from the repo's outputs-gt/traceelephant tree (pinned [question, answer]
+# context, see src/data/context.py), protocol writes land in
+# exp-august/outputs-gt/traceelephant/. Baseline predictions keep reading the plain
+# outputs/traceelephant/baselines (their prompts already embed the answer on TE).
+dataset: traceelephant
+gt: true
+
+device: cuda
+n_seeds: 3          # shared seeds per cell, chosen jointly with the SVD (proj) config
+
+# ── SVD (proj): the base score, selected from the recorded score files. ──────
+base:
+  fixed:
+    pooling: mean
+    method: proj
+    centered: false   # uncentered SVD reference
+    weighted: false   # component scores not scaled by singular values
+    direction: asc    # lower projection = more error-like
+  swept: [position, c_begin, c_end]
+
+# ── SOAP (full): rescoring on top of the cell's fixed base config. ───────────
+# The sweep (run_rescore.py) always covers the full grid below, so moving an
+# axis between fixed and swept later needs no re-run — only re-tabulation.
+rescore:
+  strategy: backprop  # the manuscript's rescoring (eq:recap)
+  fixed:
+    orient: inverse
+    score_norm: none
+  swept: [layer_range, gamma, w]
+
+# ── seed-window ("triples") protocol: every consecutive `window` of `seeds` ──
+# (the GT score stage must cover the same seed list; see the README's GT section)
+triples:
+  window: 3
+  seeds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+
+# ── grid swept by run_rescore.py / run_rescore_triples.py (superset of anything selected above) ───────
+poolings: [mean]
+n_ranges: 4
+gammas: [0.0, 0.1, 0.2, 0.4, 0.6, 0.8, 1.0]  # 0.0 included: recovers SVD (proj), so SOAP (full) can fall back to the base score
+ws: [1, 2, 3, 4, 5, all]
+orients: [negate, inverse, sigmoid]
+score_norms: [none, center]
+strategies: [discount, backprop]

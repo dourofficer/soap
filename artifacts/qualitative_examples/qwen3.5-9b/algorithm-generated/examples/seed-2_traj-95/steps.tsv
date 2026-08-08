@@ -1,0 +1,11 @@
+model	subset	seed	split	traj_idx	n_steps	step_idx	role	base	oriented	normalized	final	base_rank	final_rank	is_gold	is_base_pred	is_soap_pred
+qwen3.5-9b	algorithm-generated	2	test	95	10	0	AcademicPublication_Expert	50.944664001464844	0.019629141315817833	0.019629141315817833	0.033032309263944626	6	3	False	False	False
+qwen3.5-9b	algorithm-generated	2	test	95	10	1	AcademicPublication_Expert	51.98265075683594	0.019237186759710312	0.019237186759710312	0.019237186759710312	7	7	False	False	False
+qwen3.5-9b	algorithm-generated	2	test	95	10	2	Computer_terminal	92.2728500366211	0.010837423615157604	0.010837423615157604	0.010837423615157604	9	9	False	False	False
+qwen3.5-9b	algorithm-generated	2	test	95	10	3	PublicationAnalysis_Expert	98.95500183105469	0.010105603374540806	0.010105603374540806	0.010105603374540806	10	10	False	False	False
+qwen3.5-9b	algorithm-generated	2	test	95	10	4	AcademicPublication_Expert	48.03078842163086	0.020819978788495064	0.020819978788495064	0.020819978788495064	5	6	False	False	False
+qwen3.5-9b	algorithm-generated	2	test	95	10	5	AcademicPublication_Expert	26.774951934814453	0.037348341196775436	0.037348341196775436	0.055000968277454376	2	1	True	False	True
+qwen3.5-9b	algorithm-generated	2	test	95	10	6	PublicationAnalysis_Expert	33.989280700683594	0.029421040788292885	0.029421040788292885	0.029421040788292885	3	4	False	False	False
+qwen3.5-9b	algorithm-generated	2	test	95	10	7	Verification_Expert	26.63873863220215	0.03753931447863579	0.03753931447863579	0.03753931447863579	1	2	False	True	False
+qwen3.5-9b	algorithm-generated	2	test	95	10	8	Computer_terminal	72.8157958984375	0.01373328361660242	0.01373328361660242	0.01373328361660242	8	8	False	False	False
+qwen3.5-9b	algorithm-generated	2	test	95	10	9	Verification_Expert	34.37873840332031	0.029087746515870094	0.029087746515870094	0.029087746515870094	4	5	False	False	False

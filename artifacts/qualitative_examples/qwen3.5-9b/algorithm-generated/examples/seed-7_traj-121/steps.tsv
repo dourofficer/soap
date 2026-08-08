@@ -1,0 +1,8 @@
+model	subset	seed	split	traj_idx	n_steps	step_idx	role	base	oriented	normalized	final	base_rank	final_rank	is_gold	is_base_pred	is_soap_pred
+qwen3.5-9b	algorithm-generated	7	test	121	7	0	JSON_Expert	73.5548324584961	0.013595299795269966	0.013595299795269966	0.018490305170416832	4	3	False	False	False
+qwen3.5-9b	algorithm-generated	7	test	121	7	1	Debugging_Expert	55.880123138427734	0.017895450815558434	0.017895450815558434	0.026841776445508003	2	1	True	False	True
+qwen3.5-9b	algorithm-generated	7	test	121	7	2	Computer_terminal	254.41104125976562	0.003930646926164627	0.003930646926164627	0.003930646926164627	6	6	False	False	False
+qwen3.5-9b	algorithm-generated	7	test	121	7	3	Debugging_Expert	47.65394592285156	0.020984621718525887	0.020984621718525887	0.020984621718525887	1	2	False	True	False
+qwen3.5-9b	algorithm-generated	7	test	121	7	4	Computer_terminal	131.88124084472656	0.007582579739391804	0.007582579739391804	0.007582579739391804	5	5	False	False	False
+qwen3.5-9b	algorithm-generated	7	test	121	7	5	Verification_Expert	61.8642578125	0.016164422035217285	0.016164422035217285	0.016164422035217285	3	4	False	False	False
+qwen3.5-9b	algorithm-generated	7	test	121	7	6	Verification_Expert	377.51092529296875	0.0026489300653338432	0.0026489300653338432	0.0026489300653338432	7	7	False	False	False

@@ -1,0 +1,116 @@
+{
+  "cell": {
+    "dataset": "ww",
+    "model": "qwen3.5-9b",
+    "subset": "algorithm-generated",
+    "column": "WW-AG",
+    "manuscript_seeds": [
+      2,
+      3,
+      4
+    ]
+  },
+  "frozen_config": {
+    "seed": 3,
+    "pooling": "mean",
+    "position": "act/27",
+    "method": "proj",
+    "c_begin": 1,
+    "c_end": 7,
+    "centered": false,
+    "weighted": false,
+    "orient": "inverse",
+    "score_norm": "none",
+    "strategy": "backprop",
+    "layer_range": "0-2",
+    "gamma": 0.6,
+    "w": 1,
+    "model": "qwen3.5-9b",
+    "subset": "algorithm-generated",
+    "split": "test",
+    "rank_direction": "desc",
+    "base_direction": "asc"
+  },
+  "selection": {
+    "seed": 3,
+    "split": "test",
+    "manuscript_window": true,
+    "relaxed": false,
+    "pick_rank": 7,
+    "traj_idx": 88,
+    "n_steps": 10,
+    "offset": 9,
+    "gold_base_rank": 2,
+    "gold_final_rank": 1,
+    "soap_margin": 0.005452824756503105,
+    "flip_seeds": "2,3,5,6,10,12,13,14,15,20",
+    "n_flip_seeds": 10
+  },
+  "gold": {
+    "step": 0,
+    "agent": "FinancialData_Expert",
+    "mistake_step_raw": "0",
+    "mistake_agent_raw": "FinancialData_Expert",
+    "mistake_reason": "The code provided by FinancialData_Expert is incorrect.",
+    "question_ID": "08cae58d-4084-4616-b6dd-dd6534e4825b",
+    "n_history_turns": 10
+  },
+  "predictions": {
+    "base": {
+      "step": 9,
+      "agent": "Computer_terminal"
+    },
+    "soap": {
+      "step": 0,
+      "agent": "FinancialData_Expert"
+    }
+  },
+  "scored_step_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "verification": {
+    "seeds": [
+      2,
+      3,
+      4
+    ],
+    "per_seed": {
+      "2": {
+        "base_step_acc": 0.36507936507936506,
+        "soap_step_acc": 0.4603174603174603,
+        "n_trajectories": 63
+      },
+      "3": {
+        "base_step_acc": 0.4444444444444444,
+        "soap_step_acc": 0.5079365079365079,
+        "n_trajectories": 63
+      },
+      "4": {
+        "base_step_acc": 0.3968253968253968,
+        "soap_step_acc": 0.47619047619047616,
+        "n_trajectories": 63
+      }
+    },
+    "tolerance": 5e-05,
+    "reproduced_base_step_acc": 0.4021164021164021,
+    "recorded_svd_step": 0.4021,
+    "reproduced_soap_step_acc": 0.4814814814814814,
+    "recorded_soap_step": 0.4815,
+    "passed": true
+  },
+  "sources": {
+    "selection_tsv": "exp-august/outputs/manuscript-tables/table1_main_selection.tsv",
+    "trajectory_json": "data/ww/algorithm-generated/88.json",
+    "activations": "outputs/ww/activations/qwen3.5-9b/algorithm-generated/88.safetensors",
+    "attention": "outputs/ww/attention/qwen3.5-9b/algorithm-generated/88.safetensors"
+  }
+}

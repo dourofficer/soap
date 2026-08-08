@@ -1,0 +1,9 @@
+model	subset	seed	split	traj_idx	n_steps	step_idx	role	base	oriented	normalized	final	base_rank	final_rank	is_gold	is_base_pred	is_soap_pred
+qwen3.5-9b	algorithm-generated	5	test	80	8	0	PythonDebugging_Expert	56.88713836669922	0.017578665167093277	0.017578665167093277	0.028481384739279747	2	1	True	False	True
+qwen3.5-9b	algorithm-generated	5	test	80	8	1	Computer_terminal	37.275787353515625	0.026827065274119377	0.026827065274119377	0.026827065274119377	1	2	False	True	False
+qwen3.5-9b	algorithm-generated	5	test	80	8	2	Environment_Expert	105.09353637695312	0.009515332989394665	0.009515332989394665	0.009515332989394665	5	5	False	False	False
+qwen3.5-9b	algorithm-generated	5	test	80	8	3	Computer_terminal	148.03176879882812	0.006755306851118803	0.006755306851118803	0.006755306851118803	6	6	False	False	False
+qwen3.5-9b	algorithm-generated	5	test	80	8	4	Verification_Expert	71.64437866210938	0.013957829214632511	0.013957829214632511	0.013957829214632511	3	4	False	False	False
+qwen3.5-9b	algorithm-generated	5	test	80	8	5	Computer_terminal	149.28468322753906	0.0066986107267439365	0.0066986107267439365	0.0066986107267439365	7	7	False	False	False
+qwen3.5-9b	algorithm-generated	5	test	80	8	6	PythonDebugging_Expert	74.35173797607422	0.013449585065245628	0.013449585065245628	0.01550327055156231	4	3	False	False	False
+qwen3.5-9b	algorithm-generated	5	test	80	8	7	PythonDebugging_Expert	292.1576843261719	0.0034228090662509203	0.0034228090662509203	0.0034228090662509203	8	8	False	False	False

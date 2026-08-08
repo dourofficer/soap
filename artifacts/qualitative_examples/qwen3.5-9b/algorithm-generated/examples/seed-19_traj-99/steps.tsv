@@ -1,0 +1,8 @@
+model	subset	seed	split	traj_idx	n_steps	step_idx	role	base	oriented	normalized	final	base_rank	final_rank	is_gold	is_base_pred	is_soap_pred
+qwen3.5-9b	algorithm-generated	19	test	99	7	0	Ticket_Pricing_Expert	75.33323669433594	0.013274352997541428	0.013274352997541428	0.018775198608636856	2	2	False	False	False
+qwen3.5-9b	algorithm-generated	19	test	99	7	1	AnalyticalReasoning_Expert	85.85569763183594	0.011647450737655163	0.011647450737655163	0.018606681376695633	4	3	False	False	False
+qwen3.5-9b	algorithm-generated	19	test	99	7	2	Verification_Expert	86.2164306640625	0.011598717421293259	0.011598717421293259	0.019387168809771538	5	1	True	False	True
+qwen3.5-9b	algorithm-generated	19	test	99	7	3	Computer_terminal	77.03713989257812	0.012980751693248749	0.012980751693248749	0.012980751693248749	3	5	False	False	False
+qwen3.5-9b	algorithm-generated	19	test	99	7	4	Ticket_Pricing_Expert	59.686248779296875	0.016754277050495148	0.016754277050495148	0.016754277050495148	1	4	False	True	False
+qwen3.5-9b	algorithm-generated	19	test	99	7	5	Ticket_Pricing_Expert	246.90440368652344	0.004050150513648987	0.004050150513648987	0.004050150513648987	7	7	False	False	False
+qwen3.5-9b	algorithm-generated	19	test	99	7	6	Ticket_Pricing_Expert	236.94268798828125	0.0042204298079013824	0.0042204298079013824	0.0042204298079013824	6	6	False	False	False

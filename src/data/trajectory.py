@@ -40,6 +40,7 @@ class Trajectory:
     subset:        str
     question:      str
     system:        str | None
+    ground_truth:  str = ""      # gold task answer; empty on corpora without one (CE)
 
 
 def load_dataset(path: str | Path, subset: str | None = None) -> list[Trajectory]:
@@ -65,6 +66,7 @@ def load_dataset(path: str | Path, subset: str | None = None) -> list[Trajectory
             subset        = subset,
             question      = item.get("question", ""),
             system        = system_description,
+            ground_truth  = item.get("ground_truth") or item.get("groundtruth") or "",
         ))
     return trajectories
 
@@ -79,4 +81,5 @@ def extract_metadata(traj: Trajectory) -> dict:
         "level":         traj.level,
         "subset":        traj.subset,
         "question":      traj.question,
+        "ground_truth":  traj.ground_truth,
     }

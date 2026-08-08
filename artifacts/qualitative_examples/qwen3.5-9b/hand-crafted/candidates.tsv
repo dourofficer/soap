@@ -1,0 +1,2 @@
+pick_rank	seed	split	manuscript_window	relaxed	traj_idx	n_steps	true_step	true_agent	base_pred_step	base_pred_agent	soap_pred_step	soap_pred_agent	offset	gold_base_rank	gold_final_rank	soap_margin
+1	15	test	True	False	23	73	8	WebSurfer	73	WebSurfer	8	WebSurfer	65	2	1	8.640927262604237e-05

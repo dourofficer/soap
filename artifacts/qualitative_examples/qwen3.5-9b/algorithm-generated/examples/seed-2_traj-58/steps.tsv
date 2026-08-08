@@ -1,0 +1,7 @@
+model	subset	seed	split	traj_idx	n_steps	step_idx	role	base	oriented	normalized	final	base_rank	final_rank	is_gold	is_base_pred	is_soap_pred
+qwen3.5-9b	algorithm-generated	2	test	58	6	0	Python_ScikitLearn_StatisticalAnalysis_Expert	56.02839660644531	0.017848093062639236	0.017848093062639236	0.02955302968621254	4	3	False	False	False
+qwen3.5-9b	algorithm-generated	2	test	58	6	1	Verification_Expert	20.269119262695312	0.049336135387420654	0.049336135387420654	0.07110175490379333	2	1	True	False	True
+qwen3.5-9b	algorithm-generated	2	test	58	6	2	Computer_terminal	384.1834716796875	0.0026029229629784822	0.0026029229629784822	0.0026029229629784822	6	6	False	False	False
+qwen3.5-9b	algorithm-generated	2	test	58	6	3	Python_ScikitLearn_StatisticalAnalysis_Expert	19.49021339416504	0.0513078011572361	0.0513078011572361	0.0513078011572361	1	2	False	True	False
+qwen3.5-9b	algorithm-generated	2	test	58	6	4	Verification_Expert	47.071510314941406	0.021244272589683533	0.021244272589683533	0.021244272589683533	3	4	False	False	False
+qwen3.5-9b	algorithm-generated	2	test	58	6	5	Python_ScikitLearn_StatisticalAnalysis_Expert	151.84585571289062	0.006585625931620598	0.006585625931620598	0.006585625931620598	5	5	False	False	False

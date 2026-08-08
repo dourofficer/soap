@@ -1,0 +1,112 @@
+{
+  "cell": {
+    "dataset": "ww",
+    "model": "qwen3.5-9b",
+    "subset": "algorithm-generated",
+    "column": "WW-AG",
+    "manuscript_seeds": [
+      2,
+      3,
+      4
+    ]
+  },
+  "frozen_config": {
+    "seed": 1,
+    "pooling": "mean",
+    "position": "act/27",
+    "method": "proj",
+    "c_begin": 1,
+    "c_end": 7,
+    "centered": false,
+    "weighted": false,
+    "orient": "inverse",
+    "score_norm": "none",
+    "strategy": "backprop",
+    "layer_range": "0-2",
+    "gamma": 0.6,
+    "w": 1,
+    "model": "qwen3.5-9b",
+    "subset": "algorithm-generated",
+    "split": "test",
+    "rank_direction": "desc",
+    "base_direction": "asc"
+  },
+  "selection": {
+    "seed": 1,
+    "split": "test",
+    "manuscript_window": false,
+    "relaxed": false,
+    "pick_rank": 108,
+    "traj_idx": 1,
+    "n_steps": 6,
+    "offset": 2,
+    "gold_base_rank": 2,
+    "gold_final_rank": 1,
+    "soap_margin": 0.009115241467952728,
+    "flip_seeds": "1,19",
+    "n_flip_seeds": 2
+  },
+  "gold": {
+    "step": 0,
+    "agent": "Excel_Expert",
+    "mistake_step_raw": "0",
+    "mistake_agent_raw": "Excel_Expert",
+    "mistake_reason": "The code failed to handle edge cases in the 'Street Address' data, leading to an incomplete and inaccurate count of even-numbered addresses.",
+    "question_ID": "4d51c4bf-4b0e-4f3d-897b-3f6687a7d9f2",
+    "n_history_turns": 6
+  },
+  "predictions": {
+    "base": {
+      "step": 2,
+      "agent": "BusinessLogic_Expert"
+    },
+    "soap": {
+      "step": 0,
+      "agent": "Excel_Expert"
+    }
+  },
+  "scored_step_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "verification": {
+    "seeds": [
+      2,
+      3,
+      4
+    ],
+    "per_seed": {
+      "2": {
+        "base_step_acc": 0.36507936507936506,
+        "soap_step_acc": 0.4603174603174603,
+        "n_trajectories": 63
+      },
+      "3": {
+        "base_step_acc": 0.4444444444444444,
+        "soap_step_acc": 0.5079365079365079,
+        "n_trajectories": 63
+      },
+      "4": {
+        "base_step_acc": 0.3968253968253968,
+        "soap_step_acc": 0.47619047619047616,
+        "n_trajectories": 63
+      }
+    },
+    "tolerance": 5e-05,
+    "reproduced_base_step_acc": 0.4021164021164021,
+    "recorded_svd_step": 0.4021,
+    "reproduced_soap_step_acc": 0.4814814814814814,
+    "recorded_soap_step": 0.4815,
+    "passed": true
+  },
+  "sources": {
+    "selection_tsv": "exp-august/outputs/manuscript-tables/table1_main_selection.tsv",
+    "trajectory_json": "data/ww/algorithm-generated/1.json",
+    "activations": "outputs/ww/activations/qwen3.5-9b/algorithm-generated/1.safetensors",
+    "attention": "outputs/ww/attention/qwen3.5-9b/algorithm-generated/1.safetensors"
+  }
+}

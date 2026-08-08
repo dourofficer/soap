@@ -2,7 +2,39 @@
 \section{Related Work}
 \label{sec:related}
 
-\paragraph{Failure attribution in multi-agent systems.} \citet{whoandwhen} formulate automated failure attribution, release the Who\&When benchmark, and evaluate three LLM-as-judge strategies---all-at-once, step-by-step, and binary search; complementary studies catalogue why multi-agent systems fail~\citep{mast}. Two lines of work build on this. The first keeps the LLM judge but engineers the inference: ECHO organizes long traces into a hierarchical context and aggregates several role-conditioned analysts through confidence-weighted consensus voting~\citep{echo}, and CORRECT distills recurrent failures into reusable error schemata that are retrieved at inference time to guide localization~\citep{correct}. The second trains a dedicated attributor: AgenTracer constructs synthetic failure trajectories via counterfactual replay and fault injection, then fine-tunes an 8B tracer with reinforcement learning to emit the decisive step~\citep{agentracer}. All of these read the entire trajectory and return a single verdict, and the accurate ones depend on either a labeled corpus (CORRECT's schema library, AgenTracer's training set) or a strong, multi-call LLM judge. CRR differs on both axes: it scores steps from a proxy model's internal representations rather than querying a judge, and it requires no labeled trajectories at all. We also note that CORRECT observes error \emph{propagation} across agents, but uses it only as motivation; CRR turns the same observation into an explicit correction on the score field.\textcolor{blue}{please refine this by discussing with more related works.}
+\textbf{Failure attribution in LLM-based agentic systems.}
+\citet{whoandwhen} formulate automated failure attribution, introduce the
+Who\&When benchmark, and evaluate All-at-Once, Step-by-Step, and Binary Search
+LLM judges; complementary work categorizes common multi-agent failure
+modes~\citep{mast,deshpande2025trail}. Subsequent methods either improve inference-time prompting~\citep{echo,raffles,correct}
+or train dedicated attributors. For instance, AgenTracer and StepFinder instead learn
+from labeled or synthetically corrupted trajectories using reinforcement
+learning or temporal-semantic modeling~\citep{agentracer,zhu2026stepfinder}. These approaches, however, often rely on c\textit{omputationally intensive inference or large-scale step-level error annotations}, limiting their practicality for real-world deployment. A recent approach OAT mitigates this by
+learning continuous latent dynamics from clean successful
+trajectories by one-class learning~\citep{oat}, which \textit{provides no decisive error signals} in their data unlike our adopted step-unlabeled failure trajectories thus underperforms our \soap (Table~\ref{}). Several methods model cross-step dependencies~\citep{falat}. GraphTracer derives
+information-flow graphs from references to prior outputs and learns to trace
+root causes and propagation paths~\citep{graphtracer}; CHIEF construct
+causal dependency graphs during prompting through multi-stage LLM reasoning~\citep{chief}. We compare with both of them in Table~\ref{}. \cite{masprism} use attention signals for failure attribution but different from \soap, they calculate attention scores on steps with high negative log-likelihood for two-stage localization.
+
+
+
+
+% \soap{} differs in its representation, dependency construction, and data
+% requirements. It constructs a spectral reference space directly from unlabeled
+% trajectory representations, without step labels, success-only filtering, or
+% synthetic fault injection. It then derives a soft dependency graph from the
+% proxy model's post-softmax attention, requiring neither explicit agent
+% references nor LLM-generated causal graphs. Rather than searching the graph or
+% generating a verdict, \soap{} directly propagates downstream anomaly evidence
+% toward its likely upstream sources, correcting downstream contamination in a
+% lightweight single-pass procedure. Experiments in
+% Section~\ref{sec:experiments} compare against prompting, retrieval, trained,
+% graph-based, and representation-based methods, with \soap{} outperforming the
+% strongest reproduced baseline by \TODO{} without judge decoding or labeled
+% reference trajectories. \textcolor{blue}{to be revised.}
+
+
+% \textbf{Failure attribution in multi-agent systems.} \citet{whoandwhen} formulate automated failure attribution, release the Who\&When benchmark, and evaluate three LLM-as-judge strategies---all-at-once, step-by-step, and binary search; complementary studies catalogue why multi-agent systems fail~\citep{mast}. Two lines of work build on this. The first keeps the LLM judge but engineers the inference: ECHO organizes long traces into a hierarchical context and aggregates several role-conditioned analysts through confidence-weighted consensus voting~\citep{echo}, and CORRECT distills recurrent failures into reusable error schemata that are retrieved at inference time to guide localization~\citep{correct}. The second trains a dedicated attributor: AgenTracer constructs synthetic failure trajectories via counterfactual replay and fault injection, then fine-tunes an 8B tracer with reinforcement learning to emit the decisive step~\citep{agentracer}. All of these read the entire trajectory and return a single verdict, and the accurate ones depend on either a labeled corpus (CORRECT's schema library, AgenTracer's training set) or a strong, multi-call LLM judge. CRR differs on both axes: it scores steps from a proxy model's internal representations rather than querying a judge, and it requires no labeled trajectories at all. We also note that CORRECT observes error \emph{propagation} across agents, but uses it only as motivation; CRR turns the same observation into an explicit correction on the score field.\textcolor{blue}{please refine this by discussing with more related works.}
 
 % \paragraph{Process reward models and step-level evaluation.} Process reward models assign a correctness score to each reasoning step and have been used to locate the earliest erroneous step in mathematical problem solving~\citep{mathshepherd,processbench}. They require dense per-step supervision, which does not exist for failure attribution---the benchmark provides only a single decisive-step label per trajectory---so a process reward model cannot be trained for this task. CRR obtains a per-step signal without any such labels.
 

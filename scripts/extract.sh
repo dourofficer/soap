@@ -18,6 +18,12 @@ export CUDA_VISIBLE_DEVICES="${GPU:-0}"
 STAGES="${STAGES:-activations attention}"
 MANIFEST="configs/datasets/$DATASET.yaml"
 
+# GT=1 -> with-GT extraction: pinned [question, answer] context block, everything
+# written to outputs-gt/ instead of outputs/ (the plain tree is never touched).
+GT="${GT:-0}"
+OUT="outputs"; GT_FLAGS=()
+[[ "$GT" == "1" ]] && { OUT="outputs-gt"; GT_FLAGS=(--gt); }
+
 # Pull models / subsets / model_paths / max_tokens out of the manifest so this script
 # never duplicates the registry.
 read_manifest() {
@@ -50,13 +56,13 @@ for m in "${models[@]}"; do
     has activations && run python -m src.extract.activations \
         --model "$m" --model-path "$mp" \
         --input "data/$DATASET" --subset "$s" \
-        --output "outputs/$DATASET/activations/$m/$s" \
-        --layers all --pool all --max_tokens "$max_tokens" --device cuda
+        --output "$OUT/$DATASET/activations/$m/$s" \
+        --layers all --pool all --max_tokens "$max_tokens" --device cuda "${GT_FLAGS[@]}"
     has attention && run python -m src.extract.attention \
         --model "$m" --model-path "$mp" \
         --input "data/$DATASET" --subset "$s" \
-        --output-root "outputs/$DATASET/attention" \
-        --max_tokens "$max_tokens" --device cuda
+        --output-root "$OUT/$DATASET/attention" \
+        --max_tokens "$max_tokens" --device cuda "${GT_FLAGS[@]}"
   done
 done
 echo ">>> extraction done: $DATASET"

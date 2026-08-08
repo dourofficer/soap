@@ -12,7 +12,9 @@
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage{graphicx}
+\usepackage{wrapfig}
 \usepackage{xcolor}
+\usepackage{colortbl}
 \usepackage{pifont}
 \usepackage{soul}
 
@@ -20,6 +22,7 @@
 \newcommand{\cmark}{\ding{51}}
 \newcommand{\xmark}{\ding{55}}
 \newcommand{\best}[1]{\textbf{#1}}
+\newcommand{\second}[1]{\underline{#1}}
 \newcommand{\crr}{CRR}
 \usepackage{xspace}
 \newcommand{\soap}{\textsc{Soap}\xspace}
@@ -70,7 +73,7 @@ citecolor=myblue]{hyperref}
 \newtheorem{assumption}{Assumption}
 
 
-\title{Causal Residual Rescoring for Failure Attribution in Multi-Agent Systems}
+\title{Spectral Scoring with Attention-guided Propagation for Agentic Failure Attribution}
 
 % Authors must not appear in the submitted version. They should be hidden
 % as long as the \iclrfinalcopy macro remains commented out below.
@@ -129,12 +132,12 @@ Nanyang Technological University, Singapore \\
 
 \input{sections/abstract}
 \input{sections/introduction}
-\input{sections/related}
+
 \input{sections/setup}
 % \input{sections/contamination}
 \input{sections/method}
 \input{sections/experiments}
-
+\input{sections/related}
 \input{sections/conclusion}
 
 % \subsubsection*{Acknowledgments}

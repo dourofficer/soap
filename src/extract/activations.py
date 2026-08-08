@@ -199,6 +199,9 @@ def parse_args():
     p.add_argument("--end_idx", type=int, default=None)
     p.add_argument("--device", default=None)
     p.add_argument("--dtype", choices=["float32", "bfloat16", "float16"], default="bfloat16")
+    p.add_argument("--gt", action="store_true",
+                   help="with-GT mode: prepend the pinned [question, answer] block "
+                        "(src.data.context) to every step's context")
     return p.parse_args()
 
 
@@ -216,9 +219,17 @@ def main():
         layers = ["embed"] + [f"act/{i}" for i in blocks] + [f"act/{n_layers - 1}_normed"]
         print(f"extractable blocks: {blocks}")
     final_norm = adapter.final_norm(model)
-    context_fn = functools.partial(build_context, template_kwargs=adapter.template_kwargs())
+    context_fn = functools.partial(build_context, template_kwargs=adapter.template_kwargs(),
+                                   with_gt=args.gt)
 
     trajs = load_dataset(args.input, subset=args.subset)
+    if args.gt:
+        # GT artifacts must never mix into the plain outputs/ tree, and an empty answer
+        # would silently degrade the run to without-GT — fail loudly on both.
+        assert "outputs-gt" in Path(args.output).parts, \
+            f"--gt runs must write under an outputs-gt/ tree, got {args.output}"
+        missing = [t.filename for t in trajs if not (t.ground_truth or "").strip()]
+        assert not missing, f"--gt but empty ground_truth in {len(missing)} files, e.g. {missing[:5]}"
     end = args.end_idx if args.end_idx is not None else len(trajs)
     trajs = trajs[args.start_idx:end]
     out_dir = Path(args.output)
@@ -226,7 +237,7 @@ def main():
     (out_dir / "config.json").write_text(json.dumps(
         {"model": args.model, "layers": layers if layers != "all" else "all",
          "pool": args.pool, "max_tokens": args.max_tokens, "dtype": args.dtype,
-         "subset": args.subset}, indent=2))
+         "subset": args.subset, "gt": bool(args.gt)}, indent=2))
 
     t0 = time.perf_counter()
     for traj in tqdm(trajs):

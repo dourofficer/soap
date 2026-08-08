@@ -1,0 +1,113 @@
+{
+  "cell": {
+    "dataset": "ww",
+    "model": "qwen3.5-9b",
+    "subset": "algorithm-generated",
+    "column": "WW-AG",
+    "manuscript_seeds": [
+      2,
+      3,
+      4
+    ]
+  },
+  "frozen_config": {
+    "seed": 19,
+    "pooling": "mean",
+    "position": "act/27",
+    "method": "proj",
+    "c_begin": 1,
+    "c_end": 7,
+    "centered": false,
+    "weighted": false,
+    "orient": "inverse",
+    "score_norm": "none",
+    "strategy": "backprop",
+    "layer_range": "0-2",
+    "gamma": 0.6,
+    "w": 1,
+    "model": "qwen3.5-9b",
+    "subset": "algorithm-generated",
+    "split": "test",
+    "rank_direction": "desc",
+    "base_direction": "asc"
+  },
+  "selection": {
+    "seed": 19,
+    "split": "test",
+    "manuscript_window": false,
+    "relaxed": false,
+    "pick_rank": 66,
+    "traj_idx": 99,
+    "n_steps": 7,
+    "offset": 2,
+    "gold_base_rank": 5,
+    "gold_final_rank": 1,
+    "soap_margin": 0.0006119702011346817,
+    "flip_seeds": "19",
+    "n_flip_seeds": 1
+  },
+  "gold": {
+    "step": 2,
+    "agent": "Verification_Expert",
+    "mistake_step_raw": "2",
+    "mistake_agent_raw": "Verification_Expert",
+    "mistake_reason": "The price in this Python program is not the actual price, yet the Verification_Expert directly used it for calculation.",
+    "question_ID": "99da66d8af02491f98b98c56b26c709e773b5a2ad945fb280375951ba600de09",
+    "n_history_turns": 7
+  },
+  "predictions": {
+    "base": {
+      "step": 4,
+      "agent": "Ticket_Pricing_Expert"
+    },
+    "soap": {
+      "step": 2,
+      "agent": "Verification_Expert"
+    }
+  },
+  "scored_step_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "verification": {
+    "seeds": [
+      2,
+      3,
+      4
+    ],
+    "per_seed": {
+      "2": {
+        "base_step_acc": 0.36507936507936506,
+        "soap_step_acc": 0.4603174603174603,
+        "n_trajectories": 63
+      },
+      "3": {
+        "base_step_acc": 0.4444444444444444,
+        "soap_step_acc": 0.5079365079365079,
+        "n_trajectories": 63
+      },
+      "4": {
+        "base_step_acc": 0.3968253968253968,
+        "soap_step_acc": 0.47619047619047616,
+        "n_trajectories": 63
+      }
+    },
+    "tolerance": 5e-05,
+    "reproduced_base_step_acc": 0.4021164021164021,
+    "recorded_svd_step": 0.4021,
+    "reproduced_soap_step_acc": 0.4814814814814814,
+    "recorded_soap_step": 0.4815,
+    "passed": true
+  },
+  "sources": {
+    "selection_tsv": "exp-august/outputs/manuscript-tables/table1_main_selection.tsv",
+    "trajectory_json": "data/ww/algorithm-generated/99.json",
+    "activations": "outputs/ww/activations/qwen3.5-9b/algorithm-generated/99.safetensors",
+    "attention": "outputs/ww/attention/qwen3.5-9b/algorithm-generated/99.safetensors"
+  }
+}

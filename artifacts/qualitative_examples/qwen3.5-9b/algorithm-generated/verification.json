@@ -1,0 +1,30 @@
+{
+  "seeds": [
+    2,
+    3,
+    4
+  ],
+  "per_seed": {
+    "2": {
+      "base_step_acc": 0.36507936507936506,
+      "soap_step_acc": 0.4603174603174603,
+      "n_trajectories": 63
+    },
+    "3": {
+      "base_step_acc": 0.4444444444444444,
+      "soap_step_acc": 0.5079365079365079,
+      "n_trajectories": 63
+    },
+    "4": {
+      "base_step_acc": 0.3968253968253968,
+      "soap_step_acc": 0.47619047619047616,
+      "n_trajectories": 63
+    }
+  },
+  "tolerance": 5e-05,
+  "reproduced_base_step_acc": 0.4021164021164021,
+  "recorded_svd_step": 0.4021,
+  "reproduced_soap_step_acc": 0.4814814814814814,
+  "recorded_soap_step": 0.4815,
+  "passed": true
+}

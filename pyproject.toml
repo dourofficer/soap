@@ -10,6 +10,7 @@ requires-python = ">=3.10"
 # runner is invoked as `python -m src.<stage>...` FROM the v2/ directory,
 # which puts v2/ on sys.path so `src` imports directly.
 dependencies = [
+    "matplotlib>=3.8",
     "numpy",
     "pandas>=2.0",
     "pyyaml>=6.0",

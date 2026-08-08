@@ -1,0 +1,11 @@
+model	subset	seed	split	traj_idx	n_steps	step_idx	role	base	oriented	normalized	final	base_rank	final_rank	is_gold	is_base_pred	is_soap_pred
+qwen3.5-9b	algorithm-generated	8	test	19	10	0	Debugging_Problem_Solving_Expert	115.62419891357422	0.008648708462715149	0.008648708462715149	0.01400304026901722	5	1	True	False	True
+qwen3.5-9b	algorithm-generated	8	test	19	10	1	DebuggingTesting_Expert	105.7801742553711	0.009453567676246166	0.009453567676246166	0.009453567676246166	4	5	False	False	False
+qwen3.5-9b	algorithm-generated	8	test	19	10	2	Computer_terminal	301.87872314453125	0.0033125884365290403	0.0033125884365290403	0.007670345716178417	10	7	False	False	False
+qwen3.5-9b	algorithm-generated	8	test	19	10	3	Debugging_Problem_Solving_Expert	77.85176086425781	0.012844924814999104	0.012844924814999104	0.012844924814999104	2	3	False	False	False
+qwen3.5-9b	algorithm-generated	8	test	19	10	4	DebuggingTesting_Expert	103.25666809082031	0.009684604592621326	0.009684604592621326	0.009684604592621326	3	4	False	False	False
+qwen3.5-9b	algorithm-generated	8	test	19	10	5	Computer_terminal	149.50709533691406	0.006688645575195551	0.006688645575195551	0.006688645575195551	8	9	False	False	False
+qwen3.5-9b	algorithm-generated	8	test	19	10	6	Validation_Expert	133.07437133789062	0.007514595054090023	0.007514595054090023	0.007514595054090023	7	8	False	False	False
+qwen3.5-9b	algorithm-generated	8	test	19	10	7	Debugging_Problem_Solving_Expert	76.84891510009766	0.013012545183300972	0.013012545183300972	0.013012545183300972	1	2	False	True	False
+qwen3.5-9b	algorithm-generated	8	test	19	10	8	Computer_terminal	127.59639739990234	0.007837211713194847	0.007837211713194847	0.007837211713194847	6	6	False	False	False
+qwen3.5-9b	algorithm-generated	8	test	19	10	9	DebuggingTesting_Expert	150.50335693359375	0.006644370034337044	0.006644370034337044	0.006644370034337044	9	10	False	False	False

@@ -1,0 +1,116 @@
+{
+  "cell": {
+    "dataset": "ww",
+    "model": "qwen3.5-9b",
+    "subset": "algorithm-generated",
+    "column": "WW-AG",
+    "manuscript_seeds": [
+      2,
+      3,
+      4
+    ]
+  },
+  "frozen_config": {
+    "seed": 2,
+    "pooling": "mean",
+    "position": "act/27",
+    "method": "proj",
+    "c_begin": 1,
+    "c_end": 7,
+    "centered": false,
+    "weighted": false,
+    "orient": "inverse",
+    "score_norm": "none",
+    "strategy": "backprop",
+    "layer_range": "0-2",
+    "gamma": 0.6,
+    "w": 1,
+    "model": "qwen3.5-9b",
+    "subset": "algorithm-generated",
+    "split": "test",
+    "rank_direction": "desc",
+    "base_direction": "asc"
+  },
+  "selection": {
+    "seed": 2,
+    "split": "test",
+    "manuscript_window": true,
+    "relaxed": false,
+    "pick_rank": 1,
+    "traj_idx": 95,
+    "n_steps": 10,
+    "offset": 2,
+    "gold_base_rank": 2,
+    "gold_final_rank": 1,
+    "soap_margin": 0.017461653798818588,
+    "flip_seeds": "2,3,7,10,15",
+    "n_flip_seeds": 5
+  },
+  "gold": {
+    "step": 5,
+    "agent": "AcademicPublication_Expert",
+    "mistake_step_raw": "5",
+    "mistake_agent_raw": "AcademicPublication_Expert",
+    "mistake_reason": "The expert failed to identify the correct title of the first paper authored by Pietro Murano.",
+    "question_ID": "46719c30-f4c3-4cad-be07-d5cb21eee6bb",
+    "n_history_turns": 10
+  },
+  "predictions": {
+    "base": {
+      "step": 7,
+      "agent": "Verification_Expert"
+    },
+    "soap": {
+      "step": 5,
+      "agent": "AcademicPublication_Expert"
+    }
+  },
+  "scored_step_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "verification": {
+    "seeds": [
+      2,
+      3,
+      4
+    ],
+    "per_seed": {
+      "2": {
+        "base_step_acc": 0.36507936507936506,
+        "soap_step_acc": 0.4603174603174603,
+        "n_trajectories": 63
+      },
+      "3": {
+        "base_step_acc": 0.4444444444444444,
+        "soap_step_acc": 0.5079365079365079,
+        "n_trajectories": 63
+      },
+      "4": {
+        "base_step_acc": 0.3968253968253968,
+        "soap_step_acc": 0.47619047619047616,
+        "n_trajectories": 63
+      }
+    },
+    "tolerance": 5e-05,
+    "reproduced_base_step_acc": 0.4021164021164021,
+    "recorded_svd_step": 0.4021,
+    "reproduced_soap_step_acc": 0.4814814814814814,
+    "recorded_soap_step": 0.4815,
+    "passed": true
+  },
+  "sources": {
+    "selection_tsv": "exp-august/outputs/manuscript-tables/table1_main_selection.tsv",
+    "trajectory_json": "data/ww/algorithm-generated/95.json",
+    "activations": "outputs/ww/activations/qwen3.5-9b/algorithm-generated/95.safetensors",
+    "attention": "outputs/ww/attention/qwen3.5-9b/algorithm-generated/95.safetensors"
+  }
+}

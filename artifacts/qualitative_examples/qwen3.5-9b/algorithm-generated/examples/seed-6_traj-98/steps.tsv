@@ -1,0 +1,8 @@
+model	subset	seed	split	traj_idx	n_steps	step_idx	role	base	oriented	normalized	final	base_rank	final_rank	is_gold	is_base_pred	is_soap_pred
+qwen3.5-9b	algorithm-generated	6	test	98	7	0	TheoreticalChemistry_Expert	67.71061706542969	0.014768732711672783	0.014768732711672783	0.023408610373735428	3	2	False	False	False
+qwen3.5-9b	algorithm-generated	6	test	98	7	1	Probability_Expert	65.26445007324219	0.015322277322411537	0.015322277322411537	0.025263246148824692	2	1	True	False	True
+qwen3.5-9b	algorithm-generated	6	test	98	7	2	Computer_terminal	60.356285095214844	0.01656828261911869	0.01656828261911869	0.01656828261911869	1	4	False	True	False
+qwen3.5-9b	algorithm-generated	6	test	98	7	3	Verification_Expert	74.19874572753906	0.013477317057549953	0.013477317057549953	0.01791684329509735	4	3	False	False	False
+qwen3.5-9b	algorithm-generated	6	test	98	7	4	Probability_Expert	100.7529525756836	0.009925267659127712	0.009925267659127712	0.009925267659127712	5	5	False	False	False
+qwen3.5-9b	algorithm-generated	6	test	98	7	5	TheoreticalChemistry_Expert	107.03048706054688	0.009343132376670837	0.009343132376670837	0.009343132376670837	6	6	False	False	False
+qwen3.5-9b	algorithm-generated	6	test	98	7	6	Verification_Expert	341.3865966796875	0.0029292304534465075	0.0029292304534465075	0.0029292304534465075	7	7	False	False	False

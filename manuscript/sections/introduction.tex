@@ -23,6 +23,7 @@ This motivates a complementary question:
 \begin{center}
 \textbf{Can failed trajectories themselves enable failure attribution
 without step-level annotations?}
+\vspace{-0.5em}
 \end{center}
 
 
@@ -44,14 +45,22 @@ The first challenge is therefore to \emph{identify decisive-error evidence from 
 
 
 
-A second challenge is that the step exhibiting the strongest failure signal need not be the step that introduced the failure. Agent trajectories are autoregressive because each step is generated from preceding observations and actions. Once an error occurs, later steps operate on a corrupted context and may produce failed tool calls, contradictory reasoning, or repeated recovery attempts. These downstream consequences can be more conspicuous than the original error. For example, a plausible but incorrect tool argument may trigger a sequence of visible error messages and unsuccessful retries, causing a conventional per-step scorer to select the final retry rather than the initial incorrect action. We refer to this phenomenon as \emph{downstream contamination}. \textcolor{blue}{Add a wrapfigure illustrating an early incorrect action followed by anomalous downstream retries.} Recent methods reconstruct dependencies through LLM prompting or specialized training, then perform graph search or backtracking~\citep{falat,chief,graphtracer}, which introduce substantial inference or training overhead. This motivates a lightweight alternative that extracts soft dependencies from the model to separate root causes from downstream effects.
+\begin{wrapfigure}{r}{0.48\linewidth}
+\vspace{-0.9\baselineskip}
+\centering
+\includegraphics[width=\linewidth]{assets/contamination_handcrafted_traj1.pdf}
+\caption{Downstream contamination in a failed Who\&When trajectory. An early wrong click (step 12) lands the browser on an irrelevant page; every later step is spent on recovery attempts that derail again, and those consequences inherit the error's anomaly, scoring second and third highest of the trajectory's 28 steps. Backbone $=$ Qwen3.5-9B.}
+\label{fig:contamination-example}
+\vspace{-\baselineskip}
+\end{wrapfigure}
+A second challenge is that the step exhibiting the strongest failure signal need not be the step that introduced the failure. Agent trajectories are autoregressive because each step is generated from preceding observations and actions. Once an error occurs, later steps operate on a corrupted context and may produce failed tool calls, contradictory reasoning, or repeated recovery attempts. These downstream consequences can be more conspicuous than the original error. For example, a plausible but incorrect tool argument may trigger a sequence of visible error messages and unsuccessful retries, causing a conventional per-step scorer to select the final retry rather than the initial incorrect action. We refer to this phenomenon as \emph{downstream contamination} (Figure~\ref{fig:contamination-example}). Recent methods reconstruct dependencies through LLM prompting or specialized training, then perform graph search or backtracking~\citep{falat,chief,graphtracer}, which introduce substantial inference or training overhead. This motivates a lightweight alternative that extracts soft dependencies from the model to separate root causes from downstream effects.
 
 
 
 
 
 
-In this paper, we propose \soap{} (\textbf{S}pectral sc\textbf{O}ring with
+In this paper, we propose \soap (\textbf{S}pectral sc\textbf{O}ring with
  \textbf{A}ttention-guided \textbf{P}ropagation), a framework for decisive-error localization from step-unlabeled failure trajectories.
 At a high level, \soap consists of two components.
 \textbf{First}, it constructs a \emph{spectral reference space} from step representations extracted from the failure trajectories.

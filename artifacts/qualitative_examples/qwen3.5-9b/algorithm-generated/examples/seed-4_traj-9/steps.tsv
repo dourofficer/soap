@@ -1,0 +1,6 @@
+model	subset	seed	split	traj_idx	n_steps	step_idx	role	base	oriented	normalized	final	base_rank	final_rank	is_gold	is_base_pred	is_soap_pred
+qwen3.5-9b	algorithm-generated	4	test	9	5	0	AlgorithmDesign_Expert	69.89453125	0.014307270757853985	0.014307270757853985	0.019110722467303276	2	3	False	False	False
+qwen3.5-9b	algorithm-generated	4	test	9	5	1	GameTheory_Expert	75.99916076660156	0.0131580401211977	0.0131580401211977	0.02957303076982498	3	1	True	False	True
+qwen3.5-9b	algorithm-generated	4	test	9	5	2	VerificationExpert	36.55195617675781	0.027358317747712135	0.027358317747712135	0.029308833181858063	1	2	False	True	False
+qwen3.5-9b	algorithm-generated	4	test	9	5	3	Computer_terminal	350.4510192871094	0.0028534657321870327	0.0028534657321870327	0.0028534657321870327	5	5	False	False	False
+qwen3.5-9b	algorithm-generated	4	test	9	5	4	VerificationExpert	307.6110534667969	0.003250858513638377	0.003250858513638377	0.003250858513638377	4	4	False	False	False

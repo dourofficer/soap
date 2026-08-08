@@ -91,7 +91,11 @@ def build_W(keeper, weighting: dict, w, device="cpu") -> list[torch.Tensor]:
          recency-weighted average.
       2. **split filtering**: a predecessor may not exist in this split's keeper (the
          eval store holds a subset of trajectories, and steps outside it have no score
-         to borrow). Those entries are dropped.
+         to borrow). Those entries are dropped. Unscored context buckets go the same
+         way — the ``human`` question turn of hand-crafted trajectories and, in with-GT
+         extractions, the pinned GT block (``ctx_indices`` id ``GT_STEP = -1``). Note
+         both CAN claim a top-w slot in step 1 before being dropped here; that is the
+         established turn-0 behaviour and is kept identical for the GT bucket.
       3. **conditional renormalisation**: the surviving weights are renormalised ONLY IF
          something was actually dropped. If nothing was dropped, the row keeps the
          normalisation it already has from step 1 (or, for ``w == "all"``, from

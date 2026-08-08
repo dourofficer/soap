@@ -1,0 +1,8 @@
+model	subset	seed	split	traj_idx	n_steps	step_idx	role	base	oriented	normalized	final	base_rank	final_rank	is_gold	is_base_pred	is_soap_pred
+qwen3.5-9b	algorithm-generated	3	test	114	7	0	DataAnalysis_Expert	73.90986633300781	0.01352999359369278	0.01352999359369278	0.019241156056523323	4	4	False	False	False
+qwen3.5-9b	algorithm-generated	3	test	114	7	1	Verification_Expert	62.47235107421875	0.016007080674171448	0.016007080674171448	0.026431681588292122	3	1	True	False	True
+qwen3.5-9b	algorithm-generated	3	test	114	7	2	Computer_terminal	86.89703369140625	0.011507872492074966	0.011507872492074966	0.011507872492074966	5	5	False	False	False
+qwen3.5-9b	algorithm-generated	3	test	114	7	3	Verification_Expert	58.102901458740234	0.01721084490418434	0.01721084490418434	0.022524753585457802	2	3	False	False	False
+qwen3.5-9b	algorithm-generated	3	test	114	7	4	Computer_terminal	112.91123962402344	0.0088565144687891	0.0088565144687891	0.0088565144687891	6	6	False	False	False
+qwen3.5-9b	algorithm-generated	3	test	114	7	5	RealEstateMarket_Expert	42.727210998535156	0.023404289036989212	0.023404289036989212	0.023404289036989212	1	2	False	True	False
+qwen3.5-9b	algorithm-generated	3	test	114	7	6	DataAnalysis_Expert	330.019287109375	0.0030301259830594063	0.0030301259830594063	0.0030301259830594063	7	7	False	False	False

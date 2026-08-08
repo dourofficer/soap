@@ -208,16 +208,21 @@ def _override_sdpa():
 
 
 @torch.no_grad()
-def extract_trajectory(traj, model, tokenizer, max_tokens, adapter, query_pool="mean"):
+def extract_trajectory(traj, model, tokenizer, max_tokens, adapter, query_pool="mean",
+                       with_gt=False):
     flat = {}
     device = next(model.parameters()).device
     tk = adapter.template_kwargs()
     for step_idx in iter_scoreable_steps(traj):
-        enc = separate_steps(traj, step_idx, tokenizer, max_tokens=max_tokens, template_kwargs=tk)
+        enc = separate_steps(traj, step_idx, tokenizer, max_tokens=max_tokens,
+                             template_kwargs=tk, with_gt=with_gt)
         input_ids = enc["input_ids"].to(device)
         step_tokens = enc["step_tokens"]
         ctx_step_ids = sorted(m for m in step_tokens if m != step_idx)
-        if not ctx_step_ids:
+        if not any(m >= 0 for m in ctx_step_ids):
+            # No real predecessors. In with-GT mode the GT bucket (GT_STEP < 0) alone
+            # does not count: recording it would give first steps attention entries that
+            # do not exist in the without-GT tree, breaking step-entry parity.
             continue
         seq_len = input_ids.shape[1]
         _STREAM.out_per_head = {}
@@ -275,6 +280,9 @@ def parse_args():
     p.add_argument("--device", default=None)
     p.add_argument("--dtype", choices=["float32", "bfloat16", "float16"], default="bfloat16")
     p.add_argument("--query-pool", choices=["mean", "last"], default="mean")
+    p.add_argument("--gt", action="store_true",
+                   help="with-GT mode: prepend the pinned [question, answer] block "
+                        "(src.data.context); it appears as a GT_STEP=-1 context bucket")
     return p.parse_args()
 
 
@@ -287,6 +295,11 @@ def main():
     _force_sdpa(model)
 
     trajs = load_dataset(args.input, subset=args.subset)
+    if args.gt:
+        assert "outputs-gt" in Path(args.output_root).parts, \
+            f"--gt runs must write under an outputs-gt/ tree, got {args.output_root}"
+        missing = [t.filename for t in trajs if not (t.ground_truth or "").strip()]
+        assert not missing, f"--gt but empty ground_truth in {len(missing)} files, e.g. {missing[:5]}"
     end = args.end_idx if args.end_idx is not None else len(trajs)
     trajs = trajs[args.start_idx:end]
     out_root = Path(args.output_root) / args.model / args.subset
@@ -294,13 +307,15 @@ def main():
     (out_root / "config.json").write_text(json.dumps(
         {"model": args.model, "subset": args.subset, "max_tokens": args.max_tokens,
          "query_pool": args.query_pool, "dtype": args.dtype, "impl": "sdpa_streaming",
-         "attn_block_indices": adapter.extract_block_indices(model)}, indent=2))
+         "attn_block_indices": adapter.extract_block_indices(model),
+         "gt": bool(args.gt)}, indent=2))
 
     for traj in tqdm(trajs):
         out_path = out_root / f"{Path(traj.filename).stem}.safetensors"
         if out_path.exists():
             continue
-        flat = extract_trajectory(traj, model, tokenizer, args.max_tokens, adapter, args.query_pool)
+        flat = extract_trajectory(traj, model, tokenizer, args.max_tokens, adapter,
+                                  args.query_pool, with_gt=args.gt)
         if flat:
             save_file(flat, out_path, metadata={"payload_metadata": json.dumps(extract_metadata(traj))})
 

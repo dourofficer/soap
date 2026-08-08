@@ -1,0 +1,113 @@
+{
+  "cell": {
+    "dataset": "ww",
+    "model": "qwen3.5-9b",
+    "subset": "algorithm-generated",
+    "column": "WW-AG",
+    "manuscript_seeds": [
+      2,
+      3,
+      4
+    ]
+  },
+  "frozen_config": {
+    "seed": 2,
+    "pooling": "mean",
+    "position": "act/27",
+    "method": "proj",
+    "c_begin": 1,
+    "c_end": 7,
+    "centered": false,
+    "weighted": false,
+    "orient": "inverse",
+    "score_norm": "none",
+    "strategy": "backprop",
+    "layer_range": "0-2",
+    "gamma": 0.6,
+    "w": 1,
+    "model": "qwen3.5-9b",
+    "subset": "algorithm-generated",
+    "split": "test",
+    "rank_direction": "desc",
+    "base_direction": "asc"
+  },
+  "selection": {
+    "seed": 2,
+    "split": "test",
+    "manuscript_window": true,
+    "relaxed": false,
+    "pick_rank": 16,
+    "traj_idx": 46,
+    "n_steps": 7,
+    "offset": 1,
+    "gold_base_rank": 3,
+    "gold_final_rank": 1,
+    "soap_margin": 0.004841657355427742,
+    "flip_seeds": "2,6,8,10,13,17",
+    "n_flip_seeds": 6
+  },
+  "gold": {
+    "step": 1,
+    "agent": "Behavioral_Expert",
+    "mistake_step_raw": "1",
+    "mistake_agent_raw": "Behavioral_Expert",
+    "mistake_reason": "The agent made a logical error in reasoning about scenario 2. If there is at least one vampire, then the statement 'At least one of us is a human,' made by vampires, would be true and would lead to a contradiction.",
+    "question_ID": "c714ab3a-da30-4603-bacd-d008800188b9",
+    "n_history_turns": 7
+  },
+  "predictions": {
+    "base": {
+      "step": 2,
+      "agent": "Validation_Expert"
+    },
+    "soap": {
+      "step": 1,
+      "agent": "Behavioral_Expert"
+    }
+  },
+  "scored_step_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "verification": {
+    "seeds": [
+      2,
+      3,
+      4
+    ],
+    "per_seed": {
+      "2": {
+        "base_step_acc": 0.36507936507936506,
+        "soap_step_acc": 0.4603174603174603,
+        "n_trajectories": 63
+      },
+      "3": {
+        "base_step_acc": 0.4444444444444444,
+        "soap_step_acc": 0.5079365079365079,
+        "n_trajectories": 63
+      },
+      "4": {
+        "base_step_acc": 0.3968253968253968,
+        "soap_step_acc": 0.47619047619047616,
+        "n_trajectories": 63
+      }
+    },
+    "tolerance": 5e-05,
+    "reproduced_base_step_acc": 0.4021164021164021,
+    "recorded_svd_step": 0.4021,
+    "reproduced_soap_step_acc": 0.4814814814814814,
+    "recorded_soap_step": 0.4815,
+    "passed": true
+  },
+  "sources": {
+    "selection_tsv": "exp-august/outputs/manuscript-tables/table1_main_selection.tsv",
+    "trajectory_json": "data/ww/algorithm-generated/46.json",
+    "activations": "outputs/ww/activations/qwen3.5-9b/algorithm-generated/46.safetensors",
+    "attention": "outputs/ww/attention/qwen3.5-9b/algorithm-generated/46.safetensors"
+  }
+}

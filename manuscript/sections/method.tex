@@ -39,27 +39,33 @@ Our key idea is to characterize this representation space through spectral
 decomposition and score each step according to its alignment with selected
 spectral directions.
 
-\textbf{Step representation.}
+
 For a trajectory $\traj=(s_1,\ldots,s_T)$, we encode each step in the context
 in which it was produced.
 Specifically, for step $s_t$, we provide the model $\proxy$ with the task
 description and the trajectory context
 $
     z_t = [x; s_1;\ldots;s_t].
-$
-Let $\mathcal{T}_t$ denote the token positions corresponding to $s_t$ in
-$z_t$, and let $h_p^{(l)}\in\mathbb{R}^d$ be the hidden representation at
-layer $l$ and token position $p$.
-We obtain the $d$-dimensional step representation by mean-pooling over the tokens belonging
-to the current step:
-$
-    v_t
-    =
-    \frac{1}{|\mathcal{T}_t|}
-    \sum_{p\in\mathcal{T}_t}
-    h_p^{(l)}
-    \in\mathbb{R}^d.
-$
+$ and then extract its $d$-dimensional step representation $v_t$.
+
+
+% Let $\mathcal{T}_t$ denote the token positions corresponding to $s_t$ in
+% $z_t$, and let $h_p^{(l)}\in\mathbb{R}^d$ be the hidden representation at
+% layer $l$ and token position $p$.
+% We obtain the $d$-dimensional step representation by mean-pooling over the tokens belonging
+% to the current step:
+% $
+%     v_t
+%     =
+%     \frac{1}{|\mathcal{T}_t|}
+%     \sum_{p\in\mathcal{T}_t}
+%     h_p^{(l)}
+%     \in\mathbb{R}^d.
+% $
+
+
+
+% \note{should clarify? in practice, we trim the context by removing early steps until $z_{t}$ fits into the context limit}\textcolor{blue}{put in the appendix}
 
 \textbf{Spectral reference space.}
 We apply the same representation extraction procedure to every step in the
@@ -107,13 +113,23 @@ onto the selected spectral band:
     \left\langle v_t,V_{:,c}\right\rangle^2.
     \label{eq:proj}
 \end{equation}
-Empirically, decisive-error steps exhibit smaller projection magnitudes on
-the selected directions than ordinary steps.\textcolor{blue}{add a distribuiton plot here.}
+
+\begin{wrapfigure}{r}{0.40\linewidth}
+\vspace{-0.9\baselineskip}
+\centering
+\includegraphics[width=\linewidth]{{assets/qwen3.5-9b_algorithm-generated_seed-3}.pdf}
+\footnotesize
+\caption{Base-score distribution on \textsc{WW-AG} (proxy Qwen3.5-9B, test split). Decisive-error steps concentrate at smaller projection magnitudes than ordinary steps.}
+\label{fig:score-dist}
+\vspace{-\baselineskip}
+\end{wrapfigure}
+\noindent Empirically, decisive-error steps exhibit smaller projection magnitudes on
+the selected directions than ordinary steps (Figure~\ref{fig:score-dist}).
 We therefore define
 $ 
     \Sbase(s_t)
     =
-    -\pi_{\mathcal{C}}(v_t)
+    1/\pi_{\mathcal{C}}(v_t)
 $ \textcolor{blue}{check?} so that a larger score indicates stronger decisive-error
 evidence. Note that $R$ is constructed solely from the step-unlabeled reference
 collection where \textit{no decisive-error or responsible-agent annotation is used}.
@@ -175,13 +191,12 @@ base scores of its downstream dependents:
         \sum_{t>i}
         w_{i,t}\,\Sbase(s_t)
     }{
-        \epsilon+\sum_{t>i}w_{i,t}
+        \sum_{t>i}w_{i,t}
     },
     \qquad
-    B_T=0,
+    B_T=0.
     \label{eq:backward-evidence}
 \end{equation}
-where $\epsilon>0$ ensures numerical stability.
 We then combine the step's local error signal with the downstream evidence attributed to it:
 \begin{equation}
     \Stilde(s_i)
