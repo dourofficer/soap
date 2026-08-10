@@ -1,4 +1,4 @@
-# attribscope
+# soap
 
 Failure attribution in LLM multi-agent systems from a **proxy model's internals**. Given
 a failed trajectory, predict the **decisive-error step** — the earliest step that

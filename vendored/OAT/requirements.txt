@@ -1,7 +1,0 @@
-numpy
-scikit-learn
-torch
-torchcde
-torchdiffeq
-tqdm
-transformers
