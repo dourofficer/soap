@@ -1,32 +1,26 @@
-"""Reproduce frozen configs and write PER-STEP scores for inspection / plotting.
+"""Reproduce selected protocol rows and write PER-STEP scores for inspection.
 
-Point it at reduced tables; it re-runs each selected winner and writes, per
-(table, model, subset, seed):
+Point it at the triples selection (``tables/<tag>/triples_selection.tsv``); for each
+requested row label x (model, subset) x seed window it re-runs the frozen config on
+every window seed and writes:
 
-    reproductions/<tag>/<model>/<subset>/<table>_seed-<n>_<split>.steps.tsv   per-step
-    reproductions/<tag>/<model>/<subset>/<table>_seed-<n>_<split>.preds.tsv   per-trajectory
-    reproductions/<tag>/<model>/<subset>/<table>_seed-<n>_<split>.json        config+metrics
+    reproductions/<tag>/<model>/<subset>/<label>_win-<s0>_seed-<n>_<split>.steps.tsv
+    reproductions/<tag>/<model>/<subset>/<label>_win-<s0>_seed-<n>_<split>.preds.tsv
+    reproductions/<tag>/<model>/<subset>/<label>_win-<s0>_seed-<n>_<split>.json
 
 `.steps.tsv` is the plotting surface: one row per (trajectory, step) with the score at
-every pipeline stage (base / oriented / normalized / final), its within-trajectory rank,
-and the gold flag. Because every table writes the same schema plus a `table` column,
-concatenating several files gives a method-vs-method comparison on identical rows.
+every pipeline stage (base / oriented / normalized / final), its within-trajectory
+rank, and the gold flag. All labels share the schema (plus a `row` column), so
+concatenating files gives a method-vs-method comparison on identical rows.
 
-    # from v2/
-    # reproduce the CRR winners on the test split (default)
-    python -m src.reproduce.run --config configs/reproduce/correct-full.yaml
+Verification: unless ``verify: false``, the reproduced test step-accuracies averaged
+over the window's seeds must match the selection row's recorded ``step_acc_test`` to
+within its 4-decimal rounding; a mismatch raises (the pipeline is meant to be
+reproducible, so this is a real failure).
 
-    # compare base vs CRR vs backprop, all seeds, on every trajectory
+    # from repo root — reproduce SVD (proj) + backprop winners of one window
     python -m src.reproduce.run --config configs/reproduce/correct-full.yaml \
-        --set tables=[base_test,crr_test,backprop_test] --set split=all
-
-    # one specific cell
-    python -m src.reproduce.run --config configs/reproduce/correct-full.yaml \
-        --model qwen3.5-9b --seed 1 --set tables=[crr_test]
-
-Verification: unless `--set verify=false`, a reproduction whose split matches the
-table's selection convention must reproduce that row's recorded accuracy exactly; a
-mismatch raises (the pipeline is meant to be reproducible, so this is a real failure).
+        --set windows=[1] --model deepseek-8b
 """
 from __future__ import annotations
 
@@ -39,88 +33,90 @@ from ..common.cli import base_parser, load_and_narrow
 from ..common.provenance import RunTimer
 from .core import ReproContext, reproduce_row
 
-# Which recorded accuracy a table's rows should reproduce, per split. base_* rows store
-# the base score's own accuracy; crr_/backprop_ rows store the post-rescore accuracy.
-_EXPECTED = {
-    "base":     {"val": "step_acc_val",      "test": "step_acc_test"},
-    "crr":      {"val": "disc_step_acc_val", "test": "disc_step_acc_test"},
-    "backprop": {"val": "disc_step_acc_val", "test": "disc_step_acc_test"},
-}
+BASE_ROW = "SVD (proj)"
+# hyperparameter columns of triples_selection.tsv, with coercions back from TSV text
+_COERCE = {"c_begin": int, "c_end": int,
+           "centered": lambda v: str(v) == "True", "weighted": lambda v: str(v) == "True",
+           "gamma": float}
+_HPARAMS = ["pooling", "position", "method", "c_begin", "c_end", "centered", "weighted",
+            "direction", "orient", "score_norm", "strategy", "layer_range", "gamma", "w"]
 
 
-def _family(table: str) -> str:
-    return table.split("_")[0]
-
-
-def _select(df: pd.DataFrame, how, seeds) -> pd.DataFrame:
-    """Rows to reproduce: 'all' (every seed's winner) or 'best' (single best seed)."""
-    if seeds:
-        df = df[df["seed"].isin(seeds)]
-    if how == "best":
-        metric = ("disc_step_acc_test" if "disc_step_acc_test" in df.columns
-                  else "step_acc_test")
-        return df.sort_values(metric, ascending=False, kind="mergesort").head(1)
-    return df
+def _row_dict(sel_row: pd.Series, seed: int) -> dict:
+    """One reproduce_row input: the selection row's hyperparameters + a window seed."""
+    d = {"seed": seed}
+    for c in _HPARAMS:
+        v = sel_row.get(c)
+        if v is None or (isinstance(v, float) and pd.isna(v)) or str(v) == "":
+            continue
+        d[c] = _COERCE[c](v) if c in _COERCE else v
+    if sel_row["row"] == BASE_ROW:
+        d.pop("strategy", None)                     # base rows have no rescoring stage
+    return d
 
 
 def run(cfg: dict) -> None:
-    tables = cfg.get("tables", ["crr_test"])
+    labels = cfg.get("rows", [BASE_ROW, "backprop"])
     split = cfg.get("split", "test")
-    how = cfg.get("select", "all")
     verify = cfg.get("verify", True)
     ks = cfg.get("ks", [1])
+    want = cfg.get("windows", "all")                # "all" | list of first seeds
+
+    sel_file = paths.tables_root(cfg) / "triples_selection.tsv"
+    sel = pd.read_csv(sel_file, sep="\t")
 
     with RunTimer(cfg, "reproductions") as rec:
-        rec.note(tables=tables, split=split, select=how, verify=verify)
+        rec.note(rows=labels, split=split, verify=verify, windows=want)
         for model in cfg["models"]:
             for subset in cfg["subsets"]:
+                cell = sel[(sel["model"] == model) & (sel["subset"] == subset)
+                           & (sel["row"].isin(labels))]
+                if want != "all":
+                    cell = cell[cell["seeds"].str.split(",").str[0].astype(int).isin(want)]
+                if cell.empty:
+                    print(f"[skip] no selection rows for {model}/{subset}")
+                    continue
                 # One context per (model, subset): attention is aggregated once and
-                # representations/SVD fits are cached per seed across all tables below.
+                # representations/SVD fits are cached per seed across all rows below.
                 ctx = ReproContext(cfg, model, subset, n_ranges=cfg.get("n_ranges", 4))
                 out_dir = paths.repro_root(cfg) / model / subset
-                for table in tables:
-                    src = paths.reduced_root(cfg) / model / subset / f"{table}.tsv"
-                    if not src.exists():
-                        print(f"[skip] missing {src}")
-                        continue
-                    rows = _select(pd.read_csv(src, sep="\t"), how, cfg.get("seeds"))
-                    for _, row in rows.iterrows():
-                        r = reproduce_row(ctx, row.to_dict(), split=split, ks=ks)
-                        seed = int(row["seed"])
-                        stem = out_dir / f"{table}_seed-{seed}_{split}"
+                for _, srow in cell.iterrows():
+                    seeds = [int(s) for s in str(srow["seeds"]).split(",")]
+                    label = srow["row"].replace(" ", "").replace("(", "-").rstrip(")")
+                    accs = []
+                    for seed in seeds:
+                        r = reproduce_row(ctx, _row_dict(srow, seed), split=split, ks=ks)
+                        stem = out_dir / f"{label}_win-{seeds[0]}_seed-{seed}_{split}"
                         stem.parent.mkdir(parents=True, exist_ok=True)
-
-                        steps = r.per_step.assign(table=table)
-                        preds = r.predictions.assign(table=table)
-                        steps.to_csv(f"{stem}.steps.tsv", sep="\t", index=False)
-                        preds.to_csv(f"{stem}.preds.tsv", sep="\t", index=False)
-                        payload = {"config": r.config, "metrics": r.metrics,
-                                   "n_trajectories": int(len(r.keeper.traj_ranges)),
-                                   "n_steps": int(len(r.per_step))}
-
-                        # Reproducibility check against the value the sweep recorded.
-                        exp_col = _EXPECTED[_family(table)].get(split)
-                        if verify and exp_col and exp_col in row and pd.notna(row[exp_col]):
-                            got = r.metrics[f"step@{ks[0]}_{r.config['rank_direction']}"]
-                            payload["recorded_step_acc"] = float(row[exp_col])
-                            payload["reproduced_step_acc"] = float(got)
-                            if abs(got - float(row[exp_col])) > 1e-9:
-                                raise AssertionError(
-                                    f"{table} {model}/{subset} seed{seed}: reproduced "
-                                    f"{got:.6f} != recorded {float(row[exp_col]):.6f}")
+                        r.per_step.assign(row=srow["row"]).to_csv(
+                            f"{stem}.steps.tsv", sep="\t", index=False)
+                        r.predictions.assign(row=srow["row"]).to_csv(
+                            f"{stem}.preds.tsv", sep="\t", index=False)
+                        acc = r.metrics[f"step@{ks[0]}_{r.config['rank_direction']}"]
+                        accs.append(float(acc))
                         with open(f"{stem}.json", "w") as fh:
-                            json.dump(payload, fh, indent=2, default=str)
+                            json.dump({"config": r.config, "metrics": r.metrics,
+                                       "n_trajectories": int(len(r.keeper.traj_ranges)),
+                                       "n_steps": int(len(r.per_step))},
+                                      fh, indent=2, default=str)
                         for suf in (".steps.tsv", ".preds.tsv", ".json"):
                             rec.add_output(f"{stem}{suf}")
-                        acc = payload.get("reproduced_step_acc")
-                        print(f"[repro] {table} {model}/{subset} seed{seed} {split}: "
-                              f"{len(steps)} steps, {len(preds)} trajs"
-                              + (f", step@1={acc:.4f} (verified)" if acc is not None else ""))
+                    got = sum(accs) / len(accs)
+                    recorded = float(srow["step_acc_test"])
+                    status = ""
+                    if verify and split == "test":
+                        # recorded value is the window mean rounded to 4 decimals
+                        if abs(got - recorded) > 5.1e-5:
+                            raise AssertionError(
+                                f"{srow['row']} {model}/{subset} win {srow['seeds']}: "
+                                f"reproduced {got:.6f} != recorded {recorded:.4f}")
+                        status = " (verified)"
+                    print(f"[repro] {srow['row']} {model}/{subset} win {srow['seeds']} "
+                          f"{split}: step@1={got:.4f}{status}")
 
 
 def main() -> None:
-    args = base_parser(__doc__).parse_args()
-    run(load_and_narrow(args))
+    run(load_and_narrow(base_parser(__doc__).parse_args()))
 
 
 if __name__ == "__main__":

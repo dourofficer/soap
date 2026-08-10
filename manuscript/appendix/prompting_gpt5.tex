@@ -1,0 +1,76 @@
+% Full prompting-baseline grid: both judges x both GT settings x three strategies.
+% Numbers computed 2026-08-10: full-dataset step-level accuracy (all trajectories,
+% no seed split), verified against ../attrib-prompting reports (*_step@1_full).
+% CE = macro-average over the seven CORRECT-Error subsets.
+% Main tables report GPT-4o; Table \ref{tab:main} shows all three strategies
+% without GT, Table \ref{tab:main-gt} shows Step-by-Step (best overall) with GT.
+\section{Prompting Baselines: Full Grid}
+\label{app:prompting-gpt5}
+
+Tables~\ref{tab:prompting-gpt4o} and~\ref{tab:prompting-gpt5} report all three
+prompting strategies under both judges and both ground-truth settings; accuracy is
+computed over the full dataset, as in the main tables. Table~\ref{tab:prompting-gpt4o}
+completes the GPT-4o judge used in Tables~\ref{tab:main} and~\ref{tab:main-gt}:
+Step-by-Step is the strongest of the three overall in both settings, which is why it
+is the strategy carried into Table~\ref{tab:main-gt}. Under the stronger GPT-5 judge
+(Table~\ref{tab:prompting-gpt5}) the ranking changes --- Binary Search dominates
+every column in both settings, and on CE it exceeds all other methods in the main
+tables.
+
+\begin{table}[t]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\caption{Step-level accuracy (\%) of the prompting strategies with the \textbf{GPT-4o}
+judge of the main tables, in both ground-truth settings, over the full dataset.
+Best per column and setting in \best{bold}.}
+\label{tab:prompting-gpt4o}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l ccccc@{}}
+\toprule
+Method & WW-AG & WW-HC & CE & TE-Cap & TE-Mag \\
+\specialrule{\lightrulewidth}{\aboverulesep}{0pt}
+\rowcolor{Gray}
+\multicolumn{6}{c}{\rule[-0.7ex]{0pt}{2.7ex}\textbf{Without ground truth}}\\
+\specialrule{\lightrulewidth}{0pt}{\belowrulesep}
+\quad All-at-Once~\citep{whoandwhen}   & 15.87 & 5.17 & 27.30 & 11.76 & 4.40 \\
+\quad Step-by-Step~\citep{whoandwhen}  & 16.67 & \best{13.79} & \best{43.63} & \best{16.47} & \best{12.09} \\
+\quad Binary Search~\citep{whoandwhen} & \best{21.43} & 3.45 & 9.85 & 9.41 & 7.69 \\
+\specialrule{\lightrulewidth}{\aboverulesep}{0pt}
+\rowcolor{Gray}
+\multicolumn{6}{c}{\rule[-0.7ex]{0pt}{2.7ex}\textbf{With ground truth}}\\
+\specialrule{\lightrulewidth}{0pt}{\belowrulesep}
+\quad All-at-Once~\citep{whoandwhen}   & 15.87 & 1.72 & 24.20 & 10.59 & 6.59 \\
+\quad Step-by-Step~\citep{whoandwhen}  & 22.22 & \best{15.52} & \best{58.54} & \best{18.82} & \best{21.98} \\
+\quad Binary Search~\citep{whoandwhen} & \best{27.78} & 3.45 & 16.97 & 7.06 & 6.59 \\
+\bottomrule
+\end{tabular*}
+\end{table}
+
+\begin{table}[t]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\caption{Step-level accuracy (\%) of the prompting strategies with a \textbf{GPT-5}
+judge, in both ground-truth settings, over the full dataset. Best per column and
+setting in \best{bold}.}
+\label{tab:prompting-gpt5}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l ccccc@{}}
+\toprule
+Method & WW-AG & WW-HC & CE & TE-Cap & TE-Mag \\
+\specialrule{\lightrulewidth}{\aboverulesep}{0pt}
+\rowcolor{Gray}
+\multicolumn{6}{c}{\rule[-0.7ex]{0pt}{2.7ex}\textbf{Without ground truth}}\\
+\specialrule{\lightrulewidth}{0pt}{\belowrulesep}
+\quad All-at-Once~\citep{whoandwhen}   & 16.67 & 5.17 & 62.95 & 8.24 & 8.79 \\
+\quad Step-by-Step~\citep{whoandwhen}  & 25.40 & 13.79 & 62.77 & 20.00 & 6.59 \\
+\quad Binary Search~\citep{whoandwhen} & \best{40.48} & \best{20.69} & \best{73.46} & \best{21.18} & \best{20.88} \\
+\specialrule{\lightrulewidth}{\aboverulesep}{0pt}
+\rowcolor{Gray}
+\multicolumn{6}{c}{\rule[-0.7ex]{0pt}{2.7ex}\textbf{With ground truth}}\\
+\specialrule{\lightrulewidth}{0pt}{\belowrulesep}
+\quad All-at-Once~\citep{whoandwhen}   & 16.67 & 8.62 & 62.67 & 8.24 & 9.89 \\
+\quad Step-by-Step~\citep{whoandwhen}  & 26.98 & 18.97 & 65.39 & 18.82 & 10.99 \\
+\quad Binary Search~\citep{whoandwhen} & \best{44.44} & \best{20.69} & \best{75.31} & \best{25.88} & \best{24.18} \\
+\bottomrule
+\end{tabular*}
+\end{table}

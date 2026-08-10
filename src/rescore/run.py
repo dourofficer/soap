@@ -1,17 +1,23 @@
-"""Rescore (CRR) sweep runner — one long/tidy TSV per (model, subset).
+"""Rescore sweep runner — one tidy TSV per (model, subset) under the triples protocol.
 
-Reads the reduced base table (``base_table``), reproduces each base row's val+test
-per-step scores, then sweeps orient x score_norm x layer_range x w x strategy and,
-for ALL gammas at once (vectorized W matmuls + batched metrics), records undiscounted
-and discounted step@k/agent@k on val + test.
+Reads ``tables/<tag>/triples_selection.tsv`` (written by the FIRST pass of
+``src.reports.triples``), takes the SVD (proj) row of every seed window, and builds
+one union base table per (model, subset): the deduplicated (window-chosen base
+config, window seed) pairs, with base metrics copied from the recorded score files
+(saved to ``reduced/<tag>/<model>/<subset>/base_triples.tsv`` for inspection and
+reproduction). It then reproduces each base row's val+test per-step scores and sweeps
+orient x score_norm x layer_range x w x strategy — for ALL gammas at once (vectorized
+matmuls + batched metrics) — recording undiscounted and rescored step@k/agent@k on
+val + test into ``rescore/<tag>/<model>/<subset>/sweep.tsv``.
 
-Weights are built ONCE per (model, subset, seed) split (WCache); orientation is
-auto-restricted per row (distance methods use ``none``). Writes
-``outputs/<ds>/rescore/<tag>/<model>/<subset>/sweep.tsv``.
+Strategies come from the protocol config (``rescore.strategies``: backprop /
+succ-strong / succ-near); per-strategy W matrices are pre-built once per (seed,
+range, w) by ``WCache``. After the sweep, run ``src.reports.triples`` again to fill
+the rescoring rows. NOTE: after adding windows/seeds or changing the base selection,
+re-run with ``--force`` so sweeps are rebuilt to cover the new (config, seed) pairs.
 
-    # from v2/  (run the base reduction first)
-    python -m src.reports.reduce --config configs/reduce/correct-full.yaml --set stage=base
-    python -m src.rescore.run    --config configs/rescore/correct-full.yaml
+    # from repo root (after the first src.reports.triples pass)
+    python -m src.rescore.run --config configs/protocol/<ds>.yaml
 """
 from __future__ import annotations
 
@@ -26,9 +32,11 @@ from ..metrics import KeeperContext, compute_metrics_batch
 from ..stores import load_representations, split_files, list_rep_files
 from ..score.svd import fit_one, score_config, N_COMPONENTS
 from ..score.ensemble import member_positions, ens_score_vec, ENSEMBLE_POSITION
-from .weights import aggregate_attn, WCache, coerce_w
-from .strategies import orient, allowed_orients, normalize_scores, STRATEGIES, discount_loop
 from ..score.scorers import native_direction
+from .weights import aggregate_attn, WCache
+from .strategies import orient, allowed_orients, normalize_scores, STRATEGIES
+
+BASE_TABLE = "base_triples.tsv"
 
 SWEEP_COLS = [
     "seed", "pooling", "position", "method", "c_begin", "c_end", "centered", "weighted",
@@ -38,11 +46,32 @@ SWEEP_COLS = [
 ]
 
 
-def _base_rows(cfg, model, subset) -> pd.DataFrame | None:
-    p = paths.reduced_root(cfg) / model / subset / cfg.get("base_table", "base_test.tsv")
-    if not p.exists():
+# ── base table from the window selections ────────────────────────────────────
+def _window_rows(cfg, model, subset, sel_row, seeds) -> pd.DataFrame:
+    """One recorded score row per window seed for the window's chosen config."""
+    d = paths.scores_root(cfg) / model / subset
+    df = pd.concat([pd.read_csv(d / f"seed-{s}.tsv", sep="\t") for s in seeds])
+    df = df[df["k"] == 1]
+    for col, val in cfg["base"]["fixed"].items():
+        df = df[df[col] == val]
+    for col in cfg["base"]["swept"]:
+        val = sel_row[col]
+        df = df[df[col] == (int(val) if str(val).lstrip("-").isdigit() else val)]
+    assert len(df) == len(seeds), \
+        f"{model}/{subset}: selected config found in {len(df)}/{len(seeds)} seed files"
+    return df.reset_index(drop=True)
+
+
+def build_base_table(cfg, model, subset, sel: pd.DataFrame) -> pd.DataFrame | None:
+    """Union over windows of (chosen base config x window seeds), deduplicated."""
+    rows = sel[(sel["model"] == model) & (sel["subset"] == subset)]
+    if rows.empty:
         return None
-    return pd.read_csv(p, sep="\t")
+    parts = [_window_rows(cfg, model, subset, r, [int(s) for s in str(r["seeds"]).split(",")])
+             for r in rows.to_dict("records")]
+    return (pd.concat(parts)
+            .drop_duplicates(["seed"] + cfg["base"]["swept"])
+            .sort_values("seed").reset_index(drop=True))
 
 
 def _undisc_from_row(row) -> dict:
@@ -61,26 +90,30 @@ def _undisc_from_row(row) -> dict:
     }
 
 
-def run_pair(cfg, model, subset, rec) -> None:
+# ── the sweep ────────────────────────────────────────────────────────────────
+def run_pair(cfg, model, subset, sel, rec) -> None:
     device = cfg.get("device", "cuda")
     ks = cfg["ks"]
     gammas = list(cfg["gammas"])
     ws = list(cfg["ws"])
     orients = list(cfg["orients"])
     score_norms = list(cfg.get("score_norms", ["none"]))
-    strategies = list(cfg.get("strategies", ["discount"]))
+    strategies = list(cfg["rescore"]["strategies"])
     n_ranges = cfg.get("n_ranges", 4)
     poolings = cfg["poolings"]
 
-    base = _base_rows(cfg, model, subset)
+    base = build_base_table(cfg, model, subset, sel)
     if base is None or len(base) == 0:
-        print(f"[skip] no base table for {model}/{subset}")
+        print(f"[skip] no window selections for {model}/{subset}")
         return
-    from ..reports.reduce import sweep_name
-    out = paths.rescore_root(cfg) / model / subset / sweep_name(cfg)
+    out = paths.rescore_root(cfg) / model / subset / "sweep.tsv"
     if out.exists() and not cfg.get("force"):
         print(f"[skip] {out}")
         return
+    bt = paths.reduced_root(cfg) / model / subset / BASE_TABLE
+    bt.parent.mkdir(parents=True, exist_ok=True)
+    base.to_csv(bt, sep="\t", index=False)
+    print(f"[base] {model}/{subset}: {len(base)} (config, seed) rows")
 
     rep_dir = paths.reps_root(cfg) / model / subset
     data_dir = paths.data_root(cfg) / subset
@@ -89,7 +122,6 @@ def run_pair(cfg, model, subset, rec) -> None:
                                         n_ranges=n_ranges, device=device)
     range_labels = [f"{lo}-{hi}" for lo, hi in bounds]
 
-    # ── The sweep ────────────────────────────────────────────────────────────
     # Nesting is ordered by COST, outermost = most expensive to recompute, so that each
     # expensive artifact is built once and amortised over everything inside it:
     #
@@ -99,19 +131,12 @@ def run_pair(cfg, model, subset, rec) -> None:
     #         norm    -> a cheap per-trajectory affine map
     #           range -> selects which cached W set to use
     #             w   -> selects which cached W set to use
-    #               strategy -> one matmul
-    #                 gamma  -> NOT a loop: all gammas are one broadcast (see below)
+    #               strategy -> one matmul (picks its matrices out of the W-set dict)
+    #                 gamma  -> NOT a loop: all gammas are one broadcast
     #
-    # Two things deliberately sit OUTSIDE the row loop because they do not depend on the
-    # base score at all: the attention aggregation (per model/subset) and the W matrices
-    # (per seed x range x w). Rebuilding W inside the sweep — as a naive implementation
-    # does — repeats the same ragged Python construction for every (row, orient, norm,
-    # gamma) combination; hoisting it is the single biggest win in the stage.
-    #
-    # Gamma is not a loop level: discount/backprop are affine in gamma, so one matmul
-    # yields the whole gamma curve at once and the metric pass scores all of them in a
-    # single batched call. The output is still written LONG (one row per gamma) so the
-    # sweep table keeps a flat, groupable schema.
+    # The attention aggregation (per model/subset) and the per-strategy W matrices
+    # (per seed x range x w) sit OUTSIDE the row loop because they do not depend on
+    # the base score at all; hoisting them is the single biggest win in the stage.
     records = []
     for seed, seed_rows in base.groupby("seed"):
         parts = split_files(files, cfg["splits"], int(seed))
@@ -192,16 +217,19 @@ def run_pair(cfg, model, subset, rec) -> None:
 
 
 def run(cfg) -> None:
+    sel_file = paths.tables_root(cfg) / "triples_selection.tsv"
+    sel = pd.read_csv(sel_file, sep="\t")
+    sel = sel[sel["row"] == "SVD (proj)"]
     with RunTimer(cfg, "rescore") as rec:
         rec.note(gammas=cfg["gammas"], ws=cfg["ws"], orients=cfg["orients"],
                  score_norms=cfg.get("score_norms", ["none"]),
-                 strategies=cfg.get("strategies", ["discount"]))
+                 strategies=cfg["rescore"]["strategies"])
         for model in cfg["models"]:
             for subset in cfg["subsets"]:
                 if cfg.get("dry_run"):
                     print(f"[dry] rescore {model}/{subset}")
                     continue
-                run_pair(cfg, model, subset, rec)
+                run_pair(cfg, model, subset, sel, rec)
 
 
 def main() -> None:

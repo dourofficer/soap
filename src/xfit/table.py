@@ -22,11 +22,10 @@ from statistics import mean
 from ..common import paths
 from ..common.config import load_manifest
 from ..stores import list_rep_files
-from ..reports.main_table import (
-    MODEL_DISPLAY, SUBSET_DISPLAY, ROW_TO_PRED, SPLIT_MODEL,
-    _read_tsv, _by_seed, _mean_over, _fmt, _baseline_cell,
-    _selection_cells, _choose_seeds,
-)
+from ..reports.baselines import (MODEL_DISPLAY, SUBSET_DISPLAY, ROW_TO_PRED,
+                                SPLIT_MODEL, fmt as _fmt,
+                                baseline_cell as _baseline_cell)
+from .legacy import _read_tsv, _by_seed, _mean_over, _selection_cells, _choose_seeds
 from .common import load_config, source_tag, iter_sources, targets_for
 
 STRATS = [("SVD", "base"), ("CRR", "crr"), ("Backprop", "backprop")]
@@ -146,7 +145,7 @@ def build_dataset(cfg, dataset: str) -> Path:
             elif kind == "baseline" and label in ROW_TO_PRED:
                 root, method = ROW_TO_PRED[label]
                 for _, sk in subsets:
-                    c = _baseline_cell(cfg325, dataset, mk, sk, root, method, chosen, reps_files[sk])
+                    c = _baseline_cell(cfg325, mk, sk, root, method, chosen, reps_files[sk])
                     cells += [_fmt(c[0]), _fmt(c[1])] if c else ["", ""]
             elif kind.startswith("ours:"):
                 _, disk_strat, scorer, gen = kind.split(":")

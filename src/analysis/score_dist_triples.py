@@ -44,10 +44,15 @@ def _as_bool(v) -> bool:
     return str(v).strip().lower() in ("true", "1", "yes")
 
 
-def load_windows(dataset: str) -> pd.DataFrame:
-    """One row per (model, subset, seed-window) with that window's base config."""
-    tsv = (V2_ROOT / "exp-august" / "outputs" / dataset
-           / "tables" / "325" / "triples_selection.tsv")
+def load_windows(cfg, dataset: str) -> pd.DataFrame:
+    """One row per (model, subset, seed-window) with that window's base config.
+
+    Default source is the main pipeline's own selection
+    (``tables/<tag>/triples_selection.tsv``); ``--set selection_tsv=...`` points at
+    another registry (e.g. the archived exp-august one) — the SVD row schema is
+    identical."""
+    tsv = Path(cfg.get("selection_tsv",
+                       paths.tables_root(cfg) / "triples_selection.tsv"))
     assert tsv.exists(), f"no triples selection table for {dataset!r}: {tsv}"
     df = pd.read_csv(tsv, sep="\t")
     df = df[df["row"].astype(str).str.startswith("SVD")]
@@ -60,7 +65,7 @@ def run(cfg) -> None:
     device = cfg.get("device", "cpu")
     dataset = paths._ds(cfg)
     out_dir = Path(cfg.get("artifacts_root", V2_ROOT / ARTIFACTS_ROOT)) / dataset / "triples"
-    windows = load_windows(dataset)
+    windows = load_windows(cfg, dataset)
 
     with RunTimer(cfg, "analysis") as rec:
         rec.note(mode="triples", n_windows=int(len(windows)), device=device)

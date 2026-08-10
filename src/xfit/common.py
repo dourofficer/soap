@@ -90,7 +90,8 @@ def paper_seeds(cfg: dict, dataset: str) -> list[int]:
     pc = paper_cfg(cfg)
     if pc["seed_policy"] == "literal":
         return [int(s) for s in pc["seeds"]]
-    from ..reports.main_table import SUBSET_DISPLAY, _selection_cells, _choose_seeds
+    from ..reports.baselines import SUBSET_DISPLAY
+    from .legacy import _selection_cells, _choose_seeds
     m = dict(load_manifest(dataset))
     m["dataset"] = dataset
     selected, have = _selection_cells(m, SUBSET_DISPLAY[dataset], "crr_ext_proj_test.tsv")

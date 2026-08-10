@@ -21,3 +21,4 @@ v1/datagen/runs*/
 v1/data/synthetic/
 v1/data/synthetic-err/
 v1/logs/
+artifacts/

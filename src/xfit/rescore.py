@@ -24,10 +24,10 @@ from ..stores import load_representations, split_files, split_data, list_rep_fil
 from ..score.svd import fit_one, score_config, N_COMPONENTS
 from ..score.scorers import native_direction
 from ..score.ensemble import ENSEMBLE_POSITION, member_positions, ens_score_vec
-from ..rescore.weights import aggregate_attn, WCache
-from ..rescore.strategies import orient, allowed_orients, normalize_scores, STRATEGIES
+from ..rescore.weights import aggregate_attn
+from ..rescore.strategies import orient, allowed_orients, normalize_scores
 from ..rescore.run import SWEEP_COLS, _undisc_from_row
-from ..reports.reduce import reduce_crr, sweep_name
+from .legacy import WCacheLegacy as WCache, LEGACY_STRATEGIES as STRATEGIES, reduce_crr, sweep_name
 from . import prov
 from .common import (load_config, source_tag, synth_reps_dir, synth_data_dir,
                      iter_sources, targets_for, target_cfg,

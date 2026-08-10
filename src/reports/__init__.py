@@ -1,1 +1,1 @@
-"""Reductions (best-config selection) + the final SVD/CRR results table."""
+"""Selection protocol (seed windows) + baseline scoring + comparison tables."""

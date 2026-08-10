@@ -5,9 +5,10 @@ benchmark it against in-distribution fitting on the IDENTICAL 325 test splits th
 ``outputs/<ds>/tables/325/results_extended.tsv``. This is a ceiling probe (the
 gaia+assistantbench fit pool leaks into the real test sets), kept apart from the core
 ``src/`` pipeline: everything new lives here and only IMPORTS the core primitives —
-``src/score/svd.py`` (fit/score decoupling), ``src/rescore/`` (CRR + backprop),
-``src/reports/reduce.py`` (reductions) and ``src/reports/main_table.py`` (table layout)
-— never modifying them.
+``src/score/svd.py`` (fit/score decoupling) and ``src/rescore/weights.py`` — never
+modifying them. The retired reduce conventions, legacy table selection and the
+discount (CRR) strategy that this strand is defined against live on in
+``src/xfit/legacy.py``, copied unchanged from ``src_v2/``.
 
 Stages (see ``run.py``): extract -> score -> rescore -> table.
 """

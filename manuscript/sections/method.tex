@@ -46,9 +46,10 @@ Specifically, for step $s_t$, we provide the model $\proxy$ with the task
 description and the trajectory context
 $
     z_t = [x; s_1;\ldots;s_t].
-$ and then extract its $d$-dimensional step representation $v_t$.
+$ and then extract its $d$-dimensional step representation $v_t$. \note{refer details, e.g., context cutoff, in the appendix.}
+% \textcolor{blue}{Please don't mention the details here. add ablations in appendix.}
 
-
+\textcolor{blue}{we need a method figure.}
 % Let $\mathcal{T}_t$ denote the token positions corresponding to $s_t$ in
 % $z_t$, and let $h_p^{(l)}\in\mathbb{R}^d$ be the hidden representation at
 % layer $l$ and token position $p$.
@@ -101,6 +102,14 @@ $
 $ whose boundaries are selected as described in
 \S\ref{sec:experiments}.
 
+\begin{wrapfigure}{r}{0.40\linewidth}
+\vspace{-0.9\baselineskip}
+\centering
+\includegraphics[width=\linewidth]{{assets/qwen3.5-9b_arc_seeds-6-7-8_seed-7}.pdf}
+\caption{Base-score distribution on a \textsc{CORRECT-Error} test split. Decisive-error steps concentrate at smaller projection magnitudes than ordinary steps. \textcolor{blue}{avoid mentioning proxy.}}
+\label{fig:score-dist}
+\vspace{-\baselineskip}
+\end{wrapfigure}
 
 \textbf{Spectral base score.}
 For a step representation $v_t$, we measure its average squared projection
@@ -114,31 +123,25 @@ onto the selected spectral band:
     \label{eq:proj}
 \end{equation}
 
-\begin{wrapfigure}{r}{0.40\linewidth}
-\vspace{-0.9\baselineskip}
-\centering
-\includegraphics[width=\linewidth]{{assets/qwen3.5-9b_algorithm-generated_seed-3}.pdf}
-\footnotesize
-\caption{Base-score distribution on \textsc{WW-AG} (proxy Qwen3.5-9B, test split). Decisive-error steps concentrate at smaller projection magnitudes than ordinary steps.}
-\label{fig:score-dist}
-\vspace{-\baselineskip}
-\end{wrapfigure}
-\noindent Empirically, decisive-error steps exhibit smaller projection magnitudes on
+
+
+
+\noindent Because ordinary steps dominate the unlabeled reference corpus, decisive-error steps exhibit smaller projection magnitudes on
 the selected directions than ordinary steps (Figure~\ref{fig:score-dist}).
 We therefore define
 $ 
-    \Sbase(s_t)
-    =
-    1/\pi_{\mathcal{C}}(v_t)
-$ \textcolor{blue}{check?} so that a larger score indicates stronger decisive-error
-evidence. Note that $R$ is constructed solely from the step-unlabeled reference
+S(s_t)
+=
+\frac{1}{\pi_{\mathcal C}(v_t)+\epsilon}.
+$  so that a larger score indicates stronger decisive-error
+evidence. $\epsilon>0$ is a small constant that ensures numerical stability. Note that $R$ is constructed solely from the step-unlabeled reference
 collection where \textit{no decisive-error or responsible-agent annotation is used}.
 
 
 \subsection{Dependency-aware rescoring}
 \label{sec:method:weights}
 
-\textbf{Attention-guided step dependencies.} The base score in Eqn.~\ref{eq:proj} evaluates each step independently
+\textbf{Attention-guided step dependencies.} \note{add context cutoff explanation}\textcolor{blue}{appendix} The base score in Eqn.~\ref{eq:proj} evaluates each step independently
 and therefore cannot distinguish an error source from its downstream
 consequences.
 Once a decisive error occurs, later steps may inherit the corrupted

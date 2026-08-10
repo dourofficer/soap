@@ -23,25 +23,26 @@ src/
   stores.py   representation loading + train/val/test splits
   metrics.py  step@k / agent@k: reference loop + vectorized batch
   score/      scorers registry, SVD fit + grid, layer ensemble, runner
-  rescore/    attention weights -> W, strategies (discount / backprop), runner
-  reports/    reduce (best config per seed, both conventions), results table
+  rescore/    attention weights -> per-strategy W, backprop + succ-strong/near, runner
+  reports/    the seed-window ("triples") selection protocol + baseline scoring
   reproduce/  re-run ONE frozen config -> per-step scores for inspection
   analysis/   geometry probe (what the singular vectors actually represent)
-configs/      datasets/<ds>.yaml (manifest) + <stage>/<ds>.yaml (thin, per stage)
-scripts/      extract.sh, run_pipeline.sh, copy_inputs.sh
-tests/        test_invariants.py (CPU, standalone) + test_parity.py (optional)
+  xfit/       cross-dataset generalization strand (legacy conventions in xfit/legacy.py)
+configs/      datasets/<ds>.yaml (manifest), score/, protocol/ (select+rescore), reproduce/
+scripts/      extract.sh, run_pipeline.sh, copy_inputs.sh, import_prompting.py
+tests/        test_invariants.py (CPU, standalone), test_xfit_paper.py, test_parity.py (optional)
 outputs/<ds>/ everything a run produces (activations, attention, scores, tables, ...)
+src_v2/       frozen archive of the pre-protocol pipeline (reduce conventions, CRR)
 ```
 
 ## Quickstart
 
 ```bash
-cd v2/
 # 1. corpus in data/<ds>/<subset>/*.json, then extract representations + attention
 DATASET=correct-full GPU=0 ./scripts/extract.sh
-# 2. score -> reduce -> rescore -> reduce -> tables
-DATASET=correct-full GPU=0 ./scripts/run_pipeline.sh
-cat outputs/correct-full/tables/325/results.tsv
+# 2. score -> select (pass 1) -> rescore -> select (pass 2)
+DS=correct-full bash scripts/run_pipeline.sh
+cat outputs/correct-full/tables/325/triples_summary.tsv
 ```
 
 Adopting extractions produced elsewhere instead of running step 1:
@@ -53,17 +54,15 @@ Narrow or override anything: `MODEL=qwen3.5-9b SEED=1 EXTRA_SET="--set gammas=[0
 ## Stages
 
 Every stage takes the same CLI (`--config`, `--set k=v`, `--model/--subset/--seed`,
-`--device`, `--dry-run`, `--force`) and is run from `v2/`:
+`--device`, `--dry-run`, `--force`) and is run from the repo root:
 
 | stage | command | output |
 |---|---|---|
 | extract reps | `python -m src.extract.activations --model M --model-path P --input data/<ds> --subset S --output outputs/<ds>/activations/M/S` | `.safetensors` per trajectory |
 | extract attn | `python -m src.extract.attention --model M --model-path P --input data/<ds> --subset S --output-root outputs/<ds>/attention` | `.safetensors` per trajectory |
 | score | `python -m src.score.run --config configs/score/<ds>.yaml` | `scores/<tag>/<model>/<subset>/seed-<n>.tsv` |
-| reduce (base) | `python -m src.reports.reduce --config configs/reduce/<ds>.yaml --set stage=base` | `reduced/.../base_{test,val}.tsv` |
-| rescore | `python -m src.rescore.run --config configs/rescore/<ds>.yaml` | `rescore/.../sweep.tsv` |
-| reduce (crr) | `python -m src.reports.reduce --config configs/reduce/<ds>.yaml --set stage=crr` | `reduced/.../{crr,backprop}_{test,val}.tsv` |
-| tables | `python -m src.reports.tables --config configs/tables/<ds>.yaml` | `tables/<tag>/results.tsv` |
+| select (x2) | `python -m src.reports.triples --config configs/protocol/<ds>.yaml` | `tables/<tag>/triples_{selection,summary}.tsv` |
+| rescore | `python -m src.rescore.run --config configs/protocol/<ds>.yaml` | `rescore/.../sweep.tsv` + `reduced/.../base_triples.tsv` |
 | reproduce | `python -m src.reproduce.run --config configs/reproduce/<ds>.yaml` | `reproductions/.../*.steps.tsv` |
 | geometry | `python -m src.analysis.geometry --config configs/datasets/<ds>.yaml` | `analysis/<tag>/geometry/...` |
 
@@ -74,15 +73,15 @@ this re-runs one frozen winner and writes the score at every pipeline stage, per
 
 ```bash
 python -m src.reproduce.run --config configs/reproduce/correct-full.yaml \
-    --set tables=[base_test,crr_test,backprop_test] --set split=test
+    --set windows=[1] --model deepseek-8b
 ```
 
 `*.steps.tsv` has one row per (trajectory, step) with `base / oriented / normalized /
 final`, the within-trajectory `rank`, `is_pred` and the gold `is_mistake` flag — plot a
-trajectory's score curve directly, or concatenate several tables (each tagged with a
-`table` column) to diff methods on identical rows. `*.preds.tsv` gives one row per
+trajectory's score curve directly, or concatenate several rows' files (each tagged
+with a `row` column) to diff methods on identical rows. `*.preds.tsv` gives one row per
 trajectory including `true_step_rank`, which is what you want for error analysis.
-Reproduction asserts it recovers the recorded accuracy exactly.
+Reproduction asserts the reproduced window-mean accuracy equals the recorded one.
 
 ## Adding a dataset
 
@@ -98,9 +97,10 @@ Reproduction asserts it recovers the recorded accuracy exactly.
 ## Tests
 
 ```bash
-pytest tests/test_invariants.py -q          # CPU, no data needed — the correctness story
-LEGACY_REPO=/path pytest tests/test_parity.py -q   # optional migration check
+pytest tests/test_invariants.py tests/test_xfit_paper.py -q   # CPU, no data needed
+LEGACY_REPO=/path pytest tests/test_parity.py -q              # optional migration check
 ```
 
-Invariants cover the scorer identities, `γ=0` identity for both strategies, the backprop
-transpose, vectorized-vs-reference rescoring, and batched-vs-loop metrics under ties.
+Invariants cover the scorer identities, `γ=0` identity for all three strategies, the
+backprop transpose, vec-vs-reference-loop for the succ variants, `w="all"` coincidence
+of all strategies, column-mask correctness, and batched-vs-loop metrics under ties.

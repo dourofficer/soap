@@ -41,7 +41,7 @@ from ..stores import load_representations, split_files, list_rep_files
 from ..score.svd import fit_one, score_config, N_COMPONENTS
 from ..score.ensemble import member_positions, ens_score_vec, ENSEMBLE_POSITION
 from ..score.scorers import native_direction
-from ..rescore.weights import aggregate_attn, build_W
+from ..rescore.weights import aggregate_attn, strategy_mats
 from ..rescore.strategies import orient, normalize_scores, STRATEGIES
 
 
@@ -172,10 +172,10 @@ def reproduce_row(ctx: ReproContext, row: dict, split: str = "test",
         snorm = row.get("score_norm", "none")
         oriented = orient(base, orient_name)
         normalized = normalize_scores(oriented, keeper, snorm)
-        Wmats = build_W(keeper, ctx.weightings[ctx.range_index(row["layer_range"])],
-                        row["w"], device=normalized.device)
+        mats = strategy_mats(keeper, ctx.weightings[ctx.range_index(row["layer_range"])],
+                             row["w"], device=normalized.device)
         gamma = float(row["gamma"])
-        final = STRATEGIES[strategy](normalized, keeper, Wmats, [gamma])[:, 0]
+        final = STRATEGIES[strategy](normalized, keeper, mats, [gamma])[:, 0]
         rank_dir = "desc"          # post-orientation scores are always "higher = error"
     else:
         orient_name, snorm, gamma = "none", "none", None

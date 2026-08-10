@@ -1,1 +1,1 @@
-"""CRR rescoring: attention weights, rescoring strategies, sweep runner."""
+"""Rescoring: dependency weights, the three strategies, sweep runner."""

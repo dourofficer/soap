@@ -5,6 +5,9 @@ representations**. Given a failed trajectory (e.g. from the Who&When, CORRECT-Er
 TraceElephant benchmarks), predict which step was the *decisive error* — the earliest
 step that irrecoverably derailed the run — and hence which agent is responsible.
 
+The pre-protocol pipeline (reduce `_test`/`_val` conventions, discount/CRR strategy) is
+archived VERBATIM at `src_v2/` — never edit it; `src/` is the live pipeline.
+
 ## The method
 
 Prediction is the argmax over rescored per-step scores: `t̂ = argmax_t S̃(s_t)`.
@@ -22,9 +25,7 @@ both supported:
   Error steps project *smaller*, so this is "lower = error" (`asc`) and needs orienting.
 - `resid` / `angres` / `maha` — the **distance off** the band. Natively "higher = error"
   (`desc`), so no orientation is needed at all. `angres` (`sin²θ = r²/‖ṽ‖²`) is the
-  principled member: norm-free and bounded. This matters because the signal is in
-  *alignment*, not magnitude — per-step norm ranks the gold step at rank-AUC ≈ 0.25-0.54
-  (chance or worse) while `sin²θ` reaches ≈ 0.7-0.84.
+  principled member: norm-free and bounded.
 
 `norm_l1`/`norm_l2` are baselines, evaluated in both directions.
 
@@ -32,20 +33,47 @@ both supported:
 predecessor step `i`: head-averaged over a layer band, then renormalized over
 predecessors so `Σ_{i<t} w_{i,t} = 1`.
 
-**Rescoring strategies** (both single-pass — they read the ORIGINAL `S`, so corrections
-never cascade):
-- `discount` — `S̃(s_t) = S(s_t) − γ·Σ_{i<t} w_{i,t}·S(s_i)`. Subtracts inherited
-  anomaly from descendants, so a step that merely echoes an anomalous predecessor is
-  marked down.
-- `backprop` — `S̃(s_i) = S(s_i) + γ·(Σ_{t>i} w_{i,t}·S(s_t)) / (Σ_{t>i} w_{i,t})`. The
-  transpose: each step collects its dependents' anomaly, so a locally-innocuous cause
-  with a broken downstream gets promoted. The hub normalization (dividing by attention
-  *received*) prevents merely-popular steps — plans, restatements — from accruing blame.
+**Rescoring strategies.** All three are the SAME single-pass, hub-normalized
+blame-collection (they read the ORIGINAL `S`, so corrections never cascade):
 
-`γ ∈ [0,1]` is the correction strength; `γ=0` recovers the base scorer exactly.
+    S̃(s_i) = S(s_i) + γ·(Σ_t M[t,i]·S(s_t)) / (Σ_t M[t,i])      = s + γ(Mᵀs)/(Mᵀ1)
+
+They differ only in which matrix `M` they aggregate through — i.e. where the top-w
+sparsification lives (`src/rescore/weights.strategy_mats`):
+
+- `backprop` (SOAP) — predecessor-side: each step t keeps its w strongest predecessors
+  (rows trimmed + renormalized by `build_W`). Selective: a step is lifted only if some
+  successor ranked it top-w; steps that win no slot pass through. Empirically strongest.
+- `succ-strong` — successor-side: W stays full; each step i collects from its w
+  strongest successors (columns masked by weight). Lifts nearly every step at any w.
+- `succ-near` — successor-side: step i collects from its w NEAREST scored successors.
+
+At `w="all"` the three coincide exactly. `γ=0` recovers the base scorer. The hub
+normalization (dividing by attention *received*) prevents merely-popular steps — plans,
+restatements — from accruing blame.
 
 Base scores rank **within a trajectory** — never across. Evaluation reports step@k /
 agent@k.
+
+## The selection protocol (seed windows / "triples")
+
+THE selection convention of the pipeline, replacing the old reduce conventions. For
+every consecutive window of `triples.window` seeds over `triples.seeds` (declared in
+`configs/protocol/<ds>.yaml`), per (model, subset):
+
+1. **SVD (proj)**: filter recorded score rows by `base.fixed`; pick the `base.swept`
+   config (position, c_begin, c_end) maximizing mean test step-acc over the window's
+   seeds (config must exist in all of them; tiebreak agent acc, then highest key).
+2. **Rescoring rows** (one per strategy): filter the sweep by strategy +
+   `rescore.fixed` + the window's chosen base config; pick `rescore.swept`
+   (layer_range, gamma, w) the same way.
+3. **Baselines** (prompting / CHIEF / CORRECT): scored from recorded prediction JSONLs
+   on the window's seeds.
+
+Selection is test-selected over the window — optimistic by construction; that is the
+protocol. `orient`/`score_norm` remain sweepable axes in code but the protocol FIXES
+them (orient=inverse, score_norm=none) and the configs pin the sweep grid to those
+values; restoring the full lists in the protocol config re-enables sweeping them.
 
 ## The pipeline (and where each stage lives)
 
@@ -53,31 +81,33 @@ agent@k.
    states to one vector `v_t`. → `src/extract/activations.py`
 2. **Attention mass** — per-step attention into predecessors, without ever materialising
    an (N,N) matrix. → `src/extract/attention.py`
-3. **Base score** — fit SVD on train, score the config grid. → `src/score/`
-4. **Rescoring sweep** — orient → normalize → strategy, all γ at once. → `src/rescore/`
-5. **Reduce / tabulate** — best config per seed in both selection conventions, then the
-   results table. → `src/reports/`
-6. **Reproduce** — re-run ONE frozen config and emit per-step scores, ranks and
-   predictions for inspection and plotting. → `src/reproduce/`
-7. **Analyse** — the geometry probe behind the claims above. → `src/analysis/geometry.py`
+3. **Base score** — fit SVD on train, score the config grid per seed. → `src/score/`
+4. **Select (pass 1)** — per-window SVD config + baseline rows. → `src/reports/triples.py`
+5. **Rescoring sweep** — union base table over windows, then orient → normalize →
+   strategy, all γ at once. → `src/rescore/`
+6. **Select (pass 2)** — same command as 4; now fills the rescoring rows and the
+   side-by-side summary. → `src/reports/triples.py`
+7. **Reproduce** — re-run selected rows, emit per-step scores/ranks/predictions, assert
+   the recorded window-mean accuracy. → `src/reproduce/`
+8. **Analyse** — geometry probe + figure data. → `src/analysis/`
 
-`scripts/run_pipeline.sh` drives 3→5 end to end.
+`scripts/run_pipeline.sh` drives 3→6 end to end (`DS=<ds> bash scripts/run_pipeline.sh`).
 
 ## Repository layout
 
 - **`src/` = all logic.** Each stage is a package with its algorithm plus a thin
-  `run.py` exposing the same CLI. Stages never hand-write paths or re-parse configs.
+  `run.py` exposing the same CLI.
 - **`configs/` = what gets run.** `configs/datasets/<ds>.yaml` is the per-dataset
   manifest and single source of truth (models, model_paths, subsets, max_tokens, splits,
-  seeds, ks). Thin stage configs (`configs/<stage>/<ds>.yaml`) declare `dataset: <ds>`
-  plus only that stage's axes.
+  seeds, ks). `configs/score/<ds>.yaml` drives scoring; `configs/protocol/<ds>.yaml` is
+  ONE config driving select + rescore (+ windows + sweep grid); `configs/reproduce/`
+  drives reproduction.
 - **`data/<ds>/<subset>/*.json` = the corpus.** Input, never regenerated by a run.
-- **`outputs/<ds>/` = everything a run produces**, including extracted
-  activations/attention (they are outputs of the extract stage even though later stages
-  consume them).
-
-So: **change behaviour in `src/`, change what gets run in `configs/`.** Adding a `src/`
-capability means adding the matching config axis.
+- **`outputs/<ds>/` = everything a run produces.** GT-mode runs mirror into
+  `outputs-gt/<ds>` purely via `--set outputs_base=...`; extraction takes `--gt`.
+- **`src_v2/`** = frozen archive of the pre-protocol pipeline. **`exp-august/`,
+  `exp-soap/`** = the experiment dirs whose frozen sweeps/selections are the regression
+  oracle the current `src/` was validated against.
 
 Three pieces keep orchestration DRY, all in `src/common/`: `config.py` (the one
 `load_stage_config` + manifest merge), `paths.py` (derives every stage's root from
@@ -86,8 +116,7 @@ CLI), `provenance.py` (a JSON run record per invocation).
 
 ## Running
 
-Everything runs **from the `v2/` directory** (which puts `src` on `sys.path`; no install
-needed), with one CLI shared by every stage:
+Everything runs **from the repo root**, with one CLI shared by every stage:
 
 ```
 python -m src.<stage>.run --config configs/<stage>/<ds>.yaml \
@@ -96,17 +125,20 @@ python -m src.<stage>.run --config configs/<stage>/<ds>.yaml \
     [--device cuda|cpu] [--dry-run] [--force]
 ```
 
-Precedence: manifest < stage config < `--set` < narrowing flags. Every runner skips
-cells whose output exists (`--force` overrides) and writes a provenance record.
-
-Onboarding a dataset = one manifest + one thin config per stage.
+(`src.reports.triples` is the select stage; it and `src.rescore.run` both take the
+`configs/protocol/<ds>.yaml`.) Precedence: manifest < stage config < `--set` <
+narrowing flags. Every runner skips cells whose output exists (`--force` overrides)
+and writes a provenance record. Onboarding a dataset = one manifest + one thin config
+per stage.
 
 ## Core modules
 
 - **`src/data/`** — how a trajectory is represented and how a step's context is built.
   `context.py` assembles `input_ids` from independently-tokenised pieces so **every token
   belongs to exactly one step**; deriving spans from re-rendered template prefixes is
-  off-by-a-scaffold and breaks both pooling and attention attribution.
+  off-by-a-scaffold and breaks both pooling and attention attribution. With-GT mode pins
+  a `[question, answer]` block under the `GT_STEP = -1` sentinel (never scored, dropped
+  by `build_W`).
 - **`src/stores.py`** — loads per-trajectory `.safetensors` into `(pooling, name)`-keyed
   stores sharing one `StoreKeeper`, and owns `split_files` (splits are by TRAJECTORY;
   the seed→partition mapping is the experiment's identity, so it must not drift).
@@ -114,17 +146,31 @@ Onboarding a dataset = one manifest + one thin config per stage.
   (vectorized). The batch version ranks via the closed-form identity
   `rank(i) = 1 + #{s_j > s_i} + #{j<i : s_j == s_i}`, which reproduces the stable sort's
   earliest-step tie-break exactly — `torch.topk` is not tie-stable and must not be used.
-- **`src/score/`** — `scorers.py` (registry + `METHOD_DIRECTION` + which methods support
-  `weighted`), `svd.py` (fit keeping the FULL spectrum, since `maha` needs the discarded
-  tail; plus `score_config`, which doubles as the reproduction primitive), `ensemble.py`
-  (`ens-mid3`, a fixed mid-depth layer band that removes the noisiest selection axis),
-  `run.py`.
-- **`src/rescore/`** — `weights.py` (attention → dense per-trajectory `W`, cached per
-  (seed, range, w)), `strategies.py` (orient / score_norm / discount / backprop, plus a
-  reference loop the vectorized path is tested against), `run.py`.
-- **`src/reproduce/`** — freeze a config, re-run it, emit per-step signal at every stage
-  (`base → oriented → normalized → final`) with ranks and predictions, and assert the
-  reproduced accuracy equals the recorded one.
+- **`src/score/`** — `scorers.py` (registry + `METHOD_DIRECTION`), `svd.py` (fit keeping
+  the FULL spectrum since `maha` needs the tail; plus `score_config`, which doubles as
+  the reproduction primitive), `ensemble.py` (`ens-mid3`), `run.py`.
+- **`src/rescore/`** — `weights.py` (attention → per-strategy dense `W` sets:
+  `build_W` row-trims for backprop, `mask_columns_*` column-mask the full W for the
+  succ variants; `strategy_mats`/`WCache` bundle them), `strategies.py` (orient /
+  score_norm / the shared `backprop_vec` + `STRATEGIES` dispatch, plus the
+  `backprop_succ_loop` reference the vectorized path is tested against), `run.py`
+  (builds the union base table from the window selections, then sweeps).
+- **`src/reports/`** — `baselines.py` (display maps, recorded-score loader, baseline
+  prediction scoring), `triples.py` (the protocol; two-pass idempotent),
+  `manuscript.py` (manuscript-shaped tables: prompting rows + SOAP per GT setting,
+  every cell's rows evaluated on that cell's pick_window seed triple). Prompting
+  predictions live at `outputs[-gt]/<ds>/baselines/prompting/<judge>/<subset>/`
+  (judges gpt-4o/gpt-5 imported from `../attrib-prompting` by
+  `scripts/import_prompting.py`; backbone-named dirs are the older local-model runs).
+- **`src/reproduce/`** — `core.py` re-runs one frozen row and exposes per-step signal
+  at every stage (`base → oriented → normalized → final`); `run.py` drives it from
+  `triples_selection.tsv` and asserts the reproduced window mean equals the recorded
+  accuracy (to its 4-decimal rounding).
+- **`src/xfit/`** — cross-dataset generalization strand, still defined against the
+  RETIRED reduce conventions: everything it needs from them (reduce_base/reduce_crr,
+  legacy pooling/seed selection, the discount/CRR strategy, the list-valued WCache)
+  lives in `src/xfit/legacy.py`, copied from `src_v2/` unchanged. Only xfit (and the
+  optional legacy-parity test) may import it.
 
 ## Conventions that bite
 
@@ -137,6 +183,11 @@ Onboarding a dataset = one manifest + one thin config per stage.
   taken from the base row's own metric, never recomputed from an oriented score.
 - **Float before scoring.** Scorers cast back to `R.dtype`; passing fp16 `R` rounds the
   scores and flips near-ties. `score_config` floats `R` first — do not "optimise" this.
+- **backprop's slot-consumption order is semantics.** `build_W` applies top-w selection
+  BEFORE dropping unscored buckets (turn-0 human, GT block), so those can claim a slot
+  and then vanish. Deriving the row trim from the already-filtered full W would
+  silently change every backprop number. The succ masks, by contrast, are DEFINED on
+  the filtered full W.
 - **Layer indexing differs by stage.** Activations store `embed` (tuple index 0),
   `act/k` (tuple index k+1), and `act/{N-1}_normed`. Attention stores one row per
   attention block, so `layer_range` labels index ATTENTION blocks (8 for Qwen3.5, which
@@ -144,19 +195,28 @@ Onboarding a dataset = one manifest + one thin config per stage.
 - **Split ratios have one home.** They live in the manifest and derive the split-tag
   (`0.3/0.2/0.5 → "325"`) naming every split-tagged root. Extraction is NOT tagged, so
   overriding `split_tag` reruns analysis while reusing the expensive forward passes.
+- **Protocol seeds ≠ manifest seeds.** The window universe is `triples.seeds` in the
+  protocol config; the manifest's `seeds` list may be narrower (it caps score-stage
+  sweeps). `triples.py` overrides the seed restriction when loading scores — keep it.
 - **Metric quirks are intentional.** `agent@k` lowercases the gold role but
   `standardize_role()`s the candidates; trajectories with no gold mistake are skipped yet
   still counted in the divisor; ties resolve to the earliest step. These define the
   metric — changing them silently changes every number.
-- **Selection convention is a reported axis, not a detail.** Reductions emit both
-  `*_test.tsv` (argmax on test — optimistic by construction) and `*_val.tsv` (leak-free).
-  On small datasets the gap is large; report both.
+- **Test-selected by design.** The protocol selects per window on test metrics; the
+  score files still carry val columns if a leak-free convention is ever needed.
 - **`maha` omits the global 1/(n−1)** — it cancels under per-trajectory ranking.
+- **Legacy artifacts on disk.** `outputs/<ds>/reduced/` and `sweep_v2.tsv` files are
+  the archived pre-protocol runs (xfit's verify gate reads the reduced trees) — do not
+  delete or regenerate them.
 
 ## Testing
 
 `pytest tests/test_invariants.py` runs standalone on CPU and is the correctness story:
-scorer identities, `γ=0` identity for both strategies, `orient=none` identity, the
-backprop transpose, vectorized-vs-reference discount, and batched-vs-loop metrics on
-tie-saturated inputs. `tests/test_parity.py` is an OPTIONAL migration check against an
-external legacy tree (`LEGACY_REPO=<path>`), not part of the repo's own guarantees.
+scorer identities, `γ=0` identity for all three strategies, `orient=none` identity, the
+backprop transpose by hand, vec-vs-reference-loop for the succ variants, `w="all"`
+coincidence of all strategies, sink pass-through, strongest≠nearest divergence,
+column-mask correctness, batched-vs-loop metrics on tie-saturated inputs, and the
+with-GT context block (pinned GT prefix, truncation, `build_W` sentinel drop).
+`tests/test_xfit_paper.py` covers the xfit strand. `tests/test_parity.py` is an
+OPTIONAL migration check against an external legacy tree (`LEGACY_REPO=<path>`), not
+part of the repo's own guarantees.

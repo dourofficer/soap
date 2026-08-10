@@ -14,7 +14,7 @@ import pytest
 from src.xfit import align, prov
 from src.xfit.common import (load_config, source_tag, paper_cfg, paper_jobs,
                              paper_seeds, setting, REAL_SOURCE)
-from src.reports.reduce import best_per_group
+from src.xfit.legacy import best_per_group
 
 REPO = Path(__file__).resolve().parents[1]
 HAVE_DATA = (REPO / "data/ww/algorithm-generated").is_dir() \

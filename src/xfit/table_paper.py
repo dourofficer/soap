@@ -20,8 +20,8 @@ from __future__ import annotations
 import csv
 
 from ..common import paths
-from ..reports.main_table import MODEL_DISPLAY, SUBSET_DISPLAY, _read_tsv, _by_seed, \
-    _mean_over, _fmt
+from ..reports.baselines import MODEL_DISPLAY, SUBSET_DISPLAY, fmt as _fmt
+from .legacy import _read_tsv, _by_seed, _mean_over
 from . import prov
 from .common import (load_config, source_tag, target_cfg, setting, paper_cfg,
                      paper_targets, paper_seeds, REAL_SOURCE)

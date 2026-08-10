@@ -167,19 +167,22 @@ Further implementation details appear in Appendices~\ref{app:implementation} and
 \centering
 \footnotesize
 \setlength{\tabcolsep}{4pt}
-\caption{Step-level accuracy (\%) in the \emph{without-ground-truth} setting (no method receives the gold task answer); mean over three seeds (std in Appendix~\ref{app:metrics}). Prompt-based methods are evaluated with a closed-source judge; all other methods run on the two open backbones. \textbf{Actual data}: the method is constructed  using actual or synthetic trajectories; \textbf{Supervised}: the construction consumes step-level error annotations; except for CORRECT, both columns are empty for prompt-based methods, which require no construction. The \soap rows are our method; \soap (w/o rescoring) ranks steps by the spectral base score alone. Best per column in \best{bold}, second best \second{underlined}.}
+\caption{Step-level accuracy (\%) in the \emph{without-ground-truth} setting (no method receives the gold task answer); mean over three seeds (std in Appendix~\ref{app:metrics}). Prompt-based methods are evaluated with a closed-source judge; all other methods run on the two open backbones. \textbf{Actual data}: the method is constructed  using actual or synthetic trajectories; \textbf{Supervised}: the construction consumes step-level error annotations; except for CORRECT, both columns are empty for prompt-based methods, which require no construction. The \soap rows are our method; \soap (w/o rescoring) ranks steps by the spectral base score alone. Best per column in \best{bold}, second best \second{underlined}. \note{Prompt rows: GPT-4o judge, full-dataset accuracy (to be clarified in text); GPT-5 in Appendix.}}
 \label{tab:main}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l cc ccccc@{}}
 \toprule
 Method & {\scriptsize Actual data} & {\scriptsize Supervised} & WW-AG & WW-HC & CE & TE-Cap & TE-Mag \\
 \specialrule{\lightrulewidth}{\aboverulesep}{0pt}
 \rowcolor{Gray}
-\multicolumn{8}{c}{\rule[-0.7ex]{0pt}{2.7ex}\textbf{Backbone: \TODO{closed-source model}}}\\
+\multicolumn{8}{c}{\rule[-0.7ex]{0pt}{2.7ex}\textbf{Backbone: GPT-4o}}\\
 \specialrule{\lightrulewidth}{0pt}{\belowrulesep}
 \multicolumn{8}{@{}l}{\textit{Prompt-based methods}}\\
-\quad All-at-Once~\citep{whoandwhen}   &  &  & - & - & - & - & - \\
-\quad Step-by-Step~\citep{whoandwhen}  &  &  & - & - & - & - & - \\
-\quad Binary Search~\citep{whoandwhen} &  &  & - & - & - & - & - \\
+% Prompt rows filled 2026-08-10: GPT-4o judge, FULL-dataset accuracy (all
+% trajectories, no seed split) — verified against ../attrib-prompting reports
+% (*_step@1_full). GPT-5 counterpart: appendix/prompting_gpt5.tex.
+\quad All-at-Once~\citep{whoandwhen}   &  &  & 15.87 & 5.17 & 27.30 & 11.76 & 4.40 \\
+\quad Step-by-Step~\citep{whoandwhen}  &  &  & 16.67 & 13.79 & 43.63 & 16.47 & 12.09 \\
+\quad Binary Search~\citep{whoandwhen} &  &  & 21.43 & 3.45 & 9.85 & 9.41 & 7.69 \\
 \quad CORRECT~\citep{correct}          & \cmark & \cmark & - & - & - & - & - \\
 \quad RAFFLES~\citep{raffles}          &  &  & - & - & - & - & - \\
 \quad CHIEF~\citep{chief}              &  &  & - & - & - & - & - \\
@@ -199,8 +202,8 @@ Method & {\scriptsize Actual data} & {\scriptsize Supervised} & WW-AG & WW-HC & 
 % exp-august/outputs/manuscript-tables/table1_main_selection.tsv
 % \quad \soap (w/o rescoring)            & \cmark & \xmark & 42.9 & 33.3 & 56.2 & 39.5 & 24.6 \\
 % \quad \soap (full)                     & \cmark & \xmark & 46.0 & 35.6 & 57.7 & 42.6 & 25.4 \\
-\quad \soap (w/o rescoring)            & \cmark & \xmark & 40.21 & 33.33 & 61.66 & 31.01 & 21.01 \\
-\quad \soap (full)                     & \cmark & \xmark & 48.15 & 34.48 & 62.11 & 34.88 & 23.19 \\
+% \quad \soap (w/o rescoring)            & \cmark & \xmark & 40.21 & 33.33 & 61.66 & 31.01 & 21.01 \\
+\quad \soap                            & \cmark & \xmark & 48.15 & 34.48 & 62.11 & 34.88 & 23.19 \\
 \specialrule{\lightrulewidth}{\aboverulesep}{0pt}
 \rowcolor{Gray}
 \multicolumn{8}{c}{\rule[-0.7ex]{0pt}{2.7ex}\textbf{Backbone: DeepSeek-R1-Distill-Llama-8B}}\\
@@ -215,8 +218,8 @@ Method & {\scriptsize Actual data} & {\scriptsize Supervised} & WW-AG & WW-HC & 
 % SOAP rows updated 2026-08-05 (same protocol/bookkeeping as the Qwen strand above).
 % \quad \soap (w/o rescoring)            & \cmark & \xmark & 45.5 & 31.0 & 56.3 & 44.2 & 31.9 \\
 % \quad \soap (full)                     & \cmark & \xmark & 49.2 & 34.5 & 60.0 & 48.1 & 31.9 \\
-\quad \soap (w/o rescoring)            & \cmark & \xmark & 37.57 & 26.44 & 63.29 & 36.43 & 29.71 \\
-\quad \soap (full)                     & \cmark & \xmark & 46.56 & 27.59 & 64.27 & 40.31 & 30.43 \\
+% \quad \soap (w/o rescoring)            & \cmark & \xmark & 37.57 & 26.44 & 63.29 & 36.43 & 29.71 \\
+\quad \soap                            & \cmark & \xmark & 46.56 & 27.59 & 64.27 & 40.31 & 30.43 \\
 \bottomrule
 \end{tabular*}
 % NOTES (2026-08-03 restructure v2 — prompt methods moved to a closed-source judge):
@@ -242,17 +245,23 @@ Method & {\scriptsize Actual data} & {\scriptsize Supervised} & WW-AG & WW-HC & 
 \centering
 \footnotesize
 \setlength{\tabcolsep}{4pt}
-\caption{Step-level accuracy (\%) in the \emph{with-ground-truth} setting, where the gold task answer is provided; \soap is adapted to this setting as described in \S\ref{sec:exp:setup}. Best prompting strategy reports, per subset, the strongest of All-at-Once, Step-by-Step, and Binary Search. Non-prompt methods use backbone Qwen3.5-9B (DeepSeek-8B in Appendix~\ref{app:gt}); column marks as in Table~\ref{tab:main}. CORRECT additionally consumes the gold error annotations of other trajectories through its retrieval protocol. Best per column in \best{bold}, second best \second{underlined}.}
+\caption{Step-level accuracy (\%) in the \emph{with-ground-truth} setting, where the gold task answer is provided; \soap is adapted to this setting as described in \S\ref{sec:exp:setup}. Among the three prompting strategies of Table~\ref{tab:main} we report Step-by-Step, the strongest of the three overall under this judge; the other two appear in Appendix~\ref{app:prompting-gpt5}. Non-prompt methods use backbone Qwen3.5-9B (DeepSeek-8B in Appendix~\ref{app:gt}); column marks as in Table~\ref{tab:main}. CORRECT additionally consumes the gold error annotations of other trajectories through its retrieval protocol. Best per column in \best{bold}, second best \second{underlined}. \note{Prompt row: GPT-4o judge, full-dataset accuracy (to be clarified in text); GPT-5 in Appendix.}}
 \label{tab:main-gt}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l cc ccccc@{}}
 \toprule
 Method & {\scriptsize Actual data} & {\scriptsize Supervised} & WW-AG & WW-HC & CE & TE-Cap & TE-Mag \\
 \specialrule{\lightrulewidth}{\aboverulesep}{0pt}
 \rowcolor{Gray}
-\multicolumn{8}{c}{\rule[-0.7ex]{0pt}{2.7ex}\textbf{Backbone: \TODO{closed-source model}}}\\
+\multicolumn{8}{c}{\rule[-0.7ex]{0pt}{2.7ex}\textbf{Backbone: GPT-4o}}\\
 \specialrule{\lightrulewidth}{0pt}{\belowrulesep}
 \multicolumn{8}{@{}l}{\textit{Prompt-based methods}}\\
-\quad [Best-method]~\citep{whoandwhen} &  &  & - & - & - & - & - \\
+% Best-prompting row filled 2026-08-10: GPT-4o judge, FULL-dataset accuracy.
+% ONE strategy selected overall (not a per-column max): Step-by-Step is best in
+% both settings — w/GT mean 27.42 and 4/5 column wins (AAO 11.79, BS 12.37);
+% wo/GT mean 20.53, also 4/5 (AAO 12.90, BS 10.37). The full grid (both judges,
+% both settings, all three strategies) is Appendix~\ref{app:prompting-gpt5}.
+% CE now HAS gold answers (corpus rebuilt with ground_truth).
+\quad Step-by-Step~\citep{whoandwhen}   &  &  & 22.22 & 15.52 & 58.54 & 18.82 & 21.98 \\
 \quad CORRECT~\citep{correct}          & \cmark & \cmark & - & - & - & - & - \\
 \quad CHIEF~\citep{chief}              &  &  & - & - & - & - & - \\
 \quad RAFFLES~\citep{raffles}          &  &  & - & - & - & - & - \\
@@ -269,10 +278,11 @@ Method & {\scriptsize Actual data} & {\scriptsize Supervised} & WW-AG & WW-HC & 
 \quad OAT~\citep{oat}                  & \xmark & \xmark & - & - & - & - & - \\
 % SOAP rows filled 2026-08-05: with-GT seed-window (triples) protocol, gamma=0 grid,
 % backbone Qwen3.5-9B (DeepSeek numbers for app:gt are in the same bookkeeping file).
-% CE has no gold answers -> no with-GT run possible; cell dashed.
+% CE with-GT: the corpus now carries gold answers (rebuilt 2026-08); the SOAP cell
+% stays dashed until the CE with-GT extraction/protocol run completes.
 % Seeds + hyperparameters: exp-august/outputs/manuscript-tables/table2_main_gt_selection.tsv
-\quad \soap (w/o rescoring)            & \cmark & \xmark & 39.15 & 33.33 & - & 31.01 & 14.49 \\
-\quad \soap (full)                     & \cmark & \xmark & 41.27 & 34.48 & - & 37.21 & 23.19 \\
+% \quad \soap (w/o rescoring)            & \cmark & \xmark & 39.15 & 33.33 & - & 31.01 & 14.49 \\
+\quad \soap                            & \cmark & \xmark & 41.27 & 34.48 & - & 37.21 & 23.19 \\
 \bottomrule
 \end{tabular*}
 % NOTES (2026-08-03 restructure v2):

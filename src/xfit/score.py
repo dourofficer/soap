@@ -29,7 +29,7 @@ from ..stores import load_representations, split_files, split_data, list_rep_fil
 from ..score.svd import fit_one, score_from_entry, N_COMPONENTS
 from ..score.ensemble import member_positions, ensemble_rows
 from ..score.run import OUT_COLS
-from ..reports.reduce import reduce_base
+from .legacy import reduce_base
 from . import align, prov
 from .common import (load_config, source_tag, synth_reps_dir, synth_data_dir,
                      iter_sources, targets_for, target_cfg,

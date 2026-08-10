@@ -70,7 +70,8 @@ def _gate_b_mismatches(model, dataset="correct-full", n=48):
     from src.stores import load_representations, split_files, list_rep_files
     from src.score.svd import fit_one, score_config
     from src.rescore.weights import aggregate_attn
-    from src.rescore.strategies import orient, discount_loop
+    from src.rescore.strategies import orient
+    from src.xfit.legacy import discount_loop
     from src.metrics import compute_metrics
     from src.score.scorers import native_direction
 
