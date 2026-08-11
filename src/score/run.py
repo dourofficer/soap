@@ -6,8 +6,8 @@ Loads train/val/test reps (both poolings, shared keeper), fits SVD per
 column.
 
     # from v2/
-    python -m src.score.run --config configs/score/correct-full.yaml
-    python -m src.score.run --config configs/score/correct-full.yaml \
+    python -m src.score.run --config configs/score/correct-error.yaml
+    python -m src.score.run --config configs/score/correct-error.yaml \
         --model qwen3.5-9b --seed 1 --set positions=[act/15]
 """
 from __future__ import annotations
@@ -48,14 +48,17 @@ def run(cfg: dict) -> None:
     ks = cfg["ks"]
     methods = cfg.get("methods", DEFAULT_METHODS)
     weighted = cfg.get("weighted", [False])
+    # `centered` is a swept axis like any other; omitting the key keeps BOTH arms
+    # (the historical grid). Production configs pin it to [false].
+    centered = tuple(cfg.get("centered", [True, False]))
     poolings = cfg["poolings"]
     n_comp = cfg.get("n_components", N_COMPONENTS)
     force = cfg.get("force", False)
     dry = cfg.get("dry_run", False)
 
     with RunTimer(cfg, "scores") as run_rec:
-        run_rec.note(methods=methods, weighted=weighted, poolings=poolings,
-                     n_components=n_comp, ks=ks)
+        run_rec.note(methods=methods, weighted=weighted, centered=list(centered),
+                     poolings=poolings, n_components=n_comp, ks=ks)
         for model in cfg["models"]:
             for subset in cfg["subsets"]:
                 rep_dir = paths.reps_root(cfg) / model / subset
@@ -102,7 +105,8 @@ def run(cfg: dict) -> None:
                                 val.stores[(pooling, position)].R,
                                 test.stores[(pooling, position)].R,
                                 val_ctx, test_ctx, methods, weighted, ks,
-                                n_components=n_comp, device=None)
+                                n_components=n_comp, device=None,
+                                centered_cfg=centered)
                         if ens_cfg.get("enabled"):
                             members = member_positions(positions)
                             rows += ensemble_rows(
@@ -110,7 +114,8 @@ def run(cfg: dict) -> None:
                                 {p: train.stores[(pooling, p)].R for p in members},
                                 {p: val.stores[(pooling, p)].R for p in members},
                                 {p: test.stores[(pooling, p)].R for p in members},
-                                val_ctx, test_ctx, methods, weighted, ks, n_components=n_comp)
+                                val_ctx, test_ctx, methods, weighted, ks, n_components=n_comp,
+                                centered_cfg=centered)
                     for r in rows:
                         r["seed"] = seed
                     df = pd.DataFrame(rows)[OUT_COLS].sort_values(

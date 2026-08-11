@@ -14,7 +14,7 @@ import numpy as np
 import pytest
 import torch
 
-from src.score.scorers import proj, resid, angres, maha, norm_l2
+from src.score.scorers import proj, resid, angres
 from src.metrics import compute_metrics, compute_metrics_batch
 
 
@@ -47,15 +47,6 @@ def test_angres_identity():
         r = resid(R, V, 0, c)
         assert torch.allclose(a, r / (R.square().sum(1) + 1e-12), atol=1e-5)
         assert (a >= -1e-6).all() and (a <= 1 + 1e-6).all()
-
-
-def test_maha_unit_spectrum_is_sqnorm():
-    V, S, ref = _fit()
-    R = torch.randn(T, D)
-    # with sigma_c == 1 everywhere, maha == whitened band + residual == ||R||^2
-    ones = torch.ones(D)
-    m = maha(R, V, 0, 20, None, singular_values=ones)
-    assert torch.allclose(m, R.square().sum(1), atol=1e-3)
 
 
 class _Keeper:

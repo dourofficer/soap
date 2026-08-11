@@ -9,7 +9,7 @@ trajectory record, its per-step signal at every pipeline stage, and a before/aft
 score figure, so the set can be browsed and a manuscript example chosen from it.
 
 The frozen configs are NOT hardcoded: they are read from the manuscript's own
-bookkeeping file (the seed-window "triples" selection produced by exp-august), so the
+bookkeeping file (``outputs/manuscript-tables/table1_main_selection.tsv``), so the
 configuration is always the one behind the main-table number. Both accuracies are
 re-derived over the manuscript seed window and asserted against the recorded ones
 before anything is drawn -- a mismatch means the wrong config/window, not noise, and
@@ -43,10 +43,11 @@ from ..common import paths
 from ..common.cli import base_parser, load_and_narrow
 from ..common.provenance import RunTimer
 from ..metrics import compute_metrics, get_mistake_meta, standardize_role
-from ..reproduce.core import ReproContext, reproduce_row
+# Reproduction lives in main/ (the primary runner); src/ no longer carries it.
+from main.reproduce import ReproContext, reproduce_row
 from ..rescore.weights import coerce_w
 
-DEFAULT_SELECTION_TSV = "exp-august/outputs/manuscript-tables/table1_main_selection.tsv"
+DEFAULT_SELECTION_TSV = "outputs/manuscript-tables/table1_main_selection.tsv"
 DEFAULT_OUT_ROOT = "artifacts/qualitative_examples"
 
 # Series colours, overridable per run: --set colors.base=#807EAF --set colors.soap=...
@@ -54,12 +55,14 @@ DEFAULT_OUT_ROOT = "artifacts/qualitative_examples"
 # orangeinplot #e29c7a from main.tex.
 DEFAULT_COLORS = {"base": "#807EAF", "soap": "#F1A484"}
 
-# The hyperparameter keys reproduce_row reads off a row (see src/reproduce/core.py).
+# Hyperparameter columns carried from the selection TSV. main.reproduce reads only
+# position/c_begin/c_end/strategy/layer_range/gamma/w; the rest are the protocol's fixed
+# axes, kept here so meta.json records the full frozen config behind the number.
 HP_KEYS = ("pooling", "position", "method", "c_begin", "c_end", "centered", "weighted",
            "direction", "strategy", "orient", "score_norm", "layer_range", "gamma", "w")
 
 # The selection TSV stores accuracies rounded to 4 decimals, so the reproduction gate
-# cannot use the 1e-9 tolerance src/reproduce/run.py applies to the reduced tables.
+# cannot use the 1e-9 tolerance main.reproduce applies to its own full-precision table.
 ACC_TOL = 5e-5
 
 # Plot-legibility bucket for the auto-pick: enough steps that "downstream" is visible,
@@ -74,7 +77,7 @@ def _load_cells(cfg: dict, tsv: Path) -> list[dict]:
         raise SystemExit(f"selection TSV not found: {tsv}")
     ds = paths._ds(cfg)                      # 'dataset' on a stage config, 'name' on a manifest
     df = pd.read_csv(tsv, sep="\t")          # parses centered/weighted to real bools
-    df = df[(df["role"] == "cell") & (df["dataset"] == ds)
+    df = df[df["row"].astype(str).str.startswith("SOAP") & (df["dataset"] == ds)
             & (df["model"].isin(cfg["models"])) & (df["subset"].isin(cfg["subsets"]))]
     if df.empty:
         raise SystemExit(f"no cells in {tsv} for dataset={ds!r} "
@@ -90,10 +93,12 @@ def _load_cells(cfg: dict, tsv: Path) -> list[dict]:
         hp["gamma"] = float(hp["gamma"])
         hp["w"] = coerce_w(hp["w"])
         cells.append({
-            "model": row["model"], "subset": row["subset"], "column": row["column"],
+            "model": row["model"], "subset": row["subset"],
+            "column": f"{row['dataset']}/{row['subset']}",
             "seeds": [int(s) for s in str(row["seeds"]).split(",")],
-            "recorded_svd": float(row["svd_step"]),
-            "recorded_soap": float(row["soap_step"]),
+            # manuscript.py records the SOAP accuracy and its margin over SVD (proj).
+            "recorded_svd": float(row["step_acc_test"]) - float(row["diff_vs_svd"]),
+            "recorded_soap": float(row["step_acc_test"]),
             "hp": hp,
         })
     return cells
@@ -103,14 +108,13 @@ def _load_cells(cfg: dict, tsv: Path) -> list[dict]:
 def _base_view(r) -> tuple[pd.DataFrame, list[int]]:
     """Per-trajectory base predictions + a per-step base rank, in keeper order.
 
-    ``base`` is in the scorer's native convention: for ``proj`` LOWER is more
-    error-like, so the base prediction is the ARGMIN, with ties broken toward the
-    EARLIEST step -- the convention ``compute_metrics`` uses (its stable ascending
-    sort leaves tied entries in step order). ``_tabulate`` in src/reproduce/core.py
-    must not be reused here: its ``(value, -i)`` sort key breaks ascending ties toward
-    the LATER step, which would disagree with the metric on exact ties.
+    ``main.reproduce`` folds the inverse orientation into the base score, so ``base`` is
+    already "higher = error" and the base prediction is the ARGMAX. Ties break toward the
+    EARLIEST step -- the convention ``compute_metrics`` uses (its stable descending sort
+    leaves tied entries in step order); the ``(-value, i)`` key below reproduces that
+    exactly. Note ranking 1/(pi+eps) descending is identical to ranking pi ascending,
+    ties included, so this is the same prediction the old asc-convention code made.
     """
-    ascending = r.direction == "asc"
     vals = r.base.detach().float().cpu()
     ranks: list[int] = [0] * len(vals)
     rows = []
@@ -119,7 +123,7 @@ def _base_view(r) -> tuple[pd.DataFrame, list[int]]:
     for (start, end), true_step, true_role in zip(r.keeper.traj_ranges, m_steps, m_roles):
         entries = r.keeper.index[start:end]
         seg = vals[start:end].tolist()
-        order = sorted(range(len(seg)), key=lambda i: (seg[i], i), reverse=not ascending)
+        order = sorted(range(len(seg)), key=lambda i: (-seg[i], i))
         for rank, i in enumerate(order):
             ranks[start + i] = rank + 1
         best = order[0]
@@ -147,12 +151,12 @@ def _verify_cell(cell: dict, repros: dict) -> dict:
     """Re-derive both main-table numbers from the reproductions; abort on mismatch."""
     per_seed = {}
     for seed, r in repros.items():
-        base_acc = compute_metrics(r.base, r.keeper, [1], r.direction)[f"step@1_{r.direction}"]
-        soap_acc = r.metrics["step@1_desc"]
+        base_acc = compute_metrics(r.base, r.keeper, [1])["step@1"]
+        soap_acc = r.metrics["step@1"]
         bp, _ = _base_view(r)
         explicit = float(bp["base_step_correct"].sum()) / len(r.keeper.traj_ranges)
         assert abs(explicit - base_acc) < 1e-12, (
-            f"{cell['column']} seed {seed}: explicit base argmin accuracy {explicit} != "
+            f"{cell['column']} seed {seed}: explicit base argmax accuracy {explicit} != "
             f"metric {base_acc} -- tie-break convention drift")
         per_seed[seed] = {"base_step_acc": base_acc, "soap_step_acc": soap_acc,
                           "n_trajectories": len(r.keeper.traj_ranges)}

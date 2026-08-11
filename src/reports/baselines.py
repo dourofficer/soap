@@ -3,9 +3,9 @@
 This is the support library under the triples protocol (``src.reports.triples``):
 dataset display names, the recorded-score loader (``load_scores``), and the scoring
 of external baseline predictions (prompting / CHIEF / CORRECT JSONLs) on the same
-test splits the proxy pipeline uses. Everything here is lifted from the archived
-``src_v2/reports/{main_table,reduce}.py`` unchanged in behavior — the baseline
-numbers must stay byte-identical to the recorded ones.
+test splits the proxy pipeline uses. The scoring here was carried over unchanged in
+behaviour from the pre-protocol report modules — the baseline numbers must stay
+byte-identical to the recorded ones, so resist "tidying" ``_agent_hit`` / ``_acc``.
 
     from src.reports.baselines import (MODEL_DISPLAY, SUBSET_DISPLAY, ROW_TO_PRED,
                                        SPLIT_MODEL, load_scores, baseline_cell, fmt)
@@ -31,7 +31,6 @@ SUBSET_DISPLAY = {
     "correct-error": [("ARC", "arc"), ("GAIA", "gaia"), ("Hotpot", "hotpot"),
                       ("MATH500", "math500"), ("MMLU-Pro", "mmlu_pro"),
                       ("Musique", "musique"), ("WikiMQA", "wikimqa")],
-    "correct-full": [("Magentic", "magentic")],
     "traceelephant": [("magentic", "magentic"), ("captain", "captain")],
 }
 

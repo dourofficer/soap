@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Extract per-step representations + attention mass for a dataset. Run from v2/.
+# Extract per-step representations + attention mass for a dataset. Run from the repo root.
 #
-#   DATASET=correct-full GPU=0 ./scripts/extract.sh
+#   DATASET=correct-error GPU=0 ./scripts/extract.sh
 #   DATASET=ww MODELS="qwen3.5-9b" SUBSETS="hand-crafted" GPU=1 ./scripts/extract.sh
-#   DRY_RUN=1 DATASET=correct-full ./scripts/extract.sh          # print commands only
+#   DRY_RUN=1 DATASET=correct-error ./scripts/extract.sh          # print commands only
 #   STAGES=activations DATASET=ww ./scripts/extract.sh           # one stage only
 #
 # Reads the corpus from data/<ds>/<subset>/*.json and the model registry from the
@@ -13,7 +13,7 @@
 # trajectories whose .safetensors already exists, so re-running resumes.
 set -euo pipefail
 
-DATASET="${DATASET:?set DATASET, e.g. correct-full}"
+DATASET="${DATASET:?set DATASET, e.g. correct-error}"
 export CUDA_VISIBLE_DEVICES="${GPU:-0}"
 STAGES="${STAGES:-activations attention}"
 MANIFEST="configs/datasets/$DATASET.yaml"

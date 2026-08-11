@@ -56,7 +56,7 @@ from matplotlib.patches import FancyArrowPatch, FancyBboxPatch     # noqa: E402
 from ..common import paths                                         # noqa: E402
 from ..common.cli import base_parser, load_and_narrow              # noqa: E402
 
-DEFAULT_SELECTION_TSV = "exp-august/outputs/manuscript-tables/table1_main_selection.tsv"
+DEFAULT_SELECTION_TSV = "outputs/manuscript-tables/table1_main_selection.tsv"
 DEFAULT_OUT_DIR = "manuscript/assets"
 CACHE = Path("artifacts/contamination_figure/scores.json")
 

@@ -11,7 +11,7 @@ Answers the "similarity vs distance / norm vs alignment" question empirically, a
 tells you which quantity carries the error signal (which distance form to prefer).
 
     # from v2/
-    python -m src.analysis.geometry --config configs/datasets/correct-full.yaml \
+    python -m src.analysis.geometry --config configs/datasets/correct-error.yaml \
         --seed 1 --set poolings=[mean] --set bands=[1,5,20]
 """
 from __future__ import annotations

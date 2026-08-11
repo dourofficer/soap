@@ -5,7 +5,7 @@ the manuscript. This scores all 18 sliding windows instead, so every triple can 
 inspected and the best-separating one chosen on evidence.
 
 Each triple selects its OWN base config (that is what Protocol 2 varies), so the config
-is read per window from ``exp-august/outputs/<ds>/tables/325/triples_selection.tsv``
+is read per window from ``outputs/<ds>/tables/325/triples_selection.tsv``
 (rows ``SVD (proj)``) rather than assumed constant. Within a window, all three seeds are
 scored under that window's config, each fitting its SVD on its own train split.
 
@@ -31,7 +31,7 @@ import pandas as pd
 
 from ..common import paths
 from ..common.cli import base_parser, load_and_narrow
-from ..common.config import V2_ROOT
+from ..common.config import REPO_ROOT
 from ..common.provenance import RunTimer
 from ..metrics import compute_metrics
 from ..score.svd import fit_one, score_config, N_COMPONENTS
@@ -49,7 +49,7 @@ def load_windows(cfg, dataset: str) -> pd.DataFrame:
 
     Default source is the main pipeline's own selection
     (``tables/<tag>/triples_selection.tsv``); ``--set selection_tsv=...`` points at
-    another registry (e.g. the archived exp-august one) — the SVD row schema is
+    another registry (e.g. a with-GT tree under outputs-gt/) — the SVD row schema is
     identical."""
     tsv = Path(cfg.get("selection_tsv",
                        paths.tables_root(cfg) / "triples_selection.tsv"))
@@ -64,7 +64,7 @@ def load_windows(cfg, dataset: str) -> pd.DataFrame:
 def run(cfg) -> None:
     device = cfg.get("device", "cpu")
     dataset = paths._ds(cfg)
-    out_dir = Path(cfg.get("artifacts_root", V2_ROOT / ARTIFACTS_ROOT)) / dataset / "triples"
+    out_dir = Path(cfg.get("artifacts_root", REPO_ROOT / ARTIFACTS_ROOT)) / dataset / "triples"
     windows = load_windows(cfg, dataset)
 
     with RunTimer(cfg, "analysis") as rec:

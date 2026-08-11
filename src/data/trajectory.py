@@ -1,7 +1,7 @@
 """Trajectory dataclass + dataset loading.
 
     from src.data import load_dataset
-    trajs = load_dataset("data/correct-full", subset="magentic")
+    trajs = load_dataset("data/correct-error", subset="arc")
 
 Each JSON has: history (ordered turns; step t == history[t], 0-indexed), question_ID,
 mistake_agent, mistake_step (string index into history), level, subset. Turn roles are

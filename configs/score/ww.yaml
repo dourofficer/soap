@@ -1,14 +1,23 @@
-# Score stage — CORRECT-Full. Full scorer set; pooling is a column (both loaded per
-# run). weighted stays [false] (unweighted wins; weighted kept for reference only).
+# Score stage — ww.
+#
+# Every axis below is a CONFIG value, not a code constant: the scorers, poolings,
+# centered and weighted arms all remain implemented and sweepable. The production
+# grid PINS them to the protocol's fixed choices (mean pooling, uncentered SVD,
+# projection scorer, unweighted) — restore the fuller lists to sweep them again:
+#   poolings: [mean, last]
+#   methods:  [proj, resid, angres, norm_l2, norm_l1]
+#   centered: [true, false]
+#   weighted: [false, true]        # only proj honours weighted
 dataset: ww
 
 device:    cuda
-poolings:  [mean, last]
+poolings:  [mean]
 positions: all
-methods:   [proj, resid, angres, norm_l2, norm_l1]
+methods:   [proj]
+centered:  [false]
 weighted:  [false]
 n_components: 20
 
 ensemble:
   enabled: true
-  kind: ens-mid3            # z-averaged mid-depth layer band (added in refinements)
+  kind: ens-mid3            # z-averaged mid-depth layer band

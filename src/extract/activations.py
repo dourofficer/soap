@@ -59,12 +59,12 @@ Trajectories whose output already exists are skipped, so extraction is resumable
     # from v2/
     python -m src.extract.activations \
         --model qwen3.5-9b --model-path ../../hub/Qwen/Qwen3.5-9B \
-        --input data/correct-full --subset magentic \
-        --output outputs/correct-full/activations/qwen3.5-9b/magentic \
+        --input data/correct-error --subset arc \
+        --output outputs/correct-error/activations/qwen3.5-9b/arc \
         --pool all --layers all --max_tokens 8192
 
     # or for a whole dataset, driven by the manifest:
-    DATASET=correct-full ./scripts/extract.sh
+    DATASET=correct-error ./scripts/extract.sh
 """
 from __future__ import annotations
 

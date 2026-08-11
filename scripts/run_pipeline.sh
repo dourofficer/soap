@@ -3,11 +3,11 @@
 #   score -> triples select (pass 1: SVD + baselines) -> rescore sweep
 #         -> triples select (pass 2: + rescoring rows)
 #
-#   DS=correct-full bash scripts/run_pipeline.sh
+#   DS=correct-error bash scripts/run_pipeline.sh
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-DS="${DS:?set DS=<dataset> (ww | traceelephant | correct-error | correct-full)}"
+DS="${DS:?set DS=<dataset> (ww | traceelephant | correct-error)}"
 
 python -m src.score.run       --config "configs/score/${DS}.yaml"
 python -m src.reports.triples --config "configs/protocol/${DS}.yaml"

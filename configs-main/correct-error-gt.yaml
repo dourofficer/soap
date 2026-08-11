@@ -1,0 +1,52 @@
+# main/ — WITH-GT variant. CORRECT-Error. ONE config drives extract / sweep / select / reproduce.
+#
+# FROZEN IN CODE, not here: pooling=mean (for scoring; the extractor still writes both),
+# uncentered SVD, scorer=proj, orientation folded in as 1/(pi+eps), score_norm=none,
+# weighted=false, ranking always descending. `src/` keeps all of those sweepable.
+# NOTE: do NOT use `--set gt=true` on the without-GT config -- its seeds are
+# the without-GT picks. Use THIS file for with-GT runs.
+dataset: correct-error
+gt: true                       # this file IS the with-GT run: results-gt/correct-error,
+                               # pinned [question, answer] context
+
+data_dir: data/correct-error
+models: [qwen3.5-9b, deepseek-8b]
+model_paths:                   # read only by `extract`
+  qwen3.5-9b:  ../hub/Qwen/Qwen3.5-9B
+  deepseek-8b: ../hub/deepseek-ai/DeepSeek-R1-Distill-Llama-8B
+subsets: [arc, gaia, hotpot, math500, mmlu_pro, musique, wikimqa]
+max_tokens: 8192
+dtype: bfloat16
+device: cuda
+
+# Extractions live in the results tree itself (results-{nogt,gt}/correct-error/...), seeded once
+# from outputs/ by scripts/seed_results.sh. `extract` writes there and is resumable; it
+# is only needed for a dataset that has none yet.
+
+splits: {train: 0.3, val: 0.2, test: 0.5}
+# FROZEN seeds: one triple per subset, shared by EVERY backbone. A reported number is the
+# mean over these three. Chosen from the 48/18-triple sweep by the sum-diff / test / backprop rule:
+# a triple where rescoring beats SVD (proj) on BOTH backbones outranks one where it does
+# not; within that, the larger summed step accuracy wins. Regenerate with
+#   python scripts/main/pick_triple.py --rule sum-diff
+# Changing these -- or `splits` -- changes the seed->partition mapping, and
+# run_stamp.json refuses to reuse the old tables.
+seeds:
+  arc:                  [17, 18, 19]
+  gaia:                 [17, 18, 19]
+  hotpot:               [17, 18, 19]
+  math500:              [17, 18, 19]
+  mmlu_pro:             [17, 18, 19]
+  musique:              [17, 18, 19]
+  wikimqa:              [17, 18, 19]
+
+# swept axis 1 — the base score
+positions: all                 # "all" | explicit list of act/N / embed / *_normed
+n_components: 20               # bands = all 0 <= c_begin < c_end <= n_components
+ensemble: true                 # add the ens-mid3 pseudo-position (middle third of act/N)
+
+# swept axis 2 — the rescoring correction
+n_ranges: 4                    # equal bands over ATTENTION blocks (8 qwen3.5 / 32 deepseek)
+gammas: [0.0, 0.1, 0.2, 0.4, 0.6, 0.8, 1.0]   # 0.0 IS the base score
+ws:     [1, 2, 3, 4, 5, all]                  # at w=all all three strategies coincide
+strategies: [backprop, succ-strong, succ-near]

@@ -18,7 +18,7 @@ dual formulations, and the choice between them is what the registry encodes:
     be combined with anything. This is ``proj``.
   * **distance** — how much lies OUTSIDE it. Error steps have MORE, so the score is
     natively "higher = error" (``desc``) and needs NO orientation. This is ``resid`` /
-    ``angres`` / ``maha``.
+    ``angres``.
 
 They are two sides of one identity, ``||v||^2 = ||P_band v||^2 + r^2``: the band energy
 and the residual sum to the squared norm. Which side you score changes only the sign
@@ -31,8 +31,8 @@ WHY ``angres`` IS THE PRINCIPLED CHOICE
 activates (norm) and where it points (alignment). Measured separately, only alignment
 carries signal — per-step norm ranks the gold error step at rank-AUC ~0.25-0.54 (chance
 or worse), while ``sin^2(theta)`` reaches ~0.7-0.84. ``angres`` is exactly that
-norm-free quantity, bounded in [0,1], natively oriented. ``resid``/``maha`` retain the
-norm term and score measurably worse.
+norm-free quantity, bounded in [0,1], natively oriented. ``resid`` retains the norm term
+and scores measurably worse.
 
 SIGNATURE
 ---------
@@ -42,8 +42,8 @@ All scorers share ONE signature so the grid can treat them uniformly:
 
 ``R`` (T,d) step reps; ``V`` (d,k) top-k right singular vectors of the TRAIN matrix;
 ``singular_values`` the FULL train spectrum (length ``min(T_train, d)``, not just the
-top k — ``maha`` needs the discarded tail); ``ref`` the train mean when centering.
-Band is the half-open ``[c_begin, c_end)``.
+top k), consumed by ``proj`` when ``weighted=True``; ``ref`` the train mean when
+centering. Band is the half-open ``[c_begin, c_end)``.
 
 ``METHOD_SUPPORTS_WEIGHTED = {proj}`` (sigma-scaling of each squared projection).
 Configs never enable it — unweighted wins empirically — but it is kept so the
@@ -53,7 +53,6 @@ weighted variant remains reproducible for reference.
 """
 from __future__ import annotations
 
-import torch
 from torch import Tensor
 
 EPS = 1e-12
@@ -99,39 +98,6 @@ def angres(R, V, c_begin=0, c_end=20, ref=None, *, singular_values=None, weighte
     return ((sq_norm - band).clamp_min(0.0) / (sq_norm + EPS)).to(R.dtype)
 
 
-def maha(R, V, c_begin=0, c_end=20, ref=None, *, singular_values=None, weighted=False):
-    """PPCA anomaly: sum_band <v~,u_c>^2/sigma_c^2 + r^2/sigma_bar_resid^2. Higher = error.
-
-    This is the Gaussian/probabilistic reading of the same geometry: model the step
-    distribution as isotropic noise around the band subspace, and score a step by its
-    negative log-density. Two terms, matching the two parts of the norm identity:
-
-      * inside the band, each direction gets WHITENED by its own train variance
-        ``sigma_c^2`` — a deviation along a low-variance direction is more surprising
-        than the same deviation along a high-variance one;
-      * outside the band, the residual is divided by ``sigma_bar_resid^2``, the mean of
-        the OFF-BAND ``sigma^2`` over the FULL train spectrum. That is the classic
-        PPCA "average of the discarded eigenvalues" estimate of the leftover variance,
-        and it is why the full spectrum (not just the top k) has to be threaded in.
-
-    The global ``1/(n-1)`` that would turn each ``sigma^2`` into a variance is a single
-    positive constant shared by both terms, so it cancels under per-trajectory ranking
-    and is omitted. Whitening makes this scale-aware where ``angres`` is scale-free —
-    in practice it tracks ``resid`` and both trail ``angres``.
-    """
-    assert not weighted, "maha does not support weighted"
-    assert singular_values is not None, "maha needs the full-spectrum singular_values"
-    band, sq_norm, coeffs_sq = _band_and_norm(R, V, c_begin, c_end, ref)
-    sv2 = singular_values.float().square()                  # (full,)
-    whitened = (coeffs_sq / (sv2[c_begin:c_end] + EPS)).sum(dim=1)
-    mask = torch.ones(sv2.shape[0], dtype=torch.bool, device=sv2.device)
-    mask[c_begin:c_end] = False
-    offband = sv2[mask]
-    sigma_resid = offband.mean() if offband.numel() > 0 else sv2[-1]
-    r2 = (sq_norm - band).clamp_min(0.0)
-    return (whitened + r2 / (sigma_resid + EPS)).to(R.dtype)
-
-
 # ── norm baselines (no SVD; band ignored) ───────────────────────────────────
 def _norm(R, ref, p):
     R_f = R.float()
@@ -152,15 +118,15 @@ def norm_l1(R, V, c_begin=0, c_end=0, ref=None, *, singular_values=None, weighte
 
 # ── registry + metadata ─────────────────────────────────────────────────────
 SCORERS = {
-    "proj": proj, "resid": resid, "angres": angres, "maha": maha,
+    "proj": proj, "resid": resid, "angres": angres,
     "norm_l2": norm_l2, "norm_l1": norm_l1,
 }
 METHOD_DIRECTION = {
-    "proj": "asc", "resid": "desc", "angres": "desc", "maha": "desc",
+    "proj": "asc", "resid": "desc", "angres": "desc",
     "norm_l2": "both", "norm_l1": "both",
 }
 METHOD_SUPPORTS_WEIGHTED = {"proj"}
-DISTANCE_METHODS = {"resid", "angres", "maha"}   # natively desc, need no orientation
+DISTANCE_METHODS = {"resid", "angres"}           # natively desc, need no orientation
 
 
 def native_directions(method: str) -> list[str]:

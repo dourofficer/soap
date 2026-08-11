@@ -80,11 +80,11 @@ def ens_score_vec(method, cb, ce, centered, weighted, members,
 
 def ensemble_rows(pooling, members, fit_by_pos, train_R_by_pos, val_R_by_pos, test_R_by_pos,
                   val_ctx, test_ctx, methods, weighted_cfg, ks,
-                  n_components=N_COMPONENTS) -> list[dict]:
+                  n_components=N_COMPONENTS, centered_cfg=(True, False)) -> list[dict]:
     """Emit ens-mid3 metric rows (direction=desc) for every config, batched over configs."""
     if len(members) < 2:
         return []
-    configs = [c for c in config_grid(methods, weighted_cfg, n_components)
+    configs = [c for c in config_grid(methods, weighted_cfg, n_components, centered_cfg)
                if ENSEMBLE_METHODS_OK(c[0])]
     val_stack, test_stack = [], []
     for method, cb, ce, centered, weighted in configs:

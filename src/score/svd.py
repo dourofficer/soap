@@ -1,7 +1,7 @@
 """SVD fitting + grid scoring.
 
 fit_one factorises the TRAIN step matrix (raw + mean-centered), keeping the top-k
-right singular vectors AND the full singular spectrum (needed by maha). score_config
+right singular vectors AND the full singular spectrum (used by weighted proj). score_config
 computes any single scorer config's per-step scores — it doubles as the "reproduce a
 base-table row" primitive used by the rescore stage. score_position runs the full
 grid for one (pooling, position) and returns metric rows.
@@ -12,9 +12,7 @@ from __future__ import annotations
 
 import torch
 
-from .scorers import (
-    SCORERS, native_directions, weighted_options, METHOD_SUPPORTS_WEIGHTED,
-)
+from .scorers import SCORERS, native_directions, weighted_options
 from ..metrics import compute_metrics_batch, KeeperContext
 
 N_COMPONENTS = 20
@@ -63,9 +61,16 @@ def score_config(R, svd_entry, method, c_begin, c_end, centered, weighted,
     return SCORERS[method](R, V, c_begin, c_end, ref, singular_values=S, weighted=weighted)
 
 
-def config_grid(methods, weighted_cfg, n_components=N_COMPONENTS):
-    """Yield every (method, c_begin, c_end, centered, weighted) config in the grid."""
-    for centered in (True, False):
+def config_grid(methods, weighted_cfg, n_components=N_COMPONENTS,
+                centered_cfg=(True, False)):
+    """Yield every (method, c_begin, c_end, centered, weighted) config in the grid.
+
+    ``centered_cfg`` is an axis like any other, driven by the ``centered:`` key of a
+    score config. It defaults to BOTH arms so an omitted key reproduces the historical
+    grid exactly; the production configs pin it to ``[false]`` (the uncentered fit the
+    protocol selects on), which halves the grid without removing the arm from the code.
+    """
+    for centered in centered_cfg:
         for method in methods:
             combos = [(0, 0)] if method in ("norm_l1", "norm_l2") else band_bounds(n_components)
             for (cb, ce) in combos:
@@ -75,13 +80,14 @@ def config_grid(methods, weighted_cfg, n_components=N_COMPONENTS):
 
 def score_from_entry(pooling, position, svd_entry, val_R, test_R,
                      val_ctx, test_ctx, methods, weighted_cfg, ks,
-                     n_components=N_COMPONENTS, device=None) -> list[dict]:
+                     n_components=N_COMPONENTS, device=None,
+                     centered_cfg=(True, False)) -> list[dict]:
     """Score the full grid for one (pooling, position) given a fitted svd_entry.
 
     All config score vectors are stacked and metrics for BOTH directions are computed
     in two batched passes; each config then emits rows only for its native direction(s).
     """
-    configs = list(config_grid(methods, weighted_cfg, n_components))
+    configs = list(config_grid(methods, weighted_cfg, n_components, centered_cfg))
     val_stack, test_stack = [], []
     for method, cb, ce, centered, weighted in configs:
         val_stack.append(score_config(val_R, svd_entry, method, cb, ce, centered, weighted, device))

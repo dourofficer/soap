@@ -22,3 +22,9 @@ v1/data/synthetic/
 v1/data/synthetic-err/
 v1/logs/
 artifacts/
+
+# main/'s output trees (seeded from outputs/ by scripts/seed_results.sh)
+results-nogt/
+results-gt/
+.parity-scratch*/
+.smoke/

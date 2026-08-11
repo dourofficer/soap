@@ -64,11 +64,11 @@ the text stack reaches the override.
     # from v2/
     python -m src.extract.attention \
         --model qwen3.5-9b --model-path ../../hub/Qwen/Qwen3.5-9B \
-        --input data/correct-full --subset magentic \
-        --output-root outputs/correct-full/attention --max_tokens 8192
+        --input data/correct-error --subset arc \
+        --output-root outputs/correct-error/attention --max_tokens 8192
 
     # or for a whole dataset, driven by the manifest:
-    DATASET=correct-full ./scripts/extract.sh
+    DATASET=correct-error ./scripts/extract.sh
 """
 from __future__ import annotations
 

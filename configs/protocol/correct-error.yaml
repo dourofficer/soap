@@ -1,6 +1,6 @@
 # Selection protocol (seed windows / "triples") — correct-error.
 # ONE config drives selection (src.reports.triples), the rescore sweep
-# (src.rescore.run) and reproduction (src.reproduce.run). Each block declares which
+# (src.rescore.run). Each block declares which
 # axes are FIXED (a value, used as a row filter) and which are SWEPT (selected: one
 # shared value per (model, subset, window), argmax of mean test step-acc over the
 # window's seeds).

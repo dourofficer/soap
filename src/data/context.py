@@ -66,7 +66,8 @@ def _serialize_turns(history: list[dict], indices: list[int]) -> str:
 
 def _gt_block_text(traj) -> str:
     """The pinned with-GT prefix. Phrasing matches the prompting baselines
-    (baselines/prompting/methods.py) so the proxy sees the answer in the same register;
+    (the prompting-baseline wording, see git history) so the proxy reads it in the same
+    register;
     it contains no ``[role] - Step i:`` substring, so it cannot collide with a turn."""
     gt = (traj.ground_truth or "").strip()
     assert gt, f"GT mode requires a non-empty ground_truth ({traj.filename})"

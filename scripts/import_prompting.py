@@ -10,7 +10,7 @@ stage scores (``src/reports/baselines.py``):
 
 Only the closed-source judges (gpt-4o, gpt-5) are imported — the local-model dirs
 over there are partly round-trips FROM this repo (their _run.json records
-``imported_from: .../attribscope/...``) and the backbone JSONLs here stay untouched.
+``imported_from: .../soap/...``) and the backbone JSONLs here stay untouched.
 Kept fields: id, filename, question_id, predicted_agent, predicted_step, gold_agent,
 gold_step (raw/call logs dropped — the scorer ignores them). ``_run.json`` and other
 non-digit stems are skipped. Existing JSONLs are never overwritten without --force.
@@ -31,7 +31,7 @@ KEEP = ["id", "filename", "question_id", "predicted_agent", "predicted_step",
 JUDGES = ["gpt-4o", "gpt-5"]
 METHODS = ["all_at_once", "step_by_step", "binary_search"]
 DATASETS = ["ww", "traceelephant", "correct-error"]
-# (attrib-prompting source root, attribscope destination base)
+# (attrib-prompting source root, soap destination base)
 SETTINGS = [("outputs-nogt", "outputs"), ("outputs", "outputs-gt")]
 
 

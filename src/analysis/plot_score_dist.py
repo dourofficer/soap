@@ -1,6 +1,6 @@
 """Plot base-score distributions: decisive-error steps vs ordinary steps.
 
-Reads the long per-step table written by ``src.analysis.score_dist`` and draws, per
+Reads the long per-step table written by ``src.analysis.score_dist_triples`` and draws, per
 (model, subset) cell, the two groups' score distributions as filled kernel densities.
 Two x-axis variants are produced:
 
@@ -20,8 +20,8 @@ is the table-view twin and ranks cells by separability:
   both: 0.5 = the groups coincide, 1.0 = every error step scores below every other
 
     # from v2/
-    python -m src.analysis.plot_score_dist --scores artifacts/score-dist/ww/scores.tsv
-    python -m src.analysis.plot_score_dist --scores .../scores.tsv --hist --per-seed
+    python -m src.analysis.plot_score_dist --scores artifacts/score-dist/ww/triples/steps.tsv
+    python -m src.analysis.plot_score_dist --scores .../steps.tsv --hist --per-seed
 """
 from __future__ import annotations
 

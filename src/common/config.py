@@ -9,7 +9,7 @@ Precedence (lowest -> highest): manifest < stage config < ``--set`` overrides.
 
 Standalone use:
     python -c "from src.common.config import load_stage_config as L; \
-               print(L('configs/score/correct-full.yaml'))"
+               print(L('configs/score/correct-error.yaml'))"
 """
 from __future__ import annotations
 
@@ -18,8 +18,8 @@ from pathlib import Path
 import yaml
 
 # config.py -> common -> src -> v2/  (parents[2] == v2 root)
-V2_ROOT = Path(__file__).resolve().parents[2]
-DATASETS_DIR = V2_ROOT / "configs" / "datasets"
+REPO_ROOT = Path(__file__).resolve().parents[2]
+DATASETS_DIR = REPO_ROOT / "configs" / "datasets"
 
 
 def _apply_overrides(cfg: dict, overrides: list[str]) -> dict:
@@ -46,7 +46,7 @@ def load_manifest(dataset: str) -> dict:
     if not path.exists():
         raise FileNotFoundError(
             f"no dataset manifest for {dataset!r} at {path}. "
-            f"Create it (see configs/datasets/correct-full.yaml)."
+            f"Create it (see configs/datasets/correct-error.yaml)."
         )
     return yaml.safe_load(path.read_text())
 
