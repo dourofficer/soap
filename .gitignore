@@ -28,3 +28,4 @@ results-nogt/
 results-gt/
 .parity-scratch*/
 .smoke/
+results-sweep/

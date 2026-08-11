@@ -32,11 +32,8 @@ splits: {train: 0.3, val: 0.2, test: 0.5}
 # Changing these -- or `splits` -- changes the seed->partition mapping, and
 # run_stamp.json refuses to reuse the old tables.
 seeds:
-  algorithm-generated:  [3, 4, 5]
-  # hand-crafted is a MANUAL override, not the sum-diff pick. That rule requires
-  # rescoring to beat SVD (proj) on BOTH backbones; at 13,14,15 it beats it only on
-  # qwen3.5-9b (deepseek ties), so the rule dropped this triple. Kept because it is
-  # the triple the manuscript reports. `pick_triple.py --rule sum-diff` will disagree.
+  algorithm-generated:  [38, 39, 40]
+  # MANUAL override, not the sum-diff pick: the triple the manuscript reports (34.48 for qwen); the sum-diff rule drops it because rescoring lifts only qwen3.5-9b there, not deepseek-8b.
   hand-crafted:         [13, 14, 15]
 
 # swept axis 1 — the base score

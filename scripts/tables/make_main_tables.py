@@ -12,14 +12,18 @@ Two deliberate departures from the .tex, both requested:
   * The `SOAP (w/o rescoring)` row is included. The manuscript commented it out, but it
     is the base score behind every SOAP number and is worth keeping alongside.
 
-Only the two SOAP rows are filled. Every other method is left blank for you to complete.
+The SOAP rows and the prompting rows are filled. The prompting numbers come from
+`results-prompting/by_column.tsv` (see `scripts/prompting/evaluate.py`), scored on the
+SAME test splits as SOAP so the two are comparable. RAFFLES and CHIEF stay blank:
+`../attrib-prompting` has no results for them. The trained attributors and StepFinder/OAT
+stay blank too.
 
 SEEDS. Each cell uses the triple frozen in `configs-main/`, which came from the
 48/18-triple sweep under the `sum-diff` rule. A number is the mean over that triple's
 three seeds. CE is the macro-average over the seven correct-error subsets, matching how
 the manuscript forms that column.
 
-    python scripts/tables/make_main_tables.py
+    python scripts/tables/make_main_tables.py               # gpt-4o + gpt-5 tables
     python scripts/tables/make_main_tables.py --strategy succ-near
 """
 from __future__ import annotations
@@ -44,9 +48,15 @@ COLUMNS = [("WW-AG", "ww", "algorithm-generated"),
 MODELS = [("Qwen3.5-9B", "qwen3.5-9b"), ("DeepSeek-R1-Distill-Llama-8B", "deepseek-8b")]
 
 # (method, actual_data, supervised, fill) — marks copied from the .tex verbatim.
-PROMPT_ROWS = [("All-at-Once", "", "", None), ("Step-by-Step", "", "", None),
-               ("Binary Search", "", "", None), ("CORRECT", "cmark", "cmark", None),
+# The fourth field names the method stem in results-prompting, or None to leave blank.
+PROMPT_ROWS = [("All-at-Once", "", "", "all_at_once"),
+               ("Step-by-Step", "", "", "step_by_step"),
+               ("Binary Search", "", "", "binary_search"),
+               ("CORRECT", "cmark", "cmark", "correct"),
                ("RAFFLES", "", "", None), ("CHIEF", "", "", None)]
+
+PROMPTING = REPO / "results-prompting" / "by_column.tsv"
+JUDGE_DISPLAY = {"gpt-4o": "GPT-4o", "gpt-5": "GPT-5"}
 TRAINED_ROWS = [("AgenTracer", "xmark", "cmark", None),
                 ("GraphTracer", "xmark", "cmark", None)]
 REPR_ROWS = [("StepFinder", "xmark", "xmark", None), ("OAT", "xmark", "xmark", None),
@@ -83,12 +93,25 @@ def cell_value(sel: pd.DataFrame, gt: bool, dataset: str, subset: str | None,
     return 100.0 * sum(vals) / len(vals)
 
 
-def build(sel: pd.DataFrame, gt: bool, strategy: str) -> list[list[str]]:
+def prompting_value(pr: pd.DataFrame | None, gt: bool, judge: str, method: str,
+                    column: str) -> str:
+    """Step accuracy for one prompting cell, as a percentage."""
+    if pr is None:
+        return ""
+    hit = pr[(pr["with_gt"] == gt) & (pr["judge"] == judge)
+             & (pr["method"] == method) & (pr["column"] == column)]
+    return "" if hit.empty else f"{100.0 * float(hit.iloc[0]['step_acc']):.2f}"
+
+
+def build(sel: pd.DataFrame, gt: bool, strategy: str, judge: str,
+          pr: pd.DataFrame | None) -> list[list[str]]:
     seeds = {ds: load_seeds(ds, gt) for ds in ("ww", "traceelephant", "correct-error")}
-    out = [HEADER, ["Backbone: GPT-4o", "", "", "", "", "", "", ""],
+    out = [HEADER, [f"Backbone: {JUDGE_DISPLAY[judge]}", "", "", "", "", "", "", ""],
            ["Prompt-based methods", "", "", "", "", "", "", ""]]
-    for method, ad, sup, _ in PROMPT_ROWS:
-        out.append([method, ad, sup] + [""] * len(COLUMNS))
+    for method, ad, sup, stem in PROMPT_ROWS:
+        cells = ([""] * len(COLUMNS) if stem is None
+                 else [prompting_value(pr, gt, judge, stem, c) for c, _, _ in COLUMNS])
+        out.append([method, ad, sup] + cells)
 
     for disp, model in MODELS:
         out.append([f"Backbone: {disp}", "", "", "", "", "", "", ""])
@@ -133,16 +156,20 @@ def main() -> int:
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    pr = pd.read_csv(PROMPTING, sep="\t") if PROMPTING.exists() else None
+    if pr is None:
+        print(f"  [warn] no {PROMPTING}; prompting rows will be blank "
+              f"(run scripts/prompting/evaluate.py)")
+
     for gt, stem in ((False, "table1_without_gt"), (True, "table2_with_gt")):
-        rows = build(sel, gt, args.strategy)
-        path = out_dir / f"{stem}.tsv"
-        with open(path, "w", newline="") as f:
-            csv.writer(f, delimiter="\t").writerows(rows)
-        filled = sum(1 for r in rows if r[0].startswith("SOAP") and any(r[3:]))
-        blank = sum(1 for r in rows[1:] if not r[0].startswith(("Backbone:", "Prompt-",
-                                                               "Trained ", "Representation"))
-                    and not r[0].startswith("SOAP"))
-        print(f"  {path}   {filled} SOAP rows filled, {blank} rows left for you")
+        for judge in JUDGE_DISPLAY:
+            rows = build(sel, gt, args.strategy, judge, pr)
+            suffix = "" if judge == "gpt-4o" else f"_{judge.replace('-', '')}"
+            path = out_dir / f"{stem}{suffix}.tsv"
+            with open(path, "w", newline="") as f:
+                csv.writer(f, delimiter="\t").writerows(rows)
+            n = sum(1 for r in rows if any(r[3:]) and r[0] != "Method")
+            print(f"  {path}   {n} data rows filled")
 
         pv = out_dir / f"{stem}_seeds.tsv"
         with open(pv, "w", newline="") as f:

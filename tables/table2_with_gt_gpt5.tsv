@@ -1,10 +1,10 @@
 Method	Actual data	Supervised	WW-AG	WW-HC	CE	TE-Cap	TE-Mag
-Backbone: GPT-4o							
+Backbone: GPT-5							
 Prompt-based methods							
-All-at-Once			14.81	6.90	28.39	16.28	5.80
-Step-by-Step			20.63	13.79	44.47	13.95	13.04
-Binary Search			22.22	4.60	9.70	9.30	6.52
-CORRECT	cmark	cmark	15.34	4.60	35.12	10.85	13.77
+All-at-Once			17.99	9.20	64.51	10.85	13.77
+Step-by-Step			28.04	24.14	66.49	20.16	15.22
+Binary Search			47.09	24.14	77.42	31.01	25.36
+CORRECT	cmark	cmark	32.80	21.84	38.25	27.13	20.29
 RAFFLES							
 CHIEF							
 Backbone: Qwen3.5-9B							
@@ -14,8 +14,8 @@ GraphTracer	xmark	cmark
 Representation-based methods							
 StepFinder	xmark	xmark					
 OAT	xmark	xmark					
-SOAP (w/o rescoring)	cmark	xmark	39.15	33.33	61.38	33.33	21.01
-SOAP	cmark	xmark	47.62	34.48	61.78	35.66	23.19
+SOAP (w/o rescoring)	cmark	xmark	41.27	33.33	60.30	32.56	15.94
+SOAP	cmark	xmark	43.39	34.48	60.59	36.43	21.01
 Backbone: DeepSeek-R1-Distill-Llama-8B							
 Trained LLM attributors							
 AgenTracer	xmark	cmark					
@@ -23,5 +23,5 @@ GraphTracer	xmark	cmark
 Representation-based methods							
 StepFinder	xmark	xmark					
 OAT	xmark	xmark					
-SOAP (w/o rescoring)	cmark	xmark	38.62	28.74	64.19	40.31	29.71
-SOAP	cmark	xmark	45.50	28.74	64.68	42.64	30.43
+SOAP (w/o rescoring)	cmark	xmark	40.21	29.89	64.81	41.09	35.51
+SOAP	cmark	xmark	44.97	29.89	65.19	42.64	36.96
