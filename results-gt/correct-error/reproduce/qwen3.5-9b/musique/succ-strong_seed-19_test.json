@@ -1,0 +1,23 @@
+{
+  "config": {
+    "seed": 19,
+    "position": "act/3",
+    "c_begin": 1,
+    "c_end": 3,
+    "strategy": "succ-strong",
+    "layer_range": "6-8",
+    "gamma": 0.0,
+    "w": "all",
+    "model": "qwen3.5-9b",
+    "subset": "musique",
+    "split": "test"
+  },
+  "metrics": {
+    "step@1": 0.4166666666666667,
+    "step@3": 0.6794871794871795,
+    "agent@1": 0.7435897435897436,
+    "agent@3": 0.8653846153846154
+  },
+  "n_trajectories": 156,
+  "n_steps": 2386
+}

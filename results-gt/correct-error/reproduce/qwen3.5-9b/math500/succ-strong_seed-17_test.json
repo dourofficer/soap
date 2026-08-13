@@ -1,0 +1,23 @@
+{
+  "config": {
+    "seed": 17,
+    "position": "act/7",
+    "c_begin": 0,
+    "c_end": 20,
+    "strategy": "succ-strong",
+    "layer_range": "6-8",
+    "gamma": 0.0,
+    "w": "all",
+    "model": "qwen3.5-9b",
+    "subset": "math500",
+    "split": "test"
+  },
+  "metrics": {
+    "step@1": 0.5822784810126582,
+    "step@3": 0.7848101265822784,
+    "agent@1": 0.569620253164557,
+    "agent@3": 0.6582278481012658
+  },
+  "n_trajectories": 79,
+  "n_steps": 495
+}

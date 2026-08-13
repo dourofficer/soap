@@ -1,0 +1,4 @@
+# Large activations artifacts: regenerate with main/ extract, or seed from
+# outputs-gt/ via scripts/seed_results.sh. Never tracked.
+*
+!.gitignore

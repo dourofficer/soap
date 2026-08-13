@@ -13,19 +13,11 @@ datagen/configs/oai_config_list.json
 data/synthetic/
 data/synthetic-err/
 
-# archived v1 implementation — large regenerable artifacts
-v1/outputs/
-v1/outputs*/
-v1/.venv/
-v1/datagen/runs*/
-v1/data/synthetic/
-v1/data/synthetic-err/
-v1/logs/
 artifacts/
 
-# main/'s output trees (seeded from outputs/ by scripts/seed_results.sh)
-results-nogt/
-results-gt/
+# main/'s output trees are tracked, except their activations/ and attention/
+# subtrees (huge .safetensors, seeded from outputs/ by scripts/seed_results.sh).
+# Those are excluded by a .gitignore inside each of them.
 .parity-scratch*/
 .smoke/
 results-sweep/

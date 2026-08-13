@@ -1,0 +1,75 @@
+{
+  "stamp": {
+    "splits": {
+      "train": 0.3,
+      "val": 0.2,
+      "test": 0.5
+    },
+    "seeds": {
+      "arc": [
+        17,
+        18,
+        19
+      ],
+      "gaia": [
+        17,
+        18,
+        19
+      ],
+      "hotpot": [
+        17,
+        18,
+        19
+      ],
+      "math500": [
+        17,
+        18,
+        19
+      ],
+      "mmlu_pro": [
+        17,
+        18,
+        19
+      ],
+      "musique": [
+        17,
+        18,
+        19
+      ],
+      "wikimqa": [
+        17,
+        18,
+        19
+      ]
+    },
+    "n_components": 20,
+    "positions": "all",
+    "ensemble": true,
+    "n_ranges": 4,
+    "gammas": [
+      0.0,
+      0.1,
+      0.2,
+      0.4,
+      0.6,
+      0.8,
+      1.0
+    ],
+    "ws": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      "all"
+    ],
+    "strategies": [
+      "backprop",
+      "succ-strong",
+      "succ-near"
+    ],
+    "gt": false
+  },
+  "utc": "2026-08-10T14:02:19Z",
+  "git_sha": "cb3d84b"
+}

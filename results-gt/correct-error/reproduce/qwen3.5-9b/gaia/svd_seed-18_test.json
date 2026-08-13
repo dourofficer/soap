@@ -1,0 +1,20 @@
+{
+  "config": {
+    "seed": 18,
+    "position": "act/27",
+    "c_begin": 1,
+    "c_end": 7,
+    "gamma": 0.0,
+    "model": "qwen3.5-9b",
+    "subset": "gaia",
+    "split": "test"
+  },
+  "metrics": {
+    "step@1": 0.72,
+    "step@3": 0.84,
+    "agent@1": 0.92,
+    "agent@3": 0.96
+  },
+  "n_trajectories": 25,
+  "n_steps": 257
+}

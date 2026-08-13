@@ -1,0 +1,20 @@
+{
+  "config": {
+    "seed": 18,
+    "position": "act/13",
+    "c_begin": 0,
+    "c_end": 4,
+    "gamma": 0.0,
+    "model": "deepseek-8b",
+    "subset": "gaia",
+    "split": "test"
+  },
+  "metrics": {
+    "step@1": 0.68,
+    "step@3": 0.8,
+    "agent@1": 0.8,
+    "agent@3": 0.88
+  },
+  "n_trajectories": 25,
+  "n_steps": 257
+}

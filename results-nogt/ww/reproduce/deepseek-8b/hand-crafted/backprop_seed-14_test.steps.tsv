@@ -1,0 +1,1300 @@
+model	subset	row	seed	split	traj_idx	n_steps	step_idx	role	is_mistake	base	final	rank	is_pred
+deepseek-8b	hand-crafted	backprop	14	test	51	122	1	Orchestrator (thought)	False	0.002196270041167736	0.002196270041167736	38	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	2	Orchestrator (thought)	False	0.0017352134454995394	0.0017352134454995394	89	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	3	Orchestrator (-> FileSurfer)	False	0.00219589751213789	0.00219589751213789	39	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	4	Orchestrator (thought)	False	0.0024411051999777555	0.0024411051999777555	24	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	5	FileSurfer	True	0.0022716696839779615	0.0022716696839779615	31	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	6	Orchestrator (thought)	False	0.0014723779167979956	0.0014723779167979956	103	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	7	Orchestrator (-> Assistant)	False	0.0019638007506728172	0.0019638007506728172	62	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	8	Orchestrator (thought)	False	0.0026594973169267178	0.0026594973169267178	14	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	9	Assistant	False	0.002334408462047577	0.002334408462047577	29	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	10	Orchestrator (thought)	False	0.001679659471847117	0.001679659471847117	98	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	11	Orchestrator (-> FileSurfer)	False	0.0020613563247025013	0.0020613563247025013	54	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	12	Orchestrator (thought)	False	0.002514355117455125	0.002514355117455125	23	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	13	FileSurfer	False	0.002392660127952695	0.002392660127952695	26	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	14	Orchestrator (thought)	False	0.00173397664912045	0.00173397664912045	90	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	15	Orchestrator (-> FileSurfer)	False	0.002093482995405793	0.002093482995405793	49	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	16	Orchestrator (thought)	False	0.002415891969576478	0.002415891969576478	25	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	17	FileSurfer	False	0.002535328036174178	0.002535328036174178	21	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	18	Orchestrator (thought)	False	0.0016171333845704794	0.0016171333845704794	102	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	19	Orchestrator (-> Assistant)	False	0.0018271439475938678	0.0018271439475938678	79	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	20	Orchestrator (thought)	False	0.0025636327918618917	0.0025636327918618917	18	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	21	Assistant	False	0.0020389535930007696	0.0020389535930007696	56	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	22	Orchestrator (thought)	False	0.0017565401503816247	0.0017565401503816247	88	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	23	Orchestrator (-> Assistant)	False	0.0019267179304733872	0.0019267179304733872	67	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	24	Orchestrator (thought)	False	0.001025622128508985	0.001025622128508985	115	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	25	Assistant	False	0.001175723853521049	0.001175723853521049	107	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	26	Orchestrator (thought)	False	0.0016842337790876627	0.0016842337790876627	97	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	27	Orchestrator (-> Assistant)	False	0.0019706091843545437	0.0019706091843545437	60	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	28	Orchestrator (thought)	False	0.0010524264071136713	0.0010524264071136713	112	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	29	Assistant	False	0.0011735853040590882	0.0011735853040590882	108	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	30	Orchestrator (thought)	False	0.0017054025083780289	0.0017054025083780289	95	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	31	Orchestrator (thought)	False	0.0025563121307641268	0.0025563121307641268	20	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	32	Orchestrator (thought)	False	0.0020930690225213766	0.0020930690225213766	50	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	33	Orchestrator (thought)	False	0.0017675865674391389	0.0017675865674391389	85	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	34	Orchestrator (-> FileSurfer)	False	0.0018142489716410637	0.0018142489716410637	80	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	35	Orchestrator (thought)	False	0.00268161459825933	0.00268161459825933	12	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	36	FileSurfer	False	0.002590763382613659	0.002590763382613659	17	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	37	Orchestrator (thought)	False	0.0018885860918089747	0.0018885860918089747	74	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	38	Orchestrator (-> Assistant)	False	0.00212463503703475	0.00212463503703475	47	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	39	Orchestrator (thought)	False	0.0027316317427903414	0.0027316317427903414	11	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	40	Assistant	False	0.0011857328936457634	0.0011857328936457634	106	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	41	Orchestrator (thought)	False	0.0020105952862650156	0.0020105952862650156	57	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	42	Orchestrator (-> Assistant)	False	0.002134328708052635	0.002134328708052635	46	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	43	Orchestrator (thought)	False	0.0010457240277901292	0.0010457240277901292	113	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	44	Assistant	False	0.0011609864886850119	0.0011609864886850119	109	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	45	Orchestrator (thought)	False	0.0017130430787801743	0.0017130430787801743	93	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	46	Orchestrator (thought)	False	0.0026795826852321625	0.0026795826852321625	13	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	47	Orchestrator (thought)	False	0.0021786957513540983	0.0021786957513540983	41	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	48	Orchestrator (thought)	False	0.0020429568830877542	0.0020429568830877542	55	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	49	Orchestrator (-> WebSurfer)	False	0.0022539617493748665	0.0022539617493748665	33	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	50	WebSurfer	False	0.0025229817256331444	0.0025229817256331444	22	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	51	Orchestrator (thought)	False	0.002063801744952798	0.002063801744952798	53	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	52	Orchestrator (-> WebSurfer)	False	0.0027407431043684483	0.0027407431043684483	10	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	53	Orchestrator (thought)	False	0.0010386838112026453	0.0010386838112026453	114	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	54	WebSurfer	False	0.0025580117944628	0.0025580117944628	19	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	55	Orchestrator (thought)	False	0.002204982563853264	0.002204982563853264	37	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	56	Orchestrator (-> FileSurfer)	False	0.002264284063130617	0.002264284063130617	32	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	57	Orchestrator (thought)	False	0.002932509407401085	0.002932509407401085	5	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	58	FileSurfer	False	0.002180569339543581	0.002180569339543581	40	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	59	Orchestrator (thought)	False	0.0019258708925917745	0.0019258708925917745	68	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	60	Orchestrator (-> WebSurfer)	False	0.0018795629730448127	0.0018795629730448127	75	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	61	WebSurfer	False	0.004871406126767397	0.004871406126767397	2	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	62	Orchestrator (thought)	False	0.0016525506507605314	0.0016525506507605314	99	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	63	Orchestrator (-> WebSurfer)	False	0.0017075215000659227	0.0017075215000659227	94	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	64	Orchestrator (thought)	False	0.001058246591128409	0.001058246591128409	111	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	65	WebSurfer	False	0.002938752993941307	0.002938752993941307	4	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	66	Orchestrator (thought)	False	0.00191705662291497	0.00191705662291497	70	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	67	Orchestrator (-> WebSurfer)	False	0.001987879630178213	0.001987879630178213	59	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	68	Orchestrator (thought)	False	0.001009905245155096	0.001009905245155096	117	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	69	WebSurfer	False	0.0026585818268358707	0.0026585818268358707	15	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	70	Orchestrator (thought)	False	0.001958967186510563	0.001958967186510563	64	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	71	Orchestrator (-> WebSurfer)	False	0.002249479992315173	0.002249479992315173	34	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	72	Orchestrator (thought)	False	0.0010072223376482725	0.0010072223376482725	118	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	73	WebSurfer	False	0.0022166594862937927	0.0022166594862937927	36	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	74	Orchestrator (thought)	False	0.0018960795132443309	0.0018960795132443309	72	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	75	Orchestrator (-> WebSurfer)	False	0.0021469490602612495	0.0021469490602612495	45	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	76	Orchestrator (thought)	False	0.00099839735776186	0.00099839735776186	119	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	77	WebSurfer	False	0.0016259746626019478	0.0016259746626019478	101	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	78	Orchestrator (thought)	False	0.0019657781813293695	0.0019657781813293695	61	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	79	Orchestrator (-> WebSurfer)	False	0.0021695676259696484	0.0021695676259696484	43	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	80	Orchestrator (thought)	False	0.0009452584199607372	0.0009452584199607372	120	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	81	WebSurfer	False	0.0017142265569418669	0.0017142265569418669	92	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	82	Orchestrator (thought)	False	0.0018123384797945619	0.0018123384797945619	81	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	83	Orchestrator (-> WebSurfer)	False	0.0019965420942753553	0.0019965420942753553	58	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	84	Orchestrator (thought)	False	0.0009315984789282084	0.0009315984789282084	122	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	85	WebSurfer	False	0.001727546565234661	0.001727546565234661	91	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	86	Orchestrator (thought)	False	0.0019591643940657377	0.0019591643940657377	63	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	87	Orchestrator (-> WebSurfer)	False	0.002078460995107889	0.002078460995107889	52	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	88	Orchestrator (thought)	False	0.0009404896991327405	0.0009404896991327405	121	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	89	WebSurfer	False	0.0017569565679877996	0.0017569565679877996	87	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	90	Orchestrator (thought)	False	0.0017616533441469073	0.0017616533441469073	86	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	91	Orchestrator (-> Assistant)	False	0.0022306705359369516	0.0022306705359369516	35	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	92	Orchestrator (thought)	False	0.0029115788638591766	0.0029115788638591766	6	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	93	Assistant	False	0.0019550600554794073	0.0019550600554794073	65	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	94	Orchestrator (thought)	False	0.0019220806425437331	0.0019220806425437331	69	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	95	Orchestrator (-> FileSurfer)	False	0.002120230346918106	0.002120230346918106	48	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	96	Orchestrator (thought)	False	0.0025963755324482918	0.0025963755324482918	16	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	97	FileSurfer	False	0.0020868112333118916	0.0020868112333118916	51	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	98	Orchestrator (thought)	False	0.0016504168743267655	0.0016504168743267655	100	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	99	Orchestrator (thought)	False	0.002387270564213395	0.002387270564213395	27	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	100	Orchestrator (thought)	False	0.0018014927627518773	0.0018014927627518773	82	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	101	Orchestrator (thought)	False	0.0016921457136049867	0.0016921457136049867	96	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	102	Orchestrator (-> WebSurfer)	False	0.0019013910787180066	0.0019013910787180066	71	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	103	WebSurfer	False	0.0027523895259946585	0.0027523895259946585	9	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	104	Orchestrator (thought)	False	0.0018371397163718939	0.0018371397163718939	78	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	105	Orchestrator (-> WebSurfer)	False	0.002367426874116063	0.002367426874116063	28	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	106	Orchestrator (thought)	False	0.0010140860686078668	0.0010140860686078668	116	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	107	WebSurfer	False	0.005937970243394375	0.005937970243394375	1	True
+deepseek-8b	hand-crafted	backprop	14	test	51	122	108	Orchestrator (thought)	False	0.0018473874079063535	0.0018473874079063535	77	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	109	Orchestrator (-> FileSurfer)	False	0.0023300189059227705	0.0023300189059227705	30	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	110	Orchestrator (thought)	False	0.002865316579118371	0.002865316579118371	7	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	111	FileSurfer	False	0.0019388217478990555	0.0019388217478990555	66	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	112	Orchestrator (thought)	False	0.0018557263538241386	0.0018557263538241386	76	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	113	Orchestrator (-> WebSurfer)	False	0.0021731562446802855	0.0021731562446802855	42	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	114	Orchestrator (thought)	False	0.0011145609896630049	0.0011145609896630049	110	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	115	WebSurfer	False	0.0033399946987628937	0.0033399946987628937	3	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	116	Orchestrator (thought)	False	0.001772885792888701	0.001772885792888701	84	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	117	Orchestrator (-> Assistant)	False	0.0014501760015264153	0.0014501760015264153	104	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	118	Orchestrator (thought)	False	0.0027638538740575314	0.0027638538740575314	8	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	119	Assistant	False	0.0021645184606313705	0.0021645184606313705	44	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	120	Orchestrator (thought)	False	0.0017811720026656985	0.0017811720026656985	83	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	121	Orchestrator (thought)	False	0.0014159278944134712	0.0014159278944134712	105	False
+deepseek-8b	hand-crafted	backprop	14	test	51	122	122	Orchestrator (termination condition)	False	0.0018937179120257497	0.0018937179120257497	73	False
+deepseek-8b	hand-crafted	backprop	14	test	6	7	1	Orchestrator (thought)	False	0.001891397056169808	0.001891397056169808	3	False
+deepseek-8b	hand-crafted	backprop	14	test	6	7	2	Orchestrator (thought)	False	0.001532891415990889	0.001532891415990889	6	False
+deepseek-8b	hand-crafted	backprop	14	test	6	7	3	Orchestrator (-> WebSurfer)	False	0.001588737592101097	0.001588737592101097	5	False
+deepseek-8b	hand-crafted	backprop	14	test	6	7	4	WebSurfer	False	0.002243579365313053	0.002243579365313053	1	True
+deepseek-8b	hand-crafted	backprop	14	test	6	7	5	Orchestrator (thought)	True	0.0017717743758112192	0.0017717743758112192	4	False
+deepseek-8b	hand-crafted	backprop	14	test	6	7	6	Orchestrator (thought)	False	0.001018822891637683	0.001018822891637683	7	False
+deepseek-8b	hand-crafted	backprop	14	test	6	7	7	Orchestrator (termination condition)	False	0.0020624708849936724	0.0020624708849936724	2	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	1	Orchestrator (thought)	False	0.0018271199660375714	0.0018271199660375714	14	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	2	Orchestrator (thought)	False	0.001981414621695876	0.001981414621695876	11	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	3	Orchestrator (-> WebSurfer)	False	0.0016114837490022182	0.0016114837490022182	27	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	4	WebSurfer	False	0.0022999634966254234	0.0022999634966254234	6	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	5	Orchestrator (thought)	False	0.0015447806799784303	0.0015447806799784303	33	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	6	Orchestrator (-> WebSurfer)	False	0.0017170977080240846	0.0017170977080240846	19	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	7	Orchestrator (thought)	False	0.0010518295457586646	0.0010518295457586646	34	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	8	WebSurfer	False	0.0024127434007823467	0.0024127434007823467	4	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	9	Orchestrator (thought)	True	0.0016642957925796509	0.0016642957925796509	21	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	10	Orchestrator (-> WebSurfer)	False	0.001717310049571097	0.001717310049571097	18	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	11	Orchestrator (thought)	False	0.0010266349418088794	0.0010266349418088794	36	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	12	WebSurfer	False	0.0023953248746693134	0.0023953248746693134	5	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	13	Orchestrator (thought)	False	0.001651980564929545	0.001651980564929545	22	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	14	Orchestrator (-> WebSurfer)	False	0.0016018907772377133	0.0016018907772377133	29	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	15	Orchestrator (thought)	False	0.0009994142455980182	0.0009994142455980182	39	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	16	WebSurfer	False	0.0027583837509155273	0.0027583837509155273	2	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	17	Orchestrator (thought)	False	0.0016168579459190369	0.0016168579459190369	26	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	18	Orchestrator (-> WebSurfer)	False	0.0016927692340686917	0.0016927692340686917	20	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	19	Orchestrator (thought)	False	0.00103380111977458	0.00103380111977458	35	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	20	WebSurfer	False	0.00201863469555974	0.00201863469555974	10	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	21	Orchestrator (thought)	False	0.0015673597808927298	0.0015673597808927298	32	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	22	Orchestrator (-> WebSurfer)	False	0.0015912360977381468	0.0015912360977381468	31	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	23	Orchestrator (thought)	False	0.000990288332104683	0.000990288332104683	41	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	24	Orchestrator (thought)	False	0.0016086988616734743	0.0016086988616734743	28	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	25	Orchestrator (-> WebSurfer)	False	0.0017360578058287501	0.0017360578058287501	17	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	26	Orchestrator (thought)	False	0.0009925366612151265	0.0009925366612151265	40	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	27	WebSurfer	False	0.002284483052790165	0.002284483052790165	7	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	28	Orchestrator (thought)	False	0.0016226897714659572	0.0016226897714659572	25	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	29	Orchestrator (-> WebSurfer)	False	0.0015999459428712726	0.0015999459428712726	30	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	30	Orchestrator (thought)	False	0.0010142053943127394	0.0010142053943127394	37	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	31	WebSurfer	False	0.0024567970540374517	0.0024567970540374517	3	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	32	Orchestrator (thought)	False	0.0018297955393791199	0.0018297955393791199	13	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	33	Orchestrator (-> WebSurfer)	False	0.0019009103998541832	0.0019009103998541832	12	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	34	Orchestrator (thought)	False	0.0010071825236082077	0.0010071825236082077	38	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	35	WebSurfer	False	0.0021129967644810677	0.0021129967644810677	9	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	36	Orchestrator (thought)	False	0.0017576746176928282	0.0017576746176928282	16	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	37	Orchestrator (-> WebSurfer)	False	0.0016340456204488873	0.0016340456204488873	24	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	38	Orchestrator (thought)	False	0.0009521279134787619	0.0009521279134787619	43	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	39	WebSurfer	False	0.002214428735896945	0.002214428735896945	8	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	40	Orchestrator (thought)	False	0.0018043899908661842	0.0018043899908661842	15	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	41	Orchestrator (-> WebSurfer)	False	0.0016355441184714437	0.0016355441184714437	23	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	42	Orchestrator (thought)	False	0.0009691357845440507	0.0009691357845440507	42	False
+deepseek-8b	hand-crafted	backprop	14	test	10	43	43	WebSurfer	False	0.0028423096518963575	0.0028423096518963575	1	True
+deepseek-8b	hand-crafted	backprop	14	test	24	4	1	Orchestrator (thought)	True	0.0019956999458372593	0.0019956999458372593	1	True
+deepseek-8b	hand-crafted	backprop	14	test	24	4	2	Orchestrator (thought)	False	0.001763578038662672	0.001763578038662672	3	False
+deepseek-8b	hand-crafted	backprop	14	test	24	4	3	Orchestrator (thought)	False	0.0010586242424324155	0.0010586242424324155	4	False
+deepseek-8b	hand-crafted	backprop	14	test	24	4	4	Orchestrator (termination condition)	False	0.0018049386562779546	0.0018049386562779546	2	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	1	Orchestrator (thought)	False	0.0018383555579930544	0.0018383555579930544	10	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	2	Orchestrator (thought)	False	0.0015311205061152577	0.0015311205061152577	38	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	3	Orchestrator (-> WebSurfer)	True	0.0017559922998771071	0.0017559922998771071	14	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	4	WebSurfer	False	0.002414243295788765	0.002414243295788765	4	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	5	Orchestrator (thought)	False	0.0014779309276491404	0.0014779309276491404	40	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	6	Orchestrator (-> WebSurfer)	False	0.0015554572455585003	0.0015554572455585003	35	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	7	Orchestrator (thought)	False	0.0009864061139523983	0.0009864061139523983	46	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	8	WebSurfer	False	0.0015766145661473274	0.0015766145661473274	34	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	9	Orchestrator (thought)	False	0.0015870989300310612	0.0015870989300310612	31	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	10	Orchestrator (-> WebSurfer)	False	0.0016730952775105834	0.0016730952775105834	22	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	11	Orchestrator (thought)	False	0.0009336121147498488	0.0009336121147498488	51	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	12	WebSurfer	False	0.0016650313045829535	0.0016650313045829535	23	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	13	Orchestrator (thought)	False	0.0016744789900258183	0.0016744789900258183	21	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	14	Orchestrator (-> WebSurfer)	False	0.0016132222954183817	0.0016132222954183817	29	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	15	Orchestrator (thought)	False	0.0009400892886333168	0.0009400892886333168	50	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	16	WebSurfer	False	0.0017646936466917396	0.0017646936466917396	11	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	17	Orchestrator (thought)	False	0.0015813756035640836	0.0015813756035640836	33	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	18	Orchestrator (-> WebSurfer)	False	0.001708885421976447	0.001708885421976447	20	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	19	Orchestrator (thought)	False	0.0009429974597878754	0.0009429974597878754	49	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	20	WebSurfer	False	0.001710078096948564	0.001710078096948564	19	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	21	Orchestrator (thought)	False	0.0017628134228289127	0.0017628134228289127	13	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	22	Orchestrator (-> WebSurfer)	False	0.0016542866360396147	0.0016542866360396147	25	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	23	Orchestrator (thought)	False	0.0009484206093475223	0.0009484206093475223	48	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	24	WebSurfer	False	0.001638313289731741	0.001638313289731741	28	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	25	Orchestrator (thought)	False	0.0015948180807754397	0.0015948180807754397	30	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	26	Orchestrator (-> WebSurfer)	False	0.0015494251856580377	0.0015494251856580377	36	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	27	Orchestrator (thought)	False	0.0009569744579494	0.0009569744579494	47	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	28	WebSurfer	False	0.0030079244170337915	0.0030079244170337915	1	True
+deepseek-8b	hand-crafted	backprop	14	test	38	51	29	Orchestrator (thought)	False	0.0015838778344914317	0.0015838778344914317	32	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	30	Orchestrator (thought)	False	0.002829567063599825	0.002829567063599825	3	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	31	Orchestrator (thought)	False	0.0017268932424485683	0.0017268932424485683	17	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	32	Orchestrator (thought)	False	0.0018571638502180576	0.0018571638502180576	9	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	33	Orchestrator (-> WebSurfer)	False	0.0021139003802090883	0.0021139003802090883	7	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	34	Orchestrator (thought)	False	0.0010396639117971063	0.0010396639117971063	41	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	35	WebSurfer	False	0.0023983942810446024	0.0023983942810446024	5	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	36	Orchestrator (thought)	False	0.0017312266863882542	0.0017312266863882542	16	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	37	Orchestrator (-> WebSurfer)	False	0.0015075233532115817	0.0015075233532115817	39	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	38	Orchestrator (thought)	False	0.0010120320366695523	0.0010120320366695523	43	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	39	WebSurfer	False	0.002074466086924076	0.002074466086924076	8	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	40	Orchestrator (thought)	False	0.0015365625731647015	0.0015365625731647015	37	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	41	Orchestrator (-> WebSurfer)	False	0.0017644980689510703	0.0017644980689510703	12	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	42	Orchestrator (thought)	False	0.0010294364765286446	0.0010294364765286446	42	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	43	WebSurfer	False	0.0021211751736700535	0.0021211751736700535	6	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	44	Orchestrator (thought)	False	0.0016471216222271323	0.0016471216222271323	26	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	45	Orchestrator (-> WebSurfer)	False	0.0017448542639613152	0.0017448542639613152	15	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	46	Orchestrator (thought)	False	0.0010055707534775138	0.0010055707534775138	44	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	47	WebSurfer	False	0.0017207058845087886	0.0017207058845087886	18	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	48	Orchestrator (thought)	False	0.0016442218329757452	0.0016442218329757452	27	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	49	Orchestrator (-> WebSurfer)	False	0.0016595512861385942	0.0016595512861385942	24	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	50	Orchestrator (thought)	False	0.000997302238829434	0.000997302238829434	45	False
+deepseek-8b	hand-crafted	backprop	14	test	38	51	51	WebSurfer	False	0.002884099492803216	0.002884099492803216	2	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	1	Orchestrator (thought)	False	0.0019511925056576729	0.0019511925056576729	12	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	2	Orchestrator (thought)	False	0.001560185686685145	0.001560185686685145	47	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	3	Orchestrator (-> WebSurfer)	False	0.0016502346843481064	0.0016502346843481064	37	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	4	WebSurfer	False	0.002175027970224619	0.002175027970224619	6	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	5	Orchestrator (thought)	False	0.0015299518126994371	0.0015299518126994371	50	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	6	Orchestrator (-> WebSurfer)	False	0.001602760050445795	0.001602760050445795	43	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	7	Orchestrator (thought)	False	0.0010180826066061854	0.0010180826066061854	64	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	8	WebSurfer	True	0.0030835294164717197	0.0030835294164717197	1	True
+deepseek-8b	hand-crafted	backprop	14	test	23	73	9	Orchestrator (thought)	False	0.0014955010265111923	0.0014955010265111923	55	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	10	Orchestrator (-> WebSurfer)	False	0.001403705682605505	0.001403705682605505	57	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	11	Orchestrator (thought)	False	0.0009680265211500227	0.0009680265211500227	70	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	12	Orchestrator (thought)	False	0.001484534004703164	0.001484534004703164	56	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	13	Orchestrator (-> Assistant)	False	0.0015194606967270374	0.0015194606967270374	52	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	14	Orchestrator (thought)	False	0.002480513881891966	0.002480513881891966	4	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	15	Assistant	False	0.001671045203693211	0.001671045203693211	35	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	16	Orchestrator (thought)	False	0.0015784489223733544	0.0015784489223733544	45	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	17	Orchestrator (-> WebSurfer)	False	0.0016413419507443905	0.0016413419507443905	38	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	18	Orchestrator (thought)	False	0.0010584504343569279	0.0010584504343569279	59	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	19	WebSurfer	False	0.0020863257814198732	0.0020863257814198732	9	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	20	Orchestrator (thought)	False	0.0015023606829345226	0.0015023606829345226	54	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	21	Orchestrator (-> WebSurfer)	False	0.0015078125288709998	0.0015078125288709998	53	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	22	Orchestrator (thought)	False	0.0010373240802437067	0.0010373240802437067	62	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	23	WebSurfer	False	0.0017547052120789886	0.0017547052120789886	28	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	24	Orchestrator (thought)	False	0.001578362425789237	0.001578362425789237	46	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	25	Orchestrator (-> WebSurfer)	False	0.001555033028125763	0.001555033028125763	48	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	26	Orchestrator (thought)	False	0.0010575370397418737	0.0010575370397418737	60	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	27	WebSurfer	False	0.0017681847093626857	0.0017681847093626857	25	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	28	Orchestrator (thought)	False	0.0016147838905453682	0.0016147838905453682	41	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	29	Orchestrator (-> WebSurfer)	False	0.0015846361638978124	0.0015846361638978124	44	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	30	Orchestrator (thought)	False	0.0010430666152387857	0.0010430666152387857	61	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	31	WebSurfer	False	0.0016987231792882085	0.0016987231792882085	34	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	32	Orchestrator (thought)	False	0.0016279025003314018	0.0016279025003314018	39	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	33	Orchestrator (-> WebSurfer)	False	0.0016275908565148711	0.0016275908565148711	40	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	34	Orchestrator (thought)	False	0.001037202076986432	0.001037202076986432	63	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	35	WebSurfer	False	0.0015525372000411153	0.0015525372000411153	49	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	36	Orchestrator (thought)	False	0.0017202310264110565	0.0017202310264110565	32	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	37	Orchestrator (thought)	False	0.00260222889482975	0.00260222889482975	3	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	38	Orchestrator (thought)	False	0.0017306854715570807	0.0017306854715570807	29	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	39	Orchestrator (thought)	False	0.0016617128858342767	0.0016617128858342767	36	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	40	Orchestrator (-> WebSurfer)	False	0.0015242223162204027	0.0015242223162204027	51	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	41	Orchestrator (thought)	False	0.000988317304290831	0.000988317304290831	66	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	42	WebSurfer	False	0.002265342976897955	0.002265342976897955	5	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	43	Orchestrator (thought)	False	0.0017093229107558727	0.0017093229107558727	33	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	44	Orchestrator (-> WebSurfer)	False	0.0016109941061586142	0.0016109941061586142	42	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	45	Orchestrator (thought)	False	0.00098461436573416	0.00098461436573416	68	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	46	WebSurfer	False	0.002169649349525571	0.002169649349525571	7	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	47	Orchestrator (thought)	False	0.0019293799996376038	0.0019293799996376038	13	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	48	Orchestrator (-> WebSurfer)	False	0.0021324108820408583	0.0021324108820408583	8	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	49	Orchestrator (thought)	False	0.0009996059816330671	0.0009996059816330671	65	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	50	WebSurfer	False	0.0018130447715520859	0.0018130447715520859	21	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	51	Orchestrator (thought)	False	0.0017887225840240717	0.0017887225840240717	23	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	52	Orchestrator (-> WebSurfer)	False	0.0018184302607551217	0.0018184302607551217	18	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	53	Orchestrator (thought)	False	0.0009584553190506995	0.0009584553190506995	73	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	54	WebSurfer	False	0.0017248941585421562	0.0017248941585421562	30	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	55	Orchestrator (thought)	False	0.0017882591346278787	0.0017882591346278787	24	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	56	Orchestrator (-> WebSurfer)	False	0.0017598088597878814	0.0017598088597878814	27	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	57	Orchestrator (thought)	False	0.0009673241293057799	0.0009673241293057799	71	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	58	WebSurfer	False	0.0018034940585494041	0.0018034940585494041	22	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	59	Orchestrator (thought)	False	0.0018377626547589898	0.0018377626547589898	17	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	60	Orchestrator (-> WebSurfer)	False	0.0019994385074824095	0.0019994385074824095	10	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	61	Orchestrator (thought)	False	0.0009861569851636887	0.0009861569851636887	67	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	62	WebSurfer	False	0.0019900279585272074	0.0019900279585272074	11	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	63	Orchestrator (thought)	False	0.001859760843217373	0.001859760843217373	15	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	64	Orchestrator (-> WebSurfer)	False	0.0018531366949900985	0.0018531366949900985	16	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	65	Orchestrator (thought)	False	0.0009745549759827554	0.0009745549759827554	69	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	66	WebSurfer	False	0.0018775704083964229	0.0018775704083964229	14	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	67	Orchestrator (thought)	False	0.0017610159702599049	0.0017610159702599049	26	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	68	Orchestrator (thought)	False	0.001224181498400867	0.001224181498400867	58	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	69	Orchestrator (thought)	False	0.0017223277827724814	0.0017223277827724814	31	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	70	Orchestrator (thought)	False	0.0018157388549298048	0.0018157388549298048	19	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	71	Orchestrator (-> WebSurfer)	False	0.0018137131119146943	0.0018137131119146943	20	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	72	Orchestrator (thought)	False	0.0009596187155693769	0.0009596187155693769	72	False
+deepseek-8b	hand-crafted	backprop	14	test	23	73	73	WebSurfer	False	0.002990066073834896	0.002990066073834896	2	False
+deepseek-8b	hand-crafted	backprop	14	test	21	24	1	Orchestrator (thought)	False	0.0018230327405035496	0.0018230327405035496	8	False
+deepseek-8b	hand-crafted	backprop	14	test	21	24	2	Orchestrator (thought)	False	0.0014795156894251704	0.0014795156894251704	17	False
+deepseek-8b	hand-crafted	backprop	14	test	21	24	3	Orchestrator (-> WebSurfer)	False	0.001727789407595992	0.001727789407595992	9	False
+deepseek-8b	hand-crafted	backprop	14	test	21	24	4	WebSurfer	True	0.0025968882255256176	0.0025968882255256176	3	False
+deepseek-8b	hand-crafted	backprop	14	test	21	24	5	Orchestrator (thought)	False	0.0014748632675036788	0.0014748632675036788	18	False
+deepseek-8b	hand-crafted	backprop	14	test	21	24	6	Orchestrator (-> WebSurfer)	False	0.0016133030876517296	0.0016133030876517296	13	False
+deepseek-8b	hand-crafted	backprop	14	test	21	24	7	Orchestrator (thought)	False	0.0009575359872542322	0.0009575359872542322	22	False
+deepseek-8b	hand-crafted	backprop	14	test	21	24	8	WebSurfer	False	0.0031606932170689106	0.0031606932170689106	2	False
+deepseek-8b	hand-crafted	backprop	14	test	21	24	9	Orchestrator (thought)	False	0.0017053476767614484	0.0017053476767614484	10	False
+deepseek-8b	hand-crafted	backprop	14	test	21	24	10	Orchestrator (-> WebSurfer)	False	0.001830710214562714	0.001830710214562714	7	False
+deepseek-8b	hand-crafted	backprop	14	test	21	24	11	Orchestrator (thought)	False	0.0009679334471002221	0.0009679334471002221	21	False
+deepseek-8b	hand-crafted	backprop	14	test	21	24	12	WebSurfer	False	0.0018379276152700186	0.0018379276152700186	6	False
+deepseek-8b	hand-crafted	backprop	14	test	21	24	13	Orchestrator (thought)	False	0.0016014354769140482	0.0016014354769140482	14	False
+deepseek-8b	hand-crafted	backprop	14	test	21	24	14	Orchestrator (-> WebSurfer)	False	0.0014377934858202934	0.0014377934858202934	19	False
+deepseek-8b	hand-crafted	backprop	14	test	21	24	15	Orchestrator (thought)	False	0.0009118046145886183	0.0009118046145886183	24	False
+deepseek-8b	hand-crafted	backprop	14	test	21	24	16	WebSurfer	False	0.0020655086264014244	0.0020655086264014244	5	False
+deepseek-8b	hand-crafted	backprop	14	test	21	24	17	Orchestrator (thought)	False	0.0015670722350478172	0.0015670722350478172	15	False
+deepseek-8b	hand-crafted	backprop	14	test	21	24	18	Orchestrator (-> WebSurfer)	False	0.0016326268669217825	0.0016326268669217825	12	False
+deepseek-8b	hand-crafted	backprop	14	test	21	24	19	Orchestrator (thought)	False	0.0009510043310001493	0.0009510043310001493	23	False
+deepseek-8b	hand-crafted	backprop	14	test	21	24	20	WebSurfer	False	0.0021410956978797913	0.0021410956978797913	4	False
+deepseek-8b	hand-crafted	backprop	14	test	21	24	21	Orchestrator (thought)	False	0.0015477122506126761	0.0015477122506126761	16	False
+deepseek-8b	hand-crafted	backprop	14	test	21	24	22	Orchestrator (-> WebSurfer)	False	0.0016690806951373816	0.0016690806951373816	11	False
+deepseek-8b	hand-crafted	backprop	14	test	21	24	23	Orchestrator (thought)	False	0.000992841087281704	0.000992841087281704	20	False
+deepseek-8b	hand-crafted	backprop	14	test	21	24	24	WebSurfer	False	0.003189454786479473	0.003189454786479473	1	True
+deepseek-8b	hand-crafted	backprop	14	test	15	128	1	Orchestrator (thought)	False	0.0019510856363922358	0.0019510856363922358	28	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	2	Orchestrator (thought)	False	0.001574343885295093	0.001574343885295093	95	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	3	Orchestrator (-> WebSurfer)	False	0.0017746610101312399	0.0017746610101312399	51	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	4	WebSurfer	False	0.002531082136556506	0.002531082136556506	4	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	5	Orchestrator (thought)	False	0.0015759698580950499	0.0015759698580950499	94	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	6	Orchestrator (-> WebSurfer)	False	0.0017550691263750196	0.0017550691263750196	59	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	7	Orchestrator (thought)	False	0.0010336680570617318	0.0010336680570617318	102	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	8	WebSurfer	True	0.002361677121371031	0.002361677121371031	7	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	9	Orchestrator (thought)	False	0.0016420772299170494	0.0016420772299170494	86	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	10	Orchestrator (-> WebSurfer)	False	0.0017670037923380733	0.0017670037923380733	54	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	11	Orchestrator (thought)	False	0.0009644186939112842	0.0009644186939112842	119	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	12	WebSurfer	False	0.002324212109670043	0.002324212109670043	9	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	13	Orchestrator (thought)	False	0.0016058313194662333	0.0016058313194662333	91	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	14	Orchestrator (-> WebSurfer)	False	0.0015222728252410889	0.0015222728252410889	98	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	15	Orchestrator (thought)	False	0.0009381715790368617	0.0009381715790368617	126	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	16	WebSurfer	False	0.0021153942216187716	0.0021153942216187716	16	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	17	Orchestrator (thought)	False	0.0015865899622440338	0.0015865899622440338	93	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	18	Orchestrator (-> WebSurfer)	False	0.0016255067894235253	0.0016255067894235253	89	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	19	Orchestrator (thought)	False	0.0009522797772660851	0.0009522797772660851	123	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	20	WebSurfer	False	0.0033674766309559345	0.0033674766309559345	1	True
+deepseek-8b	hand-crafted	backprop	14	test	15	128	21	Orchestrator (thought)	False	0.001675820560194552	0.001675820560194552	83	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	22	Orchestrator (-> WebSurfer)	False	0.0018296029884368181	0.0018296029884368181	42	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	23	Orchestrator (thought)	False	0.0009151629637926817	0.0009151629637926817	127	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	24	WebSurfer	False	0.0020887483842670918	0.0020887483842670918	17	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	25	Orchestrator (thought)	False	0.0016788331558927894	0.0016788331558927894	81	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	26	Orchestrator (-> WebSurfer)	False	0.0018448929768055677	0.0018448929768055677	39	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	27	Orchestrator (thought)	False	0.0009137729648500681	0.0009137729648500681	128	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	28	WebSurfer	False	0.0022398142609745264	0.0022398142609745264	10	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	29	Orchestrator (thought)	False	0.001589842140674591	0.001589842140674591	92	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	30	Orchestrator (-> Assistant)	False	0.00187207933049649	0.00187207933049649	34	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	31	Orchestrator (thought)	False	0.002734595211222768	0.002734595211222768	3	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	32	Assistant	False	0.0015334631316363811	0.0015334631316363811	97	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	33	Orchestrator (thought)	False	0.001627654768526554	0.001627654768526554	88	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	34	Orchestrator (-> WebSurfer)	False	0.001559463795274496	0.001559463795274496	96	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	35	Orchestrator (thought)	False	0.0009469916112720966	0.0009469916112720966	124	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	36	Orchestrator (thought)	False	0.0017896270146593451	0.0017896270146593451	47	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	37	Orchestrator (-> WebSurfer)	False	0.001734505989588797	0.001734505989588797	67	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	38	Orchestrator (thought)	False	0.000966995139606297	0.000966995139606297	118	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	39	Orchestrator (thought)	False	0.0016356767155230045	0.0016356767155230045	87	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	40	Orchestrator (thought)	False	0.0027597188018262386	0.0027597188018262386	2	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	41	Orchestrator (thought)	False	0.0017518707318231463	0.0017518707318231463	61	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	42	Orchestrator (thought)	False	0.0016924906522035599	0.0016924906522035599	77	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	43	Orchestrator (-> WebSurfer)	False	0.0019918777979910374	0.0019918777979910374	25	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	44	Orchestrator (thought)	False	0.0010106080444529653	0.0010106080444529653	107	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	45	WebSurfer	False	0.0023667661007493734	0.0023667661007493734	6	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	46	Orchestrator (thought)	False	0.00170049793086946	0.00170049793086946	73	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	47	Orchestrator (-> WebSurfer)	False	0.0017682368634268641	0.0017682368634268641	53	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	48	Orchestrator (thought)	False	0.0010002290364354849	0.0010002290364354849	109	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	49	WebSurfer	False	0.002414799528196454	0.002414799528196454	5	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	50	Orchestrator (thought)	False	0.0016242453129962087	0.0016242453129962087	90	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	51	Orchestrator (-> WebSurfer)	False	0.001804887899197638	0.001804887899197638	46	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	52	Orchestrator (thought)	False	0.00101742974948138	0.00101742974948138	105	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	53	WebSurfer	False	0.002193702617660165	0.002193702617660165	12	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	54	Orchestrator (thought)	False	0.001680910587310791	0.001680910587310791	80	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	55	Orchestrator (-> WebSurfer)	False	0.0017291895346716046	0.0017291895346716046	68	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	56	Orchestrator (thought)	False	0.0009875104296952486	0.0009875104296952486	111	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	57	WebSurfer	False	0.001890897168777883	0.001890897168777883	31	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	58	Orchestrator (thought)	False	0.0017378771444782615	0.0017378771444782615	66	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	59	Orchestrator (-> WebSurfer)	False	0.001713250414468348	0.001713250414468348	70	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	60	Orchestrator (thought)	False	0.000982053461484611	0.000982053461484611	113	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	61	WebSurfer	False	0.001677860040217638	0.001677860040217638	82	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	62	Orchestrator (thought)	False	0.001763888169080019	0.001763888169080019	55	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	63	Orchestrator (-> WebSurfer)	False	0.0018407704774290323	0.0018407704774290323	40	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	64	Orchestrator (thought)	False	0.0009819144615903497	0.0009819144615903497	114	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	65	WebSurfer	False	0.0020611879881471395	0.0020611879881471395	20	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	66	Orchestrator (thought)	False	0.0016422114567831159	0.0016422114567831159	85	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	67	Orchestrator (-> Assistant)	False	0.0017558506224304438	0.0017558506224304438	58	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	68	Orchestrator (thought)	False	0.0010117065394297242	0.0010117065394297242	106	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	69	Assistant	False	0.0018605580553412437	0.0018605580553412437	36	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	70	Orchestrator (thought)	False	0.0017633280949667096	0.0017633280949667096	56	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	71	Orchestrator (-> Assistant)	False	0.0019406481878831983	0.0019406481878831983	29	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	72	Orchestrator (thought)	False	0.0009624708909541368	0.0009624708909541368	121	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	73	Assistant	False	0.001887693302705884	0.001887693302705884	33	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	74	Orchestrator (thought)	False	0.0018272986635565758	0.0018272986635565758	43	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	75	Orchestrator (thought)	False	0.0011158623965457082	0.0011158623965457082	100	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	76	Orchestrator (thought)	False	0.0017834544414654374	0.0017834544414654374	49	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	77	Orchestrator (thought)	False	0.0017119648400694132	0.0017119648400694132	71	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	78	Orchestrator (-> WebSurfer)	False	0.0017892391188070178	0.0017892391188070178	48	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	79	Orchestrator (thought)	False	0.0009707270073704422	0.0009707270073704422	116	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	80	WebSurfer	False	0.0020847017876803875	0.0020847017876803875	18	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	81	Orchestrator (thought)	False	0.0016904885414987803	0.0016904885414987803	79	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	82	Orchestrator (-> WebSurfer)	False	0.0017516944790259004	0.0017516944790259004	62	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	83	Orchestrator (thought)	False	0.0009688157588243484	0.0009688157588243484	117	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	84	WebSurfer	False	0.002119168173521757	0.002119168173521757	14	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	85	Orchestrator (thought)	False	0.001652932958677411	0.001652932958677411	84	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	86	Orchestrator (-> WebSurfer)	False	0.0016929119592532516	0.0016929119592532516	76	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	87	Orchestrator (thought)	False	0.0010376665741205215	0.0010376665741205215	101	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	88	WebSurfer	False	0.0020216181874275208	0.0020216181874275208	23	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	89	Orchestrator (thought)	False	0.0017423785757273436	0.0017423785757273436	64	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	90	Orchestrator (-> WebSurfer)	False	0.0018122215988114476	0.0018122215988114476	44	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	91	Orchestrator (thought)	False	0.0010009347461163998	0.0010009347461163998	108	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	92	WebSurfer	False	0.00213213381357491	0.00213213381357491	13	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	93	Orchestrator (thought)	False	0.0016963984817266464	0.0016963984817266464	75	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	94	Orchestrator (-> WebSurfer)	False	0.001869023428298533	0.001869023428298533	35	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	95	Orchestrator (thought)	False	0.000986810657195747	0.000986810657195747	112	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	96	WebSurfer	False	0.0017619604477658868	0.0017619604477658868	57	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	97	Orchestrator (thought)	False	0.001691273064352572	0.001691273064352572	78	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	98	Orchestrator (-> WebSurfer)	False	0.00188773637637496	0.00188773637637496	32	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	99	Orchestrator (thought)	False	0.000988811836577952	0.000988811836577952	110	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	100	WebSurfer	False	0.0017753989668563008	0.0017753989668563008	50	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	101	Orchestrator (thought)	False	0.0016967334086075425	0.0016967334086075425	74	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	102	Orchestrator (-> WebSurfer)	False	0.0019309900235384703	0.0019309900235384703	30	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	103	Orchestrator (thought)	False	0.000974995840806514	0.000974995840806514	115	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	104	WebSurfer	False	0.0021172347478568554	0.0021172347478568554	15	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	105	Orchestrator (thought)	False	0.0017263595946133137	0.0017263595946133137	69	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	106	Orchestrator (-> WebSurfer)	False	0.0017098865937441587	0.0017098865937441587	72	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	107	Orchestrator (thought)	False	0.0009591283742338419	0.0009591283742338419	122	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	108	WebSurfer	False	0.002057886216789484	0.002057886216789484	21	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	109	Orchestrator (thought)	False	0.0017525558359920979	0.0017525558359920979	60	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	110	Orchestrator (thought)	False	0.001180856372229755	0.001180856372229755	99	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	111	Orchestrator (thought)	False	0.0018092667451128364	0.0018092667451128364	45	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	112	Orchestrator (thought)	False	0.001858091913163662	0.001858091913163662	38	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	113	Orchestrator (-> WebSurfer)	False	0.001964855007827282	0.001964855007827282	27	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	114	Orchestrator (thought)	False	0.0009633698500692844	0.0009633698500692844	120	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	115	WebSurfer	False	0.002200154587626457	0.002200154587626457	11	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	116	Orchestrator (thought)	False	0.001860079006291926	0.001860079006291926	37	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	117	Orchestrator (-> WebSurfer)	False	0.0020081689581274986	0.0020081689581274986	24	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	118	Orchestrator (thought)	False	0.0009452333324588835	0.0009452333324588835	125	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	119	WebSurfer	False	0.0020792565774172544	0.0020792565774172544	19	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	120	Orchestrator (thought)	False	0.0017458600923418999	0.0017458600923418999	63	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	121	Orchestrator (-> WebSurfer)	False	0.0019731339998543262	0.0019731339998543262	26	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	122	Orchestrator (thought)	False	0.0010206250008195639	0.0010206250008195639	103	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	123	WebSurfer	False	0.0017691061366349459	0.0017691061366349459	52	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	124	Orchestrator (thought)	False	0.0018300843657925725	0.0018300843657925725	41	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	125	Orchestrator (-> WebSurfer)	False	0.0017386998515576124	0.0017386998515576124	65	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	126	Orchestrator (thought)	False	0.0010180657263845205	0.0010180657263845205	104	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	127	WebSurfer	False	0.0020532566122710705	0.0020532566122710705	22	False
+deepseek-8b	hand-crafted	backprop	14	test	15	128	128	Orchestrator (termination condition)	False	0.0023581627756357193	0.0023581627756357193	8	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	1	Orchestrator (thought)	False	0.0019042926141992211	0.0019042926141992211	13	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	2	Orchestrator (thought)	False	0.001454533776268363	0.001454533776268363	31	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	3	Orchestrator (-> WebSurfer)	False	0.001524374820291996	0.001524374820291996	30	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	4	WebSurfer	False	0.002520535374060273	0.002520535374060273	2	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	5	Orchestrator (thought)	False	0.0016895525623112917	0.0016895525623112917	19	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	6	Orchestrator (-> WebSurfer)	False	0.0016375395935028791	0.0016375395935028791	22	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	7	Orchestrator (thought)	False	0.001054223976098001	0.001054223976098001	32	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	8	WebSurfer	False	0.0022383753675967455	0.0022383753675967455	4	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	9	Orchestrator (thought)	False	0.0015907249180600047	0.0015907249180600047	27	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	10	Orchestrator (-> WebSurfer)	False	0.0015326072461903095	0.0015326072461903095	29	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	11	Orchestrator (thought)	False	0.0009963724296540022	0.0009963724296540022	36	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	12	WebSurfer	False	0.001970798708498478	0.001970798708498478	11	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	13	Orchestrator (thought)	False	0.0016206161817535758	0.0016206161817535758	25	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	14	Orchestrator (-> WebSurfer)	False	0.0016880984185263515	0.0016880984185263515	20	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	15	Orchestrator (thought)	False	0.0009719640947878361	0.0009719640947878361	39	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	16	WebSurfer	False	0.002099438803270459	0.002099438803270459	8	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	17	Orchestrator (thought)	False	0.0016238840762525797	0.0016238840762525797	24	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	18	Orchestrator (-> WebSurfer)	True	0.0016421943437308073	0.0016421943437308073	21	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	19	Orchestrator (thought)	False	0.000983537407591939	0.000983537407591939	37	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	20	WebSurfer	False	0.00199267640709877	0.00199267640709877	10	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	21	Orchestrator (thought)	False	0.0016939612105488777	0.0016939612105488777	16	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	22	Orchestrator (-> WebSurfer)	False	0.001902037882246077	0.001902037882246077	14	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	23	Orchestrator (thought)	False	0.0010161681566387415	0.0010161681566387415	34	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	24	WebSurfer	False	0.0020398558117449284	0.0020398558117449284	9	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	25	Orchestrator (thought)	False	0.0016344477189704776	0.0016344477189704776	23	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	26	Orchestrator (-> WebSurfer)	False	0.0016937846085056663	0.0016937846085056663	17	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	27	Orchestrator (thought)	False	0.0010305565083399415	0.0010305565083399415	33	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	28	WebSurfer	False	0.0021727406419813633	0.0021727406419813633	6	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	29	Orchestrator (thought)	False	0.0015543397748842835	0.0015543397748842835	28	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	30	Orchestrator (-> WebSurfer)	False	0.001744577195495367	0.001744577195495367	15	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	31	Orchestrator (thought)	False	0.0010077620390802622	0.0010077620390802622	35	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	32	WebSurfer	False	0.002352696843445301	0.002352696843445301	3	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	33	Orchestrator (thought)	False	0.001690017874352634	0.001690017874352634	18	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	34	Orchestrator (-> Assistant)	False	0.0019191742176190019	0.0019191742176190019	12	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	35	Orchestrator (thought)	False	0.0027976026758551598	0.0027976026758551598	1	True
+deepseek-8b	hand-crafted	backprop	14	test	55	39	36	Assistant	False	0.00221824087202549	0.00221824087202549	5	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	37	Orchestrator (thought)	False	0.001611001673154533	0.001611001673154533	26	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	38	Orchestrator (thought)	False	0.000982153695076704	0.000982153695076704	38	False
+deepseek-8b	hand-crafted	backprop	14	test	55	39	39	Orchestrator (termination condition)	False	0.0021307289134711027	0.0021307289134711027	7	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	1	Orchestrator (thought)	False	0.001960937399417162	0.001960937399417162	25	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	2	Orchestrator (thought)	False	0.0015994072891771793	0.0015994072891771793	81	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	3	Orchestrator (-> WebSurfer)	False	0.0018417204264551401	0.0018417204264551401	30	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	4	WebSurfer	False	0.002492424799129367	0.002492424799129367	11	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	5	Orchestrator (thought)	False	0.001598403905518353	0.001598403905518353	83	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	6	Orchestrator (-> WebSurfer)	False	0.0017263430636376143	0.0017263430636376143	52	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	7	Orchestrator (thought)	False	0.0010023470968008041	0.0010023470968008041	110	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	8	WebSurfer	True	0.002415918279439211	0.002415918279439211	12	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	9	Orchestrator (thought)	False	0.0018173482967540622	0.0018173482967540622	33	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	10	Orchestrator (-> WebSurfer)	False	0.0016535755712538958	0.0016535755712538958	72	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	11	Orchestrator (thought)	False	0.0009895976400002837	0.0009895976400002837	114	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	12	WebSurfer	False	0.0021430368069559336	0.0021430368069559336	20	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	13	Orchestrator (thought)	False	0.0017153824446722865	0.0017153824446722865	57	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	14	Orchestrator (-> WebSurfer)	False	0.001735431025736034	0.001735431025736034	50	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	15	Orchestrator (thought)	False	0.0009675166220404208	0.0009675166220404208	118	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	16	WebSurfer	False	0.0025733322836458683	0.0025733322836458683	8	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	17	Orchestrator (thought)	False	0.0016632424667477608	0.0016632424667477608	69	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	18	Orchestrator (-> WebSurfer)	False	0.0014690890675410628	0.0014690890675410628	97	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	19	Orchestrator (thought)	False	0.0009554357966408134	0.0009554357966408134	124	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	20	WebSurfer	False	0.002650320529937744	0.002650320529937744	7	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	21	Orchestrator (thought)	False	0.0015405472368001938	0.0015405472368001938	89	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	22	Orchestrator (-> WebSurfer)	False	0.001546576269902289	0.001546576269902289	87	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	23	Orchestrator (thought)	False	0.0009371439809910953	0.0009371439809910953	126	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	24	WebSurfer	False	0.0019923453219234943	0.0019923453219234943	24	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	25	Orchestrator (thought)	False	0.0016132876044139266	0.0016132876044139266	78	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	26	Orchestrator (-> WebSurfer)	False	0.0015072808600962162	0.0015072808600962162	93	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	27	Orchestrator (thought)	False	0.0009306765277869999	0.0009306765277869999	128	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	28	WebSurfer	False	0.0018198221223428845	0.0018198221223428845	32	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	29	Orchestrator (thought)	False	0.0016521497163921595	0.0016521497163921595	75	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	30	Orchestrator (-> WebSurfer)	False	0.0014915758511051536	0.0014915758511051536	95	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	31	Orchestrator (thought)	False	0.0009565841173753142	0.0009565841173753142	123	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	32	WebSurfer	False	0.0021314569748938084	0.0021314569748938084	21	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	33	Orchestrator (thought)	False	0.001757792429998517	0.001757792429998517	45	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	34	Orchestrator (-> WebSurfer)	False	0.0017465855926275253	0.0017465855926275253	47	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	35	Orchestrator (thought)	False	0.0009454204118810594	0.0009454204118810594	125	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	36	WebSurfer	False	0.0028891032561659813	0.0028891032561659813	2	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	37	Orchestrator (thought)	False	0.0016608439618721604	0.0016608439618721604	70	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	38	Orchestrator (-> WebSurfer)	False	0.0015245663234964013	0.0015245663234964013	91	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	39	Orchestrator (thought)	False	0.0009590174304321408	0.0009590174304321408	122	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	40	WebSurfer	False	0.0017758666072040796	0.0017758666072040796	41	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	41	Orchestrator (thought)	False	0.0017403113888576627	0.0017403113888576627	48	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	42	Orchestrator (-> WebSurfer)	False	0.001522732200101018	0.001522732200101018	92	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	43	Orchestrator (thought)	False	0.0009645070531405509	0.0009645070531405509	120	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	44	Orchestrator (thought)	False	0.0018008733168244362	0.0018008733168244362	35	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	45	Orchestrator (thought)	False	0.002867304254323244	0.002867304254323244	3	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	46	Orchestrator (thought)	False	0.001772165298461914	0.001772165298461914	42	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	47	Orchestrator (thought)	False	0.0017105030128732324	0.0017105030128732324	59	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	48	Orchestrator (-> WebSurfer)	False	0.0017178768757730722	0.0017178768757730722	56	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	49	Orchestrator (thought)	False	0.0009355685324408114	0.0009355685324408114	127	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	50	WebSurfer	False	0.002331892494112253	0.002331892494112253	14	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	51	Orchestrator (thought)	False	0.001722692046314478	0.001722692046314478	54	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	52	Orchestrator (-> WebSurfer)	False	0.001705122645944357	0.001705122645944357	61	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	53	Orchestrator (thought)	False	0.0009630541899241507	0.0009630541899241507	121	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	54	WebSurfer	False	0.0028478277381509542	0.0028478277381509542	4	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	55	Orchestrator (thought)	False	0.0015981390606611967	0.0015981390606611967	84	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	56	Orchestrator (-> WebSurfer)	False	0.001758500817231834	0.001758500817231834	44	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	57	Orchestrator (thought)	False	0.0010213482892140746	0.0010213482892140746	104	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	58	WebSurfer	False	0.002194917993620038	0.002194917993620038	18	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	59	Orchestrator (thought)	False	0.0016527790576219559	0.0016527790576219559	73	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	60	Orchestrator (-> WebSurfer)	False	0.0017493295017629862	0.0017493295017629862	46	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	61	Orchestrator (thought)	False	0.0010148341534659266	0.0010148341534659266	105	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	62	WebSurfer	False	0.0018341810209676623	0.0018341810209676623	31	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	63	Orchestrator (thought)	False	0.001545806648209691	0.001545806648209691	88	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	64	Orchestrator (-> WebSurfer)	False	0.0017097056843340397	0.0017097056843340397	60	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	65	Orchestrator (thought)	False	0.0009721448295749724	0.0009721448295749724	117	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	66	WebSurfer	False	0.002209043363109231	0.002209043363109231	16	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	67	Orchestrator (thought)	False	0.0017373246373608708	0.0017373246373608708	49	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	68	Orchestrator (-> WebSurfer)	False	0.0019101601792499423	0.0019101601792499423	26	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	69	Orchestrator (thought)	False	0.0009823961881920695	0.0009823961881920695	115	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	70	WebSurfer	False	0.0018832915229722857	0.0018832915229722857	28	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	71	Orchestrator (thought)	False	0.0018131764372810721	0.0018131764372810721	34	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	72	Orchestrator (-> WebSurfer)	False	0.0017195186810567975	0.0017195186810567975	55	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	73	Orchestrator (thought)	False	0.000994203146547079	0.000994203146547079	112	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	74	Orchestrator (thought)	False	0.0016644910210743546	0.0016644910210743546	68	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	75	Orchestrator (-> FileSurfer)	False	0.0020548966713249683	0.0020548966713249683	22	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	76	Orchestrator (thought)	False	0.0028163669630885124	0.0028163669630885124	5	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	77	FileSurfer	False	0.0013699766714125872	0.0013699766714125872	98	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	78	Orchestrator (thought)	False	0.001689762924797833	0.001689762924797833	62	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	79	Orchestrator (-> FileSurfer)	False	0.001795475953258574	0.001795475953258574	37	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	80	Orchestrator (thought)	False	0.0009984131902456284	0.0009984131902456284	111	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	81	FileSurfer	False	0.001526219886727631	0.001526219886727631	90	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	82	Orchestrator (thought)	False	0.0016522437799721956	0.0016522437799721956	74	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	83	Orchestrator (-> FileSurfer)	False	0.0016724771121516824	0.0016724771121516824	66	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	84	Orchestrator (thought)	False	0.0009896615520119667	0.0009896615520119667	113	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	85	FileSurfer	False	0.0015993374399840832	0.0015993374399840832	82	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	86	Orchestrator (thought)	False	0.0017970539629459381	0.0017970539629459381	36	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	87	Orchestrator (-> WebSurfer)	False	0.001654651015996933	0.001654651015996933	71	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	88	Orchestrator (thought)	False	0.0010066886898130178	0.0010066886898130178	107	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	89	WebSurfer	False	0.0022060777992010117	0.0022060777992010117	17	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	90	Orchestrator (thought)	False	0.0016897041350603104	0.0016897041350603104	63	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	91	Orchestrator (thought)	False	0.001157535589300096	0.001157535589300096	99	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	92	Orchestrator (thought)	False	0.0017776774475350976	0.0017776774475350976	40	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	93	Orchestrator (thought)	False	0.0016018045134842396	0.0016018045134842396	79	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	94	Orchestrator (-> WebSurfer)	False	0.0014794692397117615	0.0014794692397117615	96	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	95	Orchestrator (thought)	False	0.0010063417721539736	0.0010063417721539736	108	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	96	WebSurfer	False	0.0022775803226977587	0.0022775803226977587	15	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	97	Orchestrator (thought)	False	0.001570330117829144	0.001570330117829144	85	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	98	Orchestrator (-> WebSurfer)	False	0.0017933236667886376	0.0017933236667886376	38	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	99	Orchestrator (thought)	False	0.0010389476083219051	0.0010389476083219051	101	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	100	WebSurfer	False	0.002704884856939316	0.002704884856939316	6	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	101	Orchestrator (thought)	False	0.0015582017367705703	0.0015582017367705703	86	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	102	Orchestrator (-> WebSurfer)	False	0.0016647394513711333	0.0016647394513711333	67	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	103	Orchestrator (thought)	False	0.001026355312205851	0.001026355312205851	102	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	104	WebSurfer	False	0.0019090983550995588	0.0019090983550995588	27	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	105	Orchestrator (thought)	False	0.0016007468802854419	0.0016007468802854419	80	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	106	Orchestrator (-> WebSurfer)	False	0.0016159367514774203	0.0016159367514774203	77	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	107	Orchestrator (thought)	False	0.0009664687677286565	0.0009664687677286565	119	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	108	WebSurfer	False	0.0020129724871367216	0.0020129724871367216	23	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	109	Orchestrator (thought)	False	0.001714734360575676	0.001714734360575676	58	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	110	Orchestrator (-> WebSurfer)	False	0.001763450331054628	0.001763450331054628	43	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	111	Orchestrator (thought)	False	0.0010234760120511055	0.0010234760120511055	103	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	112	WebSurfer	False	0.0025312015786767006	0.0025312015786767006	9	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	113	Orchestrator (thought)	False	0.0016742931911721826	0.0016742931911721826	65	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	114	Orchestrator (-> WebSurfer)	False	0.0017341322964057326	0.0017341322964057326	51	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	115	Orchestrator (thought)	False	0.0010032650316134095	0.0010032650316134095	109	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	116	WebSurfer	False	0.0030483677983283997	0.0030483677983283997	1	True
+deepseek-8b	hand-crafted	backprop	14	test	8	128	117	Orchestrator (thought)	False	0.0014930344186723232	0.0014930344186723232	94	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	118	Orchestrator (-> WebSurfer)	False	0.0016745725879445672	0.0016745725879445672	64	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	119	Orchestrator (thought)	False	0.0009738165535964072	0.0009738165535964072	116	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	120	WebSurfer	False	0.0025035450235009193	0.0025035450235009193	10	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	121	Orchestrator (thought)	False	0.0017242878675460815	0.0017242878675460815	53	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	122	Orchestrator (thought)	False	0.0011222396278753877	0.0011222396278753877	100	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	123	Orchestrator (thought)	False	0.0018529981607571244	0.0018529981607571244	29	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	124	Orchestrator (thought)	False	0.0016215597279369831	0.0016215597279369831	76	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	125	Orchestrator (-> WebSurfer)	False	0.0017910577589645982	0.0017910577589645982	39	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	126	Orchestrator (thought)	False	0.0010141392704099417	0.0010141392704099417	106	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	127	WebSurfer	False	0.00239021354354918	0.00239021354354918	13	False
+deepseek-8b	hand-crafted	backprop	14	test	8	128	128	Orchestrator (termination condition)	False	0.0021815320942550898	0.0021815320942550898	19	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	1	Orchestrator (thought)	False	0.0018191239796578884	0.0018191239796578884	20	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	2	Orchestrator (thought)	False	0.0016316439723595977	0.0016316439723595977	40	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	3	Orchestrator (-> WebSurfer)	False	0.001656090491451323	0.001656090491451323	31	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	4	WebSurfer	False	0.0027213552966713905	0.0027213552966713905	2	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	5	Orchestrator (thought)	False	0.0016674124635756016	0.0016674124635756016	30	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	6	Orchestrator (-> WebSurfer)	False	0.0015539032174274325	0.0015539032174274325	54	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	7	Orchestrator (thought)	False	0.0010258853435516357	0.0010258853435516357	66	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	8	WebSurfer	True	0.0021606741938740015	0.0021606741938740015	11	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	9	Orchestrator (thought)	False	0.001621741452254355	0.001621741452254355	42	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	10	Orchestrator (-> WebSurfer)	False	0.001635421416722238	0.001635421416722238	37	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	11	Orchestrator (thought)	False	0.000977073796093464	0.000977073796093464	72	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	12	WebSurfer	False	0.001611368148587644	0.001611368148587644	45	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	13	Orchestrator (thought)	False	0.001566164894029498	0.001566164894029498	52	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	14	Orchestrator (-> WebSurfer)	False	0.0015413559740409255	0.0015413559740409255	55	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	15	Orchestrator (thought)	False	0.0009546628571115434	0.0009546628571115434	76	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	16	WebSurfer	False	0.0019196666544303298	0.0019196666544303298	18	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	17	Orchestrator (thought)	False	0.001577214919961989	0.001577214919961989	51	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	18	Orchestrator (-> Assistant)	False	0.0017056976212188601	0.0017056976212188601	27	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	19	Orchestrator (thought)	False	0.002702070400118828	0.002702070400118828	3	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	20	Assistant	False	0.001787730143405497	0.001787730143405497	22	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	21	Orchestrator (thought)	False	0.0015982899349182844	0.0015982899349182844	48	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	22	Orchestrator (-> WebSurfer)	False	0.0017896033823490143	0.0017896033823490143	21	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	23	Orchestrator (thought)	False	0.0010372628457844257	0.0010372628457844257	65	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	24	WebSurfer	False	0.0025179784279316664	0.0025179784279316664	6	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	25	Orchestrator (thought)	False	0.0016475970624014735	0.0016475970624014735	32	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	26	Orchestrator (-> WebSurfer)	False	0.0017298477469012141	0.0017298477469012141	25	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	27	Orchestrator (thought)	False	0.0010139261139556766	0.0010139261139556766	68	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	28	WebSurfer	False	0.0021129194647073746	0.0021129194647073746	13	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	29	Orchestrator (thought)	False	0.0016757516423240304	0.0016757516423240304	29	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	30	Orchestrator (-> Assistant)	False	0.001771119306795299	0.001771119306795299	24	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	31	Orchestrator (thought)	False	0.0010152865434065461	0.0010152865434065461	67	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	32	Assistant	False	0.0018854601075872779	0.0018854601075872779	19	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	33	Orchestrator (thought)	False	0.001616777735762298	0.001616777735762298	43	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	34	Orchestrator (-> WebSurfer)	False	0.0015977564034983516	0.0015977564034983516	49	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	35	Orchestrator (thought)	False	0.0009919898584485054	0.0009919898584485054	71	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	36	Orchestrator (thought)	False	0.0016280326526612043	0.0016280326526612043	41	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	37	Orchestrator (thought)	False	0.002635672688484192	0.002635672688484192	5	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	38	Orchestrator (thought)	False	0.0016381063032895327	0.0016381063032895327	36	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	39	Orchestrator (thought)	False	0.0016343981260433793	0.0016343981260433793	38	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	40	Orchestrator (-> WebSurfer)	False	0.0017031044699251652	0.0017031044699251652	28	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	41	Orchestrator (thought)	False	0.0010100443614646792	0.0010100443614646792	70	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	42	WebSurfer	False	0.0023611385840922594	0.0023611385840922594	8	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	43	Orchestrator (thought)	False	0.0016086057294160128	0.0016086057294160128	46	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	44	Orchestrator (-> WebSurfer)	False	0.001531871035695076	0.001531871035695076	58	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	45	Orchestrator (thought)	False	0.0009754353668540716	0.0009754353668540716	73	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	46	WebSurfer	False	0.002663322724401951	0.002663322724401951	4	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	47	Orchestrator (thought)	False	0.001643973053433001	0.001643973053433001	34	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	48	Orchestrator (-> WebSurfer)	False	0.001532595488242805	0.001532595488242805	57	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	49	Orchestrator (thought)	False	0.0009528054506517947	0.0009528054506517947	77	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	50	WebSurfer	False	0.002108474960550666	0.002108474960550666	14	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	51	Orchestrator (thought)	False	0.001644101575948298	0.001644101575948298	33	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	52	Orchestrator (-> WebSurfer)	False	0.001520699355751276	0.001520699355751276	59	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	53	Orchestrator (thought)	False	0.0009554245043545961	0.0009554245043545961	75	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	54	WebSurfer	False	0.002420381410047412	0.002420381410047412	7	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	55	Orchestrator (thought)	False	0.001579191884957254	0.001579191884957254	50	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	56	Orchestrator (-> WebSurfer)	False	0.0017817788757383823	0.0017817788757383823	23	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	57	Orchestrator (thought)	False	0.001013688393868506	0.001013688393868506	69	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	58	WebSurfer	False	0.002080725971609354	0.002080725971609354	15	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	59	Orchestrator (thought)	False	0.001604637480340898	0.001604637480340898	47	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	60	Orchestrator (-> WebSurfer)	False	0.0015163479838520288	0.0015163479838520288	60	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	61	Orchestrator (thought)	False	0.0009411717182956636	0.0009411717182956636	80	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	62	WebSurfer	False	0.002122683683410287	0.002122683683410287	12	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	63	Orchestrator (thought)	False	0.0016165541019290686	0.0016165541019290686	44	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	64	Orchestrator (-> WebSurfer)	False	0.0015358326490968466	0.0015358326490968466	56	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	65	Orchestrator (thought)	False	0.0009501103777438402	0.0009501103777438402	78	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	66	WebSurfer	False	0.002010792028158903	0.002010792028158903	16	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	67	Orchestrator (thought)	False	0.0016388680087402463	0.0016388680087402463	35	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	68	Orchestrator (-> WebSurfer)	False	0.0014434403274208307	0.0014434403274208307	63	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	69	Orchestrator (thought)	False	0.000926761596929282	0.000926761596929282	82	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	70	WebSurfer	False	0.002249388722702861	0.002249388722702861	9	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	71	Orchestrator (thought)	False	0.0015624744119122624	0.0015624744119122624	53	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	72	Orchestrator (-> WebSurfer)	False	0.0014871889725327492	0.0014871889725327492	62	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	73	Orchestrator (thought)	False	0.0009431100334040821	0.0009431100334040821	79	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	74	WebSurfer	False	0.002004404552280903	0.002004404552280903	17	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	75	Orchestrator (thought)	False	0.001713028410449624	0.001713028410449624	26	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	76	Orchestrator (-> WebSurfer)	False	0.0014944771537557244	0.0014944771537557244	61	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	77	Orchestrator (thought)	False	0.0009660869254730642	0.0009660869254730642	74	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	78	WebSurfer	False	0.0021855845116078854	0.0021855845116078854	10	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	79	Orchestrator (thought)	False	0.0016341554000973701	0.0016341554000973701	39	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	80	Orchestrator (-> WebSurfer)	False	0.0014314365107566118	0.0014314365107566118	64	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	81	Orchestrator (thought)	False	0.0009407192119397223	0.0009407192119397223	81	False
+deepseek-8b	hand-crafted	backprop	14	test	41	82	82	WebSurfer	False	0.0029804327059537172	0.0029804327059537172	1	True
+deepseek-8b	hand-crafted	backprop	14	test	26	32	1	Orchestrator (thought)	False	0.001842152327299118	0.001842152327299118	13	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	2	Orchestrator (thought)	False	0.0014759203186258674	0.0014759203186258674	26	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	3	Orchestrator (-> WebSurfer)	False	0.0016942870570346713	0.0016942870570346713	17	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	4	WebSurfer	False	0.002361017046496272	0.002361017046496272	3	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	5	Orchestrator (thought)	False	0.001500522717833519	0.001500522717833519	25	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	6	Orchestrator (-> WebSurfer)	False	0.0017313675489276648	0.0017313675489276648	16	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	7	Orchestrator (thought)	False	0.0009867799235507846	0.0009867799235507846	31	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	8	WebSurfer	False	0.0021724337711930275	0.0021724337711930275	4	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	9	Orchestrator (thought)	False	0.0015592242125421762	0.0015592242125421762	23	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	10	Orchestrator (-> WebSurfer)	False	0.0016817380674183369	0.0016817380674183369	19	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	11	Orchestrator (thought)	False	0.0009115569409914315	0.0009115569409914315	32	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	12	WebSurfer	False	0.0017545889131724834	0.0017545889131724834	15	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	13	Orchestrator (thought)	False	0.001580804237164557	0.001580804237164557	21	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	14	Orchestrator (-> FileSurfer)	False	0.0017912995535880327	0.0017912995535880327	14	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	15	Orchestrator (thought)	False	0.0025963508524000645	0.0025963508524000645	2	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	16	FileSurfer	False	0.00189541548024863	0.00189541548024863	11	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	17	Orchestrator (thought)	False	0.0015533179976046085	0.0015533179976046085	24	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	18	Orchestrator (-> FileSurfer)	False	0.0020170046482235193	0.0020170046482235193	7	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	19	Orchestrator (thought)	False	0.0010271588107571006	0.0010271588107571006	27	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	20	FileSurfer	False	0.0018912835512310266	0.0018912835512310266	12	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	21	Orchestrator (thought)	False	0.001600344548933208	0.001600344548933208	20	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	22	Orchestrator (-> FileSurfer)	False	0.0019515017047524452	0.0019515017047524452	8	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	23	Orchestrator (thought)	False	0.0010027589742094278	0.0010027589742094278	29	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	24	FileSurfer	False	0.002115374431014061	0.002115374431014061	5	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	25	Orchestrator (thought)	False	0.0016854382120072842	0.0016854382120072842	18	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	26	Orchestrator (-> FileSurfer)	False	0.0019088665721938014	0.0019088665721938014	9	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	27	Orchestrator (thought)	False	0.0009868631605058908	0.0009868631605058908	30	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	28	FileSurfer	False	0.0021001065615564585	0.0021001065615564585	6	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	29	Orchestrator (thought)	False	0.001567971077747643	0.001567971077747643	22	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	30	Orchestrator (-> FileSurfer)	False	0.0019047829555347562	0.0019047829555347562	10	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	31	Orchestrator (thought)	False	0.0010204047430306673	0.0010204047430306673	28	False
+deepseek-8b	hand-crafted	backprop	14	test	26	32	32	FileSurfer	True	0.0035583083517849445	0.0035583083517849445	1	True
+deepseek-8b	hand-crafted	backprop	14	test	30	120	1	Orchestrator (thought)	False	0.001851352397352457	0.001851352397352457	26	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	2	Orchestrator (thought)	False	0.0014367105904966593	0.0014367105904966593	89	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	3	Orchestrator (-> WebSurfer)	False	0.0014259000308811665	0.0014259000308811665	91	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	4	WebSurfer	False	0.002357122953981161	0.002357122953981161	10	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	5	Orchestrator (thought)	False	0.0014559399569407105	0.0014559399569407105	86	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	6	Orchestrator (-> WebSurfer)	False	0.0015742540126666427	0.0015742540126666427	65	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	7	Orchestrator (thought)	False	0.0010191884357482195	0.0010191884357482195	98	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	8	WebSurfer	False	0.002739305142313242	0.002739305142313242	5	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	9	Orchestrator (thought)	False	0.001439381274394691	0.001439381274394691	88	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	10	Orchestrator (-> WebSurfer)	False	0.0014044278068467975	0.0014044278068467975	93	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	11	Orchestrator (thought)	False	0.0009474571561440825	0.0009474571561440825	116	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	12	WebSurfer	False	0.002575268968939781	0.002575268968939781	7	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	13	Orchestrator (thought)	False	0.0014696046710014343	0.0014696046710014343	83	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	14	Orchestrator (-> WebSurfer)	False	0.0013357952702790499	0.0013357952702790499	94	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	15	Orchestrator (thought)	False	0.0009465952753089368	0.0009465952753089368	117	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	16	WebSurfer	False	0.0022738385014235973	0.0022738385014235973	12	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	17	Orchestrator (thought)	False	0.0015869179042056203	0.0015869179042056203	58	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	18	Orchestrator (-> WebSurfer)	False	0.0015766401775181293	0.0015766401775181293	64	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	19	Orchestrator (thought)	False	0.0009960817405954003	0.0009960817405954003	104	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	20	WebSurfer	False	0.0022204299457371235	0.0022204299457371235	13	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	21	Orchestrator (thought)	False	0.0015949184307828546	0.0015949184307828546	56	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	22	Orchestrator (-> WebSurfer)	False	0.0016494272276759148	0.0016494272276759148	40	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	23	Orchestrator (thought)	False	0.0009441148140467703	0.0009441148140467703	118	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	24	WebSurfer	False	0.00382114015519619	0.00382114015519619	2	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	25	Orchestrator (thought)	False	0.0015616132877767086	0.0015616132877767086	70	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	26	Orchestrator (-> WebSurfer)	False	0.002051908988505602	0.002051908988505602	17	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	27	Orchestrator (thought)	False	0.0010901386849582195	0.0010901386849582195	97	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	28	WebSurfer	False	0.003901178017258644	0.003901178017258644	1	True
+deepseek-8b	hand-crafted	backprop	14	test	30	120	29	Orchestrator (thought)	False	0.0016020480543375015	0.0016020480543375015	55	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	30	Orchestrator (thought)	False	0.00286975153721869	0.00286975153721869	3	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	31	Orchestrator (thought)	False	0.0016623663250356913	0.0016623663250356913	38	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	32	Orchestrator (thought)	False	0.00146920932456851	0.00146920932456851	84	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	33	Orchestrator (-> WebSurfer)	False	0.001637986279092729	0.001637986279092729	43	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	34	Orchestrator (thought)	False	0.0010031075216829777	0.0010031075216829777	103	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	35	WebSurfer	False	0.0021563617046922445	0.0021563617046922445	14	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	36	Orchestrator (thought)	False	0.0014455480268225074	0.0014455480268225074	87	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	37	Orchestrator (-> WebSurfer)	False	0.0015781469410285354	0.0015781469410285354	63	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	38	Orchestrator (thought)	False	0.0009714842308312654	0.0009714842308312654	109	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	39	WebSurfer	False	0.002292193006724119	0.002292193006724119	11	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	40	Orchestrator (thought)	False	0.001571444678120315	0.001571444678120315	66	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	41	Orchestrator (-> FileSurfer)	False	0.0015790819888934493	0.0015790819888934493	61	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	42	Orchestrator (thought)	False	0.002701127203181386	0.002701127203181386	6	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	43	FileSurfer	False	0.0024975084234029055	0.0024975084234029055	8	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	44	Orchestrator (thought)	False	0.0015512228710576892	0.0015512228710576892	77	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	45	Orchestrator (-> WebSurfer)	False	0.0014301729388535023	0.0014301729388535023	90	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	46	Orchestrator (thought)	False	0.0010168178705498576	0.0010168178705498576	99	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	47	WebSurfer	False	0.0019644496496766806	0.0019644496496766806	21	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	48	Orchestrator (thought)	False	0.0016129525611177087	0.0016129525611177087	50	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	49	Orchestrator (-> WebSurfer)	False	0.001503620995208621	0.001503620995208621	80	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	50	Orchestrator (thought)	False	0.0009893130045384169	0.0009893130045384169	106	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	51	WebSurfer	False	0.0020324508659541607	0.0020324508659541607	19	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	52	Orchestrator (thought)	False	0.0016080413479357958	0.0016080413479357958	53	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	53	Orchestrator (thought)	False	0.0012576276203617454	0.0012576276203617454	95	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	54	Orchestrator (thought)	False	0.0018661461072042584	0.0018661461072042584	24	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	55	Orchestrator (thought)	False	0.0015788993332535028	0.0015788993332535028	62	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	56	Orchestrator (-> WebSurfer)	False	0.0017577852122485638	0.0017577852122485638	30	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	57	Orchestrator (thought)	False	0.0010146616259589791	0.0010146616259589791	100	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	58	WebSurfer	False	0.0021420312114059925	0.0021420312114059925	15	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	59	Orchestrator (thought)	False	0.001588151091709733	0.001588151091709733	57	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	60	Orchestrator (-> WebSurfer)	False	0.0016038907924667	0.0016038907924667	54	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	61	Orchestrator (thought)	False	0.0010055805323645473	0.0010055805323645473	101	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	62	WebSurfer	False	0.0024738209322094917	0.0024738209322094917	9	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	63	Orchestrator (thought)	False	0.001703622518107295	0.001703622518107295	35	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	64	Orchestrator (-> WebSurfer)	False	0.0015681575750932097	0.0015681575750932097	69	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	65	Orchestrator (thought)	False	0.0009753903141245246	0.0009753903141245246	108	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	66	WebSurfer	False	0.0020412763115018606	0.0020412763115018606	18	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	67	Orchestrator (thought)	False	0.00155760592315346	0.00155760592315346	72	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	68	Orchestrator (-> WebSurfer)	False	0.0017656323034316301	0.0017656323034316301	29	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	69	Orchestrator (thought)	False	0.0009935651905834675	0.0009935651905834675	105	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	70	WebSurfer	False	0.0018359790556132793	0.0018359790556132793	27	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	71	Orchestrator (thought)	False	0.0016361844027414918	0.0016361844027414918	44	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	72	Orchestrator (-> WebSurfer)	False	0.001656917156651616	0.001656917156651616	39	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	73	Orchestrator (thought)	False	0.0009604967781342566	0.0009604967781342566	114	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	74	WebSurfer	False	0.0015537806320935488	0.0015537806320935488	75	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	75	Orchestrator (thought)	False	0.0015547128859907389	0.0015547128859907389	74	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	76	Orchestrator (-> WebSurfer)	False	0.0015827154275029898	0.0015827154275029898	60	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	77	Orchestrator (thought)	False	0.0009607687825337052	0.0009607687825337052	113	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	78	WebSurfer	False	0.0015561276813969016	0.0015561276813969016	73	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	79	Orchestrator (thought)	False	0.0015837587416172028	0.0015837587416172028	59	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	80	Orchestrator (-> Assistant)	False	0.0017175348475575447	0.0017175348475575447	32	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	81	Orchestrator (thought)	False	0.002846908289939165	0.002846908289939165	4	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	82	Assistant	True	0.001948622171767056	0.001948622171767056	22	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	83	Orchestrator (thought)	False	0.0016093053855001926	0.0016093053855001926	51	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	84	Orchestrator (thought)	False	0.0011845477856695652	0.0011845477856695652	96	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	85	Orchestrator (thought)	False	0.0016688868636265397	0.0016688868636265397	37	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	86	Orchestrator (thought)	False	0.001615965855307877	0.001615965855307877	49	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	87	Orchestrator (-> WebSurfer)	False	0.0016184997512027621	0.0016184997512027621	47	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	88	Orchestrator (thought)	False	0.0009678805945441127	0.0009678805945441127	110	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	89	WebSurfer	False	0.002090587979182601	0.002090587979182601	16	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	90	Orchestrator (thought)	False	0.0016232746420428157	0.0016232746420428157	46	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	91	Orchestrator (-> WebSurfer)	False	0.0015694171888753772	0.0015694171888753772	67	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	92	Orchestrator (thought)	False	0.0009595548617653549	0.0009595548617653549	115	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	93	WebSurfer	False	0.002027924871072173	0.002027924871072173	20	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	94	Orchestrator (thought)	False	0.0016901131020858884	0.0016901131020858884	36	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	95	Orchestrator (-> WebSurfer)	False	0.0016253191279247403	0.0016253191279247403	45	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	96	Orchestrator (thought)	False	0.0009409302147105336	0.0009409302147105336	119	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	97	WebSurfer	False	0.0015586760127916932	0.0015586760127916932	71	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	98	Orchestrator (thought)	False	0.001617778791114688	0.001617778791114688	48	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	99	Orchestrator (-> WebSurfer)	False	0.0015532815596088767	0.0015532815596088767	76	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	100	Orchestrator (thought)	False	0.0009666309342719615	0.0009666309342719615	111	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	101	WebSurfer	False	0.0017229726072400808	0.0017229726072400808	31	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	102	Orchestrator (thought)	False	0.0014841294614598155	0.0014841294614598155	81	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	103	Orchestrator (-> WebSurfer)	False	0.0014775380259379745	0.0014775380259379745	82	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	104	Orchestrator (thought)	False	0.0009809560142457485	0.0009809560142457485	107	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	105	WebSurfer	False	0.0018902523443102837	0.0018902523443102837	23	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	106	Orchestrator (thought)	False	0.0015375736402347684	0.0015375736402347684	78	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	107	Orchestrator (-> WebSurfer)	False	0.0014604948228225112	0.0014604948228225112	85	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	108	Orchestrator (thought)	False	0.0009307506261393428	0.0009307506261393428	120	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	109	WebSurfer	False	0.0017156018875539303	0.0017156018875539303	33	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	110	Orchestrator (thought)	False	0.001640686416067183	0.001640686416067183	42	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	111	Orchestrator (-> WebSurfer)	False	0.0017104692524299026	0.0017104692524299026	34	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	112	Orchestrator (thought)	False	0.0009616909665055573	0.0009616909665055573	112	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	113	WebSurfer	False	0.0018208986148238182	0.0018208986148238182	28	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	114	Orchestrator (thought)	False	0.001640810864046216	0.001640810864046216	41	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	115	Orchestrator (-> WebSurfer)	False	0.0018528258660808206	0.0018528258660808206	25	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	116	Orchestrator (thought)	False	0.0010040280176326632	0.0010040280176326632	102	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	117	WebSurfer	False	0.0015691841254010797	0.0015691841254010797	68	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	118	Orchestrator (thought)	False	0.0016086269170045853	0.0016086269170045853	52	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	119	Orchestrator (thought)	False	0.0014077003579586744	0.0014077003579586744	92	False
+deepseek-8b	hand-crafted	backprop	14	test	30	120	120	Orchestrator (termination condition)	False	0.0015066381311044097	0.0015066381311044097	79	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	1	Orchestrator (thought)	False	0.0020045791752636433	0.0020045791752636433	13	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	2	Orchestrator (thought)	False	0.001632715342566371	0.001632715342566371	32	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	3	Orchestrator (-> WebSurfer)	True	0.002214329084381461	0.002214329084381461	8	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	4	WebSurfer	False	0.002436177572235465	0.002436177572235465	5	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	5	Orchestrator (thought)	False	0.0016367333009839058	0.0016367333009839058	30	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	6	Orchestrator (-> WebSurfer)	False	0.0019587615970522165	0.0019587615970522165	16	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	7	Orchestrator (thought)	False	0.0010532655287533998	0.0010532655287533998	55	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	8	WebSurfer	False	0.0020004650577902794	0.0020004650577902794	15	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	9	Orchestrator (thought)	False	0.0015564365312457085	0.0015564365312457085	44	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	10	Orchestrator (-> WebSurfer)	False	0.0019432991975918412	0.0019432991975918412	19	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	11	Orchestrator (thought)	False	0.0009844413725659251	0.0009844413725659251	61	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	12	WebSurfer	False	0.0020008995197713375	0.0020008995197713375	14	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	13	Orchestrator (thought)	False	0.0015876942779868841	0.0015876942779868841	39	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	14	Orchestrator (-> WebSurfer)	False	0.0016872759442776442	0.0016872759442776442	26	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	15	Orchestrator (thought)	False	0.00095741031691432	0.00095741031691432	63	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	16	WebSurfer	False	0.0014640113804489374	0.0014640113804489374	52	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	17	Orchestrator (thought)	False	0.0015335754724219441	0.0015335754724219441	46	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	18	Orchestrator (-> FileSurfer)	False	0.0018026367761194706	0.0018026367761194706	23	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	19	Orchestrator (thought)	False	0.0025726407766342163	0.0025726407766342163	4	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	20	FileSurfer	False	0.0018773365300148726	0.0018773365300148726	22	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	21	Orchestrator (thought)	False	0.0015270396834239364	0.0015270396834239364	49	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	22	Orchestrator (-> FileSurfer)	False	0.001634582644328475	0.001634582644328475	31	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	23	Orchestrator (thought)	False	0.00107078836299479	0.00107078836299479	54	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	24	FileSurfer	False	0.0019111435394734144	0.0019111435394734144	21	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	25	Orchestrator (thought)	False	0.00160572852473706	0.00160572852473706	37	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	26	Orchestrator (-> FileSurfer)	False	0.0016193886986002326	0.0016193886986002326	35	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	27	Orchestrator (thought)	False	0.0010349777294322848	0.0010349777294322848	56	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	28	FileSurfer	False	0.002070822287350893	0.002070822287350893	12	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	29	Orchestrator (thought)	False	0.0015313357580453157	0.0015313357580453157	47	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	30	Orchestrator (-> FileSurfer)	False	0.001658623805269599	0.001658623805269599	27	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	31	Orchestrator (thought)	False	0.0010270605562254786	0.0010270605562254786	57	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	32	FileSurfer	False	0.0022836425341665745	0.0022836425341665745	6	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	33	Orchestrator (thought)	False	0.0016537741757929325	0.0016537741757929325	28	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	34	Orchestrator (thought)	False	0.00263740262016654	0.00263740262016654	3	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	35	Orchestrator (thought)	False	0.001949331141076982	0.001949331141076982	17	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	36	Orchestrator (thought)	False	0.0015304585685953498	0.0015304585685953498	48	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	37	Orchestrator (-> WebSurfer)	False	0.0016916635213419795	0.0016916635213419795	25	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	38	Orchestrator (thought)	False	0.0010143730323761702	0.0010143730323761702	59	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	39	WebSurfer	False	0.0022529109846800566	0.0022529109846800566	7	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	40	Orchestrator (thought)	False	0.001563626923598349	0.001563626923598349	42	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	41	Orchestrator (-> FileSurfer)	False	0.001538293669000268	0.001538293669000268	45	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	42	Orchestrator (thought)	False	0.0010197435040026903	0.0010197435040026903	58	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	43	FileSurfer	False	0.0021942383609712124	0.0021942383609712124	9	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	44	Orchestrator (thought)	False	0.0015581556363031268	0.0015581556363031268	43	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	45	Orchestrator (-> WebSurfer)	False	0.001622807583771646	0.001622807583771646	34	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	46	Orchestrator (thought)	False	0.00099400884937495	0.00099400884937495	60	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	47	WebSurfer	False	0.0028615060728043318	0.0028615060728043318	2	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	48	Orchestrator (thought)	False	0.0015853847144171596	0.0015853847144171596	40	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	49	Orchestrator (-> WebSurfer)	False	0.001944835064932704	0.001944835064932704	18	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	50	Orchestrator (thought)	False	0.0011447621509432793	0.0011447621509432793	53	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	51	WebSurfer	False	0.002172422595322132	0.002172422595322132	10	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	52	Orchestrator (thought)	False	0.00162757548969239	0.00162757548969239	33	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	53	Orchestrator (-> WebSurfer)	False	0.001696937601082027	0.001696937601082027	24	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	54	Orchestrator (thought)	False	0.0009750945027917624	0.0009750945027917624	62	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	55	WebSurfer	False	0.0021221411880105734	0.0021221411880105734	11	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	56	Orchestrator (thought)	False	0.0016086274990811944	0.0016086274990811944	36	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	57	Orchestrator (-> WebSurfer)	False	0.001652378123253584	0.001652378123253584	29	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	58	Orchestrator (thought)	False	0.0009400704875588417	0.0009400704875588417	64	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	59	WebSurfer	False	0.0019422905752435327	0.0019422905752435327	20	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	60	Orchestrator (thought)	False	0.0015650249551981688	0.0015650249551981688	41	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	61	Orchestrator (-> WebSurfer)	False	0.0015885273460298777	0.0015885273460298777	38	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	62	Orchestrator (thought)	False	0.0009282928658649325	0.0009282928658649325	66	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	63	Orchestrator (thought)	False	0.0014990997733548284	0.0014990997733548284	50	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	64	Orchestrator (-> WebSurfer)	False	0.0014640887966379523	0.0014640887966379523	51	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	65	Orchestrator (thought)	False	0.0009344014106318355	0.0009344014106318355	65	False
+deepseek-8b	hand-crafted	backprop	14	test	20	66	66	WebSurfer	False	0.0034359588753432035	0.0034359588753432035	1	True
+deepseek-8b	hand-crafted	backprop	14	test	29	12	1	Orchestrator (thought)	False	0.0017986851744353771	0.0017986851744353771	4	False
+deepseek-8b	hand-crafted	backprop	14	test	29	12	2	Orchestrator (thought)	False	0.0014165497850626707	0.0014165497850626707	10	False
+deepseek-8b	hand-crafted	backprop	14	test	29	12	3	Orchestrator (-> WebSurfer)	False	0.0015369158936664462	0.0015369158936664462	7	False
+deepseek-8b	hand-crafted	backprop	14	test	29	12	4	WebSurfer	False	0.0022221137769520283	0.0022221137769520283	2	False
+deepseek-8b	hand-crafted	backprop	14	test	29	12	5	Orchestrator (thought)	False	0.0015003897715359926	0.0015003897715359926	8	False
+deepseek-8b	hand-crafted	backprop	14	test	29	12	6	Orchestrator (-> WebSurfer)	False	0.0016854825662449002	0.0016854825662449002	5	False
+deepseek-8b	hand-crafted	backprop	14	test	29	12	7	Orchestrator (thought)	False	0.0010083942906931043	0.0010083942906931043	11	False
+deepseek-8b	hand-crafted	backprop	14	test	29	12	8	WebSurfer	False	0.002078326651826501	0.002078326651826501	3	False
+deepseek-8b	hand-crafted	backprop	14	test	29	12	9	Orchestrator (thought)	False	0.0014608785277232528	0.0014608785277232528	9	False
+deepseek-8b	hand-crafted	backprop	14	test	29	12	10	Orchestrator (-> WebSurfer)	False	0.001586324186064303	0.001586324186064303	6	False
+deepseek-8b	hand-crafted	backprop	14	test	29	12	11	Orchestrator (thought)	False	0.0009732143953442574	0.0009732143953442574	12	False
+deepseek-8b	hand-crafted	backprop	14	test	29	12	12	WebSurfer	True	0.002848423784598708	0.002848423784598708	1	True
+deepseek-8b	hand-crafted	backprop	14	test	43	15	1	Orchestrator (thought)	False	0.0018678390188142657	0.0018678390188142657	5	False
+deepseek-8b	hand-crafted	backprop	14	test	43	15	2	Orchestrator (thought)	False	0.0015390435000881553	0.0015390435000881553	11	False
+deepseek-8b	hand-crafted	backprop	14	test	43	15	3	Orchestrator (-> WebSurfer)	False	0.0016625492135062814	0.0016625492135062814	8	False
+deepseek-8b	hand-crafted	backprop	14	test	43	15	4	WebSurfer	False	0.002284167567268014	0.002284167567268014	2	False
+deepseek-8b	hand-crafted	backprop	14	test	43	15	5	Orchestrator (thought)	False	0.0015382145065814257	0.0015382145065814257	12	False
+deepseek-8b	hand-crafted	backprop	14	test	43	15	6	Orchestrator (-> WebSurfer)	False	0.0015161732444539666	0.0015161732444539666	13	False
+deepseek-8b	hand-crafted	backprop	14	test	43	15	7	Orchestrator (thought)	False	0.0009807409951463342	0.0009807409951463342	15	False
+deepseek-8b	hand-crafted	backprop	14	test	43	15	8	WebSurfer	False	0.0021233847364783287	0.0021233847364783287	3	False
+deepseek-8b	hand-crafted	backprop	14	test	43	15	9	Orchestrator (thought)	False	0.0015854507219046354	0.0015854507219046354	10	False
+deepseek-8b	hand-crafted	backprop	14	test	43	15	10	Orchestrator (-> Assistant)	False	0.0017420575022697449	0.0017420575022697449	6	False
+deepseek-8b	hand-crafted	backprop	14	test	43	15	11	Orchestrator (thought)	False	0.0027646480593830347	0.0027646480593830347	1	True
+deepseek-8b	hand-crafted	backprop	14	test	43	15	12	Assistant	True	0.0019178696675226092	0.0019178696675226092	4	False
+deepseek-8b	hand-crafted	backprop	14	test	43	15	13	Orchestrator (thought)	False	0.0017152309883385897	0.0017152309883385897	7	False
+deepseek-8b	hand-crafted	backprop	14	test	43	15	14	Orchestrator (thought)	False	0.001047275261953473	0.001047275261953473	14	False
+deepseek-8b	hand-crafted	backprop	14	test	43	15	15	Orchestrator (termination condition)	False	0.0016223639249801636	0.0016223639249801636	9	False
+deepseek-8b	hand-crafted	backprop	14	test	5	19	1	Orchestrator (thought)	False	0.001857064082287252	0.001857064082287252	5	False
+deepseek-8b	hand-crafted	backprop	14	test	5	19	2	Orchestrator (thought)	False	0.001410083961673081	0.001410083961673081	15	False
+deepseek-8b	hand-crafted	backprop	14	test	5	19	3	Orchestrator (-> WebSurfer)	False	0.0015863677253946662	0.0015863677253946662	12	False
+deepseek-8b	hand-crafted	backprop	14	test	5	19	4	WebSurfer	False	0.0023462793324142694	0.0023462793324142694	2	False
+deepseek-8b	hand-crafted	backprop	14	test	5	19	5	Orchestrator (thought)	False	0.0015786157455295324	0.0015786157455295324	13	False
+deepseek-8b	hand-crafted	backprop	14	test	5	19	6	Orchestrator (-> WebSurfer)	False	0.001686333678662777	0.001686333678662777	9	False
+deepseek-8b	hand-crafted	backprop	14	test	5	19	7	Orchestrator (thought)	False	0.0010094245662912726	0.0010094245662912726	16	False
+deepseek-8b	hand-crafted	backprop	14	test	5	19	8	WebSurfer	False	0.0022576437331736088	0.0022576437331736088	3	False
+deepseek-8b	hand-crafted	backprop	14	test	5	19	9	Orchestrator (thought)	False	0.0017681721365079284	0.0017681721365079284	7	False
+deepseek-8b	hand-crafted	backprop	14	test	5	19	10	Orchestrator (-> WebSurfer)	False	0.0018089787336066365	0.0018089787336066365	6	False
+deepseek-8b	hand-crafted	backprop	14	test	5	19	11	Orchestrator (thought)	False	0.00099350162781775	0.00099350162781775	18	False
+deepseek-8b	hand-crafted	backprop	14	test	5	19	12	WebSurfer	True	0.0026548474561423063	0.0026548474561423063	1	True
+deepseek-8b	hand-crafted	backprop	14	test	5	19	13	Orchestrator (thought)	False	0.001679117907769978	0.001679117907769978	10	False
+deepseek-8b	hand-crafted	backprop	14	test	5	19	14	Orchestrator (-> WebSurfer)	False	0.0017481293762102723	0.0017481293762102723	8	False
+deepseek-8b	hand-crafted	backprop	14	test	5	19	15	Orchestrator (thought)	False	0.0009647303377278149	0.0009647303377278149	19	False
+deepseek-8b	hand-crafted	backprop	14	test	5	19	16	WebSurfer	False	0.0021211551502346992	0.0021211551502346992	4	False
+deepseek-8b	hand-crafted	backprop	14	test	5	19	17	Orchestrator (thought)	False	0.0016482011415064335	0.0016482011415064335	11	False
+deepseek-8b	hand-crafted	backprop	14	test	5	19	18	Orchestrator (thought)	False	0.0009990010876208544	0.0009990010876208544	17	False
+deepseek-8b	hand-crafted	backprop	14	test	5	19	19	Orchestrator (termination condition)	False	0.0015451883664354682	0.0015451883664354682	14	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	1	Orchestrator (thought)	False	0.0018156374571844935	0.0018156374571844935	41	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	2	Orchestrator (thought)	False	0.0013903878862038255	0.0013903878862038255	53	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	3	Orchestrator (-> WebSurfer)	False	0.0016974511090666056	0.0016974511090666056	48	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	4	WebSurfer	False	0.002225584350526333	0.002225584350526333	21	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	5	Orchestrator (thought)	False	0.001551802852191031	0.001551802852191031	51	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	6	Orchestrator (-> WebSurfer)	False	0.0019218254601582885	0.0019218254601582885	32	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	7	Orchestrator (thought)	False	0.0010106220142915845	0.0010106220142915845	64	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	8	WebSurfer	False	0.002086434280499816	0.002086434280499816	27	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	9	Orchestrator (thought)	False	0.0015144768403843045	0.0015144768403843045	52	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	10	Orchestrator (-> WebSurfer)	False	0.0016507395775988698	0.0016507395775988698	50	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	11	Orchestrator (thought)	False	0.0009856841061264277	0.0009856841061264277	65	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	12	WebSurfer	False	0.00548605527728796	0.00548605527728796	1	True
+deepseek-8b	hand-crafted	backprop	14	test	47	66	13	Orchestrator (thought)	False	0.0018644900992512703	0.0018644900992512703	36	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	14	Orchestrator (-> FileSurfer)	False	0.0022183028049767017	0.0022183028049767017	22	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	15	Orchestrator (thought)	False	0.0023947018198668957	0.0023947018198668957	11	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	16	FileSurfer	False	0.0019217785447835922	0.0019217785447835922	33	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	17	Orchestrator (thought)	False	0.0017874912591651082	0.0017874912591651082	44	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	18	Orchestrator (-> FileSurfer)	False	0.0022614370100200176	0.0022614370100200176	16	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	19	Orchestrator (thought)	False	0.001089828205294907	0.001089828205294907	56	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	20	FileSurfer	False	0.0025447190273553133	0.0025447190273553133	10	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	21	Orchestrator (thought)	False	0.001713864505290985	0.001713864505290985	47	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	22	Orchestrator (-> FileSurfer)	False	0.002363713923841715	0.002363713923841715	12	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	23	Orchestrator (thought)	False	0.0010735937394201756	0.0010735937394201756	58	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	24	FileSurfer	False	0.00209172279573977	0.00209172279573977	26	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	25	Orchestrator (thought)	False	0.0018181586638092995	0.0018181586638092995	40	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	26	Orchestrator (-> FileSurfer)	False	0.00231378898024559	0.00231378898024559	14	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	27	Orchestrator (thought)	False	0.0010858811438083649	0.0010858811438083649	57	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	28	FileSurfer	False	0.0022434501443058252	0.0022434501443058252	18	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	29	Orchestrator (thought)	False	0.0018532391404733062	0.0018532391404733062	38	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	30	Orchestrator (-> FileSurfer)	False	0.002242770977318287	0.002242770977318287	20	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	31	Orchestrator (thought)	False	0.0010915821185335517	0.0010915821185335517	55	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	32	FileSurfer	False	0.0022710992489010096	0.0022710992489010096	15	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	33	Orchestrator (thought)	False	0.0018382897833362222	0.0018382897833362222	39	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	34	Orchestrator (-> FileSurfer)	False	0.0022031895350664854	0.0022031895350664854	23	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	35	Orchestrator (thought)	False	0.0010381484171375632	0.0010381484171375632	62	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	36	FileSurfer	False	0.001786356559023261	0.001786356559023261	45	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	37	Orchestrator (thought)	False	0.0019039269536733627	0.0019039269536733627	34	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	38	Orchestrator (-> FileSurfer)	False	0.0022433639969676733	0.0022433639969676733	19	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	39	Orchestrator (thought)	False	0.001059692818671465	0.001059692818671465	60	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	40	FileSurfer	False	0.0022452697157859802	0.0022452697157859802	17	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	41	Orchestrator (thought)	False	0.0018011251231655478	0.0018011251231655478	42	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	42	Orchestrator (-> FileSurfer)	False	0.002152366330847144	0.002152366330847144	25	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	43	Orchestrator (thought)	False	0.0010574004845693707	0.0010574004845693707	61	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	44	FileSurfer	False	0.0023374713491648436	0.0023374713491648436	13	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	45	Orchestrator (thought)	False	0.001895452500320971	0.001895452500320971	35	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	46	Orchestrator (-> ComputerTerminal)	False	0.0025920795742422342	0.0025920795742422342	9	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	47	Orchestrator (thought)	False	0.0011175737017765641	0.0011175737017765641	54	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	48	ComputerTerminal	False	0.0017934429924935102	0.0017934429924935102	43	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	49	Orchestrator (thought)	False	0.0020088814198970795	0.0020088814198970795	28	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	50	Orchestrator (thought)	False	0.0026956298388540745	0.0026956298388540745	6	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	51	Orchestrator (thought)	True	0.0019303240114822984	0.0019303240114822984	30	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	52	Orchestrator (thought)	False	0.0019329458009451628	0.0019329458009451628	29	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	53	Orchestrator (-> ComputerTerminal)	False	0.0028681259136646986	0.0028681259136646986	5	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	54	Orchestrator (thought)	False	0.0010310460347682238	0.0010310460347682238	63	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	55	ComputerTerminal	False	0.00368516705930233	0.00368516705930233	2	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	56	Orchestrator (thought)	False	0.001755978912115097	0.001755978912115097	46	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	57	Orchestrator (-> Assistant)	False	0.0018585764337331057	0.0018585764337331057	37	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	58	Orchestrator (thought)	False	0.003080119611695409	0.003080119611695409	4	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	59	Assistant	False	0.0026873897295445204	0.0026873897295445204	7	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	60	Orchestrator (thought)	False	0.0016681902343407273	0.0016681902343407273	49	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	61	Orchestrator (-> ComputerTerminal)	False	0.001924928743392229	0.001924928743392229	31	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	62	Orchestrator (thought)	False	0.0010641112457960844	0.0010641112457960844	59	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	63	ComputerTerminal	False	0.003677366767078638	0.003677366767078638	3	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	64	Orchestrator (thought)	False	0.0021550357341766357	0.0021550357341766357	24	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	65	Orchestrator (thought)	False	0.0009703165269456804	0.0009703165269456804	66	False
+deepseek-8b	hand-crafted	backprop	14	test	47	66	66	Orchestrator (termination condition)	False	0.002622599946334958	0.002622599946334958	8	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	1	Orchestrator (thought)	False	0.0018843387952074409	0.0018843387952074409	14	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	2	Orchestrator (thought)	False	0.0015344178536906838	0.0015344178536906838	46	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	3	Orchestrator (-> WebSurfer)	False	0.001850200816988945	0.001850200816988945	16	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	4	WebSurfer	False	0.002517965156584978	0.002517965156584978	4	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	5	Orchestrator (thought)	False	0.001453974051401019	0.001453974051401019	52	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	6	Orchestrator (-> WebSurfer)	False	0.0017462890828028321	0.0017462890828028321	21	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	7	Orchestrator (thought)	False	0.001008282182738185	0.001008282182738185	55	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	8	WebSurfer	False	0.002127680229023099	0.002127680229023099	7	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	9	Orchestrator (thought)	False	0.00153464381583035	0.00153464381583035	45	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	10	Orchestrator (-> WebSurfer)	False	0.001495762960985303	0.001495762960985303	51	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	11	Orchestrator (thought)	False	0.000980214448645711	0.000980214448645711	59	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	12	WebSurfer	False	0.0018259836360812187	0.0018259836360812187	17	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	13	Orchestrator (thought)	False	0.0015501423040404916	0.0015501423040404916	41	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	14	Orchestrator (-> WebSurfer)	False	0.0017477243673056364	0.0017477243673056364	20	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	15	Orchestrator (thought)	False	0.0009627697872929275	0.0009627697872929275	62	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	16	WebSurfer	False	0.0020342690404504538	0.0020342690404504538	10	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	17	Orchestrator (thought)	False	0.001417262014001608	0.001417262014001608	53	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	18	Orchestrator (-> WebSurfer)	False	0.001587385660968721	0.001587385660968721	35	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	19	Orchestrator (thought)	False	0.0009474452235735953	0.0009474452235735953	64	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	20	WebSurfer	False	0.002511319937184453	0.002511319937184453	5	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	21	Orchestrator (thought)	False	0.0015567338559776545	0.0015567338559776545	40	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	22	Orchestrator (-> Assistant)	False	0.0017590800998732448	0.0017590800998732448	19	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	23	Orchestrator (thought)	False	0.0028155783656984568	0.0028155783656984568	1	True
+deepseek-8b	hand-crafted	backprop	14	test	19	68	24	Assistant	False	0.0018651181599125266	0.0018651181599125266	15	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	25	Orchestrator (thought)	False	0.001501474529504776	0.001501474529504776	50	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	26	Orchestrator (-> WebSurfer)	False	0.0015199232148006558	0.0015199232148006558	49	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	27	Orchestrator (thought)	False	0.0009965751087293029	0.0009965751087293029	58	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	28	WebSurfer	False	0.002196199493482709	0.002196199493482709	6	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	29	Orchestrator (thought)	False	0.0016052925493568182	0.0016052925493568182	34	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	30	Orchestrator (-> WebSurfer)	False	0.00170737667940557	0.00170737667940557	25	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	31	Orchestrator (thought)	False	0.0009693556930869818	0.0009693556930869818	60	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	32	WebSurfer	False	0.001924932119436562	0.001924932119436562	13	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	33	Orchestrator (thought)	False	0.0015800503315404058	0.0015800503315404058	36	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	34	Orchestrator (-> WebSurfer)	False	0.0015783333219587803	0.0015783333219587803	38	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	35	Orchestrator (thought)	False	0.0009182566427625716	0.0009182566427625716	68	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	36	WebSurfer	False	0.002121240831911564	0.002121240831911564	8	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	37	Orchestrator (thought)	False	0.0015320468228310347	0.0015320468228310347	47	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	38	Orchestrator (-> WebSurfer)	False	0.0015299060614779592	0.0015299060614779592	48	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	39	Orchestrator (thought)	False	0.0009288923465646803	0.0009288923465646803	67	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	40	WebSurfer	False	0.0016301636351272464	0.0016301636351272464	31	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	41	Orchestrator (thought)	False	0.0016278980765491724	0.0016278980765491724	32	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	42	Orchestrator (-> WebSurfer)	False	0.0016793510876595974	0.0016793510876595974	27	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	43	Orchestrator (thought)	False	0.0009552198462188244	0.0009552198462188244	63	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	44	WebSurfer	False	0.001659909961745143	0.001659909961745143	28	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	45	Orchestrator (thought)	False	0.0015788060845807195	0.0015788060845807195	37	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	46	Orchestrator (-> WebSurfer)	False	0.0014077360974624753	0.0014077360974624753	54	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	47	Orchestrator (thought)	False	0.0009663421078585088	0.0009663421078585088	61	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	48	WebSurfer	False	0.0017359176417812705	0.0017359176417812705	22	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	49	Orchestrator (thought)	False	0.0017305494984611869	0.0017305494984611869	23	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	50	Orchestrator (thought)	True	0.0027278917841613293	0.0027278917841613293	2	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	51	Orchestrator (thought)	False	0.0017205780604854226	0.0017205780604854226	24	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	52	Orchestrator (thought)	False	0.0015457702102139592	0.0015457702102139592	42	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	53	Orchestrator (-> WebSurfer)	False	0.0016472269780933857	0.0016472269780933857	29	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	54	Orchestrator (thought)	False	0.0009389632614329457	0.0009389632614329457	65	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	55	WebSurfer	False	0.0020821113139390945	0.0020821113139390945	9	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	56	Orchestrator (thought)	False	0.0016209775349125266	0.0016209775349125266	33	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	57	Orchestrator (-> WebSurfer)	False	0.0015403012512251735	0.0015403012512251735	44	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	58	Orchestrator (thought)	False	0.0009289152803830802	0.0009289152803830802	66	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	59	WebSurfer	False	0.002000402892008424	0.002000402892008424	12	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	60	Orchestrator (thought)	False	0.00163646275177598	0.00163646275177598	30	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	61	Orchestrator (-> WebSurfer)	False	0.001768928486853838	0.001768928486853838	18	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	62	Orchestrator (thought)	False	0.0010005870135501027	0.0010005870135501027	57	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	63	WebSurfer	False	0.002024544170126319	0.002024544170126319	11	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	64	Orchestrator (thought)	False	0.0015437265392392874	0.0015437265392392874	43	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	65	Orchestrator (-> WebSurfer)	False	0.0016812450485303998	0.0016812450485303998	26	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	66	Orchestrator (thought)	False	0.001004328834824264	0.001004328834824264	56	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	67	WebSurfer	False	0.0025921131018549204	0.0025921131018549204	3	False
+deepseek-8b	hand-crafted	backprop	14	test	19	68	68	Orchestrator (termination condition)	False	0.001567335450090468	0.001567335450090468	39	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	1	Orchestrator (thought)	False	0.001962763024494052	0.001962763024494052	9	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	2	Orchestrator (thought)	False	0.0016085755778476596	0.0016085755778476596	25	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	3	Orchestrator (-> WebSurfer)	False	0.0013499869965016842	0.0013499869965016842	28	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	4	WebSurfer	False	0.0023853627499192953	0.0023853627499192953	3	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	5	Orchestrator (thought)	False	0.0017465417040511966	0.0017465417040511966	19	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	6	Orchestrator (-> WebSurfer)	False	0.0016773055540397763	0.0016773055540397763	23	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	7	Orchestrator (thought)	False	0.0010596633655950427	0.0010596633655950427	29	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	8	WebSurfer	True	0.0022400261368602514	0.0022400261368602514	7	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	9	Orchestrator (thought)	False	0.0017974135698750615	0.0017974135698750615	14	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	10	Orchestrator (-> WebSurfer)	False	0.0018173480639234185	0.0018173480639234185	11	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	11	Orchestrator (thought)	False	0.0010105064138770103	0.0010105064138770103	33	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	12	WebSurfer	False	0.0020760283805429935	0.0020760283805429935	8	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	13	Orchestrator (thought)	False	0.0018106994684785604	0.0018106994684785604	12	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	14	Orchestrator (-> WebSurfer)	False	0.0017462436808273196	0.0017462436808273196	20	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	15	Orchestrator (thought)	False	0.000996916787698865	0.000996916787698865	34	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	16	WebSurfer	False	0.0023543264251202345	0.0023543264251202345	4	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	17	Orchestrator (thought)	False	0.0018972759135067463	0.0018972759135067463	10	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	18	Orchestrator (-> WebSurfer)	False	0.0017920593963935971	0.0017920593963935971	17	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	19	Orchestrator (thought)	False	0.0010117640485987067	0.0010117640485987067	32	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	20	WebSurfer	False	0.002273359801620245	0.002273359801620245	5	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	21	Orchestrator (thought)	False	0.0017959114629775286	0.0017959114629775286	15	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	22	Orchestrator (-> WebSurfer)	False	0.0017939748940989375	0.0017939748940989375	16	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	23	Orchestrator (thought)	False	0.001032668398693204	0.001032668398693204	30	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	24	WebSurfer	False	0.0017603465821594	0.0017603465821594	18	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	25	Orchestrator (thought)	False	0.0017998513067141175	0.0017998513067141175	13	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	26	Orchestrator (-> WebSurfer)	False	0.001542402314953506	0.001542402314953506	27	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	27	Orchestrator (thought)	False	0.0010177966905757785	0.0010177966905757785	31	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	28	WebSurfer	False	0.002271887846291065	0.002271887846291065	6	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	29	Orchestrator (thought)	False	0.0017170743085443974	0.0017170743085443974	22	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	30	Orchestrator (-> WebSurfer)	False	0.001630752463825047	0.001630752463825047	24	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	31	Orchestrator (thought)	False	0.0009600181365385652	0.0009600181365385652	36	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	32	WebSurfer	False	0.0023977896198630333	0.0023977896198630333	2	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	33	Orchestrator (thought)	False	0.001743432367220521	0.001743432367220521	21	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	34	Orchestrator (-> WebSurfer)	False	0.0015974120469763875	0.0015974120469763875	26	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	35	Orchestrator (thought)	False	0.0009807725436985493	0.0009807725436985493	35	False
+deepseek-8b	hand-crafted	backprop	14	test	17	36	36	WebSurfer	False	0.00389162078499794	0.00389162078499794	1	True
+deepseek-8b	hand-crafted	backprop	14	test	48	4	1	Orchestrator (thought)	False	0.0019405139610171318	0.0019405139610171318	2	False
+deepseek-8b	hand-crafted	backprop	14	test	48	4	2	Orchestrator (thought)	False	0.0014298305613920093	0.0014298305613920093	4	False
+deepseek-8b	hand-crafted	backprop	14	test	48	4	3	Orchestrator (-> WebSurfer)	False	0.001695331302471459	0.001695331302471459	3	False
+deepseek-8b	hand-crafted	backprop	14	test	48	4	4	WebSurfer	True	0.002645870903506875	0.002645870903506875	1	True
+deepseek-8b	hand-crafted	backprop	14	test	18	30	1	Orchestrator (thought)	False	0.0018251114524900913	0.0018251114524900913	10	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	2	Orchestrator (thought)	False	0.0014970344491302967	0.0014970344491302967	21	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	3	Orchestrator (-> WebSurfer)	False	0.0016698798863217235	0.0016698798863217235	13	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	4	WebSurfer	False	0.002681639976799488	0.002681639976799488	3	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	5	Orchestrator (thought)	False	0.0015776475192978978	0.0015776475192978978	16	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	6	Orchestrator (-> WebSurfer)	False	0.0014882282121106982	0.0014882282121106982	24	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	7	Orchestrator (thought)	False	0.0010300172725692391	0.0010300172725692391	26	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	8	WebSurfer	False	0.003112569684162736	0.003112569684162736	1	True
+deepseek-8b	hand-crafted	backprop	14	test	18	30	9	Orchestrator (thought)	False	0.0015478042187169194	0.0015478042187169194	19	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	10	Orchestrator (-> WebSurfer)	False	0.0016743981977924705	0.0016743981977924705	12	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	11	Orchestrator (thought)	False	0.0009753131889738142	0.0009753131889738142	29	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	12	WebSurfer	False	0.0026083041448146105	0.0026083041448146105	6	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	13	Orchestrator (thought)	False	0.0015528624644502997	0.0015528624644502997	18	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	14	Orchestrator (-> WebSurfer)	False	0.001496336655691266	0.001496336655691266	22	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	15	Orchestrator (thought)	False	0.000977689167484641	0.000977689167484641	28	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	16	WebSurfer	True	0.003002302488312125	0.003002302488312125	2	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	17	Orchestrator (thought)	False	0.0015682474477216601	0.0015682474477216601	17	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	18	Orchestrator (-> WebSurfer)	False	0.0016552653396502137	0.0016552653396502137	14	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	19	Orchestrator (thought)	False	0.0009950026869773865	0.0009950026869773865	27	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	20	WebSurfer	False	0.0018924061441794038	0.0018924061441794038	8	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	21	Orchestrator (thought)	False	0.0015845707384869456	0.0015845707384869456	15	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	22	Orchestrator (thought)	False	0.0026599676348268986	0.0026599676348268986	4	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	23	Orchestrator (thought)	False	0.0018528818618506193	0.0018528818618506193	9	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	24	Orchestrator (thought)	False	0.001492328941822052	0.001492328941822052	23	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	25	Orchestrator (-> WebSurfer)	False	0.0015126478392630816	0.0015126478392630816	20	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	26	Orchestrator (thought)	False	0.0009660618961788714	0.0009660618961788714	30	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	27	WebSurfer	False	0.0024344006087630987	0.0024344006087630987	7	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	28	Orchestrator (thought)	False	0.001822203048504889	0.001822203048504889	11	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	29	Orchestrator (thought)	False	0.0010358134750276804	0.0010358134750276804	25	False
+deepseek-8b	hand-crafted	backprop	14	test	18	30	30	Orchestrator (termination condition)	False	0.002658458426594734	0.002658458426594734	5	False
+deepseek-8b	hand-crafted	backprop	14	test	16	20	1	Orchestrator (thought)	False	0.0018953288672491908	0.0018953288672491908	6	False
+deepseek-8b	hand-crafted	backprop	14	test	16	20	2	Orchestrator (thought)	False	0.001544820610433817	0.001544820610433817	16	False
+deepseek-8b	hand-crafted	backprop	14	test	16	20	3	Orchestrator (-> WebSurfer)	False	0.0017326523084193468	0.0017326523084193468	8	False
+deepseek-8b	hand-crafted	backprop	14	test	16	20	4	WebSurfer	False	0.0023722699843347073	0.0023722699843347073	2	False
+deepseek-8b	hand-crafted	backprop	14	test	16	20	5	Orchestrator (thought)	False	0.0016089456621557474	0.0016089456621557474	12	False
+deepseek-8b	hand-crafted	backprop	14	test	16	20	6	Orchestrator (-> WebSurfer)	False	0.0015601038467139006	0.0015601038467139006	15	False
+deepseek-8b	hand-crafted	backprop	14	test	16	20	7	Orchestrator (thought)	False	0.0010374605190008879	0.0010374605190008879	17	False
+deepseek-8b	hand-crafted	backprop	14	test	16	20	8	WebSurfer	False	0.0021238839253783226	0.0021238839253783226	4	False
+deepseek-8b	hand-crafted	backprop	14	test	16	20	9	Orchestrator (thought)	False	0.0016579938819631934	0.0016579938819631934	10	False
+deepseek-8b	hand-crafted	backprop	14	test	16	20	10	Orchestrator (-> WebSurfer)	False	0.0018682903610169888	0.0018682903610169888	7	False
+deepseek-8b	hand-crafted	backprop	14	test	16	20	11	Orchestrator (thought)	False	0.0009781613480299711	0.0009781613480299711	18	False
+deepseek-8b	hand-crafted	backprop	14	test	16	20	12	WebSurfer	False	0.001932488870806992	0.001932488870806992	5	False
+deepseek-8b	hand-crafted	backprop	14	test	16	20	13	Orchestrator (thought)	False	0.001577853225171566	0.001577853225171566	14	False
+deepseek-8b	hand-crafted	backprop	14	test	16	20	14	Orchestrator (-> WebSurfer)	False	0.0016542256344109774	0.0016542256344109774	11	False
+deepseek-8b	hand-crafted	backprop	14	test	16	20	15	Orchestrator (thought)	True	0.0009628594852983952	0.0009628594852983952	19	False
+deepseek-8b	hand-crafted	backprop	14	test	16	20	16	WebSurfer	False	0.002130131470039487	0.002130131470039487	3	False
+deepseek-8b	hand-crafted	backprop	14	test	16	20	17	Orchestrator (thought)	False	0.0015903802122920752	0.0015903802122920752	13	False
+deepseek-8b	hand-crafted	backprop	14	test	16	20	18	Orchestrator (-> WebSurfer)	False	0.0016757504781708121	0.0016757504781708121	9	False
+deepseek-8b	hand-crafted	backprop	14	test	16	20	19	Orchestrator (thought)	False	0.0009597704629413784	0.0009597704629413784	20	False
+deepseek-8b	hand-crafted	backprop	14	test	16	20	20	WebSurfer	False	0.002895536832511425	0.002895536832511425	1	True
+deepseek-8b	hand-crafted	backprop	14	test	34	4	1	Orchestrator (thought)	False	0.002034886507317424	0.002034886507317424	2	False
+deepseek-8b	hand-crafted	backprop	14	test	34	4	2	Orchestrator (thought)	False	0.0015603384235873818	0.0015603384235873818	4	False
+deepseek-8b	hand-crafted	backprop	14	test	34	4	3	Orchestrator (-> WebSurfer)	False	0.0016915790038183331	0.0016915790038183331	3	False
+deepseek-8b	hand-crafted	backprop	14	test	34	4	4	WebSurfer	True	0.0026297501754015684	0.0026297501754015684	1	True
+deepseek-8b	hand-crafted	backprop	14	test	42	31	1	Orchestrator (thought)	False	0.001796636381186545	0.001796636381186545	9	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	2	Orchestrator (thought)	False	0.0014685182832181454	0.0014685182832181454	23	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	3	Orchestrator (-> WebSurfer)	False	0.0017207248602062464	0.0017207248602062464	10	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	4	WebSurfer	False	0.0022701642010360956	0.0022701642010360956	5	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	5	Orchestrator (thought)	False	0.0015094592235982418	0.0015094592235982418	21	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	6	Orchestrator (-> WebSurfer)	False	0.0015745715936645865	0.0015745715936645865	16	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	7	Orchestrator (thought)	False	0.0009580287151038647	0.0009580287151038647	29	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	8	WebSurfer	False	0.0021132214460521936	0.0021132214460521936	7	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	9	Orchestrator (thought)	False	0.0014839625218883157	0.0014839625218883157	22	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	10	Orchestrator (-> WebSurfer)	False	0.0015281358500942588	0.0015281358500942588	20	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	11	Orchestrator (thought)	False	0.0009485863265581429	0.0009485863265581429	30	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	12	WebSurfer	False	0.0021946716587990522	0.0021946716587990522	6	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	13	Orchestrator (thought)	False	0.0015667080879211426	0.0015667080879211426	18	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	14	Orchestrator (-> WebSurfer)	False	0.0015825146110728383	0.0015825146110728383	15	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	15	Orchestrator (thought)	False	0.0009481784654781222	0.0009481784654781222	31	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	16	WebSurfer	False	0.002500558504834771	0.002500558504834771	4	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	17	Orchestrator (thought)	False	0.0016092427540570498	0.0016092427540570498	14	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	18	Orchestrator (-> WebSurfer)	False	0.0015707432758063078	0.0015707432758063078	17	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	19	Orchestrator (thought)	False	0.0009824660373851657	0.0009824660373851657	27	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	20	WebSurfer	False	0.0028496889863163233	0.0028496889863163233	1	True
+deepseek-8b	hand-crafted	backprop	14	test	42	31	21	Orchestrator (thought)	False	0.0016481000930070877	0.0016481000930070877	13	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	22	Orchestrator (-> WebSurfer)	False	0.0018053629901260138	0.0018053629901260138	8	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	23	Orchestrator (thought)	False	0.0009948598453775048	0.0009948598453775048	25	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	24	WebSurfer	False	0.0028159641660749912	0.0028159641660749912	2	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	25	Orchestrator (thought)	False	0.001705406466498971	0.001705406466498971	11	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	26	Orchestrator (-> WebSurfer)	False	0.0015525687485933304	0.0015525687485933304	19	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	27	Orchestrator (thought)	False	0.0009891327936202288	0.0009891327936202288	26	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	28	WebSurfer	False	0.0025989499408751726	0.0025989499408751726	3	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	29	Orchestrator (thought)	True	0.0016545788384974003	0.0016545788384974003	12	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	30	Orchestrator (thought)	False	0.0009660318028181791	0.0009660318028181791	28	False
+deepseek-8b	hand-crafted	backprop	14	test	42	31	31	Orchestrator (termination condition)	False	0.0014314840082079172	0.0014314840082079172	24	False
+deepseek-8b	hand-crafted	backprop	14	test	49	15	1	Orchestrator (thought)	False	0.0018852336797863245	0.0018852336797863245	5	False
+deepseek-8b	hand-crafted	backprop	14	test	49	15	2	Orchestrator (thought)	False	0.0015909968642517924	0.0015909968642517924	12	False
+deepseek-8b	hand-crafted	backprop	14	test	49	15	3	Orchestrator (-> WebSurfer)	False	0.0017258361913263798	0.0017258361913263798	7	False
+deepseek-8b	hand-crafted	backprop	14	test	49	15	4	WebSurfer	False	0.0023748166859149933	0.0023748166859149933	2	False
+deepseek-8b	hand-crafted	backprop	14	test	49	15	5	Orchestrator (thought)	False	0.001586200320161879	0.001586200320161879	13	False
+deepseek-8b	hand-crafted	backprop	14	test	49	15	6	Orchestrator (-> WebSurfer)	False	0.001686250907368958	0.001686250907368958	9	False
+deepseek-8b	hand-crafted	backprop	14	test	49	15	7	Orchestrator (thought)	False	0.0010209965985268354	0.0010209965985268354	15	False
+deepseek-8b	hand-crafted	backprop	14	test	49	15	8	WebSurfer	False	0.002373118419200182	0.002373118419200182	3	False
+deepseek-8b	hand-crafted	backprop	14	test	49	15	9	Orchestrator (thought)	False	0.0016618977533653378	0.0016618977533653378	10	False
+deepseek-8b	hand-crafted	backprop	14	test	49	15	10	Orchestrator (-> Assistant)	False	0.001794450799934566	0.001794450799934566	6	False
+deepseek-8b	hand-crafted	backprop	14	test	49	15	11	Orchestrator (thought)	False	0.003008452709764242	0.003008452709764242	1	True
+deepseek-8b	hand-crafted	backprop	14	test	49	15	12	Assistant	True	0.0021754971239715815	0.0021754971239715815	4	False
+deepseek-8b	hand-crafted	backprop	14	test	49	15	13	Orchestrator (thought)	False	0.0017228875076398253	0.0017228875076398253	8	False
+deepseek-8b	hand-crafted	backprop	14	test	49	15	14	Orchestrator (thought)	False	0.0010317496489733458	0.0010317496489733458	14	False
+deepseek-8b	hand-crafted	backprop	14	test	49	15	15	Orchestrator (termination condition)	False	0.0016161673702299595	0.0016161673702299595	11	False
+deepseek-8b	hand-crafted	backprop	14	test	45	20	1	Orchestrator (thought)	False	0.0022170566953718662	0.0022170566953718662	4	False
+deepseek-8b	hand-crafted	backprop	14	test	45	20	2	Orchestrator (thought)	False	0.0017255733255296946	0.0017255733255296946	12	False
+deepseek-8b	hand-crafted	backprop	14	test	45	20	3	Orchestrator (-> WebSurfer)	False	0.002002097899094224	0.002002097899094224	5	False
+deepseek-8b	hand-crafted	backprop	14	test	45	20	4	WebSurfer	False	0.0026428960263729095	0.0026428960263729095	2	False
+deepseek-8b	hand-crafted	backprop	14	test	45	20	5	Orchestrator (thought)	False	0.0018721837550401688	0.0018721837550401688	8	False
+deepseek-8b	hand-crafted	backprop	14	test	45	20	6	Orchestrator (-> WebSurfer)	False	0.0018002589931711555	0.0018002589931711555	9	False
+deepseek-8b	hand-crafted	backprop	14	test	45	20	7	Orchestrator (thought)	False	0.0010125635890290141	0.0010125635890290141	17	False
+deepseek-8b	hand-crafted	backprop	14	test	45	20	8	WebSurfer	False	0.0023367421235889196	0.0023367421235889196	3	False
+deepseek-8b	hand-crafted	backprop	14	test	45	20	9	Orchestrator (thought)	False	0.0018928394420072436	0.0018928394420072436	6	False
+deepseek-8b	hand-crafted	backprop	14	test	45	20	10	Orchestrator (-> WebSurfer)	False	0.001742844469845295	0.001742844469845295	11	False
+deepseek-8b	hand-crafted	backprop	14	test	45	20	11	Orchestrator (thought)	False	0.0009699566871859133	0.0009699566871859133	18	False
+deepseek-8b	hand-crafted	backprop	14	test	45	20	12	Orchestrator (thought)	False	0.0016698760446161032	0.0016698760446161032	14	False
+deepseek-8b	hand-crafted	backprop	14	test	45	20	13	Orchestrator (-> WebSurfer)	False	0.0015761107206344604	0.0015761107206344604	16	False
+deepseek-8b	hand-crafted	backprop	14	test	45	20	14	Orchestrator (thought)	False	0.0009627399849705398	0.0009627399849705398	19	False
+deepseek-8b	hand-crafted	backprop	14	test	45	20	15	Orchestrator (thought)	False	0.0018869610503315926	0.0018869610503315926	7	False
+deepseek-8b	hand-crafted	backprop	14	test	45	20	16	Orchestrator (-> WebSurfer)	False	0.0016301850555464625	0.0016301850555464625	15	False
+deepseek-8b	hand-crafted	backprop	14	test	45	20	17	Orchestrator (thought)	False	0.0009427020559087396	0.0009427020559087396	20	False
+deepseek-8b	hand-crafted	backprop	14	test	45	20	18	Orchestrator (thought)	False	0.0017870564479380846	0.0017870564479380846	10	False
+deepseek-8b	hand-crafted	backprop	14	test	45	20	19	Orchestrator (-> Assistant)	False	0.0016930843703448772	0.0016930843703448772	13	False
+deepseek-8b	hand-crafted	backprop	14	test	45	20	20	Orchestrator (thought)	True	0.0036678484175354242	0.0036678484175354242	1	True
+deepseek-8b	hand-crafted	backprop	14	test	40	16	1	Orchestrator (thought)	False	0.0018164673820137978	0.0018164673820137978	4	False
+deepseek-8b	hand-crafted	backprop	14	test	40	16	2	Orchestrator (thought)	False	0.0015459014102816582	0.0015459014102816582	12	False
+deepseek-8b	hand-crafted	backprop	14	test	40	16	3	Orchestrator (-> WebSurfer)	False	0.0017803381197154522	0.0017803381197154522	5	False
+deepseek-8b	hand-crafted	backprop	14	test	40	16	4	WebSurfer	False	0.002301296452060342	0.002301296452060342	3	False
+deepseek-8b	hand-crafted	backprop	14	test	40	16	5	Orchestrator (thought)	False	0.0016213335329666734	0.0016213335329666734	10	False
+deepseek-8b	hand-crafted	backprop	14	test	40	16	6	Orchestrator (-> WebSurfer)	False	0.0015934361144900322	0.0015934361144900322	11	False
+deepseek-8b	hand-crafted	backprop	14	test	40	16	7	Orchestrator (thought)	False	0.0009789796313270926	0.0009789796313270926	14	False
+deepseek-8b	hand-crafted	backprop	14	test	40	16	8	WebSurfer	False	0.0031048725359141827	0.0031048725359141827	2	False
+deepseek-8b	hand-crafted	backprop	14	test	40	16	9	Orchestrator (thought)	False	0.0015109996311366558	0.0015109996311366558	13	False
+deepseek-8b	hand-crafted	backprop	14	test	40	16	10	Orchestrator (-> WebSurfer)	False	0.0016923077637329698	0.0016923077637329698	7	False
+deepseek-8b	hand-crafted	backprop	14	test	40	16	11	Orchestrator (thought)	False	0.0009513826225884259	0.0009513826225884259	15	False
+deepseek-8b	hand-crafted	backprop	14	test	40	16	12	WebSurfer	False	0.00176771089900285	0.00176771089900285	6	False
+deepseek-8b	hand-crafted	backprop	14	test	40	16	13	Orchestrator (thought)	False	0.001630887622013688	0.001630887622013688	9	False
+deepseek-8b	hand-crafted	backprop	14	test	40	16	14	Orchestrator (-> WebSurfer)	False	0.0016653985949233174	0.0016653985949233174	8	False
+deepseek-8b	hand-crafted	backprop	14	test	40	16	15	Orchestrator (thought)	False	0.0009411123464815319	0.0009411123464815319	16	False
+deepseek-8b	hand-crafted	backprop	14	test	40	16	16	WebSurfer	True	0.003300615819171071	0.003300615819171071	1	True
+deepseek-8b	hand-crafted	backprop	14	test	7	24	1	Orchestrator (thought)	False	0.0019197305664420128	0.0019197305664420128	9	False
+deepseek-8b	hand-crafted	backprop	14	test	7	24	2	Orchestrator (thought)	False	0.0014750587288290262	0.0014750587288290262	19	False
+deepseek-8b	hand-crafted	backprop	14	test	7	24	3	Orchestrator (-> WebSurfer)	False	0.0017658091383054852	0.0017658091383054852	13	False
+deepseek-8b	hand-crafted	backprop	14	test	7	24	4	WebSurfer	False	0.0024707645643502474	0.0024707645643502474	3	False
+deepseek-8b	hand-crafted	backprop	14	test	7	24	5	Orchestrator (thought)	False	0.0015057242708280683	0.0015057242708280683	18	False
+deepseek-8b	hand-crafted	backprop	14	test	7	24	6	Orchestrator (-> WebSurfer)	False	0.001980653963983059	0.001980653963983059	7	False
+deepseek-8b	hand-crafted	backprop	14	test	7	24	7	Orchestrator (thought)	False	0.0010328658390790224	0.0010328658390790224	20	False
+deepseek-8b	hand-crafted	backprop	14	test	7	24	8	WebSurfer	True	0.0031787969637662172	0.0031787969637662172	1	True
+deepseek-8b	hand-crafted	backprop	14	test	7	24	9	Orchestrator (thought)	False	0.0016049015102908015	0.0016049015102908015	17	False
+deepseek-8b	hand-crafted	backprop	14	test	7	24	10	Orchestrator (-> WebSurfer)	False	0.002047747140750289	0.002047747140750289	6	False
+deepseek-8b	hand-crafted	backprop	14	test	7	24	11	Orchestrator (thought)	False	0.000980046228505671	0.000980046228505671	21	False
+deepseek-8b	hand-crafted	backprop	14	test	7	24	12	WebSurfer	False	0.0018850065534934402	0.0018850065534934402	11	False
+deepseek-8b	hand-crafted	backprop	14	test	7	24	13	Orchestrator (thought)	False	0.001671717851422727	0.001671717851422727	16	False
+deepseek-8b	hand-crafted	backprop	14	test	7	24	14	Orchestrator (-> WebSurfer)	False	0.001979211112484336	0.001979211112484336	8	False
+deepseek-8b	hand-crafted	backprop	14	test	7	24	15	Orchestrator (thought)	False	0.000963942613452673	0.000963942613452673	23	False
+deepseek-8b	hand-crafted	backprop	14	test	7	24	16	WebSurfer	False	0.0018759710947051644	0.0018759710947051644	12	False
+deepseek-8b	hand-crafted	backprop	14	test	7	24	17	Orchestrator (thought)	False	0.0016783401370048523	0.0016783401370048523	15	False
+deepseek-8b	hand-crafted	backprop	14	test	7	24	18	Orchestrator (-> WebSurfer)	False	0.0019035000586882234	0.0019035000586882234	10	False
+deepseek-8b	hand-crafted	backprop	14	test	7	24	19	Orchestrator (thought)	False	0.0009607283282093704	0.0009607283282093704	24	False
+deepseek-8b	hand-crafted	backprop	14	test	7	24	20	WebSurfer	False	0.002075599040836096	0.002075599040836096	5	False
+deepseek-8b	hand-crafted	backprop	14	test	7	24	21	Orchestrator (thought)	False	0.0017375514144077897	0.0017375514144077897	14	False
+deepseek-8b	hand-crafted	backprop	14	test	7	24	22	Orchestrator (-> WebSurfer)	False	0.002114984905347228	0.002114984905347228	4	False
+deepseek-8b	hand-crafted	backprop	14	test	7	24	23	Orchestrator (thought)	False	0.0009672696469351649	0.0009672696469351649	22	False
+deepseek-8b	hand-crafted	backprop	14	test	7	24	24	WebSurfer	False	0.003021302167326212	0.003021302167326212	2	False

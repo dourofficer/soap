@@ -1,0 +1,23 @@
+{
+  "config": {
+    "seed": 19,
+    "position": "act/13",
+    "c_begin": 0,
+    "c_end": 2,
+    "strategy": "succ-near",
+    "layer_range": "8-16",
+    "gamma": 0.0,
+    "w": "all",
+    "model": "deepseek-8b",
+    "subset": "arc",
+    "split": "test"
+  },
+  "metrics": {
+    "step@1": 0.8552631578947368,
+    "step@3": 0.9144736842105263,
+    "agent@1": 0.8486842105263158,
+    "agent@3": 0.8947368421052632
+  },
+  "n_trajectories": 152,
+  "n_steps": 861
+}

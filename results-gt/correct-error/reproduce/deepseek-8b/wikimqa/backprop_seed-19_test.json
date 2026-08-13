@@ -1,0 +1,23 @@
+{
+  "config": {
+    "seed": 19,
+    "position": "act/12",
+    "c_begin": 0,
+    "c_end": 3,
+    "strategy": "backprop",
+    "layer_range": "0-8",
+    "gamma": 0.1,
+    "w": "1",
+    "model": "deepseek-8b",
+    "subset": "wikimqa",
+    "split": "test"
+  },
+  "metrics": {
+    "step@1": 0.5422343324250681,
+    "step@3": 0.6948228882833788,
+    "agent@1": 0.6784741144414169,
+    "agent@3": 0.8256130790190735
+  },
+  "n_trajectories": 367,
+  "n_steps": 5179
+}

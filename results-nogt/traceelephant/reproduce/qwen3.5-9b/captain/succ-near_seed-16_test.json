@@ -1,0 +1,23 @@
+{
+  "config": {
+    "seed": 16,
+    "position": "act/3",
+    "c_begin": 4,
+    "c_end": 11,
+    "strategy": "succ-near",
+    "layer_range": "6-8",
+    "gamma": 0.1,
+    "w": "1",
+    "model": "qwen3.5-9b",
+    "subset": "captain",
+    "split": "test"
+  },
+  "metrics": {
+    "step@1": 0.3488372093023256,
+    "step@3": 0.4883720930232558,
+    "agent@1": 0.7441860465116279,
+    "agent@3": 0.8604651162790697
+  },
+  "n_trajectories": 43,
+  "n_steps": 894
+}

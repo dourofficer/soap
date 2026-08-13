@@ -1,0 +1,23 @@
+{
+  "config": {
+    "seed": 18,
+    "position": "act/13",
+    "c_begin": 0,
+    "c_end": 6,
+    "strategy": "backprop",
+    "layer_range": "8-16",
+    "gamma": 0.0,
+    "w": "all",
+    "model": "deepseek-8b",
+    "subset": "musique",
+    "split": "test"
+  },
+  "metrics": {
+    "step@1": 0.48717948717948717,
+    "step@3": 0.6602564102564102,
+    "agent@1": 0.7756410256410257,
+    "agent@3": 0.8525641025641025
+  },
+  "n_trajectories": 156,
+  "n_steps": 2280
+}

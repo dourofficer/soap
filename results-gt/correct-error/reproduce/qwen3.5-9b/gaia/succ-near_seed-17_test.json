@@ -1,0 +1,23 @@
+{
+  "config": {
+    "seed": 17,
+    "position": "act/27",
+    "c_begin": 1,
+    "c_end": 7,
+    "strategy": "succ-near",
+    "layer_range": "6-8",
+    "gamma": 0.0,
+    "w": "all",
+    "model": "qwen3.5-9b",
+    "subset": "gaia",
+    "split": "test"
+  },
+  "metrics": {
+    "step@1": 0.68,
+    "step@3": 0.76,
+    "agent@1": 0.8,
+    "agent@3": 0.8
+  },
+  "n_trajectories": 25,
+  "n_steps": 241
+}

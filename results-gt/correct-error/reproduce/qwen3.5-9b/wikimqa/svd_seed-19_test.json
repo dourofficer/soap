@@ -1,0 +1,20 @@
+{
+  "config": {
+    "seed": 19,
+    "position": "act/15",
+    "c_begin": 1,
+    "c_end": 3,
+    "gamma": 0.0,
+    "model": "qwen3.5-9b",
+    "subset": "wikimqa",
+    "split": "test"
+  },
+  "metrics": {
+    "step@1": 0.49591280653950953,
+    "step@3": 0.7002724795640327,
+    "agent@1": 0.7002724795640327,
+    "agent@3": 0.8337874659400545
+  },
+  "n_trajectories": 367,
+  "n_steps": 5179
+}

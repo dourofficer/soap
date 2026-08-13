@@ -1,0 +1,20 @@
+{
+  "config": {
+    "seed": 18,
+    "position": "act/3",
+    "c_begin": 1,
+    "c_end": 3,
+    "gamma": 0.0,
+    "model": "qwen3.5-9b",
+    "subset": "musique",
+    "split": "test"
+  },
+  "metrics": {
+    "step@1": 0.47435897435897434,
+    "step@3": 0.7051282051282052,
+    "agent@1": 0.7243589743589743,
+    "agent@3": 0.8717948717948718
+  },
+  "n_trajectories": 156,
+  "n_steps": 2280
+}

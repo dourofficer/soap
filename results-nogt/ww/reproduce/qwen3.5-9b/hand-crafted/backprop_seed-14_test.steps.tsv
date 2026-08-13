@@ -1,0 +1,1300 @@
+model	subset	row	seed	split	traj_idx	n_steps	step_idx	role	is_mistake	base	final	rank	is_pred
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	1	Orchestrator (thought)	False	0.001552476780489087	0.001728213857859373	86	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	2	Orchestrator (thought)	False	0.0015477738343179226	0.0017163384472951293	88	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	3	Orchestrator (-> FileSurfer)	False	0.0017783923540264368	0.0017783923540264368	80	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	4	Orchestrator (thought)	False	0.0016833576373755932	0.0018948144279420376	65	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	5	FileSurfer	True	0.0017279379535466433	0.0019466927042230964	60	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	6	Orchestrator (thought)	False	0.0014248351799324155	0.0015621623024344444	98	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	7	Orchestrator (-> Assistant)	False	0.0013355414848774672	0.0013355414848774672	104	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	8	Orchestrator (thought)	False	0.0022162715904414654	0.002454763511195779	9	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	9	Assistant	False	0.0017213471001014113	0.0018543254118412733	74	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	10	Orchestrator (thought)	False	0.0017106628511101007	0.001894658082164824	66	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	11	Orchestrator (-> FileSurfer)	False	0.0018525193445384502	0.0018525193445384502	75	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	12	Orchestrator (thought)	False	0.0023791145067662	0.0023791145067662	15	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	13	FileSurfer	False	0.00198201066814363	0.00198201066814363	52	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	14	Orchestrator (thought)	False	0.0018229158595204353	0.0020009472500532866	49	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	15	Orchestrator (-> FileSurfer)	False	0.0017803128575906157	0.0017803128575906157	79	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	16	Orchestrator (thought)	False	0.0023192267399281263	0.0023192267399281263	20	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	17	FileSurfer	False	0.002205889904871583	0.002205889904871583	27	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	18	Orchestrator (thought)	False	0.0016199431847780943	0.0017742927884683013	82	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	19	Orchestrator (-> Assistant)	False	0.0014509812463074923	0.0014509812463074923	101	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	20	Orchestrator (thought)	False	0.0022967359982430935	0.0022967359982430935	21	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	21	Assistant	False	0.0015996196307241917	0.001739197294227779	85	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	22	Orchestrator (thought)	False	0.0016903055366128683	0.0018408913165330887	76	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	23	Orchestrator (-> Assistant)	False	0.0017740863841027021	0.0017740863841027021	83	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	24	Orchestrator (thought)	False	0.0009604454971849918	0.0009604454971849918	121	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	25	Assistant	False	0.0010681437561288476	0.0011764965020120144	105	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	26	Orchestrator (thought)	False	0.0016096942126750946	0.001747536240145564	84	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	27	Orchestrator (-> Assistant)	False	0.00166363175958395	0.00166363175958395	92	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	28	Orchestrator (thought)	False	0.0009357381495647132	0.0009357381495647132	122	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	29	Assistant	False	0.0010835272260010242	0.0010835272260010242	109	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	30	Orchestrator (thought)	False	0.0017266960348933935	0.0017266960348933935	87	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	31	Orchestrator (thought)	False	0.00176715524867177	0.002060624770820141	41	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	32	Orchestrator (thought)	False	0.0016992476303130388	0.0018795966170728207	68	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	33	Orchestrator (thought)	False	0.0017336318269371986	0.0019291701028123498	61	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	34	Orchestrator (-> FileSurfer)	False	0.001955383224412799	0.001955383224412799	59	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	35	Orchestrator (thought)	False	0.0025528776459395885	0.0025528776459395885	6	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	36	FileSurfer	False	0.0024365545250475407	0.0024365545250475407	12	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	37	Orchestrator (thought)	False	0.0018465237226337194	0.0020301181357353926	45	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	38	Orchestrator (-> Assistant)	False	0.001857862574979663	0.001857862574979663	73	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	39	Orchestrator (thought)	False	0.002446684753522277	0.002446684753522277	10	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	40	Assistant	False	0.0011745180236175656	0.0011745180236175656	106	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	41	Orchestrator (thought)	False	0.0018066562479361892	0.0019842444453388453	51	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	42	Orchestrator (-> Assistant)	False	0.0017758816247805953	0.0017758816247805953	81	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	43	Orchestrator (thought)	False	0.0009682537638582289	0.0009682537638582289	120	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	44	Assistant	False	0.0011613102396950126	0.0011613102396950126	107	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	45	Orchestrator (thought)	False	0.0019262125715613365	0.0019262125715613365	62	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	46	Orchestrator (thought)	False	0.0029346952214837074	0.0029346952214837074	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	47	Orchestrator (thought)	False	0.0019281443674117327	0.002111201174557209	37	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	48	Orchestrator (thought)	False	0.0018234173767268658	0.0020119990222156048	47	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	49	Orchestrator (-> WebSurfer)	False	0.001856571645475924	0.002072371542453766	39	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	50	WebSurfer	False	0.0018244389211758971	0.002024017507210374	46	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	51	Orchestrator (thought)	False	0.0019388222135603428	0.0021160682663321495	36	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	52	Orchestrator (-> WebSurfer)	False	0.0020576000679284334	0.0020576000679284334	42	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	53	Orchestrator (thought)	False	0.0010049677221104503	0.0010049677221104503	117	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	54	WebSurfer	False	0.002139308489859104	0.0023219205904752016	19	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	55	Orchestrator (thought)	False	0.0019514377927407622	0.0021275198087096214	33	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	56	Orchestrator (-> FileSurfer)	False	0.002157999901100993	0.002377502853050828	16	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	57	Orchestrator (thought)	False	0.0017546990420669317	0.001869748579338193	70	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	58	FileSurfer	False	0.0014414137694984674	0.0017151314532384276	90	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	59	Orchestrator (thought)	False	0.0018089429941028357	0.0019879743922501802	50	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	60	Orchestrator (-> WebSurfer)	False	0.002167245140299201	0.002379766898229718	14	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	61	WebSurfer	False	0.002737176837399602	0.0029513882473111153	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	62	Orchestrator (thought)	False	0.0015654675662517548	0.0017154918750748038	89	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	63	Orchestrator (-> WebSurfer)	False	0.0016045229276642203	0.0016045229276642203	97	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	64	Orchestrator (thought)	False	0.0010424443753436208	0.0011480683460831642	108	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	65	WebSurfer	False	0.0022824991028755903	0.002472920110449195	8	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	66	Orchestrator (thought)	False	0.0019070332637056708	0.002086333930492401	38	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	67	Orchestrator (-> WebSurfer)	False	0.002200618851929903	0.002200618851929903	29	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	68	Orchestrator (thought)	False	0.0010448627872392535	0.0010448627872392535	113	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	69	WebSurfer	False	0.0021344090346246958	0.0023291881661862135	18	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	70	Orchestrator (thought)	False	0.0020664064213633537	0.0022785868495702744	22	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	71	Orchestrator (-> WebSurfer)	False	0.002260136418044567	0.002260136418044567	24	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	72	Orchestrator (thought)	False	0.0010073521407321095	0.0010073521407321095	116	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	73	WebSurfer	False	0.002252566395327449	0.0024183893110603094	13	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	74	Orchestrator (thought)	False	0.0019934021402150393	0.0021680458448827267	31	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	75	Orchestrator (-> WebSurfer)	False	0.002144960453733802	0.002249118173494935	25	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	76	Orchestrator (thought)	False	0.0010023628128692508	0.0010023628128692508	118	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	77	WebSurfer	False	0.0014758743345737457	0.0016950941644608974	91	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	78	Orchestrator (thought)	False	0.002142850775271654	0.002353220945224166	17	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	79	Orchestrator (-> WebSurfer)	False	0.002195030450820923	0.002195030450820923	30	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	80	Orchestrator (thought)	False	0.0010503795929253101	0.0010503795929253101	111	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	81	WebSurfer	False	0.0016954909078776836	0.0018814607756212354	67	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	82	Orchestrator (thought)	False	0.001949587487615645	0.0021187465172261	35	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	83	Orchestrator (-> WebSurfer)	False	0.0021252180449664593	0.0021252180449664593	34	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	84	Orchestrator (thought)	False	0.000992443528957665	0.000992443528957665	119	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	85	WebSurfer	False	0.0018596990266814828	0.0018596990266814828	72	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	86	Orchestrator (thought)	False	0.0018441124120727181	0.002071599243208766	40	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	87	Orchestrator (-> WebSurfer)	False	0.0022748683113604784	0.0022748683113604784	23	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	88	Orchestrator (thought)	False	0.0010562401730567217	0.0010562401730567217	110	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	89	WebSurfer	False	0.0019100212957710028	0.0019100212957710028	63	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	90	Orchestrator (thought)	False	0.0017785639502108097	0.001981387846171856	53	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	91	Orchestrator (-> Assistant)	False	0.002028238493949175	0.0022052526473999023	28	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	92	Orchestrator (thought)	False	0.0017701417673379183	0.0019651982001960278	58	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	93	Assistant	False	0.001411097007803619	0.001411097007803619	102	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	94	Orchestrator (thought)	False	0.0018364390125498176	0.0020398013293743134	43	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	95	Orchestrator (-> FileSurfer)	False	0.00215449882671237	0.00215449882671237	32	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	96	Orchestrator (thought)	False	0.0022873682901263237	0.0024374150671064854	11	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	97	FileSurfer	False	0.0015004670713096857	0.0016576254274696112	94	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	98	Orchestrator (thought)	False	0.0016632437473163009	0.0016632437473163009	93	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	99	Orchestrator (thought)	False	0.0019012197153642774	0.0019012197153642774	64	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	100	Orchestrator (thought)	False	0.001259665354155004	0.0014550801133736968	100	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	101	Orchestrator (thought)	False	0.0016614588676020503	0.0018251508008688688	77	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	102	Orchestrator (-> WebSurfer)	False	0.0016369192162528634	0.0016369192162528634	95	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	103	WebSurfer	False	0.0029113898053765297	0.0029113898053765297	5	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	104	Orchestrator (thought)	False	0.0016755076358094811	0.0018732337048277259	69	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	105	Orchestrator (-> WebSurfer)	False	0.001977260923013091	0.001977260923013091	54	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	106	Orchestrator (thought)	False	0.0010415780125185847	0.0010415780125185847	114	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	107	WebSurfer	False	0.0036350414156913757	0.0036350414156913757	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	108	Orchestrator (thought)	False	0.001368128228932619	0.0015376912197098136	99	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	109	Orchestrator (-> FileSurfer)	False	0.0018164372304454446	0.0019674089271575212	57	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	110	Orchestrator (thought)	False	0.0016333553940057755	0.0018109699012711644	78	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	111	FileSurfer	False	0.001362949493341148	0.0016271049389615655	96	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	112	Orchestrator (thought)	False	0.0018346074502915144	0.002036819700151682	44	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	113	Orchestrator (-> WebSurfer)	False	0.002241404028609395	0.002241404028609395	26	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	114	Orchestrator (thought)	False	0.0010481355711817741	0.0010481355711817741	112	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	115	WebSurfer	False	0.002977077616378665	0.002977077616378665	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	116	Orchestrator (thought)	False	0.0017804449889808893	0.0019690378103405237	56	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	117	Orchestrator (-> Assistant)	False	0.0018598763272166252	0.0018598763272166252	71	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	118	Orchestrator (thought)	False	0.002343705389648676	0.002484147436916828	7	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	119	Assistant	False	0.001817358541302383	0.0020043652039021254	48	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	120	Orchestrator (thought)	False	0.0018700676737353206	0.001973775215446949	55	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	121	Orchestrator (thought)	False	0.0010370753007009625	0.0010370753007009625	115	False
+qwen3.5-9b	hand-crafted	backprop	14	test	51	122	122	Orchestrator (termination condition)	False	0.0014044211711734533	0.0014044211711734533	103	False
+qwen3.5-9b	hand-crafted	backprop	14	test	6	7	1	Orchestrator (thought)	False	0.0013685111189261079	0.0015270027797669172	5	False
+qwen3.5-9b	hand-crafted	backprop	14	test	6	7	2	Orchestrator (thought)	False	0.0015155842993408442	0.0016706022433936596	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	6	7	3	Orchestrator (-> WebSurfer)	False	0.0016015535220503807	0.0016015535220503807	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	6	7	4	WebSurfer	False	0.0018304024124518037	0.0018304024124518037	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	6	7	5	Orchestrator (thought)	True	0.001867896062321961	0.0019701821729540825	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	6	7	6	Orchestrator (thought)	False	0.0009394627995789051	0.0009394627995789051	7	False
+qwen3.5-9b	hand-crafted	backprop	14	test	6	7	7	Orchestrator (termination condition)	False	0.0012794947251677513	0.0012794947251677513	6	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	1	Orchestrator (thought)	False	0.001376142492517829	0.0015296970959752798	32	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	2	Orchestrator (thought)	False	0.0017129037296399474	0.0018515379633754492	21	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	3	Orchestrator (-> WebSurfer)	False	0.0013716407120227814	0.0013716407120227814	33	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	4	WebSurfer	False	0.0019421096658334136	0.0021563477348536253	10	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	5	Orchestrator (thought)	False	0.0016431356780231	0.0017932348418980837	23	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	6	Orchestrator (-> WebSurfer)	False	0.001760871964506805	0.001760871964506805	25	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	7	Orchestrator (thought)	False	0.0009037430863827467	0.001011646818369627	37	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	8	WebSurfer	False	0.0020633998792618513	0.0022832907270640135	5	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	9	Orchestrator (thought)	True	0.001818894175812602	0.0019755808170884848	18	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	10	Orchestrator (-> WebSurfer)	False	0.0018144637579098344	0.0018144637579098344	22	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	11	Orchestrator (thought)	False	0.0009394392836838961	0.0009394392836838961	39	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	12	WebSurfer	False	0.0018556895665824413	0.0021023303270339966	13	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	13	Orchestrator (thought)	False	0.0018576165894046426	0.0020198358688503504	14	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	14	Orchestrator (-> WebSurfer)	False	0.0016473934520035982	0.0016473934520035982	31	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	15	Orchestrator (thought)	False	0.0009289503796026111	0.0009289503796026111	42	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	16	WebSurfer	False	0.0024664064403623343	0.0026533615309745073	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	17	Orchestrator (thought)	False	0.001854350441135466	0.0020155650563538074	16	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	18	Orchestrator (-> WebSurfer)	False	0.0017269439995288849	0.0017269439995288849	28	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	19	Orchestrator (thought)	False	0.0009361312258988619	0.0009361312258988619	41	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	20	WebSurfer	False	0.0018695504404604435	0.0018695504404604435	20	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	21	Orchestrator (thought)	False	0.001729563227854669	0.001894415938295424	19	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	22	Orchestrator (-> WebSurfer)	False	0.0016485267551615834	0.0016485267551615834	30	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	23	Orchestrator (thought)	False	0.0009384630830027163	0.0009384630830027163	40	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	24	Orchestrator (thought)	False	0.001819372409954667	0.002018648199737072	15	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	25	Orchestrator (-> WebSurfer)	False	0.0019927590619772673	0.0019927590619772673	17	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	26	Orchestrator (thought)	False	0.0009191156714223325	0.0009191156714223325	43	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	27	WebSurfer	False	0.002351155737414956	0.0025521188508719206	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	28	Orchestrator (thought)	False	0.0019572810269892216	0.0021419143304228783	11	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	29	Orchestrator (-> WebSurfer)	False	0.001699369284324348	0.001699369284324348	29	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	30	Orchestrator (thought)	False	0.00100553291849792	0.00100553291849792	38	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	31	WebSurfer	False	0.0021996733266860247	0.0021996733266860247	8	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	32	Orchestrator (thought)	False	0.00210381718352437	0.0022786385379731655	6	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	33	Orchestrator (-> WebSurfer)	False	0.0017482140101492405	0.0017482140101492405	27	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	34	Orchestrator (thought)	False	0.0010209133615717292	0.0010209133615717292	36	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	35	WebSurfer	False	0.002311773831024766	0.0025036430452018976	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	36	Orchestrator (thought)	False	0.0019370380323380232	0.0021119280718266964	12	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	37	Orchestrator (-> WebSurfer)	False	0.0017488994635641575	0.0017488994635641575	26	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	38	Orchestrator (thought)	False	0.0010790375526994467	0.0010790375526994467	34	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	39	WebSurfer	False	0.0018871951615437865	0.0021785327699035406	9	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	40	Orchestrator (thought)	False	0.002034347504377365	0.0022114405874162912	7	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	41	Orchestrator (-> WebSurfer)	False	0.0017709317617118359	0.0017709317617118359	24	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	42	Orchestrator (thought)	False	0.0010751421796157956	0.0010751421796157956	35	False
+qwen3.5-9b	hand-crafted	backprop	14	test	10	43	43	WebSurfer	False	0.0029133770149201155	0.0029133770149201155	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	24	4	1	Orchestrator (thought)	True	0.0016710852505639195	0.001803562743589282	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	24	4	2	Orchestrator (thought)	False	0.001585585530847311	0.0016871708212420344	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	24	4	3	Orchestrator (thought)	False	0.0009413664811290801	0.0009413664811290801	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	24	4	4	Orchestrator (termination condition)	False	0.0011307299137115479	0.0011307299137115479	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	1	Orchestrator (thought)	False	0.0014146986650303006	0.0015529923839494586	38	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	2	Orchestrator (thought)	False	0.0014988970942795277	0.001634075422771275	34	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	3	Orchestrator (-> WebSurfer)	True	0.0016449602553620934	0.0016449602553620934	32	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	4	WebSurfer	False	0.0018883947050198913	0.002065638080239296	8	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	5	Orchestrator (thought)	False	0.0015904938336461782	0.0017447513528168201	27	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	6	Orchestrator (-> WebSurfer)	False	0.0016716611571609974	0.0016716611571609974	30	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	7	Orchestrator (thought)	False	0.0009002681472338736	0.0009002681472338736	51	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	8	WebSurfer	False	0.0017283230554312468	0.0019127917475998402	13	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	9	Orchestrator (thought)	False	0.0016571290325373411	0.0018375265644863248	18	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	10	Orchestrator (-> WebSurfer)	False	0.0018039752030745149	0.0018039752030745149	24	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	11	Orchestrator (thought)	False	0.0009096568101085722	0.0009096568101085722	49	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	12	WebSurfer	False	0.0018577530281618237	0.0020188349299132824	9	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	13	Orchestrator (thought)	False	0.0016679485561326146	0.0018394640646874905	17	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	14	Orchestrator (-> WebSurfer)	False	0.0017151552019640803	0.0017151552019640803	28	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	15	Orchestrator (thought)	False	0.0009056617855094373	0.0009056617855094373	50	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	16	WebSurfer	False	0.0016108183190226555	0.0016108183190226555	37	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	17	Orchestrator (thought)	False	0.001644905423745513	0.0018250129651278257	20	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	18	Orchestrator (-> WebSurfer)	False	0.001784303574822843	0.001784303574822843	25	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	19	Orchestrator (thought)	False	0.0009165957453660667	0.0009165957453660667	48	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	20	WebSurfer	False	0.0018137538572773337	0.0018137538572773337	23	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	21	Orchestrator (thought)	False	0.0018253253074362874	0.001987986033782363	10	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	22	Orchestrator (-> WebSurfer)	False	0.0016266065649688244	0.0016266065649688244	36	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	23	Orchestrator (thought)	False	0.000962794350925833	0.000962794350925833	46	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	24	WebSurfer	False	0.0019053691066801548	0.0019053691066801548	14	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	25	Orchestrator (thought)	False	0.0016754495445638895	0.0018570073880255222	16	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	26	Orchestrator (-> WebSurfer)	False	0.0018155784346163273	0.0018155784346163273	22	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	27	Orchestrator (thought)	False	0.001022734330035746	0.001022734330035746	42	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	28	WebSurfer	False	0.0024707799311727285	0.0024707799311727285	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	29	Orchestrator (thought)	False	0.001295352354645729	0.001437787082977593	40	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	30	Orchestrator (thought)	False	0.0018303653923794627	0.0019392755348235369	11	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	31	Orchestrator (thought)	False	0.0013004625216126442	0.0014879117952659726	39	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	32	Orchestrator (thought)	False	0.0019580721855163574	0.0021428056061267853	7	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	33	Orchestrator (-> WebSurfer)	False	0.001985443290323019	0.002149491338059306	5	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	34	Orchestrator (thought)	False	0.0009562473860569298	0.0009562473860569298	47	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	35	WebSurfer	False	0.001944611081853509	0.0021718640346080065	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	36	Orchestrator (thought)	False	0.0017304227221757174	0.0018971230601891875	15	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	37	Orchestrator (-> WebSurfer)	False	0.0016287205507978797	0.0016287205507978797	35	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	38	Orchestrator (thought)	False	0.0010033402359113097	0.0010033402359113097	43	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	39	WebSurfer	False	0.002150157932192087	0.0023960161488503218	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	40	Orchestrator (thought)	False	0.001654675230383873	0.0018202608916908503	21	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	41	Orchestrator (-> WebSurfer)	False	0.0016558560309931636	0.0016558560309931636	31	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	42	Orchestrator (thought)	False	0.0009984110947698355	0.0009984110947698355	44	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	43	WebSurfer	False	0.001982171321287751	0.0021461595315486193	6	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	44	Orchestrator (thought)	False	0.0017381140496581793	0.0019152723252773285	12	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	45	Orchestrator (-> WebSurfer)	False	0.001771582756191492	0.001771582756191492	26	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	46	Orchestrator (thought)	False	0.0010231705382466316	0.0010231705382466316	41	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	47	WebSurfer	False	0.001639881986193359	0.001639881986193359	33	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	48	Orchestrator (thought)	False	0.001659673172980547	0.0018277674680575728	19	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	49	Orchestrator (-> WebSurfer)	False	0.0016809433000162244	0.0016809433000162244	29	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	50	Orchestrator (thought)	False	0.000991046312265098	0.000991046312265098	45	False
+qwen3.5-9b	hand-crafted	backprop	14	test	38	51	51	WebSurfer	False	0.0029098698869347572	0.0029098698869347572	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	1	Orchestrator (thought)	False	0.001601634663529694	0.0017451514722779393	27	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	2	Orchestrator (thought)	False	0.0015489482320845127	0.0016869351966306567	35	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	3	Orchestrator (-> WebSurfer)	False	0.0014154671225696802	0.0014154671225696802	55	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	4	WebSurfer	False	0.0017026897985488176	0.001878430601209402	17	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	5	Orchestrator (thought)	False	0.0017419973155483603	0.001904644537717104	13	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	6	Orchestrator (-> WebSurfer)	False	0.0014877859503030777	0.0014877859503030777	50	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	7	Orchestrator (thought)	False	0.0009202563669532537	0.0009202563669532537	73	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	8	WebSurfer	True	0.002353331772610545	0.002499992959201336	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	9	Orchestrator (thought)	False	0.0017315411241725087	0.0018544720951467752	19	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	10	Orchestrator (-> WebSurfer)	False	0.001487911562435329	0.001487911562435329	49	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	11	Orchestrator (thought)	False	0.0009278590441681445	0.0009278590441681445	72	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	12	Orchestrator (thought)	False	0.0014942710986360908	0.0016583489486947656	39	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	13	Orchestrator (-> Assistant)	False	0.0014259674353525043	0.0014259674353525043	54	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	14	Orchestrator (thought)	False	0.0018057854613289237	0.001931654755026102	10	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	15	Assistant	False	0.0013817677972838283	0.001529327011667192	47	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	16	Orchestrator (thought)	False	0.0016516895266249776	0.0017757602035999298	24	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	17	Orchestrator (-> WebSurfer)	False	0.0014793704031035304	0.0014793704031035304	51	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	18	Orchestrator (thought)	False	0.0009152584825642407	0.001022780081257224	66	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	19	WebSurfer	False	0.0014666107017546892	0.0016272033099085093	44	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	20	Orchestrator (thought)	False	0.001581248128786683	0.0017200183356180787	30	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	21	Orchestrator (-> WebSurfer)	False	0.0014047113945707679	0.0014047113945707679	56	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	22	Orchestrator (thought)	False	0.0009429433266632259	0.0009429433266632259	71	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	23	WebSurfer	False	0.001571275875903666	0.0017109272303059697	31	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	24	Orchestrator (thought)	False	0.001542604761198163	0.0016827919753268361	36	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	25	Orchestrator (-> WebSurfer)	False	0.0013829360250383615	0.0013829360250383615	57	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	26	Orchestrator (thought)	False	0.0009481935994699597	0.0009481935994699597	70	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	27	WebSurfer	False	0.0013965134276077151	0.0015555709833279252	46	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	28	Orchestrator (thought)	False	0.0017037132056429982	0.0018513256218284369	20	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	29	Orchestrator (-> WebSurfer)	False	0.0014342888025566936	0.0014342888025566936	52	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	30	Orchestrator (thought)	False	0.0009611906134523451	0.001072874292731285	63	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	31	WebSurfer	False	0.0015905752079561353	0.0017597114201635122	26	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	32	Orchestrator (thought)	False	0.0017387688858434558	0.001880641677416861	16	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	33	Orchestrator (-> WebSurfer)	False	0.0015137882437556982	0.0015137882437556982	48	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	34	Orchestrator (thought)	False	0.0009566746302880347	0.0009566746302880347	69	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	35	WebSurfer	False	0.001691362471319735	0.001691362471319735	34	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	36	Orchestrator (thought)	False	0.0015741370152682066	0.0016807623906061053	37	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	37	Orchestrator (thought)	False	0.001889480627141893	0.002013696124777198	6	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	38	Orchestrator (thought)	False	0.00147559167817235	0.001634647836908698	43	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	39	Orchestrator (thought)	False	0.001754583790898323	0.001908380538225174	12	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	40	Orchestrator (-> WebSurfer)	False	0.0016914800507947803	0.0016914800507947803	33	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	41	Orchestrator (thought)	False	0.001040786155499518	0.0011372346198186278	59	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	42	WebSurfer	False	0.0018365767318755388	0.0019897911697626114	7	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	43	Orchestrator (thought)	False	0.0016706872265785933	0.0017979417461901903	22	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	44	Orchestrator (-> WebSurfer)	False	0.0014265680219978094	0.0014265680219978094	53	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	45	Orchestrator (thought)	False	0.0010304332245141268	0.0010304332245141268	65	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	46	WebSurfer	False	0.0015640532365068793	0.0017429805593565106	28	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	47	Orchestrator (thought)	False	0.0019236993975937366	0.0020981249399483204	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	48	Orchestrator (-> WebSurfer)	False	0.0017736377194523811	0.0017736377194523811	25	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	49	Orchestrator (thought)	False	0.0010076945181936026	0.0010076945181936026	67	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	50	WebSurfer	False	0.0014956982340663671	0.0016796166310086846	38	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	51	Orchestrator (thought)	False	0.0017304240027442575	0.001900961040519178	14	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	52	Orchestrator (-> WebSurfer)	False	0.0017053702613338828	0.0017053702613338828	32	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	53	Orchestrator (thought)	False	0.0010752155212685466	0.0010752155212685466	62	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	54	WebSurfer	False	0.0019235797226428986	0.0019235797226428986	11	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	55	Orchestrator (thought)	False	0.0017661422025412321	0.0019391351379454136	9	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	56	Orchestrator (-> WebSurfer)	False	0.001729929936118424	0.001729929936118424	29	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	57	Orchestrator (thought)	False	0.0010992385214194655	0.0010992385214194655	61	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	58	WebSurfer	False	0.0021103506442159414	0.0023383009247481823	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	59	Orchestrator (thought)	False	0.00189239252358675	0.0020736325532197952	5	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	60	Orchestrator (-> WebSurfer)	False	0.0018124001799151301	0.0018124001799151301	21	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	61	Orchestrator (thought)	False	0.0011168362107127905	0.0011168362107127905	60	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	62	WebSurfer	False	0.0016940267523750663	0.0018581133335828781	18	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	63	Orchestrator (thought)	False	0.0017340893391519785	0.0018988254014402628	15	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	64	Orchestrator (-> WebSurfer)	False	0.001647360622882843	0.001647360622882843	40	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	65	Orchestrator (thought)	False	0.0010662534041330218	0.0010662534041330218	64	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	66	WebSurfer	False	0.0016371096717193723	0.0016371096717193723	42	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	67	Orchestrator (thought)	False	0.0017959731630980968	0.0017959731630980968	23	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	68	Orchestrator (thought)	False	0.001242155907675624	0.001242155907675624	58	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	69	Orchestrator (thought)	False	0.0014182388549670577	0.0016006119549274445	45	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	70	Orchestrator (thought)	False	0.0018150286050513387	0.001979286316782236	8	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	71	Orchestrator (-> WebSurfer)	False	0.0016425763024017215	0.0016425763024017215	41	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	72	Orchestrator (thought)	False	0.0009644846431910992	0.0009644846431910992	68	False
+qwen3.5-9b	hand-crafted	backprop	14	test	23	73	73	WebSurfer	False	0.002820091787725687	0.002820091787725687	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	21	24	1	Orchestrator (thought)	False	0.0012567698722705245	0.001403552247211337	17	False
+qwen3.5-9b	hand-crafted	backprop	14	test	21	24	2	Orchestrator (thought)	False	0.0015239139320328832	0.0016543548554182053	13	False
+qwen3.5-9b	hand-crafted	backprop	14	test	21	24	3	Orchestrator (-> WebSurfer)	False	0.0012314773630350828	0.0012314773630350828	19	False
+qwen3.5-9b	hand-crafted	backprop	14	test	21	24	4	WebSurfer	True	0.00217946688644588	0.002420570934191346	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	21	24	5	Orchestrator (thought)	False	0.0014739236794412136	0.0016481084749102592	14	False
+qwen3.5-9b	hand-crafted	backprop	14	test	21	24	6	Orchestrator (-> WebSurfer)	False	0.0017418484203517437	0.0017418484203517437	10	False
+qwen3.5-9b	hand-crafted	backprop	14	test	21	24	7	Orchestrator (thought)	False	0.0008519815164618194	0.0008519815164618194	24	False
+qwen3.5-9b	hand-crafted	backprop	14	test	21	24	8	WebSurfer	False	0.0030907904729247093	0.003294857917353511	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	21	24	9	Orchestrator (thought)	False	0.0019255189690738916	0.0020974897779524326	5	False
+qwen3.5-9b	hand-crafted	backprop	14	test	21	24	10	Orchestrator (-> WebSurfer)	False	0.001719707390293479	0.001719707390293479	11	False
+qwen3.5-9b	hand-crafted	backprop	14	test	21	24	11	Orchestrator (thought)	False	0.0008705870131962001	0.0008705870131962001	23	False
+qwen3.5-9b	hand-crafted	backprop	14	test	21	24	12	WebSurfer	False	0.0014925407012924552	0.001689716475084424	12	False
+qwen3.5-9b	hand-crafted	backprop	14	test	21	24	13	Orchestrator (thought)	False	0.0018058499554172158	0.001956632360816002	7	False
+qwen3.5-9b	hand-crafted	backprop	14	test	21	24	14	Orchestrator (-> WebSurfer)	False	0.0013848162489011884	0.0013848162489011884	18	False
+qwen3.5-9b	hand-crafted	backprop	14	test	21	24	15	Orchestrator (thought)	False	0.0009219812927767634	0.0009219812927767634	20	False
+qwen3.5-9b	hand-crafted	backprop	14	test	21	24	16	WebSurfer	False	0.0019717575050890446	0.0019717575050890446	6	False
+qwen3.5-9b	hand-crafted	backprop	14	test	21	24	17	Orchestrator (thought)	False	0.0017124114092439413	0.0018628871766850352	8	False
+qwen3.5-9b	hand-crafted	backprop	14	test	21	24	18	Orchestrator (-> WebSurfer)	False	0.001504757208749652	0.001504757208749652	16	False
+qwen3.5-9b	hand-crafted	backprop	14	test	21	24	19	Orchestrator (thought)	False	0.0009110091486945748	0.0009110091486945748	22	False
+qwen3.5-9b	hand-crafted	backprop	14	test	21	24	20	WebSurfer	False	0.002113645663484931	0.002113645663484931	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	21	24	21	Orchestrator (thought)	False	0.0016088642878457904	0.0017712541157379746	9	False
+qwen3.5-9b	hand-crafted	backprop	14	test	21	24	22	Orchestrator (-> WebSurfer)	False	0.0016238983953371644	0.0016238983953371644	15	False
+qwen3.5-9b	hand-crafted	backprop	14	test	21	24	23	Orchestrator (thought)	False	0.0009152518468908966	0.0009152518468908966	21	False
+qwen3.5-9b	hand-crafted	backprop	14	test	21	24	24	WebSurfer	False	0.003228047164157033	0.003228047164157033	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	1	Orchestrator (thought)	False	0.0014634154504165053	0.001616603578440845	91	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	2	Orchestrator (thought)	False	0.0015462992014363408	0.0016802280442789197	84	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	3	Orchestrator (-> WebSurfer)	False	0.0016225054860115051	0.0016225054860115051	90	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	4	WebSurfer	False	0.0020636888220906258	0.0022552362643182278	5	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	5	Orchestrator (thought)	False	0.001677924650721252	0.0018309338483959436	60	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	6	Orchestrator (-> WebSurfer)	False	0.001667817123234272	0.001667817123234272	85	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	7	Orchestrator (thought)	False	0.0008814971661195159	0.0008814971661195159	128	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	8	WebSurfer	True	0.0015082218451425433	0.0016839122399687767	82	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	9	Orchestrator (thought)	False	0.0018075754633173347	0.0019656450022011995	25	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	10	Orchestrator (-> WebSurfer)	False	0.00176978949457407	0.0019553620368242264	31	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	11	Orchestrator (thought)	False	0.00091483851429075	0.0010608137818053365	109	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	12	WebSurfer	False	0.0014300839975476265	0.0016154159093275666	92	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	13	Orchestrator (thought)	False	0.0018417667597532272	0.0019897306337952614	20	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	14	Orchestrator (-> WebSurfer)	False	0.0017610476352274418	0.0017610476352274418	72	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	15	Orchestrator (thought)	False	0.0009337520459666848	0.0010340570006519556	116	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	16	WebSurfer	False	0.002448956947773695	0.002708875574171543	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	17	Orchestrator (thought)	False	0.00181636493653059	0.001962439389899373	28	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	18	Orchestrator (-> WebSurfer)	False	0.0016977128107100725	0.0016977128107100725	81	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	19	Orchestrator (thought)	False	0.0009569231770001352	0.0009569231770001352	125	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	20	WebSurfer	False	0.0025991853326559067	0.0027639796026051044	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	21	Orchestrator (thought)	False	0.00181375234387815	0.0019652137998491526	26	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	22	Orchestrator (-> WebSurfer)	False	0.0018860568525269628	0.0018860568525269628	45	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	23	Orchestrator (thought)	False	0.0010827002115547657	0.0011882284888997674	100	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	24	WebSurfer	False	0.0017461343668401241	0.001950389239937067	34	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	25	Orchestrator (thought)	False	0.0016577497590333223	0.0018398406682536006	56	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	26	Orchestrator (-> WebSurfer)	False	0.0018710097065195441	0.0018710097065195441	48	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	27	Orchestrator (thought)	False	0.0010833805426955223	0.0011894282652065158	99	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	28	WebSurfer	False	0.002064294880256057	0.002064294880256057	12	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	29	Orchestrator (thought)	False	0.0015859307022765279	0.0017545935697853565	73	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	30	Orchestrator (-> Assistant)	False	0.0018557242583483458	0.0020345428492873907	15	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	31	Orchestrator (thought)	False	0.0018533190013840795	0.0020152749493718147	16	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	32	Assistant	False	0.0017881867242977023	0.0017881867242977023	68	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	33	Orchestrator (thought)	False	0.0017395328031852841	0.0019000546308234334	41	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	34	Orchestrator (-> WebSurfer)	False	0.0018648706609383225	0.0018648706609383225	51	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	35	Orchestrator (thought)	False	0.0010087278205901384	0.0011097275419160724	103	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	36	Orchestrator (thought)	False	0.0016807368956506252	0.0018395357765257359	57	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	37	Orchestrator (-> WebSurfer)	False	0.0018226845422759652	0.0018226845422759652	62	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	38	Orchestrator (thought)	False	0.0009969599777832627	0.0009969599777832627	120	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	39	Orchestrator (thought)	False	0.001588190789334476	0.0017836958868429065	69	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	40	Orchestrator (thought)	False	0.001955050742253661	0.001955050742253661	32	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	41	Orchestrator (thought)	False	0.001393292797729373	0.0015742366667836905	95	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	42	Orchestrator (thought)	False	0.00184123613871634	0.001993943005800247	18	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	43	Orchestrator (-> WebSurfer)	False	0.0018656094325706363	0.0018656094325706363	50	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	44	Orchestrator (thought)	False	0.0009727816795930266	0.0009727816795930266	122	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	45	WebSurfer	False	0.002023406559601426	0.002215114189311862	6	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	46	Orchestrator (thought)	False	0.0018182776402682066	0.0019626000430434942	27	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	47	Orchestrator (-> WebSurfer)	False	0.0018097310094162822	0.0018097310094162822	65	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	48	Orchestrator (thought)	False	0.0010653797071427107	0.0010653797071427107	107	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	49	WebSurfer	False	0.0015257885679602623	0.0017007722053676844	80	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	50	Orchestrator (thought)	False	0.0017883219989016652	0.0019757437985390425	21	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	51	Orchestrator (-> WebSurfer)	False	0.0018742169486358762	0.0018742169486358762	47	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	52	Orchestrator (thought)	False	0.0010552831226959825	0.0011501354165375233	101	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	53	WebSurfer	False	0.0016735965618863702	0.0018329942831769586	59	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	54	Orchestrator (thought)	False	0.0017601209692656994	0.0019437097944319248	36	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	55	Orchestrator (-> WebSurfer)	False	0.0018512778915464878	0.0018512778915464878	54	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	56	Orchestrator (thought)	False	0.0010604772251099348	0.0010604772251099348	110	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	57	WebSurfer	False	0.0016898842295631766	0.0018405949231237173	55	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	58	Orchestrator (thought)	False	0.0017379450146108866	0.0018890590872615576	43	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	59	Orchestrator (-> WebSurfer)	False	0.0017590021016076207	0.0018553779227659106	53	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	60	Orchestrator (thought)	False	0.001045368378981948	0.001045368378981948	114	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	61	WebSurfer	False	0.0014397853519767523	0.0015957680298015475	93	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	62	Orchestrator (thought)	False	0.0018153995042666793	0.0019605334382504225	29	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	63	Orchestrator (-> WebSurfer)	False	0.0017374302260577679	0.0018350922036916018	58	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	64	Orchestrator (thought)	False	0.0010099972132593393	0.0010099972132593393	117	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	65	WebSurfer	False	0.0024502433370798826	0.002624708227813244	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	66	Orchestrator (thought)	False	0.0016110064461827278	0.0017644938779994845	71	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	67	Orchestrator (-> Assistant)	False	0.001932391314767301	0.001932391314767301	39	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	68	Orchestrator (thought)	False	0.0010193800553679466	0.0011179451830685139	102	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	69	Assistant	False	0.0016058030305430293	0.0017820714274421334	70	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	70	Orchestrator (thought)	False	0.0019091941649094224	0.002066910034045577	10	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	71	Orchestrator (-> Assistant)	False	0.0020984092261642218	0.0020984092261642218	8	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	72	Orchestrator (thought)	False	0.001010674750432372	0.0011053120251744986	104	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	73	Assistant	False	0.0018131970427930355	0.0019547324627637863	33	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	74	Orchestrator (thought)	False	0.0017686354694887996	0.0018877892289310694	44	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	75	Orchestrator (thought)	False	0.001004258287139237	0.001004258287139237	118	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	76	Orchestrator (thought)	False	0.0014153533848002553	0.0015732254832983017	96	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	77	Orchestrator (thought)	False	0.0018036786932498217	0.0019451231928542256	35	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	78	Orchestrator (-> WebSurfer)	False	0.0016487921820953488	0.0016487921820953488	88	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	79	Orchestrator (thought)	False	0.0009485232876613736	0.0009485232876613736	126	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	80	WebSurfer	False	0.0017446489073336124	0.0018949430668726563	42	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	81	Orchestrator (thought)	False	0.0018060490256175399	0.0019561443477869034	30	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	82	Orchestrator (-> WebSurfer)	False	0.0018675755709409714	0.0020093799103051424	17	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	83	Orchestrator (thought)	False	0.0009637580369599164	0.0009637580369599164	124	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	84	WebSurfer	False	0.0015598270110785961	0.0017035630298778415	78	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	85	Orchestrator (thought)	False	0.0017103805439546704	0.0018580700270831585	52	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	86	Orchestrator (-> WebSurfer)	False	0.0017041390528902411	0.0017041390528902411	77	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	87	Orchestrator (thought)	False	0.0009766195435076952	0.0009766195435076952	121	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	88	WebSurfer	False	0.0013266544556245208	0.0014811678556725383	98	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	89	Orchestrator (thought)	False	0.0017645341577008367	0.0019331368384882808	38	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	90	Orchestrator (-> WebSurfer)	False	0.0016599451191723347	0.0016599451191723347	87	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	91	Orchestrator (thought)	False	0.0009904851904138923	0.0010907287942245603	105	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	92	WebSurfer	False	0.0015394556103274226	0.0017112563364207745	76	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	93	Orchestrator (thought)	False	0.0017271415563300252	0.0018678887281566858	49	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	94	Orchestrator (-> WebSurfer)	False	0.0016671012854203582	0.0016671012854203582	86	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	95	Orchestrator (thought)	False	0.0009856508113443851	0.0010828766971826553	106	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	96	WebSurfer	False	0.0014931653859093785	0.0016838128212839365	83	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	97	Orchestrator (thought)	False	0.0016484259394928813	0.0017972025088965893	66	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	98	Orchestrator (-> WebSurfer)	False	0.0016475181328132749	0.0016475181328132749	89	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	99	Orchestrator (thought)	False	0.0009463728056289256	0.001050884835422039	111	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	100	WebSurfer	False	0.001643818337470293	0.0018255611648783088	61	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	101	Orchestrator (thought)	False	0.0015747752040624619	0.001724530360661447	75	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	102	Orchestrator (-> WebSurfer)	False	0.0017021179664880037	0.0017021179664880037	79	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	103	Orchestrator (thought)	False	0.0010497308103367686	0.0010497308103367686	113	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	104	WebSurfer	False	0.00188351736869663	0.0020967121236026287	9	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	105	Orchestrator (thought)	False	0.0017083835555240512	0.0018812223570421338	46	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	106	Orchestrator (-> WebSurfer)	False	0.0017368752742186189	0.0017368752742186189	74	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	107	Orchestrator (thought)	False	0.0010507972911000252	0.0010507972911000252	112	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	108	WebSurfer	False	0.0022886181250214577	0.0022886181250214577	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	109	Orchestrator (thought)	False	0.0017104524886235595	0.0018165574874728918	64	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	110	Orchestrator (thought)	False	0.0010610496392473578	0.0010610496392473578	108	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	111	Orchestrator (thought)	False	0.001418043510057032	0.0015883881133049726	94	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	112	Orchestrator (thought)	False	0.001779559999704361	0.0019924561493098736	19	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	113	Orchestrator (-> WebSurfer)	False	0.0021289607975631952	0.0021289607975631952	7	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	114	Orchestrator (thought)	False	0.0009281102102249861	0.0009281102102249861	127	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	115	WebSurfer	False	0.001879344112239778	0.0020626618061214685	13	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	116	Orchestrator (thought)	False	0.001770437229424715	0.00196739356033504	24	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	117	Orchestrator (-> WebSurfer)	False	0.0019695633091032505	0.0019695633091032505	23	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	118	Orchestrator (thought)	False	0.001002435921691358	0.001002435921691358	119	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	119	WebSurfer	False	0.0018900863360613585	0.0020646059419959784	11	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	120	Orchestrator (thought)	False	0.001748036709614098	0.0019275173544883728	40	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	121	Orchestrator (-> WebSurfer)	False	0.00179480598308146	0.00179480598308146	67	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	122	Orchestrator (thought)	False	0.0009722593822516501	0.0009722593822516501	123	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	123	WebSurfer	False	0.0017451964085921645	0.0019424424972385168	37	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	124	Orchestrator (thought)	False	0.0018756715580821037	0.002057611243799329	14	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	125	Orchestrator (-> WebSurfer)	False	0.001819397322833538	0.001819397322833538	63	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	126	Orchestrator (thought)	False	0.0010451208800077438	0.0010451208800077438	115	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	127	WebSurfer	False	0.0019724606536328793	0.0019724606536328793	22	False
+qwen3.5-9b	hand-crafted	backprop	14	test	15	128	128	Orchestrator (termination condition)	False	0.0014893573243170977	0.0014893573243170977	97	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	1	Orchestrator (thought)	False	0.0012889854842796922	0.0014333846047520638	30	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	2	Orchestrator (thought)	False	0.0015309581067413092	0.0016640671528875828	24	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	3	Orchestrator (-> WebSurfer)	False	0.0016126123955473304	0.0016126123955473304	28	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	4	WebSurfer	False	0.002154834568500519	0.002367350272834301	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	5	Orchestrator (thought)	False	0.0016441461630165577	0.0018040118739008904	16	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	6	Orchestrator (-> WebSurfer)	False	0.0018021254800260067	0.0018021254800260067	17	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	7	Orchestrator (thought)	False	0.0009103934862650931	0.0009103934862650931	38	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	8	WebSurfer	False	0.0015013760421425104	0.0016916684107854962	23	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	9	Orchestrator (thought)	False	0.001696077873930335	0.0018711390439420938	11	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	10	Orchestrator (-> WebSurfer)	False	0.0017874182667583227	0.0017874182667583227	19	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	11	Orchestrator (thought)	False	0.0009028200292959809	0.0009028200292959809	39	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	12	WebSurfer	False	0.0019021922489628196	0.002146962797269225	7	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	13	Orchestrator (thought)	False	0.0016583006363362074	0.0018246837425976992	14	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	14	Orchestrator (-> WebSurfer)	False	0.001663831528276205	0.001663831528276205	25	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	15	Orchestrator (thought)	False	0.0009437728440389037	0.0009437728440389037	36	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	16	WebSurfer	False	0.00244770641438663	0.0026888144202530384	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	17	Orchestrator (thought)	False	0.001610003411769867	0.0017761497292667627	20	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	18	Orchestrator (-> WebSurfer)	True	0.0016614632913842797	0.0016614632913842797	26	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	19	Orchestrator (thought)	False	0.0009477831772528589	0.0009477831772528589	34	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	20	WebSurfer	False	0.002411080524325371	0.0026098366361111403	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	21	Orchestrator (thought)	False	0.0016284430166706443	0.0017906577559188008	18	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	22	Orchestrator (-> WebSurfer)	False	0.0016221472760662436	0.0016221472760662436	27	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	23	Orchestrator (thought)	False	0.0009441935690119863	0.0009441935690119863	35	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	24	WebSurfer	False	0.0021667431574314833	0.002341334940865636	5	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	25	Orchestrator (thought)	False	0.0016932893777266145	0.0018504603067412972	12	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	26	Orchestrator (-> WebSurfer)	False	0.0015717092901468277	0.0015717092901468277	29	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	27	Orchestrator (thought)	False	0.0009309134329669178	0.0009309134329669178	37	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	28	WebSurfer	False	0.002479704562574625	0.002691960893571377	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	29	Orchestrator (thought)	False	0.0018407214665785432	0.0020287984516471624	8	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	30	Orchestrator (-> WebSurfer)	False	0.0018807705491781235	0.0018807705491781235	10	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	31	Orchestrator (thought)	False	0.000989320338703692	0.000989320338703692	32	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	32	WebSurfer	False	0.0022081963252276182	0.0022081963252276182	6	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	33	Orchestrator (thought)	False	0.001645317068323493	0.0018187721725553274	15	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	34	Orchestrator (-> Assistant)	False	0.001734551158733666	0.001734551158733666	22	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	35	Orchestrator (thought)	False	0.0017122651915997267	0.00183944555465132	13	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	36	Assistant	False	0.001745917252264917	0.001912319683469832	9	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	37	Orchestrator (thought)	False	0.001664023962803185	0.0017689629457890987	21	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	38	Orchestrator (thought)	False	0.0009868871420621872	0.0009868871420621872	33	False
+qwen3.5-9b	hand-crafted	backprop	14	test	55	39	39	Orchestrator (termination condition)	False	0.0012718031648546457	0.0012718031648546457	31	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	1	Orchestrator (thought)	False	0.0013887339737266302	0.0015394550282508135	94	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	2	Orchestrator (thought)	False	0.0015999076422303915	0.001738447928801179	73	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	3	Orchestrator (-> WebSurfer)	False	0.0013274297816678882	0.0013274297816678882	98	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	4	WebSurfer	False	0.002034632256254554	0.002242302754893899	13	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	5	Orchestrator (thought)	False	0.001606293604709208	0.001745867426507175	72	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	6	Orchestrator (-> WebSurfer)	False	0.0016832572873681784	0.0016832572873681784	79	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	7	Orchestrator (thought)	False	0.0009075470734387636	0.0010172483744099736	124	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	8	WebSurfer	True	0.0022032384295016527	0.0022032384295016527	14	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	9	Orchestrator (thought)	False	0.0017285274807363749	0.0018879398703575134	39	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	10	Orchestrator (-> WebSurfer)	False	0.0015186708187684417	0.0015186708187684417	95	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	11	Orchestrator (thought)	False	0.0009544414933770895	0.0010719590354710817	117	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	12	WebSurfer	False	0.0020643945317715406	0.0022971886210143566	12	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	13	Orchestrator (thought)	False	0.0017650822410359979	0.0019289159681648016	33	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	14	Orchestrator (-> WebSurfer)	False	0.0017762469360604882	0.0017762469360604882	64	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	15	Orchestrator (thought)	False	0.0009738249937072396	0.0009738249937072396	127	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	16	WebSurfer	False	0.0024106318596750498	0.0026383253280073404	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	17	Orchestrator (thought)	False	0.0017007390270009637	0.0018523684702813625	49	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	18	Orchestrator (-> WebSurfer)	False	0.0016635166248306632	0.0016635166248306632	82	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	19	Orchestrator (thought)	False	0.0009688545251265168	0.0010801212629303336	113	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	20	WebSurfer	False	0.0022735861130058765	0.0024678099434822798	11	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	21	Orchestrator (thought)	False	0.0017162830336019397	0.0018831611378118396	40	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	22	Orchestrator (-> WebSurfer)	False	0.0017751139821484685	0.0017751139821484685	65	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	23	Orchestrator (thought)	False	0.0010542282834649086	0.0011640859302133322	103	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	24	WebSurfer	False	0.00174846185836941	0.001907077617943287	35	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	25	Orchestrator (thought)	False	0.0016744743334129453	0.0018253419548273087	52	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	26	Orchestrator (-> WebSurfer)	False	0.001638814341276884	0.001638814341276884	85	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	27	Orchestrator (thought)	False	0.0010572172468528152	0.0010572172468528152	119	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	28	WebSurfer	False	0.0015861577121540904	0.0015861577121540904	89	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	29	Orchestrator (thought)	False	0.001705711823888123	0.001872248132713139	44	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	30	Orchestrator (-> WebSurfer)	False	0.0020513730123639107	0.0020513730123639107	20	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	31	Orchestrator (thought)	False	0.0010970125440508127	0.0010970125440508127	112	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	32	WebSurfer	False	0.002295997692272067	0.0025145618710666895	8	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	33	Orchestrator (thought)	False	0.0018177276942878962	0.0020154728554189205	23	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	34	Orchestrator (-> WebSurfer)	False	0.0019774523098021746	0.0019774523098021746	28	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	35	Orchestrator (thought)	False	0.0011751755373552442	0.0012731575407087803	99	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	36	WebSurfer	False	0.002471274696290493	0.0026511005125939846	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	37	Orchestrator (thought)	False	0.001715194433927536	0.0018771637696772814	42	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	38	Orchestrator (-> WebSurfer)	False	0.00178178446367383	0.00178178446367383	63	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	39	Orchestrator (thought)	False	0.0011126671452075243	0.0012240955838933587	100	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	40	WebSurfer	False	0.0016125484835356474	0.00180888082832098	54	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	41	Orchestrator (thought)	False	0.0016805119812488556	0.0018187452806159854	53	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	42	Orchestrator (-> WebSurfer)	False	0.0017043818952515721	0.0017043818952515721	76	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	43	Orchestrator (thought)	False	0.001098576351068914	0.0012061047600582242	101	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	44	Orchestrator (thought)	False	0.0017300053732469678	0.001929505611769855	32	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	45	Orchestrator (thought)	False	0.0019950023852288723	0.0019950023852288723	25	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	46	Orchestrator (thought)	False	0.0014020366361364722	0.0015732861356809735	93	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	47	Orchestrator (thought)	False	0.0018174590077251196	0.001964431954547763	29	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	48	Orchestrator (-> WebSurfer)	False	0.0018590515246614814	0.0018590515246614814	48	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	49	Orchestrator (thought)	False	0.0009739451925270259	0.0010782468598335981	116	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	50	WebSurfer	False	0.0022616423666477203	0.0024766346905380487	9	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	51	Orchestrator (thought)	False	0.0018986122449859977	0.002045602770522237	21	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	52	Orchestrator (-> WebSurfer)	False	0.0020196279510855675	0.0020196279510855675	22	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	53	Orchestrator (thought)	False	0.000979820266366005	0.0010783775942400098	115	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	54	WebSurfer	False	0.0023692201357334852	0.0025399976875633	7	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	55	Orchestrator (thought)	False	0.0018070637015625834	0.0019458048045635223	30	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	56	Orchestrator (-> WebSurfer)	False	0.002123711397871375	0.002123711397871375	16	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	57	Orchestrator (thought)	False	0.000981541583314538	0.000981541583314538	126	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	58	WebSurfer	False	0.001673689461313188	0.001673689461313188	81	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	59	Orchestrator (thought)	False	0.0017162846634164453	0.001891694962978363	38	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	60	Orchestrator (-> WebSurfer)	False	0.0017605869797989726	0.0017605869797989726	70	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	61	Orchestrator (thought)	False	0.001114284386858344	0.001114284386858344	111	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	62	WebSurfer	False	0.0017943148268386722	0.0019799298606812954	26	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	63	Orchestrator (thought)	False	0.0016963956877589226	0.0018676799954846501	45	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	64	Orchestrator (-> WebSurfer)	False	0.0017635029507800937	0.0017635029507800937	68	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	65	Orchestrator (thought)	False	0.0010752840898931026	0.0011776998871937394	102	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	66	WebSurfer	False	0.002303310437127948	0.002473505213856697	10	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	67	Orchestrator (thought)	False	0.001952317194081843	0.002111907349899411	17	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	68	Orchestrator (-> WebSurfer)	False	0.0018607869278639555	0.0018607869278639555	47	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	69	Orchestrator (thought)	False	0.00111855729483068	0.00111855729483068	110	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	70	WebSurfer	False	0.0015107758808881044	0.0016764088068157434	80	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	71	Orchestrator (thought)	False	0.0017003669636324048	0.0018789182649925351	41	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	72	Orchestrator (-> WebSurfer)	False	0.0017855132464319468	0.0017855132464319468	62	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	73	Orchestrator (thought)	False	0.0010430167894810438	0.0010430167894810438	122	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	74	Orchestrator (thought)	False	0.0016254447400569916	0.0018030056962743402	57	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	75	Orchestrator (-> FileSurfer)	False	0.0018088305369019508	0.0018088305369019508	55	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	76	Orchestrator (thought)	False	0.001853106077760458	0.001977737993001938	27	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	77	FileSurfer	False	0.0012463191524147987	0.0013954114401713014	96	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	78	Orchestrator (thought)	False	0.0016648966120555997	0.001839578035287559	51	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	79	Orchestrator (-> FileSurfer)	False	0.0017915446078404784	0.0017915446078404784	60	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	80	Orchestrator (thought)	False	0.0010435993317514658	0.0010435993317514658	121	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	81	FileSurfer	False	0.0013998171780258417	0.001578539377078414	92	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	82	Orchestrator (thought)	False	0.001702999696135521	0.0018722981913015246	43	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	83	Orchestrator (-> FileSurfer)	False	0.0016929847188293934	0.0016929847188293934	78	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	84	Orchestrator (thought)	False	0.001019519055262208	0.0011228214716538787	109	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	85	FileSurfer	False	0.0017872222233563662	0.0017872222233563662	61	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	86	Orchestrator (thought)	False	0.0017672370886430144	0.0019425071077421308	31	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	87	Orchestrator (-> WebSurfer)	False	0.001752700423821807	0.001752700423821807	71	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	88	Orchestrator (thought)	False	0.0009855736279860139	0.0009855736279860139	125	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	89	WebSurfer	False	0.0016563291428610682	0.0016563291428610682	83	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	90	Orchestrator (thought)	False	0.00174172583501786	0.0018670965218916535	46	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	91	Orchestrator (thought)	False	0.0010711975628510118	0.0010711975628510118	118	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	92	Orchestrator (thought)	False	0.0014205846237018704	0.0015797249507158995	91	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	93	Orchestrator (thought)	False	0.0016515211900696158	0.0018015132518485188	58	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	94	Orchestrator (-> WebSurfer)	False	0.0016524159582331777	0.0016524159582331777	84	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	95	Orchestrator (thought)	False	0.001043969881720841	0.001043969881720841	120	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	96	WebSurfer	False	0.0018561495235189795	0.0020522677805274725	19	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	97	Orchestrator (thought)	False	0.0016493372386321425	0.0018057612469419837	56	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	98	Orchestrator (-> WebSurfer)	False	0.0017315506702288985	0.0017315506702288985	74	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	99	Orchestrator (thought)	False	0.0010241578565910459	0.001138548250310123	107	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	100	WebSurfer	False	0.0024418567772954702	0.0026340854819864035	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	101	Orchestrator (thought)	False	0.0016988539136946201	0.0018409049371257424	50	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	102	Orchestrator (-> WebSurfer)	False	0.0016094113234430552	0.0016094113234430552	88	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	103	Orchestrator (thought)	False	0.0010330238146707416	0.0011459903325885534	104	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	104	WebSurfer	False	0.0014883560361340642	0.0017005153931677341	77	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	105	Orchestrator (thought)	False	0.0016119995852932334	0.001774227013811469	66	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	106	Orchestrator (-> WebSurfer)	False	0.001630568178370595	0.001630568178370595	87	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	107	Orchestrator (thought)	False	0.0010424687061458826	0.0010424687061458826	123	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	108	WebSurfer	False	0.0019241964910179377	0.0019241964910179377	34	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	109	Orchestrator (thought)	False	0.002042217180132866	0.002196596935391426	15	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	110	Orchestrator (-> WebSurfer)	False	0.001764438464306295	0.001764438464306295	67	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	111	Orchestrator (thought)	False	0.0011389449937269092	0.0011389449937269092	106	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	112	WebSurfer	False	0.0025679301470518112	0.0028038816526532173	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	113	Orchestrator (thought)	False	0.0017445096746087074	0.001896373345516622	37	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	114	Orchestrator (-> WebSurfer)	False	0.0017227876232936978	0.0017227876232936978	75	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	115	Orchestrator (thought)	False	0.0011439044028520584	0.0011439044028520584	105	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	116	WebSurfer	False	0.002357371849939227	0.002573578618466854	5	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	117	Orchestrator (thought)	False	0.001608129357919097	0.0017630810616537929	69	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	118	Orchestrator (-> WebSurfer)	False	0.001638356246985495	0.001638356246985495	86	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	119	Orchestrator (thought)	False	0.0011296647135168314	0.0011296647135168314	108	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	120	WebSurfer	False	0.002362524624913931	0.0025700011756271124	6	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	121	Orchestrator (thought)	False	0.0016719469567760825	0.001798404147848487	59	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	122	Orchestrator (thought)	False	0.00107996491715312	0.00107996491715312	114	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	123	Orchestrator (thought)	False	0.0014277150621637702	0.0015855170786380768	90	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	124	Orchestrator (thought)	False	0.0018137675942853093	0.002003628760576248	24	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	125	Orchestrator (-> WebSurfer)	False	0.0018986108480021358	0.0018986108480021358	36	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	126	Orchestrator (thought)	False	0.0009302743710577488	0.0009302743710577488	128	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	127	WebSurfer	False	0.002074766205623746	0.002074766205623746	18	False
+qwen3.5-9b	hand-crafted	backprop	14	test	8	128	128	Orchestrator (termination condition)	False	0.0013495589373633265	0.0013495589373633265	97	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	1	Orchestrator (thought)	False	0.001294945366680622	0.0014372837031260133	62	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	2	Orchestrator (thought)	False	0.001471816678531468	0.001590254483744502	55	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	3	Orchestrator (-> WebSurfer)	False	0.0012895335676148534	0.0012895335676148534	64	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	4	WebSurfer	False	0.002042425097897649	0.0022417986765503883	10	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	5	Orchestrator (thought)	False	0.0015303288819268346	0.0016617641085758805	50	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	6	Orchestrator (-> WebSurfer)	False	0.0015827871393412352	0.0016849023522809148	48	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	7	Orchestrator (thought)	False	0.0008757421164773405	0.0008757421164773405	81	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	8	WebSurfer	True	0.0019458549795672297	0.0021289438009262085	14	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	9	Orchestrator (thought)	False	0.0015869407216086984	0.0017364652594551444	42	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	10	Orchestrator (-> WebSurfer)	False	0.0014635124243795872	0.0014635124243795872	61	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	11	Orchestrator (thought)	False	0.0008675797143951058	0.0008675797143951058	82	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	12	WebSurfer	False	0.001459535676985979	0.0016316344263032079	54	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	13	Orchestrator (thought)	False	0.001570231863297522	0.0016963034868240356	46	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	14	Orchestrator (-> WebSurfer)	False	0.0013347133062779903	0.0013347133062779903	63	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	15	Orchestrator (thought)	False	0.0008777692564763129	0.0008777692564763129	80	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	16	WebSurfer	False	0.0017209876095876098	0.0018924698233604431	22	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	17	Orchestrator (thought)	False	0.001422389643266797	0.001575591741129756	56	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	18	Orchestrator (-> Assistant)	False	0.0015236386097967625	0.0015236386097967625	59	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	19	Orchestrator (thought)	False	0.001677562016993761	0.001827159314416349	27	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	20	Assistant	False	0.0013467120006680489	0.0015225900569930673	60	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	21	Orchestrator (thought)	False	0.0016372959362342954	0.001795890391804278	34	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	22	Orchestrator (-> WebSurfer)	False	0.0015372029738500714	0.0015372029738500714	57	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	23	Orchestrator (thought)	False	0.0008870520978234708	0.0008870520978234708	79	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	24	WebSurfer	False	0.0017148220213130116	0.0017148220213130116	44	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	25	Orchestrator (thought)	False	0.0016470184782519937	0.0017946104053407907	35	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	26	Orchestrator (-> WebSurfer)	False	0.0016560970107093453	0.0016560970107093453	51	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	27	Orchestrator (thought)	False	0.0009132333798334002	0.0009132333798334002	78	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	28	WebSurfer	False	0.002717822790145874	0.0029630872886627913	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	29	Orchestrator (thought)	False	0.001511170295998454	0.001651817699894309	52	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	30	Orchestrator (-> Assistant)	False	0.0016833496047183871	0.0016833496047183871	49	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	31	Orchestrator (thought)	False	0.0009966427460312843	0.0009966427460312843	75	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	32	Assistant	False	0.0018983734771609306	0.0020500929094851017	15	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	33	Orchestrator (thought)	False	0.0016051369020715356	0.001749475602991879	41	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	34	Orchestrator (-> WebSurfer)	False	0.0016859561437740922	0.0016859561437740922	47	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	35	Orchestrator (thought)	False	0.0010211525950580835	0.0010211525950580835	73	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	36	Orchestrator (thought)	False	0.001535898889414966	0.00171481107827276	45	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	37	Orchestrator (thought)	False	0.0017891221214085817	0.0017891221214085817	36	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	38	Orchestrator (thought)	False	0.0013726638862863183	0.0015249912394210696	58	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	39	Orchestrator (thought)	False	0.001655405038036406	0.0018104296177625656	29	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	40	Orchestrator (-> WebSurfer)	False	0.0018399079563096166	0.0018399079563096166	25	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	41	Orchestrator (thought)	False	0.0009698133799247444	0.0010748894419521093	67	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	42	WebSurfer	False	0.0028199905063956976	0.0030416585505008698	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	43	Orchestrator (thought)	False	0.0017765698721632361	0.001917989575304091	20	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	44	Orchestrator (-> WebSurfer)	False	0.0017506889998912811	0.0017506889998912811	39	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	45	Orchestrator (thought)	False	0.0009912526002153754	0.0010962882079184055	65	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	46	WebSurfer	False	0.002304780064150691	0.0025464054197072983	5	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	47	Orchestrator (thought)	False	0.001798162586055696	0.001947138225659728	17	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	48	Orchestrator (-> WebSurfer)	False	0.001641725655645132	0.001641725655645132	53	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	49	Orchestrator (thought)	False	0.0009857246186584234	0.001091179670765996	66	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	50	WebSurfer	False	0.0026162532158195972	0.0026162532158195972	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	51	Orchestrator (thought)	False	0.0017736554145812988	0.0019281989661976695	18	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	52	Orchestrator (-> WebSurfer)	False	0.0016444845823571086	0.0017502130940556526	40	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	53	Orchestrator (thought)	False	0.0009744104463607073	0.0009744104463607073	77	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	54	WebSurfer	False	0.0020623435266315937	0.002260436536744237	9	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	55	Orchestrator (thought)	False	0.0016373236430808902	0.0018020966090261936	32	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	56	Orchestrator (-> WebSurfer)	False	0.0017231351230293512	0.0017231351230293512	43	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	57	Orchestrator (thought)	False	0.000986970029771328	0.000986970029771328	76	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	58	WebSurfer	False	0.0018228816334158182	0.0020371193531900644	16	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	59	Orchestrator (thought)	False	0.0017579509876668453	0.0019217851804569364	19	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	60	Orchestrator (-> WebSurfer)	False	0.0018184850923717022	0.0018184850923717022	28	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	61	Orchestrator (thought)	False	0.0010310146026313305	0.0010310146026313305	72	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	62	WebSurfer	False	0.002100458135828376	0.0023484902922064066	7	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	63	Orchestrator (thought)	False	0.0017395495669916272	0.0019149979343637824	21	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	64	Orchestrator (-> WebSurfer)	False	0.0018057579873129725	0.0018057579873129725	31	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	65	Orchestrator (thought)	False	0.0010507606202736497	0.0010507606202736497	70	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	66	WebSurfer	False	0.002193204825744033	0.002484782598912716	6	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	67	Orchestrator (thought)	False	0.001666738768108189	0.001845251303166151	24	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	68	Orchestrator (-> WebSurfer)	False	0.001785125583410263	0.001785125583410263	38	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	69	Orchestrator (thought)	False	0.0010503556113690138	0.0010503556113690138	71	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	70	WebSurfer	False	0.0019378236029297113	0.0021571938414126635	12	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	71	Orchestrator (thought)	False	0.001652006758376956	0.0018306177807971835	26	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	72	Orchestrator (-> WebSurfer)	False	0.0017861106898635626	0.0017861106898635626	37	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	73	Orchestrator (thought)	False	0.00105455017182976	0.00105455017182976	69	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	74	WebSurfer	False	0.0021937028504908085	0.0021937028504908085	11	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	75	Orchestrator (thought)	False	0.001700503984466195	0.0018802012782543898	23	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	76	Orchestrator (-> WebSurfer)	False	0.0017969731707125902	0.0017969731707125902	33	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	77	Orchestrator (thought)	False	0.0010572847677394748	0.0010572847677394748	68	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	78	WebSurfer	False	0.002282858593389392	0.002282858593389392	8	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	79	Orchestrator (thought)	False	0.0019581099040806293	0.002138752955943346	13	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	80	Orchestrator (-> WebSurfer)	False	0.0018064311007037759	0.0018064311007037759	30	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	81	Orchestrator (thought)	False	0.001009611994959414	0.001009611994959414	74	False
+qwen3.5-9b	hand-crafted	backprop	14	test	41	82	82	WebSurfer	False	0.002915777498856187	0.002915777498856187	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	1	Orchestrator (thought)	False	0.0012437117984518409	0.0013937129406258464	26	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	2	Orchestrator (thought)	False	0.0014304935466498137	0.0015567505033686757	21	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	3	Orchestrator (-> WebSurfer)	False	0.0013975678011775017	0.0013975678011775017	25	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	4	WebSurfer	False	0.001679187291301787	0.0018427069298923016	6	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	5	Orchestrator (thought)	False	0.0015720698283985257	0.0017301614861935377	12	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	6	Orchestrator (-> WebSurfer)	False	0.0015809168107807636	0.0015809168107807636	19	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	7	Orchestrator (thought)	False	0.0008443857659585774	0.0008443857659585774	32	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	8	WebSurfer	False	0.0018002457218244672	0.00197162595577538	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	9	Orchestrator (thought)	False	0.0015968993538990617	0.0017501430120319128	10	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	10	Orchestrator (-> WebSurfer)	False	0.001532435999251902	0.001532435999251902	22	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	11	Orchestrator (thought)	False	0.0009007637854665518	0.0009007637854665518	29	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	12	WebSurfer	False	0.0017138017574325204	0.0017138017574325204	13	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	13	Orchestrator (thought)	False	0.0015039130812510848	0.0016535966424271464	16	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	14	Orchestrator (-> FileSurfer)	False	0.0014968359610065818	0.0014968359610065818	23	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	15	Orchestrator (thought)	False	0.0018122449982911348	0.002146275946870446	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	16	FileSurfer	False	0.0013098582858219743	0.0014791000867262483	24	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	17	Orchestrator (thought)	False	0.0015882310690358281	0.001749250222928822	11	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	18	Orchestrator (-> FileSurfer)	False	0.0016608589794486761	0.0016608589794486761	15	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	19	Orchestrator (thought)	False	0.0008972011273726821	0.0008972011273726821	31	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	20	FileSurfer	False	0.0014590620994567871	0.0016482843784615397	17	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	21	Orchestrator (thought)	False	0.0016271048225462437	0.0017903640400618315	7	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	22	Orchestrator (-> FileSurfer)	False	0.0016325919423252344	0.0016325919423252344	18	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	23	Orchestrator (thought)	False	0.0008998435223475099	0.0008998435223475099	30	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	24	FileSurfer	False	0.001892670406959951	0.001892670406959951	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	25	Orchestrator (thought)	False	0.0015113946283236146	0.0016681032720953226	14	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	26	Orchestrator (-> FileSurfer)	False	0.0015670864377170801	0.0015670864377170801	20	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	27	Orchestrator (thought)	False	0.0009154554572887719	0.0009154554572887719	27	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	28	FileSurfer	False	0.0018916947301477194	0.0018916947301477194	5	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	29	Orchestrator (thought)	False	0.0015911819646134973	0.0017692705150693655	9	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	30	Orchestrator (-> FileSurfer)	False	0.0017808856209740043	0.0017808856209740043	8	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	31	Orchestrator (thought)	False	0.0009150950936600566	0.0009150950936600566	28	False
+qwen3.5-9b	hand-crafted	backprop	14	test	26	32	32	FileSurfer	True	0.0033403090201318264	0.0033403090201318264	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	1	Orchestrator (thought)	False	0.0014680668246001005	0.0016140054212883115	80	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	2	Orchestrator (thought)	False	0.0015066933119669557	0.0016454551368951797	75	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	3	Orchestrator (-> WebSurfer)	False	0.0014858266804367304	0.0014858266804367304	91	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	4	WebSurfer	False	0.0021004220470786095	0.002314963610842824	8	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	5	Orchestrator (thought)	False	0.0018577524460852146	0.0020132872741669416	24	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	6	Orchestrator (-> WebSurfer)	False	0.0017697394359856844	0.0017697394359856844	62	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	7	Orchestrator (thought)	False	0.0008841836825013161	0.0008841836825013161	120	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	8	WebSurfer	False	0.002436290727928281	0.0026534562930464745	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	9	Orchestrator (thought)	False	0.0015823626890778542	0.0017341743223369122	69	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	10	Orchestrator (-> WebSurfer)	False	0.0016072625294327736	0.0016072625294327736	81	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	11	Orchestrator (thought)	False	0.0009236432961188257	0.0009236432961188257	118	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	12	WebSurfer	False	0.002267376286908984	0.002473546424880624	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	13	Orchestrator (thought)	False	0.0017095844959840178	0.0018512679962441325	51	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	14	Orchestrator (-> WebSurfer)	False	0.0016586462734267116	0.0016586462734267116	74	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	15	Orchestrator (thought)	False	0.0009470076765865088	0.0009470076765865088	116	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	16	WebSurfer	False	0.001960664987564087	0.001960664987564087	31	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	17	Orchestrator (thought)	False	0.0017565377056598663	0.0019466629019007087	33	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	18	Orchestrator (-> WebSurfer)	False	0.0019012525444850326	0.0019012525444850326	41	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	19	Orchestrator (thought)	False	0.001099221408367157	0.001099221408367157	98	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	20	WebSurfer	False	0.00238362280651927	0.0025632111355662346	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	21	Orchestrator (thought)	False	0.0017461578827351332	0.001934229047037661	35	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	22	Orchestrator (-> WebSurfer)	False	0.0018807114101946354	0.0018807114101946354	43	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	23	Orchestrator (thought)	False	0.0010871666017919779	0.0010871666017919779	101	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	24	WebSurfer	False	0.0024055931717157364	0.0024055931717157364	7	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	25	Orchestrator (thought)	False	0.001416003447957337	0.001552370609715581	87	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	26	Orchestrator (-> WebSurfer)	False	0.0016478270990774035	0.0017407126724720001	68	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	27	Orchestrator (thought)	False	0.0009288560831919312	0.0009288560831919312	117	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	28	WebSurfer	False	0.00244468217715621	0.00244468217715621	5	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	29	Orchestrator (thought)	False	0.0014138506958261132	0.0015758662484586239	83	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	30	Orchestrator (thought)	False	0.0018982619512826204	0.0020427084527909756	21	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	31	Orchestrator (thought)	False	0.0013629872119054198	0.0015377087984234095	89	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	32	Orchestrator (thought)	False	0.001688109477981925	0.0018145105568692088	56	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	33	Orchestrator (-> WebSurfer)	False	0.0017209143843501806	0.0017209143843501806	70	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	34	Orchestrator (thought)	False	0.0009143321658484638	0.0009143321658484638	119	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	35	WebSurfer	False	0.0019841750618070364	0.002188987797126174	11	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	36	Orchestrator (thought)	False	0.0017260616878047585	0.001868340652436018	47	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	37	Orchestrator (-> WebSurfer)	False	0.0018196903401985765	0.0019288850016891956	36	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	38	Orchestrator (thought)	False	0.0009472990641370416	0.0009472990641370416	115	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	39	WebSurfer	False	0.0015722813550382853	0.0017528451280668378	65	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	40	Orchestrator (thought)	False	0.001854423200711608	0.002037501661106944	22	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	41	Orchestrator (-> FileSurfer)	False	0.001830784254707396	0.001830784254707396	53	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	42	Orchestrator (thought)	False	0.002333522541448474	0.002439875155687332	6	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	43	FileSurfer	False	0.0019782630261033773	0.0019782630261033773	29	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	44	Orchestrator (thought)	False	0.0018251147121191025	0.0019901730120182037	26	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	45	Orchestrator (-> WebSurfer)	False	0.001908795558847487	0.001908795558847487	39	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	46	Orchestrator (thought)	False	0.0010225281585007906	0.0010225281585007906	108	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	47	WebSurfer	False	0.0017908283043652773	0.0017908283043652773	60	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	48	Orchestrator (thought)	False	0.001750200754031539	0.001898026093840599	42	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	49	Orchestrator (-> WebSurfer)	False	0.0016294382512569427	0.0016294382512569427	77	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	50	Orchestrator (thought)	False	0.0009676947956904769	0.0009676947956904769	113	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	51	WebSurfer	False	0.002636039862409234	0.002832469530403614	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	52	Orchestrator (thought)	False	0.002022612141445279	0.002151799388229847	15	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	53	Orchestrator (thought)	False	0.001235920935869217	0.001235920935869217	93	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	54	Orchestrator (thought)	False	0.0017927029402926564	0.001956293825060129	32	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	55	Orchestrator (thought)	False	0.0016021861229091883	0.0017592599615454674	64	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	56	Orchestrator (-> WebSurfer)	False	0.0017653483664616942	0.0017653483664616942	63	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	57	Orchestrator (thought)	False	0.0009667670237831771	0.0009667670237831771	114	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	58	WebSurfer	False	0.00197683391161263	0.0021677622571587563	12	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	59	Orchestrator (thought)	False	0.0017533234786242247	0.0019038572208955884	40	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	60	Orchestrator (-> WebSurfer)	False	0.0017754875589162111	0.0017754875589162111	61	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	61	Orchestrator (thought)	False	0.0010276343673467636	0.0010276343673467636	107	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	62	WebSurfer	False	0.00182202213909477	0.00182202213909477	55	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	63	Orchestrator (thought)	False	0.0020283691119402647	0.0022143719252198935	10	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	64	Orchestrator (-> WebSurfer)	False	0.0018600281327962875	0.0018600281327962875	49	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	65	Orchestrator (thought)	False	0.0010919468477368355	0.0010919468477368355	100	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	66	WebSurfer	False	0.0021111539099365473	0.002290321746841073	9	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	67	Orchestrator (thought)	False	0.0018544327467679977	0.0020120786502957344	25	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	68	Orchestrator (-> WebSurfer)	False	0.0016825760249048471	0.0016825760249048471	73	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	69	Orchestrator (thought)	False	0.0010635252110660076	0.0011703441850841045	96	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	70	WebSurfer	False	0.0016398320440202951	0.00180504797026515	58	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	71	Orchestrator (thought)	False	0.00172275525983423	0.0018765314016491175	45	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	72	Orchestrator (-> WebSurfer)	False	0.001565758022479713	0.001565758022479713	86	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	73	Orchestrator (thought)	False	0.0010442635975778103	0.0011498493840917945	97	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	74	WebSurfer	False	0.001429815893061459	0.0015905258478596807	82	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	75	Orchestrator (thought)	False	0.0016015279106795788	0.0017489788588136435	66	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	76	Orchestrator (-> WebSurfer)	False	0.0014813804300501943	0.0014813804300501943	92	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	77	Orchestrator (thought)	False	0.0010208564344793558	0.0010208564344793558	109	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	78	WebSurfer	False	0.0016899877227842808	0.0016899877227842808	71	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	79	Orchestrator (thought)	False	0.0017139995470643044	0.0018683073576539755	48	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	80	Orchestrator (-> Assistant)	False	0.0017477200599387288	0.0017477200599387288	67	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	81	Orchestrator (thought)	False	0.0016957118641585112	0.001796496333554387	59	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	82	Assistant	True	0.0017599886050447822	0.0019217492081224918	37	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	83	Orchestrator (thought)	False	0.0018585975049063563	0.001985585782676935	28	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	84	Orchestrator (thought)	False	0.0010462490608915687	0.0010462490608915687	105	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	85	Orchestrator (thought)	False	0.0014214154798537493	0.0015720580704510212	85	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	86	Orchestrator (thought)	False	0.0018856493989005685	0.002036862540990114	23	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	87	Orchestrator (-> WebSurfer)	False	0.0016335690161213279	0.0016335690161213279	76	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	88	Orchestrator (thought)	False	0.0009872200898826122	0.0009872200898826122	112	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	89	WebSurfer	False	0.001956863794475794	0.002139371819794178	16	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	90	Orchestrator (thought)	False	0.0019826365169137716	0.0021178163588047028	17	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	91	Orchestrator (-> WebSurfer)	False	0.0015521601308137178	0.0015521601308137178	88	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	92	Orchestrator (thought)	False	0.0010362514294683933	0.0010362514294683933	106	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	93	WebSurfer	False	0.001903863507322967	0.002093823393806815	18	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	94	Orchestrator (thought)	False	0.0018874171655625105	0.0020639686845242977	19	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	95	Orchestrator (-> WebSurfer)	False	0.0016834740526974201	0.0016834740526974201	72	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	96	Orchestrator (thought)	False	0.0010681893909350038	0.0010681893909350038	103	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	97	WebSurfer	False	0.001678762026131153	0.0018760591046884656	46	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	98	Orchestrator (thought)	False	0.0018853206420317292	0.0020469066221266985	20	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	99	Orchestrator (-> WebSurfer)	False	0.0016158599173650146	0.0016158599173650146	78	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	100	Orchestrator (thought)	False	0.0010558575158938766	0.0010558575158938766	104	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	101	WebSurfer	False	0.0018068180652335286	0.0018068180652335286	57	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	102	Orchestrator (thought)	False	0.0016601165989413857	0.0018269537249580026	54	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	103	Orchestrator (-> WebSurfer)	False	0.0016149361617863178	0.0016149361617863178	79	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	104	Orchestrator (thought)	False	0.0010078445775434375	0.0010078445775434375	110	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	105	WebSurfer	False	0.0019597436767071486	0.0021560387685894966	14	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	106	Orchestrator (thought)	False	0.001761075109243393	0.001918458379805088	38	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	107	Orchestrator (-> WebSurfer)	False	0.0015738332876935601	0.0015738332876935601	84	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	108	Orchestrator (thought)	False	0.0009988037636503577	0.0009988037636503577	111	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	109	WebSurfer	False	0.0019629516173154116	0.0019629516173154116	30	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	110	Orchestrator (thought)	False	0.001791356597095728	0.0019405912607908249	34	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	111	Orchestrator (-> WebSurfer)	False	0.0014923469861969352	0.0014923469861969352	90	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	112	Orchestrator (thought)	False	0.0010698954574763775	0.0010698954574763775	102	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	113	WebSurfer	False	0.0021644746884703636	0.0021644746884703636	13	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	114	Orchestrator (thought)	False	0.0017166276229545474	0.0018804497085511684	44	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	115	Orchestrator (-> WebSurfer)	False	0.0018524081679061055	0.0018524081679061055	50	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	116	Orchestrator (thought)	False	0.0010976255871355534	0.0010976255871355534	99	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	117	WebSurfer	False	0.00198958208784461	0.00198958208784461	27	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	118	Orchestrator (thought)	False	0.0017291744006797671	0.0018358073430135846	52	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	119	Orchestrator (thought)	False	0.0010663298889994621	0.0011872927425429225	95	False
+qwen3.5-9b	hand-crafted	backprop	14	test	30	120	120	Orchestrator (termination condition)	False	0.0012096286518499255	0.0012096286518499255	94	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	1	Orchestrator (thought)	False	0.0013217574451118708	0.0014660162851214409	44	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	2	Orchestrator (thought)	False	0.0014710931573063135	0.0016050819540396333	39	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	3	Orchestrator (-> WebSurfer)	True	0.0016144363908097148	0.0016144363908097148	38	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	4	WebSurfer	False	0.00198283139616251	0.0021330323070287704	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	5	Orchestrator (thought)	False	0.001577867311425507	0.0017310649855062366	30	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	6	Orchestrator (-> WebSurfer)	False	0.0018838796531781554	0.0018838796531781554	15	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	7	Orchestrator (thought)	False	0.000878402846865356	0.0009741763933561742	59	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	8	WebSurfer	False	0.002094034105539322	0.002266931813210249	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	9	Orchestrator (thought)	False	0.0016278536058962345	0.0017783151706680655	26	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	10	Orchestrator (-> WebSurfer)	False	0.0017552186036482453	0.0018563535995781422	19	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	11	Orchestrator (thought)	False	0.0008961765561252832	0.0008961765561252832	66	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	12	WebSurfer	False	0.0013051907299086452	0.0013051907299086452	50	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	13	Orchestrator (thought)	False	0.001633201027289033	0.0018069595098495483	23	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	14	Orchestrator (-> WebSurfer)	False	0.001737584243528545	0.001737584243528545	29	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	15	Orchestrator (thought)	False	0.000910910137463361	0.000910910137463361	65	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	16	WebSurfer	False	0.0010403640335425735	0.0010403640335425735	54	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	17	Orchestrator (thought)	False	0.0014891152968630195	0.0016508339904248714	35	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	18	Orchestrator (-> FileSurfer)	False	0.0016171871684491634	0.0016171871684491634	37	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	19	Orchestrator (thought)	False	0.001943581155501306	0.002120080403983593	5	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	20	FileSurfer	False	0.0011414074106141925	0.001304958830587566	51	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	21	Orchestrator (thought)	False	0.0017021653475239873	0.001852590125054121	20	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	22	Orchestrator (-> FileSurfer)	False	0.0013925032690167427	0.0013925032690167427	47	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	23	Orchestrator (thought)	False	0.0009562651976011693	0.0009562651976011693	62	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	24	FileSurfer	False	0.0014852569438517094	0.0016715669771656394	33	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	25	Orchestrator (thought)	False	0.0016628007870167494	0.0018007215112447739	25	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	26	Orchestrator (-> FileSurfer)	False	0.0013792073586955667	0.0013792073586955667	48	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	27	Orchestrator (thought)	False	0.0009585543302819133	0.0009585543302819133	60	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	28	FileSurfer	False	0.0016537407645955682	0.0016537407645955682	34	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	29	Orchestrator (thought)	False	0.0014769844710826874	0.0016204053536057472	36	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	30	Orchestrator (-> FileSurfer)	False	0.001434208475984633	0.001434208475984633	45	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	31	Orchestrator (thought)	False	0.000952502537984401	0.000952502537984401	63	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	32	FileSurfer	False	0.0018366740550845861	0.0020462030079215765	7	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	33	Orchestrator (thought)	False	0.0015898104757070541	0.0017173908418044448	32	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	34	Orchestrator (thought)	False	0.0017649928340688348	0.0017649928340688348	27	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	35	Orchestrator (thought)	False	0.0012758037773892283	0.0014316493179649115	46	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	36	Orchestrator (thought)	False	0.0016791451489552855	0.001807355904020369	22	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	37	Orchestrator (-> WebSurfer)	False	0.0015801643021404743	0.0015801643021404743	40	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	38	Orchestrator (thought)	False	0.0009381335694342852	0.0009381335694342852	64	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	39	WebSurfer	False	0.002011435804888606	0.00216623954474926	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	40	Orchestrator (thought)	False	0.0015886262990534306	0.0017417743802070618	28	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	41	Orchestrator (-> FileSurfer)	False	0.0015314811607822776	0.0015314811607822776	42	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	42	Orchestrator (thought)	False	0.000957735232077539	0.000957735232077539	61	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	43	FileSurfer	False	0.002095288597047329	0.002095288597047329	6	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	44	Orchestrator (thought)	False	0.001713343197479844	0.001868146937340498	18	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	45	Orchestrator (-> WebSurfer)	False	0.0015480369329452515	0.0015480369329452515	41	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	46	Orchestrator (thought)	False	0.001011350192129612	0.001011350192129612	57	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	47	WebSurfer	False	0.0019821797031909227	0.0019821797031909227	12	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	48	Orchestrator (thought)	False	0.0013153505278751254	0.0014795566676184535	43	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	49	Orchestrator (-> WebSurfer)	False	0.0016098023625090718	0.0017308916430920362	31	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	50	Orchestrator (thought)	False	0.0009647057158872485	0.0010702983709052205	52	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	51	WebSurfer	False	0.0018014778615906835	0.0019984205719083548	10	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	52	Orchestrator (thought)	False	0.0016545712715014815	0.0018052218947559595	24	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	53	Orchestrator (-> WebSurfer)	False	0.0018732588505372405	0.0018732588505372405	17	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	54	Orchestrator (thought)	False	0.0010243570432066917	0.0010243570432066917	56	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	55	WebSurfer	False	0.001869102125056088	0.00199966155923903	9	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	56	Orchestrator (thought)	False	0.0017473743064329028	0.0019457378657534719	13	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	57	Orchestrator (-> WebSurfer)	False	0.001983635826036334	0.001983635826036334	11	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	58	Orchestrator (thought)	False	0.0010559260845184326	0.0010559260845184326	53	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	59	WebSurfer	False	0.0013055942254140973	0.0013055942254140973	49	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	60	Orchestrator (thought)	False	0.0016812504036352038	0.00187986483797431	16	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	61	Orchestrator (-> WebSurfer)	False	0.002016659826040268	0.002016659826040268	8	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	62	Orchestrator (thought)	False	0.0010393535485491157	0.0010393535485491157	55	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	63	Orchestrator (thought)	False	0.0016218213131651282	0.0018112899269908667	21	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	64	Orchestrator (-> WebSurfer)	False	0.0018946867203339934	0.0018946867203339934	14	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	65	Orchestrator (thought)	False	0.0010058364132419229	0.0010058364132419229	58	False
+qwen3.5-9b	hand-crafted	backprop	14	test	20	66	66	WebSurfer	False	0.003862194251269102	0.003862194251269102	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	29	12	1	Orchestrator (thought)	False	0.0012553445994853973	0.0014064128044992685	9	False
+qwen3.5-9b	hand-crafted	backprop	14	test	29	12	2	Orchestrator (thought)	False	0.0014558935072273016	0.001589966006577015	7	False
+qwen3.5-9b	hand-crafted	backprop	14	test	29	12	3	Orchestrator (-> WebSurfer)	False	0.0013601973187178373	0.0013601973187178373	10	False
+qwen3.5-9b	hand-crafted	backprop	14	test	29	12	4	WebSurfer	False	0.0018650211859494448	0.002064718399196863	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	29	12	5	Orchestrator (thought)	False	0.0018118104198947549	0.0019887108355760574	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	29	12	6	Orchestrator (-> WebSurfer)	False	0.0019347902853041887	0.0019347902853041887	5	False
+qwen3.5-9b	hand-crafted	backprop	14	test	29	12	7	Orchestrator (thought)	False	0.0008746547973714769	0.0008746547973714769	12	False
+qwen3.5-9b	hand-crafted	backprop	14	test	29	12	8	WebSurfer	False	0.0021234287414699793	0.002350409282371402	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	29	12	9	Orchestrator (thought)	False	0.0015546989161521196	0.0017069971654564142	6	False
+qwen3.5-9b	hand-crafted	backprop	14	test	29	12	10	Orchestrator (-> WebSurfer)	False	0.0015229819109663367	0.0015229819109663367	8	False
+qwen3.5-9b	hand-crafted	backprop	14	test	29	12	11	Orchestrator (thought)	False	0.0009051952511072159	0.0009051952511072159	11	False
+qwen3.5-9b	hand-crafted	backprop	14	test	29	12	12	WebSurfer	True	0.002660385798662901	0.002660385798662901	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	43	15	1	Orchestrator (thought)	False	0.0013789974618703127	0.0015316132921725512	10	False
+qwen3.5-9b	hand-crafted	backprop	14	test	43	15	2	Orchestrator (thought)	False	0.0015532965771853924	0.00168806710280478	6	False
+qwen3.5-9b	hand-crafted	backprop	14	test	43	15	3	Orchestrator (-> WebSurfer)	False	0.0013590564485639334	0.0013590564485639334	12	False
+qwen3.5-9b	hand-crafted	backprop	14	test	43	15	4	WebSurfer	False	0.0019293768564239144	0.0020853213500231504	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	43	15	5	Orchestrator (thought)	False	0.0016005118377506733	0.0017543452559038997	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	43	15	6	Orchestrator (-> WebSurfer)	False	0.00153833394870162	0.00153833394870162	9	False
+qwen3.5-9b	hand-crafted	backprop	14	test	43	15	7	Orchestrator (thought)	False	0.000892612268216908	0.000892612268216908	15	False
+qwen3.5-9b	hand-crafted	backprop	14	test	43	15	8	WebSurfer	False	0.0015439202543348074	0.0017047934234142303	5	False
+qwen3.5-9b	hand-crafted	backprop	14	test	43	15	9	Orchestrator (thought)	False	0.0016885220538824797	0.0018378515960648656	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	43	15	10	Orchestrator (-> Assistant)	False	0.0014932951889932156	0.0014932951889932156	11	False
+qwen3.5-9b	hand-crafted	backprop	14	test	43	15	11	Orchestrator (thought)	False	0.0016825260827317834	0.0016825260827317834	7	False
+qwen3.5-9b	hand-crafted	backprop	14	test	43	15	12	Assistant	True	0.0016087311087176204	0.0016087311087176204	8	False
+qwen3.5-9b	hand-crafted	backprop	14	test	43	15	13	Orchestrator (thought)	False	0.001666243770159781	0.0017584390006959438	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	43	15	14	Orchestrator (thought)	False	0.0009219524217769504	0.0009219524217769504	14	False
+qwen3.5-9b	hand-crafted	backprop	14	test	43	15	15	Orchestrator (termination condition)	False	0.0010314278770238161	0.0010314278770238161	13	False
+qwen3.5-9b	hand-crafted	backprop	14	test	5	19	1	Orchestrator (thought)	False	0.0012540295720100403	0.0013976872432976961	13	False
+qwen3.5-9b	hand-crafted	backprop	14	test	5	19	2	Orchestrator (thought)	False	0.001466471585445106	0.0015965114580467343	9	False
+qwen3.5-9b	hand-crafted	backprop	14	test	5	19	3	Orchestrator (-> WebSurfer)	False	0.0013090965803712606	0.0015204648952931166	11	False
+qwen3.5-9b	hand-crafted	backprop	14	test	5	19	4	WebSurfer	False	0.002113683382049203	0.0023917672224342823	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	5	19	5	Orchestrator (thought)	False	0.001681176363490522	0.0018485605251044035	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	5	19	6	Orchestrator (-> WebSurfer)	False	0.0017115502851083875	0.0017115502851083875	8	False
+qwen3.5-9b	hand-crafted	backprop	14	test	5	19	7	Orchestrator (thought)	False	0.0009259964572265744	0.0009259964572265744	17	False
+qwen3.5-9b	hand-crafted	backprop	14	test	5	19	8	WebSurfer	False	0.0025252820923924446	0.002826419658958912	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	5	19	9	Orchestrator (thought)	False	0.0016121701337397099	0.0017699445597827435	6	False
+qwen3.5-9b	hand-crafted	backprop	14	test	5	19	10	Orchestrator (-> WebSurfer)	False	0.0015777447260916233	0.0015777447260916233	10	False
+qwen3.5-9b	hand-crafted	backprop	14	test	5	19	11	Orchestrator (thought)	False	0.0009037418640218675	0.0009037418640218675	18	False
+qwen3.5-9b	hand-crafted	backprop	14	test	5	19	12	WebSurfer	True	0.0030113752000033855	0.003142896806821227	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	5	19	13	Orchestrator (thought)	False	0.0015760159585624933	0.0017262933542951941	7	False
+qwen3.5-9b	hand-crafted	backprop	14	test	5	19	14	Orchestrator (-> WebSurfer)	False	0.0015027737244963646	0.0015027737244963646	12	False
+qwen3.5-9b	hand-crafted	backprop	14	test	5	19	15	Orchestrator (thought)	False	0.0008782360819168389	0.0008782360819168389	19	False
+qwen3.5-9b	hand-crafted	backprop	14	test	5	19	16	WebSurfer	False	0.001315216301009059	0.001315216301009059	14	False
+qwen3.5-9b	hand-crafted	backprop	14	test	5	19	17	Orchestrator (thought)	False	0.0017232776153832674	0.0018204385414719582	5	False
+qwen3.5-9b	hand-crafted	backprop	14	test	5	19	18	Orchestrator (thought)	False	0.0009351198095828295	0.0009351198095828295	16	False
+qwen3.5-9b	hand-crafted	backprop	14	test	5	19	19	Orchestrator (termination condition)	False	0.0010331959929317236	0.0010331959929317236	15	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	1	Orchestrator (thought)	False	0.001347023295238614	0.0015085417544469237	50	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	2	Orchestrator (thought)	False	0.0014013138134032488	0.0015512125100940466	48	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	3	Orchestrator (-> WebSurfer)	False	0.0015377970412373543	0.0015377970412373543	49	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	4	WebSurfer	False	0.001838431810028851	0.0021022676955908537	35	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	5	Orchestrator (thought)	False	0.0016303056618198752	0.001795529038645327	42	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	6	Orchestrator (-> WebSurfer)	False	0.002122027100995183	0.002122027100995183	32	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	7	Orchestrator (thought)	False	0.0008821946103125811	0.0008821946103125811	66	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	8	WebSurfer	False	0.002154269488528371	0.002494466258212924	15	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	9	Orchestrator (thought)	False	0.001922507188282907	0.0020908827427774668	36	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	10	Orchestrator (-> WebSurfer)	False	0.001492359209805727	0.001492359209805727	52	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	11	Orchestrator (thought)	False	0.0008935843943618238	0.0008935843943618238	65	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	12	WebSurfer	False	0.005535007454454899	0.005769616924226284	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	13	Orchestrator (thought)	False	0.0019816237036138773	0.0021770240273326635	25	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	14	Orchestrator (-> FileSurfer)	False	0.0022934505250304937	0.0022934505250304937	20	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	15	Orchestrator (thought)	False	0.0019441604381427169	0.002134772716090083	30	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	16	FileSurfer	False	0.0014595501124858856	0.001634070766158402	46	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	17	Orchestrator (thought)	False	0.0019175533670932055	0.0021110486704856157	33	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	18	Orchestrator (-> FileSurfer)	False	0.002598455408588052	0.002598455408588052	11	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	19	Orchestrator (thought)	False	0.0010058749467134476	0.0010058749467134476	59	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	20	FileSurfer	False	0.0017089660977944732	0.001969685312360525	40	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	21	Orchestrator (thought)	False	0.0019370205700397491	0.0021669426932930946	29	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	22	Orchestrator (-> FileSurfer)	False	0.002595256082713604	0.002595256082713604	12	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	23	Orchestrator (thought)	False	0.0010031593265011907	0.0010031593265011907	60	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	24	FileSurfer	False	0.001885811099782586	0.0021719317883253098	27	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	25	Orchestrator (thought)	False	0.001963879680261016	0.001963879680261016	41	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	26	Orchestrator (-> FileSurfer)	False	0.0025774105452001095	0.0025774105452001095	13	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	27	Orchestrator (thought)	False	0.0009935391135513783	0.0009935391135513783	62	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	28	FileSurfer	False	0.0027294117026031017	0.0027294117026031017	8	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	29	Orchestrator (thought)	False	0.0019997539930045605	0.0022481936030089855	22	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	30	Orchestrator (-> FileSurfer)	False	0.0024843949358910322	0.0024843949358910322	16	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	31	Orchestrator (thought)	False	0.0009860898135229945	0.0009860898135229945	64	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	32	FileSurfer	False	0.0027803818229585886	0.0027803818229585886	6	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	33	Orchestrator (thought)	False	0.001953219762071967	0.0021724444814026356	26	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	34	Orchestrator (-> FileSurfer)	False	0.0025211332831531763	0.0025211332831531763	14	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	35	Orchestrator (thought)	False	0.001010380918160081	0.001010380918160081	57	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	36	FileSurfer	False	0.0017452066531404853	0.0017452066531404853	43	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	37	Orchestrator (thought)	False	0.0018056229455396533	0.0020399854984134436	39	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	38	Orchestrator (-> FileSurfer)	False	0.00262118480168283	0.00262118480168283	10	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	39	Orchestrator (thought)	False	0.001028839498758316	0.001028839498758316	55	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	40	FileSurfer	False	0.0029939264059066772	0.0029939264059066772	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	41	Orchestrator (thought)	False	0.0018813519272953272	0.002123200334608555	31	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	42	Orchestrator (-> FileSurfer)	False	0.002418485004454851	0.002418485004454851	18	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	43	Orchestrator (thought)	False	0.0010285831522196531	0.0010285831522196531	56	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	44	FileSurfer	False	0.002978301839902997	0.002978301839902997	5	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	45	Orchestrator (thought)	False	0.0021347433794289827	0.0023806148674339056	19	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	46	Orchestrator (-> ComputerTerminal)	False	0.002653287723660469	0.002753235399723053	7	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	47	Orchestrator (thought)	False	0.0009888637578114867	0.0009888637578114867	63	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	48	ComputerTerminal	False	0.001009082538075745	0.001009082538075745	58	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	49	Orchestrator (thought)	False	0.0020930883474648	0.002288425574079156	21	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	50	Orchestrator (thought)	False	0.001953371334820986	0.0021718661300837994	28	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	51	Orchestrator (thought)	True	0.0014883826952427626	0.0017055780626833439	44	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	52	Orchestrator (thought)	False	0.002038919599726796	0.002227265853434801	23	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	53	Orchestrator (-> ComputerTerminal)	False	0.0027066569309681654	0.0027066569309681654	9	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	54	Orchestrator (thought)	False	0.001036722562275827	0.001036722562275827	54	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	55	ComputerTerminal	False	0.002793798688799143	0.003124699229374528	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	56	Orchestrator (thought)	False	0.0018839961849153042	0.0020488458685576916	38	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	57	Orchestrator (-> Assistant)	False	0.0016484976513311267	0.0016484976513311267	45	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	58	Orchestrator (thought)	False	0.0021849472541362047	0.0021849472541362047	24	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	59	Assistant	False	0.002295274520292878	0.0024754421319812536	17	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	60	Orchestrator (thought)	False	0.0019319973653182387	0.002067010849714279	37	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	61	Orchestrator (-> ComputerTerminal)	False	0.0016097009647637606	0.0016097009647637606	47	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	62	Orchestrator (thought)	False	0.0010457007447257638	0.0010457007447257638	53	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	63	ComputerTerminal	False	0.0038503671530634165	0.004023874178528786	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	64	Orchestrator (thought)	False	0.0019824416376650333	0.0021039810962975025	34	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	65	Orchestrator (thought)	False	0.0009987469529733062	0.0009987469529733062	61	False
+qwen3.5-9b	hand-crafted	backprop	14	test	47	66	66	Orchestrator (termination condition)	False	0.001504934742115438	0.001504934742115438	51	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	1	Orchestrator (thought)	False	0.0013676562812179327	0.0015138016315177083	51	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	2	Orchestrator (thought)	False	0.0014571254141628742	0.001590231666341424	46	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	3	Orchestrator (-> WebSurfer)	False	0.0014833227032795548	0.0014833227032795548	52	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	4	WebSurfer	False	0.001986780436709523	0.0022097164765000343	7	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	5	Orchestrator (thought)	False	0.001576993614435196	0.0017429369036108255	31	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	6	Orchestrator (-> WebSurfer)	False	0.001594669884070754	0.001594669884070754	45	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	7	Orchestrator (thought)	False	0.0009205498499795794	0.0009205498499795794	67	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	8	WebSurfer	False	0.002373829949647188	0.0025818776339292526	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	9	Orchestrator (thought)	False	0.0017297826707363129	0.0018814133945852518	21	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	10	Orchestrator (-> WebSurfer)	False	0.0016976497136056423	0.0016976497136056423	39	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	11	Orchestrator (thought)	False	0.0009418462868779898	0.0010444531217217445	63	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	12	WebSurfer	False	0.0019404108170419931	0.002159460447728634	9	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	13	Orchestrator (thought)	False	0.0015880863647907972	0.001737779937684536	32	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	14	Orchestrator (-> WebSurfer)	False	0.0016998169012367725	0.0016998169012367725	38	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	15	Orchestrator (thought)	False	0.0009608574910089374	0.0009608574910089374	66	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	16	WebSurfer	False	0.002241522306576371	0.002453392604365945	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	17	Orchestrator (thought)	False	0.0016949287382885814	0.001840750570409	26	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	18	Orchestrator (-> WebSurfer)	False	0.0015856863465160131	0.0015856863465160131	47	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	19	Orchestrator (thought)	False	0.0009682641830295324	0.0010734553216025233	58	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	20	WebSurfer	False	0.002490338636562228	0.0026946025900542736	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	21	Orchestrator (thought)	False	0.0015683098463341594	0.0017252748366445303	33	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	22	Orchestrator (-> Assistant)	False	0.0018363348208367825	0.00201070006005466	12	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	23	Orchestrator (thought)	False	0.0018261627992615104	0.001973876729607582	14	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	24	Assistant	False	0.001743651693686843	0.0019099278142675757	17	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	25	Orchestrator (thought)	False	0.0017670439556241035	0.0019043649081140757	18	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	26	Orchestrator (-> WebSurfer)	False	0.0017027276335284114	0.0017027276335284114	37	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	27	Orchestrator (thought)	False	0.0009113404084928334	0.0009113404084928334	68	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	28	WebSurfer	False	0.0023509878665208817	0.002533372025936842	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	29	Orchestrator (thought)	False	0.0017167446203529835	0.001850105356425047	25	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	30	Orchestrator (-> WebSurfer)	False	0.0015759945381432772	0.0015759945381432772	48	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	31	Orchestrator (thought)	False	0.001026068115606904	0.0011361639481037855	56	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	32	WebSurfer	False	0.002052543917670846	0.002240014960989356	6	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	33	Orchestrator (thought)	False	0.0016308779595419765	0.001791565679013729	28	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	34	Orchestrator (-> WebSurfer)	False	0.0017226667841896415	0.0017226667841896415	34	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	35	Orchestrator (thought)	False	0.0011017960496246815	0.001206626184284687	54	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	36	WebSurfer	False	0.0020350536797195673	0.002207455923780799	8	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	37	Orchestrator (thought)	False	0.001603761687874794	0.0017712998669594526	30	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	38	Orchestrator (-> WebSurfer)	False	0.0016753820236772299	0.0016753820236772299	40	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	39	Orchestrator (thought)	False	0.0010519112693145871	0.0010519112693145871	61	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	40	WebSurfer	False	0.0016941712237894535	0.0018648748518899083	23	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	41	Orchestrator (thought)	False	0.0016655956860631704	0.001836344599723816	27	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	42	Orchestrator (-> WebSurfer)	False	0.0017074889037758112	0.0017074889037758112	36	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	43	Orchestrator (thought)	False	0.0010599496308714151	0.0010599496308714151	59	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	44	WebSurfer	False	0.0014716641744598746	0.0014716641744598746	53	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	45	Orchestrator (thought)	False	0.0015969632659107447	0.0017856727354228497	29	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	46	Orchestrator (-> WebSurfer)	False	0.001887094578705728	0.001887094578705728	20	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	47	Orchestrator (thought)	False	0.0010550498263910413	0.0010550498263910413	60	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	48	WebSurfer	False	0.001938649220392108	0.001938649220392108	16	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	49	Orchestrator (thought)	False	0.0016328998608514667	0.0016328998608514667	42	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	50	Orchestrator (thought)	True	0.0019964156672358513	0.0019964156672358513	13	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	51	Orchestrator (thought)	False	0.0013990855077281594	0.0015456469263881445	50	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	52	Orchestrator (thought)	False	0.0015816129744052887	0.001719076419249177	35	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	53	Orchestrator (-> WebSurfer)	False	0.0016191549366340041	0.0016191549366340041	44	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	54	Orchestrator (thought)	False	0.000962599937338382	0.000962599937338382	65	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	55	WebSurfer	False	0.0019298095721751451	0.0021155967842787504	10	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	56	Orchestrator (thought)	False	0.00180347531568259	0.0019481724593788385	15	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	57	Orchestrator (-> WebSurfer)	False	0.0015545918140560389	0.0015545918140560389	49	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	58	Orchestrator (thought)	False	0.0010066796094179153	0.0010066796094179153	64	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	59	WebSurfer	False	0.001622430863790214	0.001622430863790214	43	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	60	Orchestrator (thought)	False	0.0019064563093706965	0.0020927893929183483	11	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	61	Orchestrator (-> WebSurfer)	False	0.0018633304862305522	0.0018633304862305522	24	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	62	Orchestrator (thought)	False	0.0011009578593075275	0.0011009578593075275	57	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	63	WebSurfer	False	0.0021041177678853273	0.002280930755659938	5	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	64	Orchestrator (thought)	False	0.001715665915980935	0.001879355637356639	22	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	65	Orchestrator (-> WebSurfer)	False	0.0016368968645110726	0.0016368968645110726	41	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	66	Orchestrator (thought)	False	0.0010483012301847339	0.0010483012301847339	62	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	67	WebSurfer	False	0.0019036165904253721	0.0019036165904253721	19	False
+qwen3.5-9b	hand-crafted	backprop	14	test	19	68	68	Orchestrator (termination condition)	False	0.0011531031923368573	0.0011531031923368573	55	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	1	Orchestrator (thought)	False	0.0013861153274774551	0.0015308046713471413	27	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	2	Orchestrator (thought)	False	0.0015120196621865034	0.0016371302772313356	25	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	3	Orchestrator (-> WebSurfer)	False	0.001188382157124579	0.001188382157124579	29	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	4	WebSurfer	False	0.001877609291113913	0.0020843124948441982	9	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	5	Orchestrator (thought)	False	0.0018574814312160015	0.002022534841671586	11	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	6	Orchestrator (-> WebSurfer)	False	0.0017544111469760537	0.0017544111469760537	21	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	7	Orchestrator (thought)	False	0.0009136726730503142	0.0010329150827601552	33	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	8	WebSurfer	True	0.002160364994779229	0.002354382537305355	5	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	9	Orchestrator (thought)	False	0.0018119229935109615	0.0019869485404342413	14	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	10	Orchestrator (-> WebSurfer)	False	0.0020051889587193727	0.0020051889587193727	12	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	11	Orchestrator (thought)	False	0.0009160975459963083	0.0010289241326972842	34	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	12	WebSurfer	False	0.0018210526322945952	0.002031613141298294	10	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	13	Orchestrator (thought)	False	0.001732987118884921	0.001893188920803368	16	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	14	Orchestrator (-> WebSurfer)	False	0.001870034378953278	0.001870034378953278	17	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	15	Orchestrator (thought)	False	0.0009174954029731452	0.001024545286782086	35	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	16	WebSurfer	False	0.0022336726542562246	0.002444374840706587	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	17	Orchestrator (thought)	False	0.001933951280079782	0.0021103224717080593	7	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	18	Orchestrator (-> WebSurfer)	False	0.0017915066564455628	0.0017915066564455628	20	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	19	Orchestrator (thought)	False	0.0009566960507072508	0.0009566960507072508	36	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	20	WebSurfer	False	0.0021680863574147224	0.0024303707759827375	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	21	Orchestrator (thought)	False	0.0019018884049728513	0.0020870245061814785	8	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	22	Orchestrator (-> WebSurfer)	False	0.0018513619434088469	0.0018513619434088469	18	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	23	Orchestrator (thought)	False	0.0011282655177637935	0.0011282655177637935	30	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	24	WebSurfer	False	0.001560967997647822	0.001560967997647822	26	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	25	Orchestrator (thought)	False	0.0017613578820601106	0.0019334948156028986	15	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	26	Orchestrator (-> WebSurfer)	False	0.0017213691025972366	0.0017213691025972366	24	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	27	Orchestrator (thought)	False	0.0011924239806830883	0.0011924239806830883	28	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	28	WebSurfer	False	0.0022846010979264975	0.0022846010979264975	6	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	29	Orchestrator (thought)	False	0.001817455980926752	0.001991341821849346	13	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	30	Orchestrator (-> WebSurfer)	False	0.0017388593405485153	0.0017388593405485153	22	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	31	Orchestrator (thought)	False	0.0010598099324852228	0.0010598099324852228	32	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	32	WebSurfer	False	0.0021464608144015074	0.002450956730172038	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	33	Orchestrator (thought)	False	0.0016526812687516212	0.0018252654699608684	19	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	34	Orchestrator (-> WebSurfer)	False	0.0017258422449231148	0.0017258422449231148	23	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	35	Orchestrator (thought)	False	0.0010818402515724301	0.0010818402515724301	31	False
+qwen3.5-9b	hand-crafted	backprop	14	test	17	36	36	WebSurfer	False	0.003962415270507336	0.003962415270507336	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	48	4	1	Orchestrator (thought)	False	0.0013933334266766906	0.0015757413348183036	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	48	4	2	Orchestrator (thought)	False	0.0014829166466370225	0.0016651599435135722	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	48	4	3	Orchestrator (-> WebSurfer)	False	0.0015708269784227014	0.0015708269784227014	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	48	4	4	WebSurfer	True	0.0024174856953322887	0.0024174856953322887	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	1	Orchestrator (thought)	False	0.0013229986652731895	0.0014760801568627357	23	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	2	Orchestrator (thought)	False	0.001550686894915998	0.0016836763825267553	12	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	3	Orchestrator (-> WebSurfer)	False	0.0015862470027059317	0.0015862470027059317	17	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	4	WebSurfer	False	0.0018622431671246886	0.002083918545395136	6	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	5	Orchestrator (thought)	False	0.0016490563284605742	0.001780626829713583	10	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	6	Orchestrator (-> WebSurfer)	False	0.0015021885046735406	0.0015021885046735406	22	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	7	Orchestrator (thought)	False	0.0009108223603107035	0.0009108223603107035	29	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	8	WebSurfer	False	0.0028692339546978474	0.0030949360225349665	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	9	Orchestrator (thought)	False	0.0016087612602859735	0.0017707240767776966	11	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	10	Orchestrator (-> WebSurfer)	False	0.0015853781951591372	0.0015853781951591372	19	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	11	Orchestrator (thought)	False	0.000891367788426578	0.000891367788426578	30	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	12	WebSurfer	False	0.0019183331169188023	0.0021109506487846375	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	13	Orchestrator (thought)	False	0.001637776498682797	0.0017999077681452036	9	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	14	Orchestrator (-> WebSurfer)	False	0.0016213128110393882	0.0016213128110393882	15	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	15	Orchestrator (thought)	False	0.0009175972663797438	0.0009175972663797438	28	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	16	WebSurfer	True	0.0029641101136803627	0.0031223250553011894	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	17	Orchestrator (thought)	False	0.0016488058026880026	0.00181045092176646	8	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	18	Orchestrator (-> WebSurfer)	False	0.001585755031555891	0.001585755031555891	18	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	19	Orchestrator (thought)	False	0.000923800456803292	0.000923800456803292	27	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	20	WebSurfer	False	0.001580317155458033	0.001580317155458033	20	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	21	Orchestrator (thought)	False	0.001657609362155199	0.001657609362155199	13	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	22	Orchestrator (thought)	False	0.0020448339637368917	0.002204315271228552	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	23	Orchestrator (thought)	False	0.001255820388905704	0.0013980334624648094	24	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	24	Orchestrator (thought)	False	0.0014842047821730375	0.001640782575123012	14	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	25	Orchestrator (-> WebSurfer)	False	0.0015657779294997454	0.0015657779294997454	21	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	26	Orchestrator (thought)	False	0.0009611661662347615	0.0009611661662347615	26	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	27	WebSurfer	False	0.0019261745037510991	0.0020981295965611935	5	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	28	Orchestrator (thought)	False	0.0017195518594235182	0.0018290397711098194	7	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	29	Orchestrator (thought)	False	0.0010948794661089778	0.0010948794661089778	25	False
+qwen3.5-9b	hand-crafted	backprop	14	test	18	30	30	Orchestrator (termination condition)	False	0.0015948133077472448	0.0015948133077472448	16	False
+qwen3.5-9b	hand-crafted	backprop	14	test	16	20	1	Orchestrator (thought)	False	0.0014269675593823195	0.0015871619107201695	16	False
+qwen3.5-9b	hand-crafted	backprop	14	test	16	20	2	Orchestrator (thought)	False	0.0015876584220677614	0.0017282727640122175	12	False
+qwen3.5-9b	hand-crafted	backprop	14	test	16	20	3	Orchestrator (-> WebSurfer)	False	0.0017140565905719995	0.0017140565905719995	13	False
+qwen3.5-9b	hand-crafted	backprop	14	test	16	20	4	WebSurfer	False	0.0021146987564861774	0.0023341330233961344	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	16	20	5	Orchestrator (thought)	False	0.0018106938805431128	0.0019810541998595	7	False
+qwen3.5-9b	hand-crafted	backprop	14	test	16	20	6	Orchestrator (-> WebSurfer)	False	0.0017036034259945154	0.0017036034259945154	14	False
+qwen3.5-9b	hand-crafted	backprop	14	test	16	20	7	Orchestrator (thought)	False	0.000882582797203213	0.000882582797203213	20	False
+qwen3.5-9b	hand-crafted	backprop	14	test	16	20	8	WebSurfer	False	0.002025737427175045	0.002025737427175045	6	False
+qwen3.5-9b	hand-crafted	backprop	14	test	16	20	9	Orchestrator (thought)	False	0.001899783848784864	0.002094089053571224	5	False
+qwen3.5-9b	hand-crafted	backprop	14	test	16	20	10	Orchestrator (-> WebSurfer)	False	0.0019430529791861773	0.0019430529791861773	8	False
+qwen3.5-9b	hand-crafted	backprop	14	test	16	20	11	Orchestrator (thought)	False	0.0009067366481758654	0.0009067366481758654	19	False
+qwen3.5-9b	hand-crafted	backprop	14	test	16	20	12	WebSurfer	False	0.002291276352480054	0.00257445708848536	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	16	20	13	Orchestrator (thought)	False	0.0017338857287541032	0.0019154169131070375	10	False
+qwen3.5-9b	hand-crafted	backprop	14	test	16	20	14	Orchestrator (-> WebSurfer)	False	0.0018153125420212746	0.0018153125420212746	11	False
+qwen3.5-9b	hand-crafted	backprop	14	test	16	20	15	Orchestrator (thought)	True	0.000926228822208941	0.000926228822208941	18	False
+qwen3.5-9b	hand-crafted	backprop	14	test	16	20	16	WebSurfer	False	0.002333838026970625	0.0026632293593138456	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	16	20	17	Orchestrator (thought)	False	0.0017626323970034719	0.0019237376982346177	9	False
+qwen3.5-9b	hand-crafted	backprop	14	test	16	20	18	Orchestrator (-> WebSurfer)	False	0.0016110525466501713	0.0016110525466501713	15	False
+qwen3.5-9b	hand-crafted	backprop	14	test	16	20	19	Orchestrator (thought)	False	0.0009714485495351255	0.0009714485495351255	17	False
+qwen3.5-9b	hand-crafted	backprop	14	test	16	20	20	WebSurfer	False	0.0032939142547547817	0.0032939142547547817	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	34	4	1	Orchestrator (thought)	False	0.0013778224820271134	0.0015582258347421885	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	34	4	2	Orchestrator (thought)	False	0.0014663543552160263	0.0016408793162554502	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	34	4	3	Orchestrator (-> WebSurfer)	False	0.0014514400390908122	0.0014514400390908122	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	34	4	4	WebSurfer	True	0.002462550066411495	0.002462550066411495	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	1	Orchestrator (thought)	False	0.0012942637549713254	0.0014342137146741152	22	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	2	Orchestrator (thought)	False	0.0014873207546770573	0.0016132384771481156	17	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	3	Orchestrator (-> WebSurfer)	False	0.0016172442119568586	0.0016172442119568586	16	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	4	WebSurfer	False	0.0017840561922639608	0.0019630210008472204	7	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	5	Orchestrator (thought)	False	0.0015010156203061342	0.0016470395494252443	15	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	6	Orchestrator (-> WebSurfer)	False	0.0015803157584741712	0.0015803157584741712	18	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	7	Orchestrator (thought)	False	0.0008614829857833683	0.0008614829857833683	31	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	8	WebSurfer	False	0.001758437603712082	0.001975388266146183	6	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	9	Orchestrator (thought)	False	0.0015553092816844583	0.0016883492935448885	13	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	10	Orchestrator (-> WebSurfer)	False	0.0015010240022093058	0.0015010240022093058	20	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	11	Orchestrator (thought)	False	0.000901784747838974	0.000901784747838974	30	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	12	WebSurfer	False	0.0018718547653406858	0.002110541332513094	5	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	13	Orchestrator (thought)	False	0.0016265497542917728	0.0017820335924625397	9	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	14	Orchestrator (-> WebSurfer)	False	0.0015548380324617028	0.0015548380324617028	19	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	15	Orchestrator (thought)	False	0.000912984018214047	0.000912984018214047	29	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	16	WebSurfer	False	0.0023868652060627937	0.002661704318597913	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	17	Orchestrator (thought)	False	0.0016152868047356606	0.0017603702144697309	10	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	18	Orchestrator (-> WebSurfer)	False	0.0014508339809253812	0.0014508339809253812	21	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	19	Orchestrator (thought)	False	0.0009145689546130598	0.0009145689546130598	28	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	20	WebSurfer	False	0.0026462264358997345	0.0029429099522531033	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	21	Orchestrator (thought)	False	0.0015171050326898694	0.0016600704984739423	14	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	22	Orchestrator (-> WebSurfer)	False	0.0014296550070866942	0.0014296550070866942	23	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	23	Orchestrator (thought)	False	0.0009317871881648898	0.0009317871881648898	27	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	24	WebSurfer	False	0.002930606482550502	0.003157295286655426	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	25	Orchestrator (thought)	False	0.0017681762110441923	0.0019161079544574022	8	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	26	Orchestrator (-> WebSurfer)	False	0.0017251387471333146	0.0017251387471333146	12	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	27	Orchestrator (thought)	False	0.0010499589843675494	0.0010499589843675494	24	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	28	WebSurfer	False	0.0030050070490688086	0.0031688229646533728	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	29	Orchestrator (thought)	True	0.0016381597379222512	0.0017405144171789289	11	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	30	Orchestrator (thought)	False	0.0010096111800521612	0.0010096111800521612	26	False
+qwen3.5-9b	hand-crafted	backprop	14	test	42	31	31	Orchestrator (termination condition)	False	0.001040403381921351	0.001040403381921351	25	False
+qwen3.5-9b	hand-crafted	backprop	14	test	49	15	1	Orchestrator (thought)	False	0.0012092546094208956	0.001350506441667676	12	False
+qwen3.5-9b	hand-crafted	backprop	14	test	49	15	2	Orchestrator (thought)	False	0.0013920963974669576	0.001532500027678907	9	False
+qwen3.5-9b	hand-crafted	backprop	14	test	49	15	3	Orchestrator (-> WebSurfer)	False	0.0014180626021698117	0.0014180626021698117	11	False
+qwen3.5-9b	hand-crafted	backprop	14	test	49	15	4	WebSurfer	False	0.0017859371146187186	0.001959289191290736	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	49	15	5	Orchestrator (thought)	False	0.0014463161351159215	0.0015887003391981125	8	False
+qwen3.5-9b	hand-crafted	backprop	14	test	49	15	6	Orchestrator (-> WebSurfer)	False	0.0014378228224813938	0.0014378228224813938	10	False
+qwen3.5-9b	hand-crafted	backprop	14	test	49	15	7	Orchestrator (thought)	False	0.0008970255730673671	0.0008970255730673671	15	False
+qwen3.5-9b	hand-crafted	backprop	14	test	49	15	8	WebSurfer	False	0.001867245533503592	0.002025565830990672	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	49	15	9	Orchestrator (thought)	False	0.0016372272511944175	0.0018088554497808218	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	49	15	10	Orchestrator (-> Assistant)	False	0.0017677017021924257	0.0017677017021924257	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	49	15	11	Orchestrator (thought)	False	0.0016622941475361586	0.0016622941475361586	6	False
+qwen3.5-9b	hand-crafted	backprop	14	test	49	15	12	Assistant	True	0.0015832032077014446	0.0017361016944050789	5	False
+qwen3.5-9b	hand-crafted	backprop	14	test	49	15	13	Orchestrator (thought)	False	0.0015289847506210208	0.0016294928500428796	7	False
+qwen3.5-9b	hand-crafted	backprop	14	test	49	15	14	Orchestrator (thought)	False	0.0009659226634539664	0.0009659226634539664	14	False
+qwen3.5-9b	hand-crafted	backprop	14	test	49	15	15	Orchestrator (termination condition)	False	0.001058461843058467	0.001058461843058467	13	False
+qwen3.5-9b	hand-crafted	backprop	14	test	45	20	1	Orchestrator (thought)	False	0.0016884380020201206	0.0018684978131204844	10	False
+qwen3.5-9b	hand-crafted	backprop	14	test	45	20	2	Orchestrator (thought)	False	0.0016122929519042373	0.0017673693364486098	13	False
+qwen3.5-9b	hand-crafted	backprop	14	test	45	20	3	Orchestrator (-> WebSurfer)	False	0.0018448489718139172	0.0018448489718139172	11	False
+qwen3.5-9b	hand-crafted	backprop	14	test	45	20	4	WebSurfer	False	0.002000457141548395	0.002241886220872402	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	45	20	5	Orchestrator (thought)	False	0.0018640008056536317	0.0020604052115231752	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	45	20	6	Orchestrator (-> WebSurfer)	False	0.002034361707046628	0.002034361707046628	6	False
+qwen3.5-9b	hand-crafted	backprop	14	test	45	20	7	Orchestrator (thought)	False	0.0008774640737101436	0.0008774640737101436	20	False
+qwen3.5-9b	hand-crafted	backprop	14	test	45	20	8	WebSurfer	False	0.0024142914917320013	0.0024142914917320013	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	45	20	9	Orchestrator (thought)	False	0.0018717499915510416	0.00204564374871552	5	False
+qwen3.5-9b	hand-crafted	backprop	14	test	45	20	10	Orchestrator (-> WebSurfer)	False	0.001775888609699905	0.001775888609699905	12	False
+qwen3.5-9b	hand-crafted	backprop	14	test	45	20	11	Orchestrator (thought)	False	0.0009204130619764328	0.0009204130619764328	18	False
+qwen3.5-9b	hand-crafted	backprop	14	test	45	20	12	Orchestrator (thought)	False	0.0016992496093735099	0.0018755350029096007	9	False
+qwen3.5-9b	hand-crafted	backprop	14	test	45	20	13	Orchestrator (-> WebSurfer)	False	0.001713094301521778	0.001713094301521778	15	False
+qwen3.5-9b	hand-crafted	backprop	14	test	45	20	14	Orchestrator (thought)	False	0.000878699473105371	0.000878699473105371	19	False
+qwen3.5-9b	hand-crafted	backprop	14	test	45	20	15	Orchestrator (thought)	False	0.0018387343734502792	0.00201407796703279	7	False
+qwen3.5-9b	hand-crafted	backprop	14	test	45	20	16	Orchestrator (-> WebSurfer)	False	0.0017534351209178567	0.0017534351209178567	14	False
+qwen3.5-9b	hand-crafted	backprop	14	test	45	20	17	Orchestrator (thought)	False	0.0009296915959566832	0.0009296915959566832	17	False
+qwen3.5-9b	hand-crafted	backprop	14	test	45	20	18	Orchestrator (thought)	False	0.0017592842923477292	0.001927561592310667	8	False
+qwen3.5-9b	hand-crafted	backprop	14	test	45	20	19	Orchestrator (-> Assistant)	False	0.0016827728832140565	0.0016827728832140565	16	False
+qwen3.5-9b	hand-crafted	backprop	14	test	45	20	20	Orchestrator (thought)	True	0.003976771607995033	0.003976771607995033	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	40	16	1	Orchestrator (thought)	False	0.0013755285181105137	0.0015277958009392023	13	False
+qwen3.5-9b	hand-crafted	backprop	14	test	40	16	2	Orchestrator (thought)	False	0.0014936812222003937	0.001630101352930069	10	False
+qwen3.5-9b	hand-crafted	backprop	14	test	40	16	3	Orchestrator (-> WebSurfer)	False	0.0016491272253915668	0.0016491272253915668	9	False
+qwen3.5-9b	hand-crafted	backprop	14	test	40	16	4	WebSurfer	False	0.0020626047626137733	0.0022864218335598707	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	40	16	5	Orchestrator (thought)	False	0.0016618702793493867	0.001836455543525517	5	False
+qwen3.5-9b	hand-crafted	backprop	14	test	40	16	6	Orchestrator (-> WebSurfer)	False	0.0017458531074225903	0.0017458531074225903	7	False
+qwen3.5-9b	hand-crafted	backprop	14	test	40	16	7	Orchestrator (thought)	False	0.0008826910052448511	0.0008826910052448511	16	False
+qwen3.5-9b	hand-crafted	backprop	14	test	40	16	8	WebSurfer	False	0.002662448678165674	0.0028551744762808084	2	False
+qwen3.5-9b	hand-crafted	backprop	14	test	40	16	9	Orchestrator (thought)	False	0.0016560276271775365	0.0018267822451889515	6	False
+qwen3.5-9b	hand-crafted	backprop	14	test	40	16	10	Orchestrator (-> WebSurfer)	False	0.0017075467621907592	0.0017075467621907592	8	False
+qwen3.5-9b	hand-crafted	backprop	14	test	40	16	11	Orchestrator (thought)	False	0.0008871618192642927	0.0008871618192642927	15	False
+qwen3.5-9b	hand-crafted	backprop	14	test	40	16	12	WebSurfer	False	0.0013719475828111172	0.0015883153537288308	12	False
+qwen3.5-9b	hand-crafted	backprop	14	test	40	16	13	Orchestrator (thought)	False	0.0017418639035895467	0.0019041841151192784	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	40	16	14	Orchestrator (-> WebSurfer)	False	0.0016232025809586048	0.0016232025809586048	11	False
+qwen3.5-9b	hand-crafted	backprop	14	test	40	16	15	Orchestrator (thought)	False	0.0009101600153371692	0.0009101600153371692	14	False
+qwen3.5-9b	hand-crafted	backprop	14	test	40	16	16	WebSurfer	True	0.002937220735475421	0.002937220735475421	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	7	24	1	Orchestrator (thought)	False	0.0012975051067769527	0.0014444172848016024	18	False
+qwen3.5-9b	hand-crafted	backprop	14	test	7	24	2	Orchestrator (thought)	False	0.0014138614060357213	0.0015438762493431568	17	False
+qwen3.5-9b	hand-crafted	backprop	14	test	7	24	3	Orchestrator (-> WebSurfer)	False	0.0013047768734395504	0.0013047768734395504	19	False
+qwen3.5-9b	hand-crafted	backprop	14	test	7	24	4	WebSurfer	False	0.0018802759004756808	0.0021379897370934486	3	False
+qwen3.5-9b	hand-crafted	backprop	14	test	7	24	5	Orchestrator (thought)	False	0.0014948417665436864	0.0016512989532202482	14	False
+qwen3.5-9b	hand-crafted	backprop	14	test	7	24	6	Orchestrator (-> WebSurfer)	False	0.0019081945065408945	0.0019081945065408945	6	False
+qwen3.5-9b	hand-crafted	backprop	14	test	7	24	7	Orchestrator (thought)	False	0.0008916541119106114	0.0008916541119106114	23	False
+qwen3.5-9b	hand-crafted	backprop	14	test	7	24	8	WebSurfer	True	0.002878556726500392	0.0030389681924134493	1	True
+qwen3.5-9b	hand-crafted	backprop	14	test	7	24	9	Orchestrator (thought)	False	0.0016120297368615866	0.0018030323553830385	10	False
+qwen3.5-9b	hand-crafted	backprop	14	test	7	24	10	Orchestrator (-> WebSurfer)	False	0.0019100259523838758	0.0019100259523838758	5	False
+qwen3.5-9b	hand-crafted	backprop	14	test	7	24	11	Orchestrator (thought)	False	0.0008778824121691287	0.0008778824121691287	24	False
+qwen3.5-9b	hand-crafted	backprop	14	test	7	24	12	WebSurfer	False	0.0013760949950665236	0.0015603143256157637	16	False
+qwen3.5-9b	hand-crafted	backprop	14	test	7	24	13	Orchestrator (thought)	False	0.001607244019396603	0.0017932391492649913	11	False
+qwen3.5-9b	hand-crafted	backprop	14	test	7	24	14	Orchestrator (-> WebSurfer)	False	0.0018599516479298472	0.0018599516479298472	9	False
+qwen3.5-9b	hand-crafted	backprop	14	test	7	24	15	Orchestrator (thought)	False	0.0009392534848302603	0.0009392534848302603	21	False
+qwen3.5-9b	hand-crafted	backprop	14	test	7	24	16	WebSurfer	False	0.0014514474896714091	0.0017096416559070349	13	False
+qwen3.5-9b	hand-crafted	backprop	14	test	7	24	17	Orchestrator (thought)	False	0.001747024361975491	0.0019204504787921906	4	False
+qwen3.5-9b	hand-crafted	backprop	14	test	7	24	18	Orchestrator (-> WebSurfer)	False	0.0017363278893753886	0.0017363278893753886	12	False
+qwen3.5-9b	hand-crafted	backprop	14	test	7	24	19	Orchestrator (thought)	False	0.0009392342180944979	0.0009392342180944979	22	False
+qwen3.5-9b	hand-crafted	backprop	14	test	7	24	20	WebSurfer	False	0.0015971268294379115	0.0015971268294379115	15	False
+qwen3.5-9b	hand-crafted	backprop	14	test	7	24	21	Orchestrator (thought)	False	0.001731144730001688	0.0018889661878347397	8	False
+qwen3.5-9b	hand-crafted	backprop	14	test	7	24	22	Orchestrator (-> WebSurfer)	False	0.0018921871669590473	0.0018921871669590473	7	False
+qwen3.5-9b	hand-crafted	backprop	14	test	7	24	23	Orchestrator (thought)	False	0.0010488959960639477	0.0010488959960639477	20	False
+qwen3.5-9b	hand-crafted	backprop	14	test	7	24	24	WebSurfer	False	0.0025819416623562574	0.0025819416623562574	2	False
