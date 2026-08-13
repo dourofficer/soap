@@ -53,7 +53,9 @@ SETTINGS = [("outputs-nogt", False, "results-nogt", ""),
             ("outputs", True, "results-gt", "-gt")]
 
 JUDGES = ["gpt-4o", "gpt-5"]
-METHODS = ["all_at_once", "step_by_step", "binary_search", "correct"]
+# gpt-5 x correct-error has no `chief` run — it was excluded as too costly, so
+# that cell stays blank rather than missing.
+METHODS = ["all_at_once", "step_by_step", "binary_search", "correct", "chief"]
 DATASETS = ["ww", "traceelephant", "correct-error"]
 SPLIT_MODEL = "qwen3.5-9b"      # id source; every backbone has the same file list
 

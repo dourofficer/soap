@@ -202,7 +202,7 @@ changing the code it covers:
 
 ## How to write here
 
-All prose in this repo — documentation, docstrings, comments, commit messages —
+All prose in this repo — documentation, docstrings, comments, chat conversations —
 follows William Zinsser's *On Writing Well*. When you write or revise any of it, hold
 to these rules:
 

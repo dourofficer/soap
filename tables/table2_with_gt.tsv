@@ -6,7 +6,7 @@ Step-by-Step			22.75	18.39	59.29	18.60	19.57
 Binary Search			28.57	4.60	18.44	9.30	6.52
 CORRECT	cmark	cmark	15.87	4.60	37.09	10.85	10.14
 RAFFLES							
-CHIEF							
+CHIEF			24.34	11.49	42.10	14.73	13.77
 Backbone: Qwen3.5-9B							
 Trained LLM attributors							
 AgenTracer	xmark	cmark					
