@@ -53,7 +53,7 @@ PROMPT_ROWS = [("All-at-Once", "", "", "all_at_once"),
                ("Step-by-Step", "", "", "step_by_step"),
                ("Binary Search", "", "", "binary_search"),
                ("CORRECT", "cmark", "cmark", "correct"),
-               ("RAFFLES", "", "", None), ("CHIEF", "", "", "chief")]
+               ("RAFFLES", "", "", "raffles"), ("CHIEF", "", "", "chief")]
 
 PROMPTING = REPO / "results-prompting" / "by_column.tsv"
 JUDGE_DISPLAY = {"gpt-4o": "GPT-4o", "gpt-5": "GPT-5"}
