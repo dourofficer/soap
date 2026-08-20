@@ -84,41 +84,53 @@ Every experiment below follows these rules. State a deviation explicitly or it i
 
 ## Main experiments
 
-### E1 — Cross-distribution transfer (`fig:transfer`)  `[CPU]`  — DONE 2026-08-17
+### E1 — Cross-distribution transfer (`fig:transfer`)  `[CPU]`  — DONE 2026-08-17; PROTOCOL REVISED + RERUN 2026-08-18
 
 - [x] **Target.** Is a fitted SOAP specific to the distribution it was tuned on?
-- **Procedure.** 4×4 source→target grid over {WW-AG, WW-HC, TE-Cap, TE-Mag}, one grid
-  per backbone. For each pair: fit R on the SOURCE's train split; freeze the source's
-  full anchor config (position, band, attn layers, γ, w); evaluate on the TARGET's
-  test split. Dependency weights always come from the target trajectories' own
-  attention. Seeds pair positionally: source seed i's train split ↔ target seed i's
-  test split; report the 3-seed mean.
-- **Sanity check.** Every diagonal cell must reproduce Table 1's SOAP row.
+- **Procedure (revised 2026-08-18).** 4×4 source→target grid over {WW-AG, WW-HC,
+  TE-Cap, TE-Mag}, one grid per backbone. For each pair: fit R on the SOURCE's train
+  split, then RE-SELECT the full config from scratch on the TARGET — dense base grid
+  (position × band, ens-mid3 included), then the backprop rescore grid on the winning
+  base config — test-selected by the standard rule, exactly like every other
+  experiment. Each cell is "the best a source-fitted reference can do on the target".
+  Dependency weights always come from the target trajectories' own attention. Seeds
+  pair positionally; report the 3-seed mean. (The original protocol froze the
+  source's anchor config; that grid is preserved in
+  `results-ablations/e1_transfer_frozen-anchor.tsv`.)
+- **Sanity check.** The diagonal repeats the main sweep's protocol verbatim, so it
+  must reproduce Table 1's base AND SOAP rows. Verified on both backbones.
 - **Deliverable.** Two 4×4 step-accuracy heatmaps (one per backbone).
 - (CE dropped from the grid with the pooled-source design; can be reinstated later if
   a 5×5 is wanted.)
-- **Results** — `results-ablations/e1_transfer.tsv`
-  (`scripts/ablations/e1_transfer.py`; base and soap rows per pair; both diagonals
-  reproduce Table 1 exactly). SOAP step acc %, rows = source:
+- **Results** — `results-ablations/e1_transfer.tsv` (`scripts/ablations/e1_transfer.py`;
+  base and soap rows per pair with the selected configs). SOAP step acc %, rows =
+  source:
 
   | qwen3.5-9b | →WW-AG | →WW-HC | →TE-Cap | →TE-Mag |
   |---|---|---|---|---|
-  | WW-AG | **47.62** | 3.45 | 20.16 | 5.80 |
-  | WW-HC | 23.81 | **34.48** | 20.16 | 14.49 |
-  | TE-Cap | 12.70 | 13.79 | **35.66** | 20.29 |
-  | TE-Mag | 11.64 | 10.34 | 27.91 | **23.19** |
+  | WW-AG | **47.62** | 32.18 | 34.11 | 21.01 |
+  | WW-HC | 35.45 | **34.48** | 34.11 | 22.46 |
+  | TE-Cap | 26.98 | 33.33 | **35.66** | 21.74 |
+  | TE-Mag | 28.57 | 29.89 | 34.88 | **23.19** |
 
   | deepseek-8b | →WW-AG | →WW-HC | →TE-Cap | →TE-Mag |
   |---|---|---|---|---|
-  | WW-AG | **45.50** | 3.45 | 20.16 | 9.42 |
-  | WW-HC | 13.76 | **28.74** | 34.11 | 12.32 |
-  | TE-Cap | 15.87 | 21.84 | **42.64** | 10.14 |
-  | TE-Mag | 24.34 | 19.54 | 16.28 | **30.43** |
+  | WW-AG | **45.50** | 25.29 | 34.88 | 30.43 |
+  | WW-HC | 40.74 | **28.74** | 42.64 | 33.33 |
+  | TE-Cap | 29.63 | 32.18 | **42.64** | 28.99 |
+  | TE-Mag | 35.45 | 29.89 | 30.23 | **30.43** |
 
-  Reading: transfer degrades sharply off-diagonal — the diagonal wins every column
-  but one (DeepSeek TE-Mag→WW-AG 24.34 is the best non-diagonal source for WW-AG
-  but still 21 points under in-distribution). A fitted SOAP is distribution-specific;
-  the closest cross pair is DeepSeek WW-HC→TE-Cap (34.11 vs 42.64 in-dist).
+  (Bold marks the in-domain diagonal, not the column best.)
+
+  Reading: with the config re-selected per target, the fitted reference travels far
+  better than under the frozen-anchor protocol (WW-AG→WW-HC: 32.18 vs 3.45 before).
+  On Qwen the diagonal still wins every column, by a wide margin only on WW-AG
+  (47.62 vs 35.45); elsewhere the best foreign source lands within ~1 point. On
+  DeepSeek the diagonal is not always best: WW-HC→TE-Cap ties in-domain (42.64) and
+  WW-HC→TE-Mag beats it (33.33 vs 30.43); DeepSeek WW-HC's own cell (28.74, γ=0) is
+  beaten by three foreign sources. Conclusion: the distribution-specific part of
+  SOAP is chiefly the hyperparameter configuration; the spectral reference itself is
+  broadly reusable.
 
 ### E2 — Synthetic reference trajectories (`tab:synth`)  `[GPU, DEFERRED]`
 

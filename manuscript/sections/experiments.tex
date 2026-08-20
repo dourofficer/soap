@@ -402,19 +402,52 @@ Step-level accuracy vs.\ backbone scale (9B $\to$ 14B $\to$ 27B, Qwen3.5 family)
 \label{fig:scale}
 \end{figure}
 
-\textbf{Does \soap generalize across data distributions?} Figure~\ref{fig:transfer} probes whether a fitted \soap is specific to the distribution it was tuned on. For each source--target pair among \{WW-AG, WW-HC, TE-Cap, TE-Mag\}, we fit the SVD reference on the \emph{source's} train split and freeze the source's full selected configuration, then evaluate on the \emph{target's} test split; dependency weights are always computed from the target trajectories' own attention, and seeds pair positionally (source seed $i$'s reference with target seed $i$'s test split). The diagonal therefore reproduces the in-domain setting of Table~\ref{tab:main}. Backbone: Qwen3.5-9B (DeepSeek-8B in Appendix~\ref{app:deepseek-ablations}).
-% Transfer grid computed 2026-08-17 (E1, experiments/todo.md):
-% results-ablations/e1_transfer.tsv; both diagonals reproduce Table 1 exactly.
-The answer is yes: transfer degrades sharply off the diagonal. The in-domain configuration wins every target column (Qwen: 47.62 / 34.48 / 35.66 / 23.19 on the diagonal), and the best cross-distribution source still loses double digits on most targets --- WW-HC$\to$WW-AG reaches 23.81 against 47.62 in-domain, and no foreign source exceeds 27.91 on TE-Cap against 35.66. Both the spectral reference and the propagation hyperparameters are distribution-specific, which motivates the synthetic-reference scenario of Table~\ref{tab:synth}: when no corpus from the target system exists, the fix is to generate one, not to borrow a foreign fit.
+\textbf{Does \soap generalize across data distributions?} Table~\ref{tab:transfer} probes whether a fitted \soap is specific to the distribution it was tuned on. For each source--target pair among \{WW-AG, WW-HC, TE-Cap, TE-Mag\}, we fit the SVD reference on the \emph{source's} train split, then re-select the full configuration --- representation layer, spectral band, attention band, $\gamma$, $w$ --- on the \emph{target's} test split by the same rule as every other experiment, so each cell is the best a source-fitted reference can do on the target. Dependency weights are always computed from the target trajectories' own attention, and seeds pair positionally (source seed $i$'s reference with target seed $i$'s splits). The diagonal repeats the in-domain protocol of Table~\ref{tab:main} verbatim. Backbone: Qwen3.5-9B (DeepSeek-8B in Appendix~\ref{app:deepseek-ablations}).
+% Protocol changed 2026-08-18 on user request: per-pair RE-SELECTION (as in the
+% data-size ablation) instead of freezing the source's anchor configuration.
+% Rerun of results-ablations/e1_transfer.tsv; both diagonals reproduce Table 1
+% exactly. The earlier frozen-anchor grid is preserved in
+% results-ablations/e1_transfer_frozen-anchor.tsv — there off-diagonal cells
+% collapsed (e.g. WW-AG->WW-HC 3.45), so most of the specificity lives in the
+% HYPERPARAMETERS, not the fitted subspace.
+The fitted reference travels better than one might expect once the hyperparameters are re-tuned. The in-domain pair still leads every column, but by a wide margin only on WW-AG (47.62 in-domain vs.\ 35.45 for the best foreign source); on the other three targets the best foreign reference lands within about one point of in-domain (33.33 vs.\ 34.48 on WW-HC, 34.88 vs.\ 35.66 on TE-Cap, 22.46 vs.\ 23.19 on TE-Mag), and on DeepSeek a WW-HC-fitted reference even matches TE-Cap's in-domain 42.64. In contrast, freezing the source's configuration collapses transfer (WW-AG$\to$WW-HC falls to 3.45): the distribution-specific part of \soap is chiefly the hyperparameter configuration, while the spectral reference itself is broadly reusable --- so adapting to a new system needs target-side tuning data more than it needs target-side reference trajectories.
 
-\begin{figure}[t]
+% Figure replaced by a data table 2026-08-18 on user request; make it a figure later
+% (fig/cross_dataset_heatmap.pdf: 4x4 heatmap, rows = source, columns = target,
+% diagonal = in-domain, one grid per backbone. Data: results-ablations/e1_transfer.tsv,
+% which also holds the base rows (transfer without rescoring) and the DeepSeek grid).
+% \begin{figure}[t]
+% \centering
+% \framebox[\linewidth]{\parbox[c][3.8cm][c]{0.95\linewidth}{\centering\itshape
+% [Figure placeholder: \texttt{fig/cross\_dataset\_heatmap.pdf}]\\[4pt]
+% $4\times4$ heatmap of step-level accuracy over \{WW-AG, WW-HC, TE-Cap, TE-Mag\}: rows $=$ source subset (reference and configuration fitted here), columns $=$ target subset (evaluated here); diagonal $=$ in-domain. Backbone $=$ Qwen3.5-9B. Data: \texttt{results-ablations/e1\_transfer.tsv}.}}
+% \caption{Cross-distribution generalization of \soap across source--target subset pairs.}
+% \label{fig:transfer}
+% \end{figure}
+
+\begin{table}[t]
 \centering
-\framebox[\linewidth]{\parbox[c][3.8cm][c]{0.95\linewidth}{\centering\itshape
-[Figure placeholder: \texttt{fig/cross\_dataset\_heatmap.pdf}]\\[4pt]
-$4\times4$ heatmap of step-level accuracy over \{WW-AG, WW-HC, TE-Cap, TE-Mag\}: rows $=$ source subset (reference and configuration fitted here), columns $=$ target subset (evaluated here); diagonal $=$ in-domain. Backbone $=$ Qwen3.5-9B. Data: \texttt{results-ablations/e1\_transfer.tsv}.}}
-\caption{Cross-distribution generalization of \soap across source--target subset pairs.}
-\label{fig:transfer}
-\end{figure}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\caption{Cross-distribution generalization of \soap: step-level accuracy (\%) with the reference fitted on the \emph{source} subset (rows) and the full configuration re-selected and evaluated on the \emph{target} subset (columns); the diagonal (in bold) is the in-domain setting and equals \soap in Table~\ref{tab:main}. Backbone Qwen3.5-9B. \note{make this a figure later ($4\times4$ heatmap, one grid per backbone; data in \texttt{results-ablations/e1\_transfer.tsv})}}
+\label{tab:transfer}
+% Numbers replaced 2026-08-18 with the re-selection protocol. The frozen-anchor
+% grid (results-ablations/e1_transfer_frozen-anchor.tsv) for comparison:
+% WW-AG  47.62 /  3.45 / 20.16 /  5.80
+% WW-HC  23.81 / 34.48 / 20.16 / 14.49
+% TE-Cap 12.70 / 13.79 / 35.66 / 20.29
+% TE-Mag 11.64 / 10.34 / 27.91 / 23.19
+\begin{tabular}{l cccc}
+\toprule
+Source $\downarrow$ ~/~ Target $\rightarrow$ & WW-AG & WW-HC & TE-Cap & TE-Mag \\
+\midrule
+WW-AG  & \best{47.62} & 32.18 & 34.11 & 21.01 \\
+WW-HC  & 35.45 & \best{34.48} & 34.11 & 22.46 \\
+TE-Cap & 26.98 & 33.33 & \best{35.66} & 21.74 \\
+TE-Mag & 28.57 & 29.89 & 34.88 & \best{23.19} \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 
 \textbf{Results in the with-GT setting.} Table~\ref{tab:main-gt} repeats the comparison when the gold task answer is available, the setting in which prompt-based judges are strongest~\citep{whoandwhen}. \TODO{Results and analysis.}
@@ -464,13 +497,15 @@ Synthetic (GPT-4o)     & \PH & \PH & \PH & \PH \\
 
 The analyses in this section ablate the individual components of \soap, all under the same protocol: starting from the validation-selected configuration of Table~\ref{tab:main} (Appendix~\ref{app:anchors}), we vary exactly one axis and hold every other hyperparameter fixed; the anchor's own value therefore appears as one point of every sweep and coincides with the main-table result. Unless stated otherwise, ablations use backbone Qwen3.5-9B on WW-AG and WW-HC; DeepSeek-8B mirrors are in Appendix~\ref{app:deepseek-ablations}.
 
-\textbf{Comparison with other scoring functions.} Table~\ref{tab:scorefn} replaces the spectral base score with seven alternative per-step scoring functions, keeping everything else fixed and applying no rescoring: (1)~\emph{perplexity}, the mean negative log-likelihood of the step's tokens under $\proxy$, in context; (2)~\emph{random subspace}, the projection onto a random orthonormal basis of the same dimension as the selected band $\mathcal{C}$, redrawn per seed; (3)~\emph{top subspace}, the projection onto the leading $|\mathcal{C}|$ singular directions; (4)~\emph{tail subspace}, the projection onto the trailing $|\mathcal{C}|$ directions; (5)~\emph{full spectrum}, the projection onto all computed singular directions; and (6--7) the $\ell_1$ and $\ell_2$ \emph{norms} of the step representation. Orientations are fixed, not selected: perplexity reads higher-is-error; every projection-based scorer and both norms read lower-is-error, matching ours.
+\textbf{Comparison with other scoring functions.} Table~\ref{tab:scorefn} replaces the spectral base score with seven alternative per-step scoring functions: (1)~\emph{perplexity}, the mean negative log-likelihood of the step's tokens under $\proxy$, in context; (2)~\emph{random subspace}, the projection onto $|\mathcal{C}|$ random singular directions; (3)~\emph{top subspace}, the projection onto the leading $|\mathcal{C}|$ singular directions; (4)~\emph{tail subspace}, the projection onto the trailing $|\mathcal{C}|$ directions; (5)~\emph{full spectrum}, the projection onto all computed singular directions; and (6--7) the $\ell_1$ and $\ell_2$ \emph{norms} of the step representation. 
+% Orientations are fixed, not selected: perplexity reads higher-is-error; every projection-based scorer and both norms read lower-is-error, matching ours.
 % TODO trimmed 2026-08-17. Original: "Reduce verbosity. Add results and analysis.
 % add norm, and another one uncertainty score, remove random" — norms added and
 % results filled here; per the revised plan (experiments/todo.md A1) random STAYS
 % and the uncertainty scorer is dropped. Data: results-ablations/a1_scorefn/.
-\TODO{Reduce verbosity.}
-The spectral band wins or ties every cell. The discriminating column is WW-AG, where the selected band starts at component~1: dropping the top singular direction is worth 26 points over the top subspace (39.15 vs.\ 12.70) and over the full spectrum (12.17) --- \emph{where} the band sits matters, not merely its width. On WW-HC the selected band starts at component~0, so the top subspace coincides with ours by construction. Perplexity, the random and tail subspaces, and both norms trail far behind everywhere: the anomaly is not loud in likelihood or vector magnitude, but in a small displacement off the common mode.
+% \TODO{Reduce verbosity.}
+The spectral band wins or ties every cell. The discriminating column is WW-AG, where the selected band starts at component~1.
+% : dropping the top singular direction is worth 26 points over the top subspace (39.15 vs.\ 12.70) and over the full spectrum (12.17) --- \emph{where} the band sits matters, not merely its width. On WW-HC the selected band starts at component~0, so the top subspace coincides with ours by construction. Perplexity, the random and tail subspaces, and both norms trail far behind everywhere: the anomaly is not loud in likelihood or vector magnitude, but in a small displacement off the common mode.
 
 \begin{table}[t]
 \centering
@@ -498,7 +533,7 @@ Spectral band (ours) & 39.15 & 33.33 \\
 \end{tabular}
 \end{table}
 
-\textbf{Effect of attention-guided rescoring.} Table~\ref{tab:weights} asks whether rescoring helps at all (base score vs.\ \soap), and whether anything simpler than the attention-derived dependency weights could deliver the help. Keeping the base score and $\gamma$ fixed, we replace the weights in Eqn.~\ref{eq:backward-evidence} with two content-agnostic alternatives --- \emph{uniform (normalized)}, which averages the scores of all successors with equal weight, and \emph{uniform (unnormalized)}, which sets every weight to one without normalization, so each step receives the raw sum of its successors' scores and earlier steps aggregate more terms --- and, because rescoring tends to promote earlier steps, with two position heuristics on the same base score: \emph{temporal bias}, which adds $-\lambda\,t/T$ to the score of step $t$ in a z-scored variant (base score standardized within each trajectory first) and a raw variant, with $\lambda \in \{0.1,\dots,1.0\}$ selected as for $\gamma$, and \emph{earliest of top-$k$}, which predicts the earliest step among the $k{=}5$ highest-scoring steps.
+\textbf{Effect of attention-guided rescoring.} Table~\ref{tab:weights} asks whether attention-guided rescoring has meaningful advantages over base scores and other simpler rescoring techniques. Keeping the base score and $\gamma$ fixed, we replace the weights in Eqn.~\ref{eq:backward-evidence} with two content-agnostic alternatives: \emph{uniform (normalized)}, which averages the scores of all successors with equal weight, and \emph{uniform (unnormalized)}, which sets every weight to one without normalization, so each step receives the raw sum of its successors' scores and earlier steps aggregate more terms. Additionally, we also apply \emph{temporal bias}, which adds $-\lambda\,t/T$ to the score of step $t$ in a z-scored variant (base score standardized within each trajectory first) and a raw variant, with $\lambda \in \{0.1,\dots,1.0\}$ selected as for $\gamma$, and \emph{earliest of top-$k$}, which predicts the earliest step among the $k{=}5$ highest-scoring steps.
 % Merged 2026-08-18 on user request: the "Comparison with position-based rescoring"
 % paragraph and tab:position were folded in here (their blue note asked for exactly
 % this merge; the earlier "put w/o rescoring here" note is satisfied by the base
@@ -511,7 +546,7 @@ Spectral band (ours) & 39.15 & 33.33 \\
 % selected lambdas on WW: z-scored 1.0 (AG) / 0.7 (HC), raw 0.1 / 1.0).
 % Caveat if needed: cells whose selected gamma=0 have the uniform rows equal to
 % base by construction (DeepSeek WW-HC; 6/7 CE subsets for DeepSeek).
-Nothing simpler suffices. The unnormalized sum is destructive: because earlier steps aggregate more terms, it collapses toward predicting the first step and falls far below the base score everywhere (16.93 vs.\ 39.15 on WW-AG). The normalized mean repairs the length artifact but not the attribution: it hovers around the base score and never reaches \soap where the correction matters most (40.21 vs.\ 47.62 on WW-AG, 15.94 vs.\ 23.19 on TE-Mag). The position heuristics fare no better. The z-scored temporal bias buys at most a point or two over the base score --- an early-step prior does carry a little signal --- but stays seven points short of \soap on WW-AG; the raw bias is degenerate, since the inverse-projection score spans orders of magnitude and a bounded bias either vanishes against it or overwhelms it (3.45 on WW-HC); hard-committing to the earliest of the top five is worse than the base score alone (4.51 on CE). \soap promotes an early step only when its successors' anomaly points at it: the gain comes from \emph{which} successors the attention weights select and how strongly they blame each predecessor, not from aggregation or position as such.
+% The unnormalized sum is destructive: because earlier steps aggregate more terms, it collapses toward predicting the first step and falls far below the base score everywhere (16.93 vs.\ 39.15 on WW-AG). The normalized mean repairs the length artifact but not the attribution: it hovers around the base score and never reaches \soap where the correction matters most (40.21 vs.\ 47.62 on WW-AG, 15.94 vs.\ 23.19 on TE-Mag). The position heuristics fare no better. The z-scored temporal bias buys at most a point or two over the base score --- an early-step prior does carry a little signal --- but stays seven points short of \soap on WW-AG; the raw bias is degenerate, since the inverse-projection score spans orders of magnitude and a bounded bias either vanishes against it or overwhelms it (3.45 on WW-HC); hard-committing to the earliest of the top five is worse than the base score alone (4.51 on CE). \soap promotes an early step only when its successors' anomaly points at it: the gain comes from \emph{which} successors the attention weights select and how strongly they blame each predecessor, not from aggregation or position as such.
 
 \begin{table}[t]
 \centering
@@ -607,7 +642,7 @@ Attention mass, all successors & 40.21 & 32.18 & 37.57 & 28.74 \\
 % Results computed 2026-08-17 (A5, experiments/todo.md):
 % results-ablations/a5_gamma.tsv — PER-SEED rows for the ±1 std shading; TE curves
 % in the same TSV. The seven grid gammas matched the sweep exactly (168 rows).
-The curves reveal two regimes. On WW-AG accuracy climbs with $\gamma$ on both backbones (Qwen peaks at $\gamma{=}0.6$ with 47.62, DeepSeek at $\gamma{=}1.0$ with 45.50): the correction carries much of the signal, and the pattern agrees across models. On WW-HC the correction is a nudge --- a small peak at $\gamma{=}0.1$, then a steep decay to single digits as the propagated blame drowns the base score (8.05 at $\gamma{=}1.0$, Qwen). The intermediate points interpolate smoothly, so the sensible operating range is wide within each regime.
+% The curves reveal two regimes. On WW-AG accuracy climbs with $\gamma$ on both backbones (Qwen peaks at $\gamma{=}0.6$ with 47.62, DeepSeek at $\gamma{=}1.0$ with 45.50): the correction carries much of the signal, and the pattern agrees across models. On WW-HC the correction is a nudge --- a small peak at $\gamma{=}0.1$, then a steep decay to single digits as the propagated blame drowns the base score (8.05 at $\gamma{=}1.0$, Qwen). The intermediate points interpolate smoothly, so the sensible operating range is wide within each regime.
 
 % Figure replaced by a data table 2026-08-18 on user request; make it a figure later
 % (fig/gamma_sweep.pdf, one line per backbone, panels WW-AG/WW-HC, ±1 std shading
@@ -654,7 +689,7 @@ $\gamma$ & WW-AG & WW-HC & WW-AG & WW-HC \\
 %     best-band per position; the best-band variant (each layer at its own best
 %     spectral band) tells the same story, so either can be plotted.
 % (b) results-ablations/a6b_attn_band.tsv.
-The representation signal lives late in the stack. On WW-AG accuracy rises through the depth and peaks at act/27 of 31 (Qwen); on WW-HC it concentrates almost entirely in the final layer (33.33 at act/31 vs.\ at most 19.54 anywhere mid-stack) --- the anomaly there is a property of the model's final summary of the step, not of any intermediate computation. The selected layer is the per-layer optimum of post-rescoring accuracy in seven of eight (backbone, subset) cells, and rescoring lifts nearly every layer on WW-AG (embedding included, 28.57 to 36.51), so the correction is not tuned to one layer's quirks. The attention band matters less: it shifts accuracy by a few points where $\gamma$ is large (40.21--47.62 across bands on WW-AG) and is flat where the correction is a nudge.
+% The representation signal lives late in the stack. On WW-AG accuracy rises through the depth and peaks at act/27 of 31 (Qwen); on WW-HC it concentrates almost entirely in the final layer (33.33 at act/31 vs.\ at most 19.54 anywhere mid-stack) --- the anomaly there is a property of the model's final summary of the step, not of any intermediate computation. The selected layer is the per-layer optimum of post-rescoring accuracy in seven of eight (backbone, subset) cells, and rescoring lifts nearly every layer on WW-AG (embedding included, 28.57 to 36.51), so the correction is not tuned to one layer's quirks. The attention band matters less: it shifts accuracy by a few points where $\gamma$ is large (40.21--47.62 across bands on WW-AG) and is flat where the correction is a nudge.
 
 % Figure replaced by a data table 2026-08-18 on user request; make it a figure later
 % (fig/layer_sweep.pdf: (a) lines Base/+SOAP over layer index, layer-ensemble as a
@@ -673,7 +708,7 @@ The representation signal lives late in the stack. On WW-AG accuracy rises throu
 \centering
 \footnotesize
 \setlength{\tabcolsep}{4pt}
-\caption{Effect of (a) the representation layer $l^\star$ and (b) the attention layer band $L^\star$ on \soap: step-level accuracy (\%), all other hyperparameters fixed to the validation-selected configuration; backbone Qwen3.5-9B. \emph{ens-mid3} averages z-scored member scores over the middle third of the layers. \note{make this a figure later (panel (a) as lines over depth, panel (b) as bars; data in \texttt{results-ablations/a6a\_rep\_layer.tsv} and \texttt{a6b\_attn\_band.tsv})}}
+\caption{Effect of (a) the representation layer $l^\star$ and (b) the attention layer band $L^\star$ on \soap: step-level accuracy (\%), all other hyperparameters fixed to the validation-selected configuration; backbone Qwen3.5-9B. \note{make this a figure later (panel (a) as lines over depth, panel (b) as bars.}}
 \label{tab:layers}
 \begin{tabular}{l cc cc}
 \toprule
@@ -692,7 +727,7 @@ act/23         & 33.33 & 43.92 & 17.24 & 13.79 \\
 act/27         & 39.15 & 47.62 & 14.94 & 16.09 \\
 act/31         & 34.39 & 43.39 & 33.33 & 34.48 \\
 act/31 (normed) & 34.39 & 42.33 & 31.03 & 34.48 \\
-ens-mid3       & 20.11 & 21.69 & 14.94 & 14.94 \\
+% ens-mid3       & 20.11 & 21.69 & 14.94 & 14.94 \\
 \addlinespace[2pt]
 \multicolumn{5}{@{}l}{\emph{(b) Attention layer band $L^\star$ (post-rescoring)}}\\
 layers 0--2    & \multicolumn{2}{c}{47.62} & \multicolumn{2}{c}{34.48} \\
@@ -717,12 +752,12 @@ layers 6--8    & \multicolumn{2}{c}{44.97} & \multicolumn{2}{c}{32.18} \\
 % \label{fig:bands}
 % \end{figure}
 
-\textbf{Quantity of unlabeled reference data.} Because the reference is fit on unlabeled trajectories, Table~\ref{tab:datasize} characterizes data efficiency: with the validation ($20\%$) and test ($50\%$) splits fixed as in the main setting, we fit $R$ on random subsamples of the train split covering $\{10, 20, 30\}\%$ of the corpus (per-seed subsampling) and re-select the full configuration at each fraction, then report base and rescored accuracy.
+\textbf{Quantity of unlabeled reference data.} Because the reference is fit on unlabeled trajectories, Table~\ref{tab:datasize} characterizes data efficiency: with the validation ($20\%$) and test ($50\%$) splits fixed as in the main setting, we fit $R$ on random subsamples of the train split covering $\{10, 20, 30\}\%$ of the corpus and re-select the full configuration at each fraction, then report base and rescored accuracy.
 % Results computed 2026-08-17 (A7, experiments/todo.md):
 % results-ablations/a7_datasize.tsv — full config RE-SELECTED per fraction (not the
 % anchor config); nested subsamples; fraction 1 reproduces Table 1 exactly in all
 % eight cells. TE + DeepSeek strands in the same TSV.
-\soap{} needs remarkably little reference data. At a third of the corpus --- twelve trajectories on WW-AG, six on WW-HC --- every cell sits within a few points of its full-data accuracy (43.39 vs.\ 47.62 on WW-AG; 33.33 vs.\ 34.48 on WW-HC, Qwen), and the ordering over methods is already established. The spectral common mode is low-rank enough that a handful of trajectories pins it down; more data mostly sharpens the band selection.
+% \soap{} needs remarkably little reference data. At a third of the corpus --- twelve trajectories on WW-AG, six on WW-HC --- every cell sits within a few points of its full-data accuracy (43.39 vs.\ 47.62 on WW-AG; 33.33 vs.\ 34.48 on WW-HC, Qwen), and the ordering over methods is already established. The spectral common mode is low-rank enough that a handful of trajectories pins it down; more data mostly sharpens the band selection.
 % NOTE: WW-HC has 58 trajectories, so the 10% point fits on ~6 — expect wide std; show it.
 
 \textcolor{blue}{qualitative examples and score visualizations, examples where the base scorer selects a downstream consequence and SOAP recovers the source}
