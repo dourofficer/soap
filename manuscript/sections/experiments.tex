@@ -320,7 +320,7 @@ Method & {\scriptsize Actual data} & {\scriptsize Supervised} & WW-AG & WW-HC & 
 \addlinespace[2pt]
 \multicolumn{8}{@{}l}{\textit{Representation-based methods}}\\
 \quad StepFinder~\citep{zhu2026stepfinder} & \xmark & \xmark & - & - & - & - & - \\
-\quad OAT~\citep{oat}                  & \xmark & \xmark & - & - & - & - & - \\
+x`\quad OAT~\citep{oat}                  & \xmark & \xmark & - & - & - & - & - \\
 % SOAP rows filled 2026-08-05: with-GT seed-window (triples) protocol, gamma=0 grid,
 % backbone Qwen3.5-9B (DeepSeek numbers for app:gt are in the same bookkeeping file).
 % CE with-GT: the corpus now carries gold answers (rebuilt 2026-08); the SOAP cell
@@ -402,7 +402,9 @@ Step-level accuracy vs.\ backbone scale (9B $\to$ 14B $\to$ 27B, Qwen3.5 family)
 \label{fig:scale}
 \end{figure}
 
-\textbf{Does \soap generalize across data distributions?} Table~\ref{tab:transfer} probes whether a fitted \soap is specific to the distribution it was tuned on. For each source--target pair among \{WW-AG, WW-HC, TE-Cap, TE-Mag\}, we fit the SVD reference on the \emph{source's} train split, then re-select the full configuration --- representation layer, spectral band, attention band, $\gamma$, $w$ --- on the \emph{target's} test split by the same rule as every other experiment, so each cell is the best a source-fitted reference can do on the target. Dependency weights are always computed from the target trajectories' own attention, and seeds pair positionally (source seed $i$'s reference with target seed $i$'s splits). The diagonal repeats the in-domain protocol of Table~\ref{tab:main} verbatim. Backbone: Qwen3.5-9B (DeepSeek-8B in Appendix~\ref{app:deepseek-ablations}).
+\textbf{Does \soap generalize across data distributions?} Table~\ref{tab:transfer} probes whether a fitted \soap is specific to the distribution it was tuned on. For each source--target pair among \{WW-AG, WW-HC, TE-Cap, TE-Mag\}, we fit the SVD reference on the \emph{source's} train split, then the full configuration 
+% --- representation layer, spectral band, attention band, $\gamma$, $w$ --- 
+is re-selected. Dependency weights are always computed from the target trajectories' own attention, and seeds pair positionally (source seed $i$'s reference with target seed $i$'s splits). The diagonal repeats the in-domain protocol of Table~\ref{tab:main} verbatim. Backbone: Qwen3.5-9B (DeepSeek-8B in Appendix~\ref{app:deepseek-ablations}).
 % Protocol changed 2026-08-18 on user request: per-pair RE-SELECTION (as in the
 % data-size ablation) instead of freezing the source's anchor configuration.
 % Rerun of results-ablations/e1_transfer.tsv; both diagonals reproduce Table 1
@@ -410,7 +412,7 @@ Step-level accuracy vs.\ backbone scale (9B $\to$ 14B $\to$ 27B, Qwen3.5 family)
 % results-ablations/e1_transfer_frozen-anchor.tsv — there off-diagonal cells
 % collapsed (e.g. WW-AG->WW-HC 3.45), so most of the specificity lives in the
 % HYPERPARAMETERS, not the fitted subspace.
-The fitted reference travels better than one might expect once the hyperparameters are re-tuned. The in-domain pair still leads every column, but by a wide margin only on WW-AG (47.62 in-domain vs.\ 35.45 for the best foreign source); on the other three targets the best foreign reference lands within about one point of in-domain (33.33 vs.\ 34.48 on WW-HC, 34.88 vs.\ 35.66 on TE-Cap, 22.46 vs.\ 23.19 on TE-Mag), and on DeepSeek a WW-HC-fitted reference even matches TE-Cap's in-domain 42.64. In contrast, freezing the source's configuration collapses transfer (WW-AG$\to$WW-HC falls to 3.45): the distribution-specific part of \soap is chiefly the hyperparameter configuration, while the spectral reference itself is broadly reusable --- so adapting to a new system needs target-side tuning data more than it needs target-side reference trajectories.
+% The fitted reference travels better than one might expect once the hyperparameters are re-tuned. The in-domain pair still leads every column, but by a wide margin only on WW-AG (47.62 in-domain vs.\ 35.45 for the best foreign source); on the other three targets the best foreign reference lands within about one point of in-domain (33.33 vs.\ 34.48 on WW-HC, 34.88 vs.\ 35.66 on TE-Cap, 22.46 vs.\ 23.19 on TE-Mag), and on DeepSeek a WW-HC-fitted reference even matches TE-Cap's in-domain 42.64. In contrast, freezing the source's configuration collapses transfer (WW-AG$\to$WW-HC falls to 3.45): the distribution-specific part of \soap is chiefly the hyperparameter configuration, while the spectral reference itself is broadly reusable --- so adapting to a new system needs target-side tuning data more than it needs target-side reference trajectories.
 
 % Figure replaced by a data table 2026-08-18 on user request; make it a figure later
 % (fig/cross_dataset_heatmap.pdf: 4x4 heatmap, rows = source, columns = target,
