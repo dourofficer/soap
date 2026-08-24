@@ -2,7 +2,7 @@
 
 Every pending experiment for the manuscript, made concrete: data, splits, backbones,
 anchor configs, procedure, and cost. Agreed 2026-08-13; revised 2026-08-17 (coverage,
-naming, orientations, grids, A7 re-selection). The two main experiments fill
+naming, orientations, grids, A7 re-selection); 2026-08-23 (B1 baseline rows). The two main experiments fill
 `fig:transfer` and `tab:synth`; the seven ablations fill `tab:scorefn`, `tab:weights`,
 `tab:position`, `tab:attnsel`, `fig:gamma`, `fig:layers`, `fig:datasize`.
 
@@ -64,7 +64,8 @@ Every experiment below follows these rules. State a deviation explicitly or it i
   is `results-ablations/<exp>_<slug>.tsv` (a directory `<exp>_<slug>/` if one file is
   not enough). `<exp>` is the experiment id (a1…a7, a6a/a6b, e1, e2), the slug says
   what it varies: `a1_scorefn`, `a2_weights`, `a3_position`, `a4_window`, `a5_gamma`,
-  `a6a_rep_layer`, `a6b_attn_band`, `a7_datasize`, `e1_transfer`, `e2_synthfit`.
+  `a6a_rep_layer`, `a6b_attn_band`, `a7_datasize`, `e1_transfer`, `e2_synthfit`;
+  baseline scorers use `b<n>`: `b1_rb_baselines`.
   When an experiment finishes, its headline numbers are written into THIS file under a
   **Results** block (full precision stays in the TSV). `manuscript/` is never edited
   by these runs — the implied edits are listed at the end and applied only on request.
@@ -84,53 +85,105 @@ Every experiment below follows these rules. State a deviation explicitly or it i
 
 ## Main experiments
 
-### E1 — Cross-distribution transfer (`fig:transfer`)  `[CPU]`  — DONE 2026-08-17; PROTOCOL REVISED + RERUN 2026-08-18
+### E1 — Cross-distribution transfer (`tab:transfer`)  `[CPU]`  — REVISED + DONE 2026-08-20
 
 - [x] **Target.** Is a fitted SOAP specific to the distribution it was tuned on?
-- **Procedure (revised 2026-08-18).** 4×4 source→target grid over {WW-AG, WW-HC,
-  TE-Cap, TE-Mag}, one grid per backbone. For each pair: fit R on the SOURCE's train
-  split, then RE-SELECT the full config from scratch on the TARGET — dense base grid
-  (position × band, ens-mid3 included), then the backprop rescore grid on the winning
-  base config — test-selected by the standard rule, exactly like every other
-  experiment. Each cell is "the best a source-fitted reference can do on the target".
+- **Procedure (revised 2026-08-20; supersedes the frozen-anchor design below).**
+  4×4 source→target grid over {WW-AG, WW-HC, TE-Cap, TE-Mag}, one grid per backbone.
+  For each pair: fit R on the SOURCE's train split; re-partition the TARGET for the
+  cross setting — its val = its main-experiment train + val files (the target's
+  train split is unused for fitting here), its test = the main-experiment test
+  split, unchanged. RE-SELECT the full config per pair (dense base grid, then the
+  backprop rescore grid on the winning base config) under TWO conventions:
+  (1) *test-selected* — on mean target-test step accuracy, optimistic, as in
+  Table 1; (2) *val-selected* — on mean target-val step accuracy, reporting test.
   Dependency weights always come from the target trajectories' own attention. Seeds
-  pair positionally; report the 3-seed mean. (The original protocol froze the
-  source's anchor config; that grid is preserved in
-  `results-ablations/e1_transfer_frozen-anchor.tsv`.)
-- **Sanity check.** The diagonal repeats the main sweep's protocol verbatim, so it
-  must reproduce Table 1's base AND SOAP rows. Verified on both backbones.
-- **Deliverable.** Two 4×4 step-accuracy heatmaps (one per backbone).
+  pair positionally: source seed i's train split ↔ target seed i's val/test splits;
+  report the 3-seed mean.
+- **Sanity check.** Under the test convention the diagonal repeats Table 1's
+  selection problem exactly, so those cells must reproduce the selection table —
+  asserted in the runner. The REPORTED tables put the main-experiment in-distribution
+  numbers on every diagonal, whichever convention the off-diagonal cells use.
+- **Deliverable.** FOUR 4×4 tables: {test-selected, val-selected} × {qwen3.5-9b,
+  deepseek-8b}. Which appear in the main text is decided later.
 - (CE dropped from the grid with the pooled-source design; can be reinstated later if
   a 5×5 is wanted.)
-- **Results** — `results-ablations/e1_transfer.tsv` (`scripts/ablations/e1_transfer.py`;
-  base and soap rows per pair with the selected configs). SOAP step acc %, rows =
-  source:
+- **Results** — `results-ablations/e1_transfer.tsv` (merged from
+  `e1_parts_reselect/`; `scripts/ablations/e1_transfer.py`, rewritten; columns
+  include `convention`; base and soap rows per pair, val metrics alongside test;
+  all 8 test-convention diagonals reproduced the selection table exactly). The four
+  tables — SOAP step acc %, rows = source, diagonal (bold) = main-exp in-dist:
 
-  | qwen3.5-9b | →WW-AG | →WW-HC | →TE-Cap | →TE-Mag |
+  **qwen3.5-9b, test-selected**
+
+  | | →WW-AG | →WW-HC | →TE-Cap | →TE-Mag |
   |---|---|---|---|---|
   | WW-AG | **47.62** | 32.18 | 34.11 | 21.01 |
   | WW-HC | 35.45 | **34.48** | 34.11 | 22.46 |
   | TE-Cap | 26.98 | 33.33 | **35.66** | 21.74 |
   | TE-Mag | 28.57 | 29.89 | 34.88 | **23.19** |
 
-  | deepseek-8b | →WW-AG | →WW-HC | →TE-Cap | →TE-Mag |
+  **qwen3.5-9b, val-selected**
+
+  | | →WW-AG | →WW-HC | →TE-Cap | →TE-Mag |
+  |---|---|---|---|---|
+  | WW-AG | **47.62** | 26.44 | 17.05 | 18.84 |
+  | WW-HC | 23.81 | **34.48** | 20.16 | 21.01 |
+  | TE-Cap | 20.63 | 28.74 | **35.66** | 16.67 |
+  | TE-Mag | 24.87 | 26.44 | 25.58 | **23.19** |
+
+  **deepseek-8b, test-selected**
+
+  | | →WW-AG | →WW-HC | →TE-Cap | →TE-Mag |
   |---|---|---|---|---|
   | WW-AG | **45.50** | 25.29 | 34.88 | 30.43 |
   | WW-HC | 40.74 | **28.74** | 42.64 | 33.33 |
   | TE-Cap | 29.63 | 32.18 | **42.64** | 28.99 |
   | TE-Mag | 35.45 | 29.89 | 30.23 | **30.43** |
 
-  (Bold marks the in-domain diagonal, not the column best.)
+  **deepseek-8b, val-selected**
 
-  Reading: with the config re-selected per target, the fitted reference travels far
-  better than under the frozen-anchor protocol (WW-AG→WW-HC: 32.18 vs 3.45 before).
-  On Qwen the diagonal still wins every column, by a wide margin only on WW-AG
-  (47.62 vs 35.45); elsewhere the best foreign source lands within ~1 point. On
-  DeepSeek the diagonal is not always best: WW-HC→TE-Cap ties in-domain (42.64) and
-  WW-HC→TE-Mag beats it (33.33 vs 30.43); DeepSeek WW-HC's own cell (28.74, γ=0) is
-  beaten by three foreign sources. Conclusion: the distribution-specific part of
-  SOAP is chiefly the hyperparameter configuration; the spectral reference itself is
-  broadly reusable.
+  | | →WW-AG | →WW-HC | →TE-Cap | →TE-Mag |
+  |---|---|---|---|---|
+  | WW-AG | **45.50** | 20.69 | 25.58 | 27.54 |
+  | WW-HC | 39.68 | **28.74** | 35.66 | 23.91 |
+  | TE-Cap | 29.10 | 20.69 | **42.64** | 18.12 |
+  | TE-Mag | 31.22 | 24.14 | 23.26 | **30.43** |
+
+  Reading: once the configuration is re-selected on the target, the reference R
+  itself transfers far better than the frozen-anchor design suggested. Under the
+  optimistic test convention most cross cells land within a few points of the
+  diagonal, and a foreign reference can even beat the in-distribution one
+  (DeepSeek WW-HC→TE-Cap ties 42.64; WW-HC→TE-Mag 33.33 vs 30.43). The honest
+  val convention restores the gap — the diagonal wins every column on both
+  backbones — but the degradation is graded, not catastrophic (DeepSeek
+  WW-HC→WW-AG keeps 39.68 of 45.50): what is distribution-specific is mostly the
+  hyperparameter configuration, not the spectral reference.
+
+#### Superseded frozen-anchor design (results kept for reference)
+
+- Old procedure: freeze the source's full anchor config, evaluate on the target's
+  test split. Results: `results-ablations/e1_transfer_frozen-anchor.tsv`.
+  SOAP step acc %, rows = source:
+
+  | qwen3.5-9b | →WW-AG | →WW-HC | →TE-Cap | →TE-Mag |
+  |---|---|---|---|---|
+  | WW-AG | **47.62** | 3.45 | 20.16 | 5.80 |
+  | WW-HC | 23.81 | **34.48** | 20.16 | 14.49 |
+  | TE-Cap | 12.70 | 13.79 | **35.66** | 20.29 |
+  | TE-Mag | 11.64 | 10.34 | 27.91 | **23.19** |
+
+  | deepseek-8b | →WW-AG | →WW-HC | →TE-Cap | →TE-Mag |
+  |---|---|---|---|---|
+  | WW-AG | **45.50** | 3.45 | 20.16 | 9.42 |
+  | WW-HC | 13.76 | **28.74** | 34.11 | 12.32 |
+  | TE-Cap | 15.87 | 21.84 | **42.64** | 10.14 |
+  | TE-Mag | 24.34 | 19.54 | 16.28 | **30.43** |
+
+  Reading: transfer degrades sharply off-diagonal — the diagonal wins every column
+  but one (DeepSeek TE-Mag→WW-AG 24.34 is the best non-diagonal source for WW-AG
+  but still 21 points under in-distribution). A fitted SOAP is distribution-specific;
+  the closest cross pair is DeepSeek WW-HC→TE-Cap (34.11 vs 42.64 in-dist).
 
 ### E2 — Synthetic reference trajectories (`tab:synth`)  `[GPU, DEFERRED]`
 
@@ -445,6 +498,151 @@ coincide with the Table-1 number.
   (DeepSeek WW-HC 1/3: 29.89; TE-Mag 1/3: 31.88) — selection noise on tiny fits,
   worth a caption note.
 
+## Baselines
+
+### B1 — Representation-based baselines: OAT and StepFinder (`tab:main`, `tab:main-gt`)  `[CPU; predictions from ../attrib-prompting]`  — DONE 2026-08-23
+
+- [x] **Target.** Fill the OAT and StepFinder rows of Tables 1–2 — the two baselines
+  that, like SOAP, read a model's internal vectors instead of prompting a judge.
+- **Scope — wider than the ablations, like A2.** All five subsets (CE included), both
+  backbones, both GT settings, on the frozen triples. Nothing is trained or re-run
+  here: the predictions (one JSON per trajectory, the prompting baselines' schema)
+  live in `../attrib-prompting/outputs-rb-nogt/` (without GT) and `outputs-rb-gt/`
+  (with GT), code in `../attrib-prompting/baselines-rp/`. This runner only scores them
+  on SOAP's test splits with the rules of `scripts/prompting/evaluate.py` (same split
+  code, missing prediction = wrong), so the cells are comparable with every other row.
+- **OAT** (one-class tracer; paper: Yeh et al., arXiv:2607.12747, vendored code).
+  Trains on SUCCESSFUL trajectories only — 103 MCP-Atlas tool-use runs shipped with
+  the paper, none from our corpora — so it sees no error label and no trajectory from
+  the test distribution. One model per (extractor, training seed), seeds 42–46; the
+  same model scores all twelve subsets. Per subset it adapts its latent statistics to
+  ALL trajectories of that subset by CORAL (unsupervised; test included — same kind of
+  transductive use as fitting nothing on labels, but note it). Extractor = the
+  backbone's last layer, mean-pooled; the paper's own extractor (Qwen3.5-27B) was not
+  run. Prediction = the step with the largest anomaly distance; step 0 (the user turn)
+  is never scored. Marks: Actual data ✗, Supervised ✗. Known deviations from the
+  paper: LR 1e-4 (paper 4e-5); trajectories whose gold step is the filtered step 0 are
+  kept and counted wrong (~45 across the corpora), not dropped.
+- **StepFinder** (Zhu et al., vendored code) — a supervised step classifier over
+  per-step embeddings with a position prior. Its faithful encoder is
+  **Qwen3-Embedding-0.6B** (the paper's); the Qwen3.5-9B / DeepSeek-8B runs take the
+  first 128 coordinates of the decoder's last hidden state, which the port documents
+  as an arbitrary slice for a decoder (principled only for an MRL embedder). Two
+  families, scored separately:
+  - **Family A — regenerated corpus (`stepfinder.s42–s46`)**, the paper's own
+    protocol: train on the LLM-regenerated, step-labelled failures released with the
+    paper (1,564 Alg-Gen-style + 2,604 Hand-Crafted-style trajectories; subset →
+    training corpus mapped as in the paper), checkpoint selected on a held-out val
+    split of that corpus (the paper selects on its test set; the port refuses to
+    write such predictions). One model per training seed 42–46, predictions for every
+    trajectory. Marks: Actual data ✗ (regenerated), Supervised ✓. Leakage: the
+    regenerated corpus shares TASKS with TE-Cap (22/85), TE-Mag (51/91) and CE-gaia
+    (30/50); WW is clean. Per-record flag `train_task_overlap`.
+  - **Family B — in-corpus (`stepfinder.e<seed>`)**, SOAP's own protocol: for split
+    seed `s`, train on that seed's 30 % train partition of the subset under test
+    (same cut as SOAP's reference split), select on its val partition, predict its
+    val+test. Encoder Qwen3-Embedding-0.6B, without-GT only. Trained for seeds 1–20
+    on WW and TE, 1–3 on CE — so it meets the frozen triple on WW-AG, WW-HC and
+    TE-Mag only; TE-Cap (22–24) and CE (17–19) would need new training runs. Marks:
+    Actual data ✓, Supervised ✓.
+- **With-GT setting.** Models are shared across settings; only the inputs change. OAT
+  appends the gold answer to the question row (left context of every step);
+  StepFinder appends it to the first step's content. Family B is not run with GT.
+- **Aggregation.** A cell is the mean over the triple's three test splits, as
+  everywhere; OAT and family A then average over their five training seeds (the
+  per-training-seed values and the best-of-five stay in the TSV — best-of-five is
+  test-selected and runs 2–13 points higher, e.g. StepFinder/Qwen CE 43.53). Family B
+  is a diagonal: seed `s`'s model on seed `s`'s test split.
+- **Results** — `results-ablations/b1_rb_baselines/` (`scripts/ablations/
+  b1_rb_baselines.py`; `by_seed` / `by_cell` / `by_column` per training seed,
+  `by_column_mean_over_train_seeds` with min/max, `family_b`; 0 missing predictions
+  in every Qwen/DeepSeek cell; CE macro-averages its 7 subsets). Step acc %, mean
+  over triple × 5 training seeds; the SOAP rows repeat Tables 1–2 for reference.
+  **Reported in the manuscript: OAT and StepFinder family A, on the Qwen3.5-9B and
+  DeepSeek-8B strands** — the embedding-encoder and family-B rows are for reference:
+
+  **Without GT**
+
+  | qwen3.5-9b | WW-AG | WW-HC | CE | TE-Cap | TE-Mag |
+  |---|---|---|---|---|---|
+  | OAT | 16.72 | 10.11 | 56.50 | 15.35 | 18.84 |
+  | StepFinder (A, regenerated) | 15.87 | 13.33 | 30.03 | 18.29 | 6.67 |
+  | SOAP | 47.62 | 34.48 | 61.78 | 35.66 | 23.19 |
+
+  | deepseek-8b | WW-AG | WW-HC | CE | TE-Cap | TE-Mag |
+  |---|---|---|---|---|---|
+  | OAT | 12.70 | 15.86 | 52.50 | 17.98 | 13.04 |
+  | StepFinder (A, regenerated) | 18.94 | 10.80 | 36.91 | 14.73 | 4.20 |
+  | SOAP | 45.50 | 28.74 | 64.68 | 42.64 | 30.43 |
+
+  | qwen3-embedding-0.6b (StepFinder's own encoder) | WW-AG | WW-HC | CE | TE-Cap | TE-Mag |
+  |---|---|---|---|---|---|
+  | StepFinder (A, regenerated) | 24.02 | 11.72 | 32.75 | 17.98 | 21.16 |
+  | StepFinder (B, in-corpus, frozen triple) | 29.63 | 12.64 | — | — | 7.97 |
+  | StepFinder (B, in-corpus, all trained seeds) | 29.29 (20) | 15.00 (20) | 56.53 (3) | 16.74 (20) | 8.70 (20) |
+
+  (Family B's last row is the port's own diagonal mean over every trained seed,
+  count in parentheses — NOT the frozen triple; CE there is the macro-mean over seeds
+  1–3, per subset: arc 80.70, gaia 56.00, hotpot 50.40, math500 65.40, mmlu_pro 70.29,
+  musique 48.50, wikimqa 24.43.)
+
+  **With GT** (Table 2 shows Qwen; DeepSeek goes to the appendix, whose with-GT
+  table is still the old placeholder layout)
+
+  | qwen3.5-9b | WW-AG | WW-HC | CE | TE-Cap | TE-Mag |
+  |---|---|---|---|---|---|
+  | OAT | 22.12 | 8.05 | 56.21 | 17.98 | 20.00 |
+  | StepFinder (A, regenerated) | 18.52 | 12.87 | 28.52 | 13.64 | 8.99 |
+  | SOAP | 43.39 | 34.48 | 60.59 | 36.43 | 21.01 |
+
+  | deepseek-8b | WW-AG | WW-HC | CE | TE-Cap | TE-Mag |
+  |---|---|---|---|---|---|
+  | OAT | 20.85 | 17.01 | 52.39 | 18.14 | 13.77 |
+  | StepFinder (A, regenerated) | 18.94 | 9.89 | 24.99 | 15.04 | 6.23 |
+  | SOAP | 44.97 | 29.89 | 65.19 | 42.64 | 36.96 |
+
+  | qwen3-embedding-0.6b | WW-AG | WW-HC | CE | TE-Cap | TE-Mag |
+  |---|---|---|---|---|---|
+  | StepFinder (A, regenerated) | 21.80 | 10.34 | 30.06 | 15.04 | 17.25 |
+
+  **Agent acc %, without GT** (with-GT mirror in the TSV):
+
+  | | WW-AG | WW-HC | CE | TE-Cap | TE-Mag |
+  |---|---|---|---|---|---|
+  | OAT / qwen3.5-9b | 40.53 | 53.10 | 70.58 | 46.67 | 62.03 |
+  | OAT / deepseek-8b | 42.33 | 56.32 | 69.04 | 50.08 | 63.91 |
+  | StepFinder A / qwen3.5-9b | 39.26 | 37.01 | 60.03 | 47.75 | 57.83 |
+  | StepFinder A / deepseek-8b | 48.99 | 41.15 | 67.29 | 45.12 | 42.61 |
+  | StepFinder A / qwen3-embedding-0.6b | 46.98 | 44.83 | 61.70 | 49.30 | 70.87 |
+  | StepFinder B / qwen3-embedding-0.6b | 49.74 | 50.57 | — | — | 57.97 |
+
+  Reading: neither baseline comes near SOAP on the two backbones — on WW-AG the gap
+  is ~30 points, on TE-Cap 17–25, on WW-HC 13–21. CE is the one column where OAT is
+  competitive (56.5 vs 61.8 on Qwen): its trajectories are short, so a short-corpus
+  prior goes a long way (A1's perplexity/random rows tell the same story). StepFinder
+  is strongest on its own encoder and on in-corpus training (family B on WW-AG 29.6,
+  the best non-SOAP representation number), which says its regenerated corpus
+  transfers poorly to these systems — and family B is supervised on the very
+  partition SOAP uses unlabeled. Rescoring in the with-GT setting moves OAT up on
+  WW-AG (+5 on Qwen, +8 on DeepSeek) and StepFinder down or sideways (mean Δ −1.6 in
+  the port's own census), the opposite sign to the prompting baselines.
+- **Caveats to carry into the captions.** (i) Mean over five training seeds, not
+  best. (ii) OAT's extractor is a 9B/8B proxy, not the paper's 27B; the paper's
+  per-step annotation (every contributing step) differs from ours (one decisive
+  step), so its printed numbers are not comparable. (iii) StepFinder's decoder
+  runs use an arbitrary 128-dim slice; the faithful encoder is the embedding model,
+  which has no SOAP counterpart in the table strands. (iv) Family A's training corpus
+  overlaps TE and CE-gaia tasks. (v) StepFinder's published numbers select the
+  checkpoint on test (+6–10 points); these select on val.
+- **Manuscript edits — APPLIED 2026-08-23.** Tables 1–2: OAT/StepFinder dashes filled
+  with family A on the Qwen3.5-9B and DeepSeek-8B strands (Table 2: Qwen only);
+  StepFinder's marks corrected to Actual data ✗, Supervised ✓; the stray `x\`` at
+  the Table-2 OAT row removed; provenance comments point at
+  `results-ablations/b1_rb_baselines/`. Still open: the StepFinder description at
+  the `\TODO` in Setup; the embedding-encoder StepFinder row (own strand or
+  footnote); the with-GT DeepSeek rows for Appendix `app:gt`, whose table is still
+  the old placeholder layout.
+
 ## Deferred (in the plan, blocked on inputs)
 
 - **E2 — synthetic reference fit**: blocked until the synthetic trajectories arrive
@@ -454,8 +652,10 @@ coincide with the Table-1 number.
 
 - **Scalability** (`fig:scale`): Qwen3.5-9B/14B/27B with All-at-Once, AgenTracer, OAT.
   Pending — the expensive item (new extraction at 14B/27B plus three baselines).
-- **Baseline rows**: OAT, StepFinder, AgenTracer, GraphTracer, RAFFLES (dashes in
-  Tables 1–2).
+  First input landed 2026-08-23: OAT on Qwen3.5-4B, WW only
+  (`../attrib-prompting/outputs-rb-{nogt,gt}/ww/*/qwen3.5-4b/oat.s42–46`).
+- **Baseline rows**: AgenTracer, GraphTracer (dashes in Tables 1–2). OAT and
+  StepFinder are scored under B1; RAFFLES landed with the prompting rows.
 - **With-GT SOAP adaptation**: announced in Setup, not yet described or planned here.
 
 ## Execution order
@@ -492,3 +692,17 @@ named in each placeholder.
   GPT-4o.
 - Ablation anchor numbers and `tab:synth`'s stale "real" row must be refreshed to the
   current Table-1 protocol once the runs land.
+
+## Manuscript presentation — APPLIED 2026-08-24
+
+The ablations now follow the REDE layout (`artifacts/rede.pdf`): a 2x4 bar strip
+`fig:sensitivity` (γ, w, representation layer, attention band; dashed orange line =
+base score, dark bar = selected config) replaces `tab:gamma` / `tab:layers` /
+`tab:attnsel`; `fig:transfer` (test-selected 4x4 heatmap + reference-data lines)
+replaces `tab:transfer` / `tab:datasize`; `tab:scorefn` / `tab:weights` restyled
+(bold best, shaded ours row, row groups). Retired tables stay in comments. Mirrors
+(DeepSeek, TE, val-selected grids, full data-size table) live in
+`manuscript/sections/appendix_ablations.tex` (`app:deepseek-ablations`, wired into
+`main.tex`). Figures: `scripts/ablations/plot_figures.py` → `artifacts/ablations/`
+→ `manuscript/assets/`; `--print-tables` dumps the hand-typed table bodies. No
+number changed; the val-selected grids carry the Table-1 diagonal per E1's rule.
