@@ -1,0 +1,4 @@
+pick_rank	model	subset	seed	traj_idx	n_steps	true_step	true_agent	base_pred_step	soap_pred_step	soap_pred_agent	w	flip_seeds
+1	qwen3.5-9b	captain	23	50	11	4	InformationExtraction_Expert	10	4	InformationExtraction_Expert	5	23
+2	qwen3.5-9b	captain	22	44	15	12	Verification_Expert	14	12	Verification_Expert	5	22
+3	qwen3.5-9b	captain	24	59	6	1	InformationExtraction_Expert	5	1	InformationExtraction_Expert	5	24

@@ -49,7 +49,17 @@ $
 $ and then extract its $d$-dimensional step representation $v_t$. \note{refer details, e.g., context cutoff, in the appendix.}
 % \textcolor{blue}{Please don't mention the details here. add ablations in appendix.}
 
-\textcolor{blue}{we need a method figure.}
+Figure~\ref{fig:overview} summarizes the method.
+% Method figure added 2026-08-25: src/analysis/method_figure.py ->
+% manuscript/assets/soap_overview.pdf (schematic; bars and weights illustrative).
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{assets/soap_overview.pdf}
+\caption{\textbf{Overview of \soap.} \note{main figure needs refinement}
+% (1)~A frozen proxy model reads the failed trajectory step by step and yields, for every step, a pooled representation $v_t$ and the attention mass it places on its predecessors. (2)~An SVD of the unlabeled reference steps defines a spectral band $\mathcal{C}$; the base score $S$ measures how weakly a step projects onto it. Its argmax tends to land \emph{after} the decisive error $t^\star$, on a step that inherited the corrupted context. (3)~Attention-derived dependency weights $w_{i,t}$ route each step's error signal back to the predecessors it depends on; the rescored $\widetilde S = S + \gamma B$ moves the argmax to $t^\star$, and the responsible agent is the agent of that step. No step-level labels, fine-tuning, or LLM prompting is involved.
+}
+\label{fig:overview}
+\end{figure}
 % Let $\mathcal{T}_t$ denote the token positions corresponding to $s_t$ in
 % $z_t$, and let $h_p^{(l)}\in\mathbb{R}^d$ be the hidden representation at
 % layer $l$ and token position $p$.
@@ -84,6 +94,14 @@ We stack their representations into $R=[(v_t^{(n)})^\top]_{n\in[N],\,t\in[T_n]}\
 The columns of $V$ describe orthogonal directions of variation among the
 unlabeled steps, ordered by decreasing singular value. 
 
+\begin{wrapfigure}{r}{0.30\linewidth}
+\vspace{-0.9\baselineskip}
+\centering
+\includegraphics[width=\linewidth]{{assets/qwen3.5-9b_arc_seeds-6-7-8_seed-7}.pdf}
+\caption{Base-score distribution on a \textsc{CORRECT-Error} test split. Decisive-error steps concentrate at smaller projection magnitudes than ordinary steps.}
+\label{fig:score-dist}
+\vspace{-\baselineskip}
+\end{wrapfigure}
 
 Importantly, the reference set $R$ is dominated by ordinary steps because
 each failure trajectory typically contains \textit{only a small number of
@@ -102,14 +120,7 @@ $
 $ whose boundaries are selected as described in
 \S\ref{sec:experiments}.
 
-\begin{wrapfigure}{r}{0.40\linewidth}
-\vspace{-0.9\baselineskip}
-\centering
-\includegraphics[width=\linewidth]{{assets/qwen3.5-9b_arc_seeds-6-7-8_seed-7}.pdf}
-\caption{Base-score distribution on a \textsc{CORRECT-Error} test split. Decisive-error steps concentrate at smaller projection magnitudes than ordinary steps. \textcolor{blue}{avoid mentioning proxy.}}
-\label{fig:score-dist}
-\vspace{-\baselineskip}
-\end{wrapfigure}
+
 
 \textbf{Spectral base score.}
 For a step representation $v_t$, we measure its average squared projection

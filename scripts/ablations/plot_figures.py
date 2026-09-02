@@ -1,16 +1,22 @@
 """Draw the manuscript's ablation figures from `results-ablations/`.
 
-Four PDFs (with PNG previews) land in `artifacts/ablations/`:
+Seven PDFs (with PNG previews) land in `artifacts/ablations/`:
 
 - `fig_sensitivity`          — main text: rows WW-AG / WW-HC on Qwen3.5-9B, panels
                                (a) gamma, (b) representation layer (line), (c)
                                attention band. Dashed orange line = base score of
                                the selected configuration (no rescoring); darker
                                bar / large marker = the selected configuration.
-- `fig_transfer_datasize`    — main text: (a) 4x4 source->target heatmap (Qwen,
-                               test-selected), (b) accuracy vs reference-data fraction.
-- `fig_sensitivity_appendix` — all eight (backbone, subset) cells, plus the window-w panel.
+- `fig_transfer_synth`       — main text: (a) 4x4 source->target heatmap (Qwen),
+                               (b) SOAP with the reference fit on real vs synthetic
+                               trajectories (WW-AG / WW-HC).
+- `fig_datasize`             — analysis: accuracy vs reference-data fraction.
+- `fig_sensitivity_appendix_{qwen,deepseek}` — the four cells of each backbone, plus
+                               the window-w panel (one page-high figure per backbone).
 - `fig_transfer_appendix`    — heatmaps for both backbones and both conventions.
+- `fig_scale`                — main text: S1 scalability, grouped bars per backbone size
+                               (9B / 27B), panels WW-AG / WW-HC, ±1 std error bars
+                               (seeds for SOAP, training seeds for the baselines).
 
 `--print-tables` dumps ready-to-paste tabular bodies for the hand-typed tables (best
 per column wrapped in `\\best{}`), so no number is typed from memory. Nothing is
@@ -210,18 +216,8 @@ def sensitivity(cells, stem: str, out: Path, panels=("gamma", "layer", "band")) 
                     ax.set_title(f"({'abcd'[panels.index(key)]}) {title}", pad=4, color=INK)
             axes[r, 0].set_ylabel(f"{tag}\nstep acc. (%)", labelpad=2)
 
-        handles = [Patch(color=PURPLE_DARK, label="selected configuration (Table 1)"),
-                   Patch(color=PURPLE, label=r"$+$SOAP at the varied value"),
-                   Line2D([], [], color=ORANGE, linestyle="--", linewidth=1,
-                          label="base score (no rescoring)"),
-                   Line2D([], [], color=PURPLE_DARK, marker="o", markersize=2.5, linewidth=1.1,
-                          label=r"$+$SOAP at that layer"),
-                   Line2D([], [], color=PURPLE, linestyle=":", linewidth=1,
-                          label="base score at that layer")]
+        # Symbol legend removed 2026-08-31: the caption explains the encoding instead.
         fig.subplots_adjust(wspace=0.34, hspace=0.5)
-        y = axes[-1, 0].get_position().y0 - 0.42 / fig.get_figheight()   # just under the x-labels
-        fig.legend(handles=handles, ncol=3, frameon=False, loc="upper center",
-                   bbox_to_anchor=(0.5, y), handlelength=1.6, columnspacing=1.2)
         return save(fig, stem, out)
 
 
@@ -230,13 +226,13 @@ def heatmap(ax, grid: pd.DataFrame, title: str | None = None) -> None:
     ax.imshow(v, cmap=CMAP, vmin=0, vmax=max(50, v.max()), aspect="equal")
     for i in range(4):
         for j in range(4):
-            ax.text(j, i, f"{v[i, j]:.2f}", ha="center", va="center", fontsize=6.5,
+            ax.text(j, i, f"{v[i, j]:.2f}", ha="center", va="center", fontsize=plt.rcParams["font.size"] * 0.95,
                     color="white" if v[i, j] > 0.8 * max(50, v.max()) else INK)
         ax.add_patch(Rectangle((i - 0.5, i - 0.5), 1, 1, fill=False, edgecolor=ORANGE, linewidth=1.2))
     ax.set_xticks(range(4), TARGETS)
     ax.set_yticks(range(4), TARGETS)
-    ax.set_xlabel("Target (evaluated on)", labelpad=2)
-    ax.set_ylabel("Source (reference fit on)", labelpad=2)
+    ax.set_xlabel("target (evaluated on)", labelpad=1)
+    ax.set_ylabel("source (reference fit on)", labelpad=1)
     ax.tick_params(length=0, colors=MUTED)
     for s in ax.spines.values():
         s.set_visible(False)
@@ -260,34 +256,78 @@ def transfer_grid(df: pd.DataFrame, model: str, convention: str) -> pd.DataFrame
     return g
 
 
-def fig_transfer_datasize(out: Path) -> list[Path]:
-    e1, a7 = tsv("e1_transfer.tsv"), tsv("a7_datasize.tsv")
-    with plt.rc_context(RC):
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(5.5, 2.15),
-                                       gridspec_kw={"width_ratios": [1, 1.25]})
-        heatmap(ax1, transfer_grid(e1, "qwen3.5-9b", "val"), "(a) Cross-distribution transfer")
+def _small_rc():
+    # Sized for a ~0.55\linewidth wrapfigure (~3.0in), REDE Fig. 5 style.
+    return {**RC, "font.size": 5.5, "axes.labelsize": 5.5, "axes.titlesize": 5.8,
+            "legend.fontsize": 5, "xtick.labelsize": 5, "ytick.labelsize": 5}
 
+
+def fig_transfer_synth(out: Path) -> list[Path]:
+    """Main text: (a) 4x4 source->target heatmap, (b) SOAP with the SVD reference fit on
+    real vs synthetic trajectories (data: e1_transfer.tsv, e2_synthfit.tsv)."""
+    e1, e2 = tsv("e1_transfer.tsv"), tsv("e2_synthfit.tsv")
+    # Shades of one purple (darkest = real), matching fig_scale's columns (2026-08-31).
+    refs = [("real", "Real", "#3F3D73"), ("syn-qwen9b", "Syn. (Qwen3.5-9B)", "#807EAF"),
+            ("syn-gpt4o", "Syn. (GPT-4o)", "#C6C5DF")]
+    with plt.rc_context(_small_rc()):
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(3.1, 1.45),
+                                       gridspec_kw={"width_ratios": [1, 0.95]})
+        heatmap(ax1, transfer_grid(e1, "qwen3.5-9b", "val"), "(a) Transfer")
+        ax1.set_xticklabels(TARGETS, rotation=30, ha="right", rotation_mode="anchor")
+
+        d = e2[(e2["model"] == "qwen3.5-9b") & (e2["row"] == "soap")].set_index(["target", "reference"])
+        x, width = np.arange(2), 0.26
+        vals_all = []
+        for j, (ref, label, color) in enumerate(refs):
+            vals = np.array([100 * d.loc[(t, ref), "step_acc_test"] for t in ("WW-AG", "WW-HC")])
+            vals_all.append(vals)
+            ax2.bar(x + (j - 1) * width, vals, width, color=color, linewidth=0, label=label)
+            for xi, v in zip(x + (j - 1) * width, vals):
+                ax2.text(xi, v + 0.6, f"{v:.1f}", ha="center", va="bottom", fontsize=3.4, color=INK_2)
+        style(ax2)
+        ax2.set_xticks(x, ["WW-AG", "WW-HC"])
+        ax2.set_xlim(-0.6, 1.6)
+        lo = max(0.0, np.min(vals_all) - 8)
+        ax2.set_ylim(lo, np.max(vals_all) + 17)  # headroom for the legend
+        ax2.set_ylabel("step acc. (%)", labelpad=1)
+        ax2.set_title("(b) Synthetic reference", color=INK, pad=3)
+        ax2.legend(frameon=False, loc="upper right", handlelength=1.0, handleheight=0.8,
+                   labelcolor=INK_2, borderaxespad=0.0, labelspacing=0.2)
+        fig.subplots_adjust(wspace=0.4)
+        return save(fig, "fig_transfer_synth", out)
+
+
+def fig_datasize(out: Path) -> list[Path]:
+    """Analysis: base and SOAP step accuracy vs reference-data fraction (data: a7_datasize.tsv).
+    Palette matches the qualitative panel it shares a figure with: +SOAP orange, base
+    score dark purple; subsets by line style (WW-AG solid, WW-HC dashed), as before."""
+    a7 = tsv("a7_datasize.tsv")
+    with plt.rc_context(RC):
+        # Sized so the panel renders at ~natural scale beside the qualitative panel
+        # in the merged manuscript figure (equal heights; see experiments.tex).
+        fig, ax2 = plt.subplots(figsize=(2.55, 1.95))
         x = [10, 20, 30]
-        for subset, ls in (("algorithm-generated", "-"), ("hand-crafted", "--")):
+        # WW-HC dotted (not dashed) and the (b)-panel line weights, so the two
+        # panels of the merged figure share one line vocabulary (2026-08-31).
+        for subset, ls in (("algorithm-generated", "-"), ("hand-crafted", ":")):
             c = cell(a7, "qwen3.5-9b", subset)
-            for row, color, m in (("base", PURPLE, "s"), ("soap", ORANGE, "o")):
+            for row, color, m in (("base", PURPLE_DARK, "s"), ("soap", ORANGE, "o")):
                 y = 100 * c[c["row"] == row].set_index("fraction").loc[["1/3", "2/3", "1"], "step_acc_test"].values
-                ax2.plot(x, y, color=color, linestyle=ls, marker=m, markersize=3.5, linewidth=1.1)
+                ax2.plot(x, y, color=color, linestyle=ls, marker=m, markersize=3.2,
+                         mew=0, linewidth=1.5 if ls == "-" else 1.3)
         style(ax2)
         ax2.set_xticks(x, ["10%", "20%", "30%"])
         ax2.set_xlim(7, 33)
-        ax2.set_ylim(ax2.get_ylim()[0] - 4.5, ax2.get_ylim()[1] + 1)
-        ax2.set_xlabel("Reference data (% of corpus)", labelpad=2)
-        ax2.set_ylabel("Step acc. (%)", labelpad=2)
-        ax2.set_title("(b) Quantity of unlabeled reference data", color=INK, pad=4)
-        handles = [Line2D([], [], color=ORANGE, marker="o", markersize=3.5, label=r"$+$SOAP"),
-                   Line2D([], [], color=PURPLE, marker="s", markersize=3.5, label="Base score"),
+        ax2.set_ylim(ax2.get_ylim()[0] - 5.5, ax2.get_ylim()[1] + 1)
+        ax2.set_xlabel("reference data (% of corpus)", labelpad=1)
+        ax2.set_ylabel("step acc. (%)", labelpad=1)
+        handles = [Line2D([], [], color=ORANGE, marker="o", markersize=3.2, mew=0, label=r"$+$SOAP"),
+                   Line2D([], [], color=PURPLE_DARK, marker="s", markersize=3.2, mew=0, label="Base score"),
                    Line2D([], [], color=INK_2, linestyle="-", label="WW-AG"),
-                   Line2D([], [], color=INK_2, linestyle="--", label="WW-HC")]
-        ax2.legend(handles=handles, ncol=2, frameon=False, loc="lower right", handlelength=1.8,
-                   columnspacing=1.0, labelcolor=INK_2)
-        fig.subplots_adjust(wspace=0.35)
-        return save(fig, "fig_transfer_datasize", out)
+                   Line2D([], [], color=INK_2, linestyle=":", label="WW-HC")]
+        ax2.legend(handles=handles, ncol=2, frameon=False, loc="lower right", handlelength=1.4,
+                   columnspacing=0.6, labelcolor=INK_2, borderaxespad=0.2, labelspacing=0.3)
+        return save(fig, "fig_datasize", out)
 
 
 def fig_transfer_appendix(out: Path) -> list[Path]:
@@ -302,12 +342,56 @@ def fig_transfer_appendix(out: Path) -> list[Path]:
         return save(fig, "fig_transfer_appendix", out)
 
 
+def fig_scale(out: Path) -> list[Path]:
+    """S1: grouped bars per backbone size, one panel per WW subset (data: s1_scale.tsv)."""
+    d = tsv("s1_scale.tsv")
+    # 9B dropped 2026-08-31 v2 (already in Table 1); Qwen3-14B restored. Columns are
+    # shades of one purple, darkest = SOAP.
+    sizes = [("qwen3-14b", "14B\nQwen3"), ("qwen3.5-27b", "27B\nQwen3.5")]
+    methods = [("soap", r"$+$SOAP", "#3F3D73"),
+               ("oat", "OAT", "#807EAF"), ("stepfinder", "StepFinder", "#C6C5DF")]
+    with plt.rc_context(RC):
+        fig, axes = plt.subplots(1, 2, figsize=(3.3, 1.5))
+        width = 0.28
+        for ax, (subset, tag) in zip(axes, [("algorithm-generated", "WW-AG"), ("hand-crafted", "WW-HC")]):
+            c = d[d["subset"] == subset].set_index(["method", "backbone"])
+            x = np.arange(len(sizes))
+            tops, bottoms = [], []
+            for j, (m, _, color) in enumerate(methods):
+                vals = np.array([c.loc[(m, bb), "step"] for bb, _ in sizes])
+                err = np.array([c.loc[(m, bb), "step_sd"] for bb, _ in sizes])
+                ax.bar(x + (j - (len(methods) - 1) / 2) * width, vals, width, color=color, linewidth=0, yerr=err,
+                       error_kw={"ecolor": MUTED, "elinewidth": 0.6, "capsize": 0})
+                tops.append(vals + err)
+                bottoms.append(vals - err)
+            ax.set_xticks(x, [lab for _, lab in sizes])
+            ax.set_xlim(-0.52, len(sizes) - 0.48)
+            ylim(ax, *tops, *bottoms)
+            ax.set_ylim(bottom=0)
+            style(ax)
+            ax.set_title(f"({'ab'[axes.tolist().index(ax)]}) {tag}", pad=4, color=INK)
+        axes[0].set_ylabel("step acc. (%)", labelpad=2)
+        handles = [Patch(color=color, label=label) for _, label, color in methods]
+        fig.subplots_adjust(wspace=0.26)
+        y = axes[0].get_position().y0 - 0.34 / fig.get_figheight()
+        fig.legend(handles=handles, ncol=len(methods), frameon=False, loc="upper center",
+                   bbox_to_anchor=(0.5, y), handlelength=1.2, columnspacing=0.8)
+        return save(fig, "fig_scale", out)
+
+
 FIGURES = {
-    "fig_sensitivity": lambda out: sensitivity(MAIN_CELLS, "fig_sensitivity", out),
-    "fig_transfer_datasize": fig_transfer_datasize,
-    "fig_sensitivity_appendix": lambda out: sensitivity(
-        MAIN_CELLS + APPENDIX_CELLS, "fig_sensitivity_appendix", out, panels=("gamma", "w", "layer", "band")),
+    # Main-text figure trimmed to the WW-AG row 2026-08-31 (WW-HC stays in the appendix figure).
+    "fig_sensitivity": lambda out: sensitivity(MAIN_CELLS[:1], "fig_sensitivity", out),
+    "fig_transfer_synth": fig_transfer_synth,
+    "fig_datasize": fig_datasize,
+    "fig_sensitivity_appendix_qwen": lambda out: sensitivity(
+        [c for c in MAIN_CELLS + APPENDIX_CELLS if c[0] == "qwen3.5-9b"],
+        "fig_sensitivity_appendix_qwen", out, panels=("gamma", "w", "layer", "band")),
+    "fig_sensitivity_appendix_deepseek": lambda out: sensitivity(
+        [c for c in APPENDIX_CELLS if c[0] == "deepseek-8b"],
+        "fig_sensitivity_appendix_deepseek", out, panels=("gamma", "w", "layer", "band")),
     "fig_transfer_appendix": fig_transfer_appendix,
+    "fig_scale": fig_scale,
 }
 
 

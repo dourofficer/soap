@@ -1,5 +1,0 @@
-Green Polygon Area Analysis
-===========================
-Green Pixels: 38922
-Convex Hull Area: 65302.0
-Best Integer Match: 1000

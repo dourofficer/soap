@@ -31,7 +31,12 @@ SEEDS_PER_SUBSET = 3
 # Knobs that change what a stage's numbers MEAN. Stamped and verified; anything else
 # (device, dtype, tqdm) can change freely between runs.
 STAMP_KEYS = ("splits", "seeds", "n_components", "positions", "ensemble",
-              "n_ranges", "gammas", "ws", "strategies", "gt")
+              "n_ranges", "gammas", "ws", "strategies", "gt", "select_rule")
+
+# Which split picks a config. "test" is Table 1's optimistic rule; "val" selects on the
+# validation split and reports test. The rule changes which base config the rescore
+# grid is expanded for, so val-rule tables live in their own tree (see ``out_root``).
+SELECT_RULES = ("test", "val")
 
 
 # ── loading ─────────────────────────────────────────────────────────────────
@@ -54,6 +59,9 @@ def load_config(path: str | Path, overrides: list[str] | None = None) -> dict:
     cfg.setdefault("ks", list(KS))
     cfg.setdefault("n_components", N_COMPONENTS)
     cfg.setdefault("strategies", list(STRATEGIES))
+    cfg.setdefault("select_rule", "test")
+    if cfg["select_rule"] not in SELECT_RULES:
+        raise SystemExit(f"{path}: select_rule must be one of {SELECT_RULES}")
     if "dataset" not in cfg:
         raise SystemExit(f"{path}: missing `dataset`")
     return cfg
@@ -87,16 +95,27 @@ def attn_root(cfg: dict) -> Path:
     return results_root(cfg) / "attention"
 
 
+def out_root(cfg: dict) -> Path:
+    """Where sweep / select / reproduce write. The frozen ``results_root`` under the
+    test rule; a ``-valsel`` sibling (``results-nogt-valsel/<ds>``) under the val rule,
+    so the two rules never overwrite each other. Activations and attention are read
+    from ``results_root`` either way — the rule does not touch them."""
+    root = results_root(cfg)
+    if cfg.get("select_rule", "test") == "test":
+        return root
+    return root.parent.with_name(root.parent.name + "-valsel") / root.name
+
+
 def sweep_dir(cfg: dict, model: str, subset: str) -> Path:
-    return results_root(cfg) / "sweep" / model / subset
+    return out_root(cfg) / "sweep" / model / subset
 
 
 def select_dir(cfg: dict) -> Path:
-    return results_root(cfg) / "select"
+    return out_root(cfg) / "select"
 
 
 def repro_dir(cfg: dict, model: str, subset: str) -> Path:
-    return results_root(cfg) / "reproduce" / model / subset
+    return out_root(cfg) / "reproduce" / model / subset
 
 
 # ── frozen seeds ────────────────────────────────────────────────────────────

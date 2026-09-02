@@ -1,0 +1,43 @@
+{
+  "cell": {
+    "model": "qwen3.5-9b",
+    "subset": "magentic",
+    "label": "Qwen3.5-9B TE-Mag",
+    "frozen_seeds": [
+      15,
+      16,
+      17
+    ]
+  },
+  "frozen_config": {
+    "seed": 15,
+    "position": "act/23",
+    "c_begin": 0,
+    "c_end": 2,
+    "strategy": "backprop",
+    "layer_range": "6-8",
+    "gamma": 1.0,
+    "w": "4",
+    "model": "qwen3.5-9b",
+    "subset": "magentic",
+    "split": "test"
+  },
+  "selection": {
+    "pick_rank": 1,
+    "seed": 15,
+    "traj_idx": 30,
+    "n_steps": 13,
+    "flip_seeds": "15,16,17"
+  },
+  "gold": {
+    "step": 6,
+    "agent": "Orchestrator",
+    "mistake_reason": "The mistake was assuming Bob should make the same conservative guess for each box, which ignored optimizing guesses based on varying coin distributions, leading to incorrect minimum winnings calculation.",
+    "question_ID": "gaia_task_123_gpt_4o_hvas376v6lu6"
+  },
+  "predictions": {
+    "base": 9,
+    "soap": 6
+  },
+  "verified_step_acc_test": 0.2318840579710145
+}

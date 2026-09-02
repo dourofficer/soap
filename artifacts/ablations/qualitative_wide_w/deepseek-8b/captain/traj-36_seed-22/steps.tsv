@@ -1,0 +1,6 @@
+model	subset	seed	traj_idx	n_steps	step_idx	role	base	final	rank	is_gold
+deepseek-8b	captain	22	36	5	0	Orchestrator	0.00516870804131031	0.006230562925338745	4	False
+deepseek-8b	captain	22	36	5	1	Orchestrator	0.0034355923999100924	0.004878927022218704	5	False
+deepseek-8b	captain	22	36	5	2	InformationExtraction_Expert	0.007340502459555864	0.008671904914081097	1	True
+deepseek-8b	captain	22	36	5	3	Orchestrator	0.006197578273713589	0.007686213590204716	2	False
+deepseek-8b	captain	22	36	5	4	Orchestrator	0.0074431756511330605	0.0074431756511330605	3	False

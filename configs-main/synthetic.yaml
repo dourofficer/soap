@@ -1,0 +1,18 @@
+# main/ — E2 synthetic reference corpora. EXTRACTION ONLY: this config exists so
+# `python -m main extract --stage activations` can write the synthetic corpora's
+# hidden states into results-nogt/synthetic/activations/. There are no splits and
+# no seeds here on purpose — the corpora are fit sets, never partitioned; the
+# scoring side lives in scripts/ablations/e2_synthfit.py against configs-main/ww.yaml.
+# Staged by scripts/ablations/e2_stage_data.py; see experiments/todo.md, E2.
+dataset: synthetic
+gt: false
+
+data_dir: data/synthetic
+models: [qwen3.5-9b, deepseek-8b]
+model_paths:                   # read only by `extract`
+  qwen3.5-9b:  ../hub/Qwen/Qwen3.5-9B
+  deepseek-8b: ../hub/deepseek-ai/DeepSeek-R1-Distill-Llama-8B
+subsets: [ag-gpt4o, ag-qwen9b, hc-gpt4o, hc-qwen9b]
+max_tokens: 8192
+dtype: bfloat16
+device: cuda

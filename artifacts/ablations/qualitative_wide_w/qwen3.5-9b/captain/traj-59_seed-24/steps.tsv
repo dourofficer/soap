@@ -1,0 +1,7 @@
+model	subset	seed	traj_idx	n_steps	step_idx	role	base	final	rank	is_gold
+qwen3.5-9b	captain	24	59	6	0	Orchestrator	0.0007549607544206083	0.0008359665516763926	5	False
+qwen3.5-9b	captain	24	59	6	1	InformationExtraction_Expert	0.0008716493030078709	0.0009534286218695343	1	True
+qwen3.5-9b	captain	24	59	6	2	Orchestrator	0.0006928993389010429	0.0007775183185003698	6	False
+qwen3.5-9b	captain	24	59	6	3	Verification_Expert	0.0008186584454961121	0.0009048175415955484	3	False
+qwen3.5-9b	captain	24	59	6	4	Orchestrator	0.0008463594131171703	0.0009342129924334586	2	False
+qwen3.5-9b	captain	24	59	6	5	Orchestrator	0.0008785355021245778	0.0008785355021245778	4	False

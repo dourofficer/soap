@@ -1,0 +1,43 @@
+{
+  "cell": {
+    "model": "qwen3.5-9b",
+    "subset": "captain",
+    "label": "Qwen3.5-9B TE-Cap",
+    "frozen_seeds": [
+      22,
+      23,
+      24
+    ]
+  },
+  "frozen_config": {
+    "seed": 22,
+    "position": "act/23",
+    "c_begin": 0,
+    "c_end": 3,
+    "strategy": "backprop",
+    "layer_range": "6-8",
+    "gamma": 0.1,
+    "w": "5",
+    "model": "qwen3.5-9b",
+    "subset": "captain",
+    "split": "test"
+  },
+  "selection": {
+    "pick_rank": 2,
+    "seed": 22,
+    "traj_idx": 44,
+    "n_steps": 15,
+    "flip_seeds": "22"
+  },
+  "gold": {
+    "step": 12,
+    "agent": "Verification_Expert",
+    "mistake_reason": "The error was incorrectly identifying Dmitri Kitayenko as the 1989 winner, when he actually won in 1974; Claus Peter Flor was the 1983 winner from East Germany.",
+    "question_ID": "gaia_task_158_gpt-4o_v09k8hwavwz7"
+  },
+  "predictions": {
+    "base": 14,
+    "soap": 12
+  },
+  "verified_step_acc_test": 0.3565891472868217
+}

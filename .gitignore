@@ -13,11 +13,12 @@ datagen/configs/oai_config_list.json
 data/synthetic/
 data/synthetic-err/
 
-artifacts/
+# artifacts/
+results-*/
 
 # main/'s output trees are tracked, except their activations/ and attention/
 # subtrees (huge .safetensors, seeded from outputs/ by scripts/seed_results.sh).
 # Those are excluded by a .gitignore inside each of them.
 .parity-scratch*/
 .smoke/
-results-sweep/
+# results-sweep/

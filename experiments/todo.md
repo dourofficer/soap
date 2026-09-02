@@ -2,9 +2,12 @@
 
 Every pending experiment for the manuscript, made concrete: data, splits, backbones,
 anchor configs, procedure, and cost. Agreed 2026-08-13; revised 2026-08-17 (coverage,
-naming, orientations, grids, A7 re-selection); 2026-08-23 (B1 baseline rows). The two main experiments fill
+naming, orientations, grids, A7 re-selection); 2026-08-23 (B1 baseline rows);
+2026-08-25 (E2 concretized on the gathered synthetic corpora); 2026-08-27 (S1 scalability
+planned). The two main experiments fill
 `fig:transfer` and `tab:synth`; the seven ablations fill `tab:scorefn`, `tab:weights`,
-`tab:position`, `tab:attnsel`, `fig:gamma`, `fig:layers`, `fig:datasize`.
+`tab:position`, `tab:attnsel`, `fig:gamma`, `fig:layers`, `fig:datasize`; S1 fills
+`fig:scale`.
 
 ## Global conventions
 
@@ -185,21 +188,294 @@ Every experiment below follows these rules. State a deviation explicitly or it i
   but still 21 points under in-distribution). A fitted SOAP is distribution-specific;
   the closest cross pair is DeepSeek WW-HC→TE-Cap (34.11 vs 42.64 in-dist).
 
-### E2 — Synthetic reference trajectories (`tab:synth`)  `[GPU, DEFERRED]`
+### E2 — Synthetic reference trajectories (`tab:synth`)  `[GPU]`  — DONE 2026-08-25
 
-- [ ] **Target.** Does SOAP work when no corpus from the target system exists to fit R?
-- **Deferred because** the synthetic trajectories do not exist yet; generators will be
-  **Qwen3.5-9B** and **GPT-4o** (Qwen3.5-35B-A3B is dropped everywhere).
+- [x] **Target.** Does SOAP work when no corpus from the target system exists to fit R?
+- **Design in one sentence.** IDENTICAL to the main experiment — same frozen triples,
+  same val/test partitions, same selection rule — except the fit set: R is fit on a
+  synthetic corpus instead of the seed's train split, which goes unused.
 - **Scope.** WW-AG and WW-HC only — `tab:synth` shrinks from five subsets to two.
-- **Data.** Validation and test splits unchanged (frozen triples). Only the reference
-  corpus is replaced by synthetic trajectories, used as-is regardless of task success.
-  One synthetic corpus per generator, shared across the triple's seeds (per-seed
-  variance comes from the val/test splits alone).
-- **Procedure.** Extract activations for the synthetic corpus (GPU) → fit R on it →
-  RE-SELECT hyperparameters (base grid, then rescore grid) by the standard protocol →
+  Generators **Qwen3.5-9B** and **GPT-4o** (Qwen3.5-35B-A3B is dropped everywhere;
+  the `mixed` corpus is out of scope).
+- **Data.** The gathered corpora in `../datagen/data/synthetic/`, produced by the
+  harness that generated each WW subset — CaptainAgent for WW-AG, Magentic-One for
+  WW-HC — with the generator LLM as the agents' backbone. Each corpus is FILTERED to
+  the trajectories whose question appears in the target subset, so the fit set's
+  question pool is identical to WW's (the fresh runs, not the extra
+  gaia/assistantbench questions the generation also covered, and none of
+  magentic-qwen9b's ~1,300 off-pool trajectories). Trajectories are used as-is
+  regardless of task success. The filtered corpora:
+
+  | Target | Corpus | Kept / generated | Question coverage |
+  |---|---|---|---|
+  | WW-AG | `captain-gpt4o` | 126 / 198 | 126 of 126 |
+  | WW-AG | `captain-qwen9b` | 124 / 196 | 124 of 126 |
+  | WW-HC | `magentic-gpt4o` | 55 / 198 | 55 of 58 |
+  | WW-HC | `magentic-qwen9b` | 55 / 1,502 | 55 of 58 |
+
+  One corpus per (target, generator), shared across the triple's seeds — per-seed
+  variance comes from the val/test splits alone. The same questions appear in the
+  fit set and in val/test BY DESIGN (that is the use case: re-run your own agents on
+  the tasks you want to diagnose, then fit on those runs); no step label is ever
+  read from the synthetic side — caption note, and the runner records the per-split
+  overlap counts.
+- **Procedure.** Materialize the filtered corpora under `data/synthetic/` →
+  extract activations for both backbones (GPU; activations ONLY — dependency
+  weights come from the target trajectories' own attention, already extracted) →
+  fit R once per (corpus, backbone, position), reused across the three seeds →
+  RE-SELECT the full config per (target, generator, backbone) by the standard rule
+  (dense base grid, then the backprop rescore grid on the winning base config) →
   report S and +SOAP. Each row is "the best that reference corpus can do", matching
-  the optimistic protocol of the real-corpus row.
-- **Rows.** Real (= Table 1) / synthetic Qwen3.5-9B / synthetic GPT-4o.
+  the optimistic protocol of the real-corpus row; val metrics are recorded alongside
+  for the protocol-wide val-selection conversion later.
+- **Sanity check.** The same code path run with the real train split as reference is
+  exactly Table 1's selection problem, so those cells must reproduce
+  `results-nogt/ww/select/selection.tsv` — asserted in the runner, and they double
+  as the Real row.
+- **Rows.** Real (= Table 1) / synthetic Qwen3.5-9B / synthetic GPT-4o, base and
+  SOAP each.
+- **Code and output.** `scripts/ablations/e2_synthfit.py` (base/rescore grid
+  machinery lifted from `e1_transfer.py`) → `results-ablations/e2_synthfit.tsv`;
+  extraction via `configs-main/synthetic.yaml` into
+  `results-nogt/synthetic/activations/` (mind the torchvision/torchaudio guard —
+  environment note at the end of this file).
+- **Cost.** GPU: ~360 trajectories × 2 backbones of activation extraction. CPU:
+  8 selection problems (2 targets × 2 generators × 2 backbones), each the size of
+  one E1 pair.
+- **Results** — `results-ablations/e2_synthfit.tsv` (merged from `e2_parts/`;
+  `scripts/ablations/e2_synthfit.py`; corpora staged by `e2_stage_data.py`,
+  extracted 2026-08-25; all four real cells reproduced the selection table
+  exactly; overlap columns confirm the intended coverage — WW-AG val ~26/26 and
+  test 62–63/63, WW-HC val 12/12 and test ~27/29, the shortfall being the 2+3
+  never-generated questions). SOAP step acc % per reference (base in
+  parentheses):
+
+  | qwen3.5-9b | WW-AG | WW-HC |
+  |---|---|---|
+  | Real (= Table 1) | 47.62 (39.15) | 34.48 (33.33) |
+  | Synthetic Qwen3.5-9B | 41.80 (33.33) | 31.03 (28.74) |
+  | Synthetic GPT-4o | 46.56 (40.74) | 29.89 (28.74) |
+
+  | deepseek-8b | WW-AG | WW-HC |
+  |---|---|---|
+  | Real (= Table 1) | 45.50 (38.62) | 28.74 (28.74) |
+  | Synthetic Qwen3.5-9B | 39.68 (35.98) | 29.89 (26.44) |
+  | Synthetic GPT-4o | 38.10 (33.33) | 25.29 (25.29) |
+
+  Reading: SOAP survives the loss of the real corpus. Every synthetic cell lands
+  within 1–7 points of its real row — the best generator per cell within ~1 point
+  on Qwen WW-AG (46.56 vs 47.62) and ABOVE real on DeepSeek WW-HC (29.89 vs
+  28.74) — and every synthetic SOAP row stays far above the representation
+  baselines of B1. The selected configs move with the reference (Qwen WW-AG picks
+  act/31 [1,13) under the Qwen corpus vs act/27 [1,7) real), echoing E1: the
+  distribution-specific part is the hyperparameter configuration, and re-selecting
+  it on the synthetic fit recovers most of the accuracy. Rescoring keeps working
+  on synthetic references — up to +8.5 over base (Qwen WW-AG, Qwen corpus) —
+  except where γ=0 is selected (DeepSeek WW-HC GPT-4o: SOAP = base, as in the
+  real anchor). Neither generator dominates: GPT-4o's corpus wins Qwen/WW-AG,
+  the Qwen3.5-9B corpus wins the other three cells, so a cheap open-weights
+  generator is a viable source of reference trajectories.
+
+## Scalability
+
+### S1 — Scalability to larger backbones (`fig:scale`)  `[GPU for SOAP; CPU for the baselines]`  — DONE 2026-08-28
+
+- [x] **Target.** Does SOAP keep working — and keep its margin over the
+  representation-based baselines — as the proxy grows? One line per method, one
+  panel per WW subset, x = backbone size.
+- **Scope.** WW-AG and WW-HC only, WITHOUT GT ONLY (no with-GT arm), on the
+  frozen triples (WW-AG 3, 4, 5; WW-HC 13, 14, 15) and the same 30/20/50
+  partitions as Table 1 — nothing is re-split. Methods: **SOAP** and its **base score** (the γ=0 row), **OAT** and
+  **StepFinder** (family A). This replaces the manuscript's current plan of
+  All-at-Once + AgenTracer + OAT: All-at-Once has no open-weight run at these sizes
+  and AgenTracer is not set up, whereas OAT and StepFinder are already trained and
+  predicted at every size (below). All four methods read the SAME backbone, so the
+  comparison is within one representation.
+- **Backbones** (weights in `../hub/Qwen/`, config facts checked 2026-08-27):
+
+  | Name | Family | Layers | Attention blocks | Hidden | Notes |
+  |---|---|---|---|---|---|
+  | `qwen3.5-9b` | Qwen3.5, hybrid | 32 | 8 full-attention | 4096 | = Table 1; no new runs |
+  | `qwen3-14b` | **Qwen3**, dense | 40 | 40 | 5120 | every block is an attention block |
+  | `qwen3.5-27b` | Qwen3.5, hybrid | 64 | 16 full-attention | 5120 | fits one H200 in bf16 (~54 GB) |
+
+  **The 14B point is Qwen3-14B, not Qwen3.5-14B** — the manuscript's "Qwen3.5-14B"
+  does not exist on disk (`../hub/Qwen/Qwen3.5-14B/` is empty) and the baselines
+  were run on Qwen3-14B. Caption note: the middle point crosses to the previous
+  Qwen generation; the x-axis is parameter count. Qwen3.5-4B is available on both
+  sides (weights + baseline predictions) and can be added as a fourth point if the
+  curve needs a left anchor; default is three points, as in the manuscript.
+- **Baselines — already done, verified 2026-08-27.** Predictions live in
+  `../attrib-prompting/outputs-rb-{nogt,gt}/ww/<subset>/<backbone>/`, produced
+  2026-08-24, for `qwen3.5-4b`, `qwen3.5-9b`, `qwen3-14b`, `qwen3.5-27b` (and
+  `deepseek-8b`): `oat.s42–46` and `stepfinder.s42–46` in every cell, 127 (WW-AG)
+  / 59 (WW-HC) JSONs per run, i.e. the full 126/58 corpus, in BOTH GT settings.
+  StepFinder also has `stepfinder-tsel` (checkpoint test-selected),
+  `stepfinder-pca` (PCA to 128 dims instead of the first-128 slice) and
+  `stepfinder-pca-tsel`. The reported row is `stepfinder` (val-selected, first-128
+  slice) — the Table-1 convention; the PCA variant is recorded in the TSV because the
+  slice is arbitrary for a decoder and a reader will ask.
+  **Do not read `../attrib-prompting/scale_ww.tsv`**: it aggregates on
+  attrib-prompting's own splits (OAT / 9B / WW-AG 21.98 there vs 16.72 on the
+  frozen triple in B1). Every baseline number in this experiment is re-scored on the
+  frozen triples by the B1 runner (`scripts/ablations/b1_rb_baselines.py`, judges
+  extended with `qwen3-14b` and `qwen3.5-27b`), mean over the five training seeds,
+  exactly as in Tables 1–2.
+- **SOAP — needs extraction at 14B and 27B.** Nothing exists for either backbone in
+  `outputs/` or `results-nogt/`. Procedure, identical to the main experiment:
+  1. Add the two backbones to `configs-main/ww.yaml` itself — `models:
+     [qwen3.5-9b, deepseek-8b, qwen3-14b, qwen3.5-27b]` plus their `model_paths`
+     (`../hub/Qwen/Qwen3-14B`, `../hub/Qwen/Qwen3.5-27B`). Seeds, splits and grids
+     (`positions: all`, 20 components, `n_ranges: 4`, γ and w grids, `backprop`)
+     stay verbatim, so `run_stamp.json` accepts the existing tables. Everything
+     lands in `results-nogt/ww/` next to the 9B/DeepSeek cells:
+     `{activations,attention}/<model>/<subset>/`, `sweep/<model>/<subset>/`, and
+     new rows in `select/selection.tsv`. The existing 9B and DeepSeek rows must
+     come out of `select --force` byte-identical (selection is per model, so
+     adding models cannot move them — asserted anyway). No `results-gt/` run.
+  2. `python -m main extract --config configs-main/ww.yaml --model <m>` for the two
+     new backbones, both subsets, activations + attention. Resumable per
+     trajectory; one GPU per backbone in parallel (GPUs 3–7 are idle).
+  3. `python -m main sweep --model <m>` then `python -m main select --force` — the
+     standard rule (mean TEST step accuracy over the triple, tiebreak agent
+     accuracy), dense base grid then the rescore grid on the winning base config.
+  4. Report base (γ=0) and SOAP per (backbone, subset), plus the selected config,
+     read from `select/selection.tsv` like every other anchor.
+- **Layer conventions for the new backbones** (CONVENTIONS.md: `layer_range`
+  indexes ATTENTION blocks, positions index decoder blocks):
+  - `qwen3-14b` goes through the default dense `ModelAdapter` (as DeepSeek does):
+    40 positions `act/1..40` (+ `embed`, `_normed`), attention bands of 10 blocks
+    (0–10, 10–20, 20–30, 30–40).
+  - `qwen3.5-27b` goes through `Qwen35Adapter`: 16 extracted blocks, so 16
+    positions and attention bands of 4 blocks (0–4, 4–8, 8–12, 12–16).
+  - The base grid grows with the position count (14B: ~40 × 210 bands × 3 seeds);
+    still CPU-cheap.
+- **Pre-flight checks before the GPU runs.**
+  - Qwen3's chat template defaults to thinking ON; `Qwen35Adapter` passes
+    `enable_thinking=False` but the default adapter passes nothing. Confirm the
+    dense adapter renders Qwen3-14B steps without `<think>` blocks (or give Qwen3
+    its own adapter with the same flag) — otherwise the step boundaries shift.
+  - `max_tokens: 8192` and bf16 as for 9B; confirm the 27B attention extractor's
+    per-step hooks cover the 16 full-attention blocks (`extract_block_indices`).
+  - Extraction timing from the July 9B run (`results-nogt/ww` mtimes): WW-AG
+    ~10 min, WW-HC ~2 h 15 min for activations + attention on one H200 (WW-HC
+    trajectories are long). Budget ~1.5× for 14B and ~3× for 27B: about 4 h and
+    7 h respectively, run in parallel. Disk: 14B activations ~4 GB (40 layers ×
+    5120 vs 9B's 637 MB), 27B ~1.6 GB.
+- **Sanity checks (asserted in `s1_scale.py --stage merge`; verified by hand
+  2026-08-30 against the sweep tables and the raw predictions).** (i) The 9B SOAP/base cells reproduce
+  Table 1 exactly — WW-AG 47.62 / 39.15, WW-HC 34.48 / 33.33. (ii) The 9B OAT and
+  StepFinder cells reproduce B1 — OAT 16.72 / 10.11, StepFinder 15.87 / 13.33.
+  (iii) 0 missing predictions in every baseline cell.
+- **Selection note.** Every SOAP point is re-selected at its own size (the same
+  optimistic test-selection as Table 1); the baselines carry no selection beyond
+  their val-selected checkpoint. Val metrics are recorded alongside for the
+  protocol-wide val-selection conversion later.
+- **With-GT.** Not run. (The baselines' with-GT predictions exist in
+  `outputs-rb-gt/` should this ever change; SOAP would need a second extraction.)
+- **Deliverable — DONE 2026-08-30.** `scripts/ablations/s1_scale.py` (stages: `soap` =
+  per-seed rows of the selected config and its γ=0 base from `results-nogt/ww/
+  sweep/`, checked against `select/selection.tsv` → `baselines` = B1 scoring of the
+  four backbones, all five StepFinder variants, one row per training seed →
+  `merge`). Per-seed parts in `results-ablations/s1_parts/`; `s1_scale.tsv` = one
+  row per (method, backbone, subset) with mean / std / agent / val and, for SOAP,
+  the selected position / band / attention band / γ / w — the runner regenerates
+  the 2026-08-28 file byte-identically; `s1_scale_summary.tsv` = the "mean (std)"
+  strings of the tables above, step and agent, 4B–27B. Figure:
+  `plot_figures.py --only fig_scale` → `artifacts/ablations/fig_scale.pdf`, copied
+  to `manuscript/assets/` — grouped BARS (fig_sensitivity style, not lines) per
+  backbone size, panels WW-AG / WW-HC, bars SOAP / base / OAT / StepFinder, ±1 std
+  error bars; 4B omitted (baselines only).
+- **Cost.** GPU: two extractions (14B, 27B) × two subsets, ≈ 11 GPU-hours in
+  parallel on two H200s. CPU: two sweeps the size of a Table-1 cell pair (the 14B
+  base grid is ~5× the 9B one), plus B1 rescoring (seconds).
+- **Results — baselines, PREFILLED 2026-08-27** (scored on the frozen triples with
+  `scripts/prompting/evaluate.py`'s rules through the B1 path, `outputs-rb-nogt`
+  only; 0 missing predictions in all 40 cells; the 9B `oat` / `stepfinder` cells
+  reproduce B1 exactly). Mean over triple × 5 training seeds; std over training
+  seeds in parentheses. Step acc %:
+
+  | WW-AG | Qwen3.5-4B | Qwen3.5-9B | Qwen3-14B | Qwen3.5-27B |
+  |---|---|---|---|---|
+  | OAT | 20.00 (1.4) | 16.72 (1.7) | 13.97 (1.7) | 20.42 (1.6) |
+  | StepFinder (reported: val-sel., first-128) | 15.34 (4.0) | 15.87 (3.4) | 22.65 (4.2) | 13.54 (2.3) |
+  | StepFinder-tsel (test-sel. checkpoint) | 24.02 (1.9) | 24.55 (4.3) | 29.63 (1.9) | 18.31 (2.1) |
+  | StepFinder-pca (val-sel., PCA-128) | 22.12 (3.7) | 25.19 (5.3) | 21.90 (4.1) | 24.87 (3.0) |
+  | StepFinder-pca-tsel | 29.95 (1.4) | 30.48 (2.3) | 24.97 (2.5) | 28.68 (3.5) |
+  | SOAP (base) | — | 47.62 (39.15) | 42.86 (40.21) | 44.97 (38.62) |
+
+  | WW-HC | Qwen3.5-4B | Qwen3.5-9B | Qwen3-14B | Qwen3.5-27B |
+  |---|---|---|---|---|
+  | OAT | 11.03 (1.0) | 10.11 (1.3) | 16.78 (2.2) | 12.41 (1.3) |
+  | StepFinder (reported) | 10.80 (3.0) | 13.33 (5.4) | 14.02 (3.3) | 16.55 (7.0) |
+  | StepFinder-tsel | 11.95 (4.1) | 14.48 (6.5) | 13.56 (4.3) | 11.03 (6.7) |
+  | StepFinder-pca | 10.11 (2.5) | 8.05 (3.4) | 6.67 (1.9) | 9.43 (2.5) |
+  | StepFinder-pca-tsel | 10.57 (5.7) | 10.80 (3.2) | 4.83 (2.6) | 7.36 (1.7) |
+  | SOAP (base) | — | 34.48 (33.33) | 25.29 (25.29) | 34.48 (33.33) |
+
+  Agent acc %:
+
+  | | 4B AG | 9B AG | 14B AG | 27B AG | 4B HC | 9B HC | 14B HC | 27B HC |
+  |---|---|---|---|---|---|---|---|---|
+  | OAT | 46.35 | 40.53 | 45.29 | 48.15 | 55.17 | 53.10 | 57.24 | 46.90 |
+  | StepFinder | 42.43 | 39.26 | 46.98 | 39.89 | 32.64 | 37.01 | 40.00 | 38.39 |
+  | StepFinder-tsel | 48.36 | 42.65 | 50.69 | 42.96 | 33.79 | 38.16 | 43.45 | 35.86 |
+  | StepFinder-pca | 51.75 | 48.78 | 42.65 | 44.02 | 32.41 | 33.33 | 32.18 | 32.41 |
+  | StepFinder-pca-tsel | 55.13 | 51.01 | 44.87 | 50.37 | 35.17 | 34.48 | 32.87 | 33.79 |
+
+  Reading: neither baseline scales. OAT is flat within noise on WW-AG (14–20 over
+  4B→27B, the 14B dip being the Qwen3 point) and stays at 10–17 on WW-HC; the
+  reported StepFinder moves 13–23 on WW-AG and 11–17 on WW-HC with no monotone
+  trend and training-seed stds of 2–7 points. Even the most generous variant
+  (pca-tsel, test-selected checkpoint AND a better projection, ~30 on WW-AG) sits
+  17 points under 9B SOAP; on WW-HC every variant is below 17 against SOAP's 34.5.
+  The experiment therefore hinges on SOAP's own 14B/27B points: a flat-or-rising
+  SOAP line over flat baselines is the figure.
+- **Results — SOAP, DONE 2026-08-28** — `results-ablations/s1_scale.tsv` (SOAP and
+  baseline rows in one file; SOAP rows read from `results-nogt/ww/select/
+  selection.tsv`, which now holds 32 rows — the 16 pre-existing 9B/DeepSeek rows
+  came out of `select --force` byte-identical). Extraction 2026-08-27/28 on two
+  H200s (`logs/s1_extract_*.log`; WW-HC attention 1 h at 14B, 2 h at 27B); the
+  pre-flight thinking-flag concern was moot — without a generation prompt Qwen3
+  and Qwen3.5 render the steps identically. Step acc %, mean over the triple (std
+  over seeds), with the selected config:
+
+  | WW-AG | base | SOAP | position | band | attn | γ | w |
+  |---|---|---|---|---|---|---|---|
+  | Qwen3.5-9B (= Table 1) | 39.15 (5.6) | 47.62 (3.2) | act/27 | [1,7) | 0–2 | 0.6 | 1 |
+  | Qwen3-14B | 40.21 (4.6) | 42.86 (5.7) | act/35 | [1,5) | 0–10 | 0.4 | 3 |
+  | Qwen3.5-27B | 38.62 (7.5) | 44.97 (3.3) | act/59 | [1,7) | 0–4 | 0.4 | 1 |
+
+  | WW-HC | base | SOAP | position | band | attn | γ | w |
+  |---|---|---|---|---|---|---|---|
+  | Qwen3.5-9B (= Table 1) | 33.33 (5.3) | 34.48 (3.5) | act/31 | [0,5) | 4–6 | 0.1 | 2 |
+  | Qwen3-14B | 25.29 (8.0) | 25.29 (8.0) | act/16 | [0,1) | 30–40 | 0.1 | all |
+  | Qwen3.5-27B | 33.33 (2.0) | 34.48 (3.5) | act/63_normed | [0,4) | 8–12 | 0.1 | all |
+
+  Agent acc %: WW-AG 60.32 / 55.03 / 59.26 (SOAP, 9B/14B/27B), WW-HC 67.82 /
+  57.47 / 68.97.
+
+  Reading: SOAP holds its level with scale rather than growing with it. Within the
+  Qwen3.5 family the 27B point matches the 9B point on both subsets (WW-AG 44.97 vs
+  47.62, within one seed-std; WW-HC 34.48 = 34.48, with the SAME γ=0.1 lift over an
+  identical 33.33 base), and its selected configs mirror the 9B ones — a late layer,
+  band starting at 1 on WW-AG and at 0 on WW-HC, the first attention band on WW-AG.
+  Rescoring lifts every backbone on WW-AG (+2.6 to +8.5) and the two Qwen3.5 sizes
+  on WW-HC. The Qwen3-14B point is the outlier: competitive on WW-AG (42.86) but
+  10 points lower on WW-HC (25.29), where its selection degenerates to a
+  mid-stack layer with a one-component band [0,1) and γ=0.1 with w=all — a
+  rescoring that changes nothing. Because that point also crosses model
+  generations (Qwen3, not Qwen3.5), it is a family effect as much as a size
+  effect — caption note; the clean scale comparison is 9B → 27B within Qwen3.5.
+  Against the baselines the margin is intact at every size: the best OAT /
+  StepFinder (reported) cell is 22.65 on WW-AG and 16.78 on WW-HC, against SOAP's
+  worst of 42.86 and 25.29.
+- **Manuscript edits — APPLIED 2026-08-30.** The "Scalability to larger backbones"
+  paragraph rewritten with the results; representatives are OAT and StepFinder
+  (All-at-Once, AgenTracer dropped); "Qwen3.5-14B" → Qwen3-14B with the family
+  note in text and caption; the placeholder replaced by `assets/fig_scale.pdf`.
+  Old text kept as a dated comment. Still open: Appendix `tab:proxies` (six
+  proxies, 8B–27B) can take the same per-backbone base/SOAP numbers.
 
 ## Ablations
 
@@ -645,15 +921,15 @@ coincide with the Table-1 number.
 
 ## Deferred (in the plan, blocked on inputs)
 
-- **E2 — synthetic reference fit**: blocked until the synthetic trajectories arrive
-  (generators Qwen3.5-9B and GPT-4o).
+- (none — E2 unblocked 2026-08-24: the synthetic corpora landed in
+  `../datagen/data/synthetic/`; concrete setup above.)
 
 ## Tracked outside this plan
 
-- **Scalability** (`fig:scale`): Qwen3.5-9B/14B/27B with All-at-Once, AgenTracer, OAT.
-  Pending — the expensive item (new extraction at 14B/27B plus three baselines).
-  First input landed 2026-08-23: OAT on Qwen3.5-4B, WW only
-  (`../attrib-prompting/outputs-rb-{nogt,gt}/ww/*/qwen3.5-4b/oat.s42–46`).
+- **Scalability** (`fig:scale`): now planned as S1 above (2026-08-27). The
+  baseline side landed 2026-08-24 — OAT and StepFinder on Qwen3.5-4B/9B, Qwen3-14B,
+  Qwen3.5-27B, WW only, both GT settings; the SOAP side (14B/27B extraction) is
+  the open GPU item.
 - **Baseline rows**: AgenTracer, GraphTracer (dashes in Tables 1–2). OAT and
   StepFinder are scored under B1; RAFFLES landed with the prompting rows.
 - **With-GT SOAP adaptation**: announced in Setup, not yet described or planned here.
@@ -663,8 +939,11 @@ coincide with the Table-1 number.
 1. **Free reads** — A4, A6(a′), A6(b) — DONE 2026-08-17.
 2. **CPU batch** — A5, A3, A6(a), E1, A7 — DONE 2026-08-17.
 3. **GPU batch** — A1 — DONE 2026-08-17.
-4. **E2** — when the synthetic trajectories arrive (extraction → fit → re-select →
-   score).
+4. **E2** — DONE 2026-08-25 (stage → real-row assertion → extraction → fit →
+   re-select → score; results above).
+5. **S1** — DONE 2026-08-28 (extract 14B ∥ 27B into `results-nogt/ww/` → sweep
+   + `select --force` → merged with the prefilled baseline rows into
+   `results-ablations/s1_scale.tsv`; figure and manuscript edits still pending).
 
 Environment note: the venv's torchvision/torchaudio are compiled against a different
 torch and crash transformers' lazy imports; `a1_scorefn.py --stage nll` blocks both
@@ -706,3 +985,36 @@ replaces `tab:transfer` / `tab:datasize`; `tab:scorefn` / `tab:weights` restyled
 `main.tex`). Figures: `scripts/ablations/plot_figures.py` → `artifacts/ablations/`
 → `manuscript/assets/`; `--print-tables` dumps the hand-typed table bodies. No
 number changed; the val-selected grids carry the Table-1 diagonal per E1's rule.
+
+## Manuscript layout pass — DONE 2026-08-25
+
+Compiled locally with tectonic (downloaded to the scratchpad; not in the repo):
+zero overfull boxes. Fixes: `tab:main`/`tab:main-gt` wrapped in `\resizebox`
+(were 50/45pt too wide); `tab:scorefn` wrap widened to 0.46\linewidth;
+`tab:weights` un-wrapped (six columns overflow any wrap column); `fig_transfer_datasize`
+regenerated at wrap size (3.2in, REDE Fig. 5 style); the appendix sensitivity strip
+split into `fig_sensitivity_appendix_{qwen,deepseek}` (the 8-row strip was taller
+than the page). `fig:overview` and `fig:qualitative` (scores_captain_traj{1,2}) are
+in. Remaining undefined refs are the pre-existing appendix stubs (app:datasets,
+app:metrics, app:implementation, app:baselines, app:prompting-gpt5, app:gt, app:anchors).
+
+## Method overview figure — DONE 2026-08-25
+
+`src/analysis/method_figure.py` → `manuscript/assets/soap_overview.pdf` (preview
+`artifacts/method_figure/soap_overview.png`), placed in `method.tex` as
+`fig:overview` where the blue "we need a method figure" note stood. Three stages
+(frozen proxy → spectral base score → attention-guided rescoring), schematic:
+bars and weights are illustrative, not data.
+
+## Qualitative examples for the wide-window cells — DONE 2026-08-25
+
+`scripts/ablations/qualitative_wide_w.py` → `artifacts/ablations/qualitative_wide_w/`
+(gitignored). For the three cells whose Table-1 anchor selects a large window —
+Qwen TE-Cap (w=5), Qwen TE-Mag (w=4), DeepSeek TE-Cap (w=all) — it re-runs the
+anchor on the frozen triples' test splits (accuracies re-verified) and records
+only the FLIPS: base argmax wrong, rescored argmax = gold. Per-seed flips 3/8/3,
+one example per trajectory 3/4/1. Figures: base + SOAP curves, argmax markers,
+gold dashed; no title, no grid. `MANIFEST.md` indexes all; `--replot` redraws
+without rescoring. Most robust (flip on all three seeds): Qwen TE-Mag traj 30
+(9 → gold 6) and DeepSeek TE-Cap traj 36 (4 → gold 2); Qwen TE-Cap traj 44
+(14 → gold 12, seed 22).

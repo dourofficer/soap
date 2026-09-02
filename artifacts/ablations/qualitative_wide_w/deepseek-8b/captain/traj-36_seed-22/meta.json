@@ -1,0 +1,43 @@
+{
+  "cell": {
+    "model": "deepseek-8b",
+    "subset": "captain",
+    "label": "DeepSeek-8B TE-Cap",
+    "frozen_seeds": [
+      22,
+      23,
+      24
+    ]
+  },
+  "frozen_config": {
+    "seed": 22,
+    "position": "act/31_normed",
+    "c_begin": 0,
+    "c_end": 18,
+    "strategy": "backprop",
+    "layer_range": "8-16",
+    "gamma": 0.2,
+    "w": "all",
+    "model": "deepseek-8b",
+    "subset": "captain",
+    "split": "test"
+  },
+  "selection": {
+    "pick_rank": 1,
+    "seed": 22,
+    "traj_idx": 36,
+    "n_steps": 5,
+    "flip_seeds": "22,23,24"
+  },
+  "gold": {
+    "step": 2,
+    "agent": "InformationExtraction_Expert",
+    "mistake_reason": "The error was checking the wrong location; the first place mentioned in Esther (NIV) is India, not Susa, so the focus should have been on India's 1977 Prime Minister.",
+    "question_ID": "gaia_task_13_gpt-4o_xs85jeo2kwvk"
+  },
+  "predictions": {
+    "base": 4,
+    "soap": 2
+  },
+  "verified_step_acc_test": 0.42635658914728686
+}

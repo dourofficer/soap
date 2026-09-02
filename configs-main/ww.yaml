@@ -9,10 +9,12 @@ gt: false                      # without-GT run. For with-GT use
                                # whose seeds would be the without-GT picks
 
 data_dir: data/ww
-models: [qwen3.5-9b, deepseek-8b]
+models: [qwen3.5-9b, deepseek-8b, qwen3-14b, qwen3.5-27b]   # 14B/27B added 2026-08-27 for S1 (scalability)
 model_paths:                   # read only by `extract`
   qwen3.5-9b:  ../hub/Qwen/Qwen3.5-9B
   deepseek-8b: ../hub/deepseek-ai/DeepSeek-R1-Distill-Llama-8B
+  qwen3-14b:   ../hub/Qwen/Qwen3-14B
+  qwen3.5-27b: ../hub/Qwen/Qwen3.5-27B
 subsets: [algorithm-generated, hand-crafted]
 max_tokens: 8192
 dtype: bfloat16

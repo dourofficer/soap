@@ -70,22 +70,41 @@ def norm_val(v) -> str:
 _TIE_DP = 12
 
 
+def rule_cols(cfg: dict) -> tuple[str, str]:
+    """(step, agent) metric columns the config's ``select_rule`` selects on."""
+    k = cfg["ks"][0]
+    split = cfg.get("select_rule", "test")
+    return f"step_acc_{split}@{k}", f"agent_acc_{split}@{k}"
+
+
+def _other_split(col: str) -> str:
+    return col.replace("_test@", "_val@") if "_test@" in col else col.replace("_val@", "_test@")
+
+
 def select_config(df: pd.DataFrame, swept: list[str], seeds: list[int],
                   step_col: str, agent_col: str) -> dict | None:
-    """Argmax of the mean test metric over ``seeds``; the config must appear in EVERY
-    seed. Tiebreak on the mean agent metric, then the HIGHEST config key (the ``>=``
-    over a sorted groupby makes full ties resolve deterministically)."""
+    """Argmax of the mean ``step_col`` over ``seeds``; the config must appear in EVERY
+    seed. Tiebreak on the mean ``agent_col``, then the HIGHEST config key (the ``>=``
+    over a sorted groupby makes full ties resolve deterministically).
+
+    ``step_col`` may be a test or a val column — that is the whole selection rule.
+    The result always carries BOTH splits' means: ``step``/``agent`` are the test
+    numbers and ``step_val``/``agent_val`` the val numbers, whichever was selected on."""
     df = df[df["seed"].isin(seeds)]
+    test_s, test_a = ((step_col, agent_col) if "_test@" in step_col
+                      else (_other_split(step_col), _other_split(agent_col)))
+    val_s, val_a = _other_split(test_s), _other_split(test_a)
     best = best_key = None
     for _, g in df.groupby(swept, sort=True):
         if len(g) < len(seeds):
             continue
         cand = {"config": {ax: g.iloc[0][ax] for ax in swept},
-                "step": float(g[step_col].mean()),
-                "agent": float(g[agent_col].mean()),
-                "step_val": float(g[step_col.replace("test", "val")].mean()),
-                "agent_val": float(g[agent_col.replace("test", "val")].mean())}
-        key = (round(cand["step"], _TIE_DP), round(cand["agent"], _TIE_DP))
+                "step": float(g[test_s].mean()),
+                "agent": float(g[test_a].mean()),
+                "step_val": float(g[val_s].mean()),
+                "agent_val": float(g[val_a].mean())}
+        key = (round(float(g[step_col].mean()), _TIE_DP),
+               round(float(g[agent_col].mean()), _TIE_DP))
         if best is None or key >= best_key:
             best, best_key = cand, key
     return best
@@ -253,25 +272,25 @@ def run_sweep(cfg: dict) -> None:
 
             base_rows = _base_pass(cfg, model, subset, seeds, rep_dir, data_dir, device)
             base_df = pd.DataFrame(base_rows)
-            best = select_config(base_df, BASE_SWEPT, seeds,
-                                 f"step_acc_test@{ks[0]}", f"agent_acc_test@{ks[0]}")
+            step_col, agent_col = rule_cols(cfg)
+            best = select_config(base_df, BASE_SWEPT, seeds, step_col, agent_col)
             assert best is not None, f"no base config present in all seeds for {model}/{subset}"
-            print(f"[base] {model}/{subset}: {best['config']} "
-                  f"step@{ks[0]}={best['step']:.4f}")
+            print(f"[base] {model}/{subset} ({cfg['select_rule']}-selected): "
+                  f"{best['config']} test step@{ks[0]}={best['step']:.4f} "
+                  f"val={best['step_val']:.4f}")
 
             resc_rows = _rescore_pass(cfg, model, subset, seeds, best["config"],
                                       rep_dir, data_dir, weightings, range_labels, device)
             df = pd.DataFrame(base_rows + resc_rows)[sweep_cols(ks)]
             _assert_gamma0_is_base(df, ks)
-            df = df.sort_values(f"step_acc_test@{ks[0]}", ascending=False, kind="mergesort")
+            df = df.sort_values(step_col, ascending=False, kind="mergesort")
             df.to_csv(out, sep="\t", index=False)
             print(f"  wrote {out}  ({len(df)} rows)")
 
 
 def run_select(cfg: dict) -> None:
     """Pure read-side reduction of the sweep tables — no recomputation."""
-    ks = cfg["ks"]
-    step_col, agent_col = f"step_acc_test@{ks[0]}", f"agent_acc_test@{ks[0]}"
+    step_col, agent_col = rule_cols(cfg)
     out_dir = C.select_dir(cfg)
     rows = []
     for model in cfg["models"]:

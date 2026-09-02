@@ -1,0 +1,43 @@
+{
+  "cell": {
+    "model": "qwen3.5-9b",
+    "subset": "magentic",
+    "label": "Qwen3.5-9B TE-Mag",
+    "frozen_seeds": [
+      15,
+      16,
+      17
+    ]
+  },
+  "frozen_config": {
+    "seed": 17,
+    "position": "act/23",
+    "c_begin": 0,
+    "c_end": 2,
+    "strategy": "backprop",
+    "layer_range": "6-8",
+    "gamma": 1.0,
+    "w": "4",
+    "model": "qwen3.5-9b",
+    "subset": "magentic",
+    "split": "test"
+  },
+  "selection": {
+    "pick_rank": 2,
+    "seed": 17,
+    "traj_idx": 54,
+    "n_steps": 22,
+    "flip_seeds": "17"
+  },
+  "gold": {
+    "step": 10,
+    "agent": "WebSurfer",
+    "mistake_reason": "They failed to directly examine the image correctly and were instead misled by the text.",
+    "question_ID": "gaia_task_163_gpt_4o_coyf1emzjjgy"
+  },
+  "predictions": {
+    "base": 15,
+    "soap": 10
+  },
+  "verified_step_acc_test": 0.2318840579710145
+}

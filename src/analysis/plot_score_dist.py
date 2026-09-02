@@ -33,13 +33,13 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt      # noqa: E402
 import numpy as np                   # noqa: E402
 import pandas as pd                  # noqa: E402
+from matplotlib.ticker import MaxNLocator  # noqa: E402
 from scipy.stats import gaussian_kde  # noqa: E402
 
-# Requested palette. The two separate cleanly from each other (all-pairs CVD dE 18.4,
-# normal-vision 22.9), but each is weak against a white surface on its own: #F1A484
-# sits at 2.02:1 contrast (below 3:1) and #807EAF is low-chroma. The legend labels and
-# summary.tsv are the required relief -- identity never rests on hue alone here.
-C_ERROR, C_NORMAL = "#F1A484", "#807EAF"
+# House palette (2026-08-31): the manuscript's orangeinplot / dark purpleinplot, as in
+# the sensitivity and qualitative figures. The legend labels and summary.tsv remain the
+# relief -- identity never rests on hue alone here.
+C_ERROR, C_NORMAL = "#E8834F", "#4F4D8A"
 INK, INK_2, MUTED = "#0b0b0b", "#52514e", "#898781"
 GRID, AXIS, SURFACE = "#e1e0d9", "#c3c2b7", "#ffffff"
 
@@ -99,6 +99,7 @@ def rank_auc(df: pd.DataFrame) -> float:
 def _style(ax) -> None:
     ax.set_facecolor(SURFACE)
     ax.grid(True, axis="y", color=GRID, linewidth=0.6, linestyle="-")
+    ax.yaxis.set_major_locator(MaxNLocator(nbins=4))   # sparse horizontal lines
     ax.set_axisbelow(True)
     for side in ("top", "right"):
         ax.spines[side].set_visible(False)
@@ -130,11 +131,9 @@ def _panel(ax, cell: pd.DataFrame, variant: str, title: str | None,
         if len(vals) > 2 and np.ptp(vals) > 0:
             kde = gaussian_kde(vals)
             dens = kde(grid)
-            # Filled density by default. Short trajectories make the standardized
-            # score take only a handful of distinct values, so binned bars there show
-            # sampling spikes that are an artifact of the binning, not of the score.
-            ax.fill_between(grid, dens, color=color, alpha=0.30, linewidth=0, zorder=2)
-            ax.plot(grid, dens, color=color, linewidth=2.0, zorder=4,
+            # Unfilled since 2026-08-31: the lines alone carry the shape, drawn in the
+            # darker house colors and a heavier weight, as in the other figures.
+            ax.plot(grid, dens, color=color, linewidth=2.2, zorder=4,
                     label=f"{label}  (n={len(vals):,})", solid_capstyle="round")
     ax.set_ylim(bottom=0)
 

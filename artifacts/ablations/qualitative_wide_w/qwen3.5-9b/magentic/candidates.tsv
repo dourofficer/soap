@@ -1,0 +1,5 @@
+pick_rank	model	subset	seed	traj_idx	n_steps	true_step	true_agent	base_pred_step	soap_pred_step	soap_pred_agent	w	flip_seeds
+1	qwen3.5-9b	magentic	15	30	13	6	Orchestrator	9	6	Orchestrator	4	15,16,17
+2	qwen3.5-9b	magentic	17	54	22	10	WebSurfer	15	10	WebSurfer	4	17
+3	qwen3.5-9b	magentic	15	25	38	3	WebSurfer	0	3	WebSurfer	4	15,17
+4	qwen3.5-9b	magentic	15	61	47	7	WebSurfer	46	7	WebSurfer	4	15,16
