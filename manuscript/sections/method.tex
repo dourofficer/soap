@@ -50,15 +50,28 @@ $ and then extract its $d$-dimensional step representation $v_t$. \note{refer de
 % \textcolor{blue}{Please don't mention the details here. add ablations in appendix.}
 
 Figure~\ref{fig:overview} summarizes the method.
-% Method figure added 2026-08-25: src/analysis/method_figure.py ->
-% manuscript/assets/soap_overview.pdf (schematic; bars and weights illustrative).
+% Method figure updated 2026-09-01: artifacts/method_figure/soap_framework.{pptx,pdf}
+% -> manuscript/assets/soap_framework.pdf (two-stage schematic; matrices, scores
+% and weights illustrative). Supersedes assets/soap_overview.pdf (2026-08-25).
 \begin{figure}[t]
 \centering
-\includegraphics[width=\textwidth]{assets/soap_overview.pdf}
-\caption{\textbf{Overview of \soap.} \note{main figure needs refinement}
-% (1)~A frozen proxy model reads the failed trajectory step by step and yields, for every step, a pooled representation $v_t$ and the attention mass it places on its predecessors. (2)~An SVD of the unlabeled reference steps defines a spectral band $\mathcal{C}$; the base score $S$ measures how weakly a step projects onto it. Its argmax tends to land \emph{after} the decisive error $t^\star$, on a step that inherited the corrupted context. (3)~Attention-derived dependency weights $w_{i,t}$ route each step's error signal back to the predecessors it depends on; the rescored $\widetilde S = S + \gamma B$ moves the argmax to $t^\star$, and the responsible agent is the agent of that step. No step-level labels, fine-tuning, or LLM prompting is involved.
-}
+\includegraphics[width=\textwidth]{assets/soap_framework.pdf}
+  \vspace{-0.6cm}
+  \caption{\small \textbf{Overview of \soap{}.}
+  \emph{During fitting}, a frozen proxy model $\proxy$ encodes every step of the
+  unlabeled reference failures $\mathcal{D}_{\mathrm{fail}}$, and the SVD of the
+  stacked representations yields a spectral band $\mathcal{C}$ capturing the
+  common mode of ordinary steps, onto which decisive errors project weakly.
+  \emph{During localization}, the same proxy encodes the failed trajectory:
+  each step receives the spectral base score      
+  $\Sbase(s_t)=1/(\pi_{\mathcal{C}}(v_t)+\epsilon)$, and attention-derived 
+  dependency weights $w_{i,t}$ propagate downstream error evidence back to the
+  predecessors it builds on, moving the argmax of the rescored $\Stilde$ from a
+  late symptom onto the decisive error $t^\star$; the responsible agent follows
+  as $\hat{a}=a_{\hat{t}}$. \soap{} involves no step labels, fine-tuning, or
+  LLM prompting.} 
 \label{fig:overview}
+\vspace{-0.5cm}
 \end{figure}
 % Let $\mathcal{T}_t$ denote the token positions corresponding to $s_t$ in
 % $z_t$, and let $h_p^{(l)}\in\mathbb{R}^d$ be the hidden representation at
@@ -98,7 +111,7 @@ unlabeled steps, ordered by decreasing singular value.
 \vspace{-0.9\baselineskip}
 \centering
 \includegraphics[width=\linewidth]{{assets/qwen3.5-9b_arc_seeds-6-7-8_seed-7}.pdf}
-\caption{Base-score distribution on a \textsc{CORRECT-Error} test split. Decisive-error steps concentrate at smaller projection magnitudes than ordinary steps.}
+\caption{\small Base-score distribution on a \textsc{CORRECT-Error} test split. Decisive-error steps concentrate at smaller projection magnitudes than ordinary steps.}
 \label{fig:score-dist}
 \vspace{-\baselineskip}
 \end{wrapfigure}

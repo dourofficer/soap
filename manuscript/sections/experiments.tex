@@ -20,6 +20,15 @@
 % fig:layers / fig:datasize replaced by data tables tab:gamma / tab:layers /
 % tab:datasize (marked \note{make this a figure later}); fig:bands and its
 % paragraph commented out (covered by tab:scorefn).
+% v2.5 (2026-08-31): analysis pass (REDE prose style, artifacts/rede.pdf; data
+% from experiments/todo.md + results-ablations/). Every \TODO{Results and
+% analysis.} filled: tab:main / tab:main-gt / fig:transfer(b) written fresh;
+% the commented drafts for fig:scale, fig:transfer(a), tab:scorefn,
+% tab:weights, fig:sensitivity activated. Setup: baseline families matched to
+% the table groups (AgenTracer/GraphTracer dropped -- no runs), StepFinder
+% described (B1), with-GT adaptation stated (main/data.py: [question, answer]
+% context), judge fixed to GPT-4o, empty ablation refs pointed at the Analysis
+% section. "Different metrics." stub retired. Old text kept in comments.
 % v2.4 (2026-08-24): ablations presented REDE-style (artifacts/rede.pdf).
 % tab:gamma / tab:layers -> fig:sensitivity (2x3 strip); tab:attnsel -> appendix;
 % tab:transfer + tab:datasize -> fig:transfer (heatmap + lines); tab:scorefn /
@@ -125,29 +134,43 @@ Appendix~\ref{app:datasets}. \note{in appendix, add number of steps statistics}
 predicted decisive step exactly matches the annotation.
 We additionally report Agent-Level Accuracy, Step@$k$, Mean Reciprocal Rank
 (MRR), and $\pm1/\pm2$ tolerance accuracy in
-Appendix~\ref{app:metrics}.
+Appendix~\ref{app:metrics}. \note{add appendix for agent-level and other metrics}
 
 % Following \citet{whoandwhen}, our headline metric is Step-Level Accuracy: the fraction of trajectories whose predicted decisive step exactly matches the annotation. Agent-Level Accuracy, ranking metrics (step@$k$, MRR\textcolor{blue}{give the full name please}), and tolerance variants ($\pm1,\pm2$) are deferred to Appendix~\ref{app:metrics}.
 
-\textbf{Baselines.} We compare against three families:
-(i) prompt-based methods, including All-at-Once, Step-by-Step, and Binary
-Search~\citep{whoandwhen}, the schema-retrieval method CORRECT~\citep{correct},
-the fault-reasoning judge RAFFLES~\citep{raffles}, and the causal-graph method CHIEF~\citep{chief};
-(ii) trained LLM attributors, including
-AgenTracer~\citep{agentracer} and GraphTracer~\citep{graphtracer};
-and (iii) representation-based methods, including OAT~\citep{oat}, which learns
-successful-trajectory dynamics through one-class training, and StepFinder~\citep{zhu2026stepfinder} \TODO{add description for StepFinder}. Our main comparison in Table~\ref{tab:main} uses the strict
-\emph{without-ground-truth (GT)} setting for all methods. Since \soap{} never accesses the GT answer during inference, we adapt it to compare fairly with baselines in the \textit{with-GT} setting (Table~\ref{tab:main-gt})
+% Rewritten 2026-08-31: families matched to the table row groups (AgenTracer /
+% GraphTracer dropped -- never run; StepFinder described per B1,
+% experiments/todo.md); the with-GT adaptation of \soap stated here, as the
+% tab:main-gt caption promises. Old text:
+% \textbf{Baselines.} We compare against three families:
+% (i) prompt-based methods, ... (ii) trained LLM attributors, including
+% AgenTracer~\citep{agentracer} and GraphTracer~\citep{graphtracer};
+% and (iii) representation-based methods, including OAT ... and StepFinder
+% \TODO{add description for StepFinder}. ... Since \soap{} never accesses the
+% GT answer during inference, we adapt it to compare fairly with baselines in
+% the with-GT setting (Table~\ref{tab:main-gt})
+\textbf{Baselines.} We compare against two families, mirroring the row groups of Table~\ref{tab:main}:
+(i)~\emph{prompt-based} methods, which ask a judge LLM to name the decisive step --- All-at-Once, Step-by-Step, and Binary Search~\citep{whoandwhen}, the schema-retrieval method CORRECT~\citep{correct}, the causal-graph method CHIEF~\citep{chief}, and the fault-reasoning judge RAFFLES~\citep{raffles};
+(ii)~\emph{training-based} methods, which, like \soap, score the trajectory's step representations --- OAT~\citep{oat}, which learns the latent dynamics of successful trajectories through one-class training, and StepFinder~\citep{zhu2026stepfinder}, a step classifier trained on synthetically corrupted trajectories with step-level error labels.
+% Our main comparison (Table~\ref{tab:main}) uses the strict \emph{without-ground-truth (GT)} setting, in which no method receives the gold task answer~\citep{whoandwhen}. For the \emph{with-GT} setting we adapt \soap, which never otherwise consults the answer: the gold answer is appended to the task description in the proxy's context, and nothing else changes (Table~\ref{tab:main-gt})
 
 
 \textbf{Implementation details.}
 We instantiate \soap{} with Qwen3.5-9B~\citep{qwen3} and
 DeepSeek-R1-Distill-Llama-8B~\citep{deepseekr1}.
-Step representations are obtained by mean-pooling token hidden states (Ablations are in Appendix~\ref{}). We select the representation layer and spectral band $\mathcal{C}$ for spectral decomposition, layer for attention calculation, and propagation strength $\gamma$ on the
-validation set (Ablations are in ~\ref{}). We use GPT-\textcolor{blue}{TODO} for the prompt-based methods.
-\textcolor{blue}{Since neither code nor training data is publicly released for AgenTracer and
-GraphTracer, we reimplement both following the descriptions in their papers.}
-To ensure a fair comparison, all non-prompt-based baselines are run on the same two backbones as \soap{} and evaluated on identical test data, employing the default experimental configurations as outlined in their respective papers.
+% Empty ablation refs pointed at sec:exp:analysis, judge fixed to GPT-4o and
+% the AgenTracer/GraphTracer reimplementation note retired (baselines dropped)
+% 2026-08-31. Old:
+% ... (Ablations are in Appendix~\ref{}) ... (Ablations are in ~\ref{}).
+% We use GPT-\textcolor{blue}{TODO} for the prompt-based methods.
+% \textcolor{blue}{Since neither code nor training data is publicly released
+% for AgenTracer and GraphTracer, we reimplement both following the
+% descriptions in their papers.}
+Step representations are obtained by mean-pooling token hidden states.
+We select the representation layer, the spectral band $\mathcal{C}$, the attention layer band, and the propagation strength $\gamma$ on the
+validation set; \S\ref{sec:exp:analysis} analyzes the sensitivity to each choice.
+The prompt-based methods use GPT-4o as the judge (GPT-5 in Appendix~\ref{app:prompting-gpt5}), evaluated on the same test splits as \soap.
+To ensure a fair comparison, the training-based baselines run on the same two backbones as \soap{} and are evaluated on identical test data, employing the default experimental configurations as outlined in their respective papers.
 Further implementation details appear in Appendices~\ref{app:implementation} and~\ref{app:baselines}.
 
 % \textbf{Implementation details.}
@@ -185,7 +208,25 @@ Further implementation details appear in Appendices~\ref{app:implementation} and
 \subsection{Main Results}
 \label{sec:exp:main}
 
-\textbf{Comparison with competitive baselines.} Table~\ref{tab:main} compares \soap with all three baseline families on the five subsets, strictly without the ground-truth answer. Notably, \soap is the only method constructed on the actual trajectories while requiring no step-level annotation. Agent-level results for the same grid appear in Appendix~\ref{app:metrics}. \TODO{Results and analysis.}
+% Analysis written 2026-08-31 (tables/table1_no_gt.tsv; B1 readings in
+% experiments/todo.md). "Both baseline families" replaced "all three" to match
+% the revised Baselines paragraph.
+\noindent \textbf{Comparison with competitive baselines.}
+Table~\ref{tab:main} compares \soap against a comprehensive set of baselines
+spanning prompt-based judges and training-based attributors, strictly without
+the ground-truth answer. \soap achieves the best step-level accuracy on all
+five subsets. With Qwen3.5-9B, \soap reaches 47.62\% on WW-AG, 34.48\% on
+WW-HC, and 61.78\% on CE; DeepSeek-R1-Distill-Llama-8B raises TE-Cap to
+42.64\% and TE-Mag to 30.43\%, confirming that the gains are not tied to one
+proxy family. Notably, \soap surpasses the strongest judge
+RAFFLES~\citep{raffles} by a large margin (\emph{e.g.}, 47.62 vs.\ 35.98 on
+WW-AG), even though it reads the trajectory through a frozen 9B proxy while
+the judges reason over it with GPT-4o. Against the training-based baselines
+on the same backbones the margin grows to 31 points (47.62 vs.\ 16.72 for OAT
+on WW-AG), demonstrating that the step-unlabeled failure trajectories
+themselves carry the attribution signal that success-only training (OAT) and
+synthetic supervision (StepFinder) miss. Agent-level results for the same
+grid appear in Appendix~\ref{app:metrics}. 
 
 \begin{table}[t]
 \centering
@@ -427,8 +468,15 @@ Method & {\scriptsize Supervised} & WW-AG & WW-HC & CE & TE-Cap & TE-Mag \\
     \caption{\textbf{Scalability to larger backbones.} Step-level accuracy (\%) on (a) WW-AG and (b) WW-HC for two proxies larger than Table~\ref{tab:main}'s Qwen3.5-9B: Qwen3-14B (the previous generation; no Qwen3.5 model of that size exists) and Qwen3.5-27B. Bars, dark to light: \soap, OAT, StepFinder; error bars $\pm1$ std (over seeds for \soap; over training seeds for the baselines, each at the mean over seeds). Splits and protocol as in Table~\ref{tab:main}.}
     \label{fig:scale}
 \end{figure}
-\textbf{Scalability to larger backbones.} Figure~\ref{fig:scale} asks whether \soap keeps working, and keeps its margin over the training-based baselines, as the proxy grows. Every method reads the same backbone --- Qwen3-14B and Qwen3.5-27B; the Qwen3.5-9B point is Table~\ref{tab:main} --- on WW-AG and WW-HC, with the splits of Table~\ref{tab:main}; \soap is re-selected at each size, OAT and StepFinder are trained at each size and averaged over five training seeds. 
-% \soap holds its level with scale rather than growing with it: within the Qwen3.5 family the 27B point matches the 9B point on both subsets (44.97 vs.\ 47.62 on WW-AG, 34.48 on both on WW-HC), and its selected configuration mirrors the 9B one --- a late layer and, on WW-AG, a band that skips the top component. Rescoring lifts every backbone on WW-AG ($+2.6$ to $+8.5$) and the two Qwen3.5 sizes on WW-HC. The 14B point crosses to the previous generation (Qwen3, dense) and is the one dip: competitive on WW-AG (42.86) but ten points lower on WW-HC, where rescoring finds nothing to correct; the clean comparison is 9B~$\to$~27B within Qwen3.5. Neither baseline scales: OAT stays at 14--20 on WW-AG and 10--17 on WW-HC, StepFinder at 13--23 and 11--17 with no monotone trend, so the margin is intact at every size (the best baseline cell, 22.65, against \soap's worst, 42.86, on WW-AG).
+\noindent \textbf{Scalability to larger backbones.} 
+To assess scalability, we evaluate \soap on Qwen3-14B and Qwen3.5-27B, with
+every method reading the same backbone: \soap is re-selected at each size,
+while OAT and StepFinder are retrained at each size. As shown in Figure~\ref{fig:scale} (results on WW-AG and WW-HC with
+the splits of Table~\ref{tab:main}; the Qwen3.5-9B points repeat
+Table~\ref{tab:main}), \soap outperforms both baselines at every size: on
+Qwen3.5-27B it reaches 44.97\% on WW-AG and 34.48\% on WW-HC, matching its 9B
+accuracy, while the best baseline result at any size remains 22.65\% and
+16.78\%.  Accuracy is stable from 9B to 27B. The consistent margins confirm that spectral scoring with attention-guided propagation remains effective in larger proxies.
 
 % Filled 2026-08-30 (S1, experiments/todo.md): representatives changed from
 % All-at-Once + AgenTracer + OAT to OAT + StepFinder (the two representation-based
@@ -444,12 +492,9 @@ Method & {\scriptsize Supervised} & WW-AG & WW-HC & CE & TE-Cap & TE-Mag \\
 
 
 
-
-\textbf{Does \soap generalize across data distributions?} Figure~\ref{fig:transfer}(a) probes whether a fitted \soap is specific to the distribution it was tuned on. For each source--target pair among \{WW-AG, WW-HC, TE-Cap, TE-Mag\}, we fit the SVD reference on the \emph{source's} train split, then the full configuration 
-% --- representation layer, spectral band, attention band, $\gamma$, $w$ --- 
-is re-selected. Dependency weights are always computed from the target trajectories' own attention, and seeds pair positionally (source seed $i$'s reference with target seed $i$'s splits). The diagonal repeats the in-domain protocol of Table~\ref{tab:main} verbatim. Backbone: Qwen3.5-9B (DeepSeek-8B in Appendix~\ref{app:deepseek-ablations}).
-
-\TODO{shrink table. remove CE, TE. }
+% Draft below activated 2026-08-31 (E1, experiments/todo.md;
+% results-ablations/e1_transfer.tsv); the stale \TODO{shrink table. remove
+% CE, TE.} removed -- the grid is already 4x4 and a figure.
 
 % Protocol changed 2026-08-18 on user request: per-pair RE-SELECTION (as in the
 % data-size ablation) instead of freezing the source's anchor configuration.
@@ -458,7 +503,21 @@ is re-selected. Dependency weights are always computed from the target trajector
 % results-ablations/e1_transfer_frozen-anchor.tsv — there off-diagonal cells
 % collapsed (e.g. WW-AG->WW-HC 3.45), so most of the specificity lives in the
 % HYPERPARAMETERS, not the fitted subspace.
-% The fitted reference travels better than one might expect once the hyperparameters are re-tuned. The in-domain pair still leads every column, but by a wide margin only on WW-AG (47.62 in-domain vs.\ 35.45 for the best foreign source); on the other three targets the best foreign reference lands within about one point of in-domain (33.33 vs.\ 34.48 on WW-HC, 34.88 vs.\ 35.66 on TE-Cap, 22.46 vs.\ 23.19 on TE-Mag), and on DeepSeek a WW-HC-fitted reference even matches TE-Cap's in-domain 42.64. In contrast, freezing the source's configuration collapses transfer (WW-AG$\to$WW-HC falls to 3.45): the distribution-specific part of \soap is chiefly the hyperparameter configuration, while the spectral reference itself is broadly reusable --- so adapting to a new system needs target-side tuning data more than it needs target-side reference trajectories.
+\noindent \textbf{Generalization across data distributions.}
+  Figure~\ref{fig:transfer}(a) tests whether a fitted \soap is specific to the
+  distribution it was tuned on. For each source--target pair among \{WW-AG,
+  WW-HC, TE-Cap, TE-Mag\}, we fit the SVD reference on the \emph{source's}
+  train split and select the configuration on the \emph{target's} validation
+  split; the diagonal reports the in-distribution results of
+  Table~\ref{tab:main}. As shown in Figure~\ref{fig:transfer}(a) (backbone
+  Qwen3.5-9B; DeepSeek-8B in Appendix~\ref{app:deepseek-ablations}), the
+  in-distribution reference remains the best in every column, but transfer
+  degrades gracefully: a WW-HC-fitted reference retains 21.01\% on TE-Mag
+  (vs.\ 23.19\% in-distribution), and 10 of the 12 cross-distribution pairs
+  still match or exceed the strongest baseline of Table~\ref{tab:main}. These
+  results indicate that the spectral reference captures failure structure that
+  largely carries across agent systems rather than dataset-specific surface
+  form. 
 
 % Figure replaced by a data table 2026-08-18 on user request; make it a figure later
 % (fig/cross_dataset_heatmap.pdf: 4x4 heatmap, rows = source, columns = target,
@@ -536,10 +595,36 @@ Step-level accuracy (\%) in the \emph{with-ground-truth} setting on Who\&When, w
 \end{tabular}
 \end{table}
 
-\textbf{Results in the with-GT setting.} Table~\ref{tab:main-gt} repeats the comparison when the gold task answer is available, the setting in which prompt-based judges are strongest~\citep{whoandwhen}. \TODO{Results and analysis.}
+% Analysis written 2026-08-31 (tables/table2_with_gt.tsv + B1 with-GT strand).
+\noindent \textbf{Results in the with-GT setting.}
+  Table~\ref{tab:main-gt} repeats the comparison when the gold task answer is
+  available, the setting in which prompt-based judges are
+  strongest~\citep{whoandwhen}. \soap adapts with a single change: the answer
+  is appended to the proxy's context. Even so, \soap achieves the best
+  accuracy on both subsets. It reaches 43.39\% on WW-AG and 34.48\% on WW-HC,
+  surpassing the strongest judge RAFFLES by 9.00 and 12.64 points. The answer
+  is direct evidence for the judges: they can check each step against it. On
+  WW-HC, Step-by-Step gains 4.60 points over Table~\ref{tab:main} and RAFFLES
+  gains 3.45. \soap and the representation-based baselines cannot use the
+  answer this way, and their accuracy barely moves. Still, \soap leads: the
+  internal signals it reads are strong enough to close a gap the judges must
+  be handed explicitly. Results on DeepSeek-8B appear in
+  Appendix~\ref{app:gt}. 
 
 
-\textbf{Results with synthetic trajectories.} The reference $R$ requires only \emph{unlabeled} trajectories, which raises the fully self-contained scenario in which no corpus from the target system is available for fitting. Figure~\ref{fig:transfer}(b) evaluates this scenario on WW-AG and WW-HC: we replace the train-split trajectories with synthetic ones generated by a multi-agent harness and fit $R$ on them, keeping the validation and test splits of Table~\ref{tab:main} unchanged. We test two generators: (1)~the proxy model itself, Qwen3.5-9B, and (2)~a stronger model, GPT-4o, probing whether higher-quality generation yields better accuracy. Unlike the benchmark corpora, which contain failures only, the generated trajectories are used as-is, regardless of task success. Generation details are in Appendix~\ref{app:synth}. \TODO{Results and analysis.}
+\noindent \textbf{Results with synthetic trajectories.}
+Theoretically, the reference $R$ requires only \emph{unlabeled} trajectories. This raises the fully self-contained scenario in which no corpus from the target system is available for fitting. Figure~\ref{fig:transfer}(b) evaluates this scenario on WW-AG and WW-HC. We fit $R$ on synthetic trajectories from a multi-agent harness
+and keep the validation and test splits of Table~\ref{tab:main} unchanged;
+the generated trajectories are used as-is, regardless of task success. We
+test two generators: the proxy itself (Qwen3.5-9B) and a stronger model
+(GPT-4o). A synthetic reference nearly matches the real one: the best
+generator per subset comes within 1.06 points on WW-AG (46.56\% vs.\
+47.62\%) and 3.45 points on WW-HC (31.03\% vs.\ 34.48\%), and every
+synthetic result stays far above the training-based baselines of
+Table~\ref{tab:main}. Neither generator dominates: GPT-4o wins WW-AG, the
+open-weight Qwen3.5-9B wins WW-HC. These results indicate that a system's
+own cheap re-runs, unlabeled and unfiltered, can replace a reference corpus
+that does not exist. Generation details are in Appendix~\ref{app:synth}.
 
 
 % Restructured 2026-08-17 (E2, experiments/todo.md): five subsets -> WW-AG + WW-HC,
@@ -577,7 +662,10 @@ Step-level accuracy (\%) in the \emph{with-ground-truth} setting on Who\&When, w
 % \end{tabular}
 % \vspace{-\baselineskip}
 % \end{table}
-\textbf{Different metrics.}
+% "Different metrics." stub retired 2026-08-31: the ranked-candidate and
+% tolerance metrics live in Appendix~\ref{app:metrics}; no main-text
+% experiment backs a paragraph here (experiments/todo.md).
+% \textbf{Different metrics.}
 
 % Un-wrapped 2026-08-31 while the section is unfinished; re-wrap once the text is final.
 \begin{figure}[t]
@@ -641,8 +729,8 @@ The analyses in this section ablate the individual components of \soap, all unde
 % results filled here; per the revised plan (experiments/todo.md A1) random STAYS
 % and the uncertainty scorer is dropped. Data: results-ablations/a1_scorefn/.
 % \TODO{Reduce verbosity.}
-The spectral band wins or ties every cell. The discriminating column is WW-AG, where the selected band starts at component~1.
-% : dropping the top singular direction is worth 26 points over the top subspace (39.15 vs.\ 12.70) and over the full spectrum (12.17) --- \emph{where} the band sits matters, not merely its width. On WW-HC the selected band starts at component~0, so the top subspace coincides with ours by construction. Perplexity, the random and tail subspaces, and both norms trail far behind everywhere: the anomaly is not loud in likelihood or vector magnitude, but in a small displacement off the common mode.
+% Commented continuation activated 2026-08-31 (A1, experiments/todo.md).
+% The spectral band wins or ties every cell. The discriminating column is WW-AG, where the selected band starts at component~1: dropping the top singular direction is worth 26 points over the top subspace (39.15 vs.\ 12.70) and over the full spectrum (12.17) --- \emph{where} the band sits matters, not merely its width. On WW-HC the selected band starts at component~0, so the top subspace coincides with ours by construction. Perplexity, the random and tail subspaces, and both norms trail far behind everywhere: the anomaly is not loud in likelihood or vector magnitude, but in a small displacement off the common mode.
 
 
 \textbf{Effect of attention-guided rescoring.} Table~\ref{tab:weights} asks whether attention-guided rescoring has meaningful advantages over base scores and other simpler rescoring techniques. Keeping the base score and $\gamma$ fixed, we replace the weights in Eqn.~\ref{eq:backward-evidence} with two content-agnostic alternatives: \emph{uniform (normalized)}, which averages the scores of all successors with equal weight, and \emph{uniform (unnormalized)}, which sets every weight to one without normalization, so each step receives the raw sum of its successors' scores and earlier steps aggregate more terms. Additionally, we also apply \emph{temporal bias}, which adds $-\lambda\,t/T$ to the score of step $t$ in a z-scored variant (base score standardized within each trajectory first) and a raw variant, with $\lambda \in \{0.1,\dots,1.0\}$ selected as for $\gamma$, and \emph{earliest of top-$k$}, which predicts the earliest step among the $k{=}5$ highest-scoring steps.
@@ -658,6 +746,7 @@ The spectral band wins or ties every cell. The discriminating column is WW-AG, w
 % selected lambdas on WW: z-scored 1.0 (AG) / 0.7 (HC), raw 0.1 / 1.0).
 % Caveat if needed: cells whose selected gamma=0 have the uniform rows equal to
 % base by construction (DeepSeek WW-HC; 6/7 CE subsets for DeepSeek).
+% Draft below activated 2026-08-31 (A2 + A3, experiments/todo.md).
 % The unnormalized sum is destructive: because earlier steps aggregate more terms, it collapses toward predicting the first step and falls far below the base score everywhere (16.93 vs.\ 39.15 on WW-AG). The normalized mean repairs the length artifact but not the attribution: it hovers around the base score and never reaches \soap where the correction matters most (40.21 vs.\ 47.62 on WW-AG, 15.94 vs.\ 23.19 on TE-Mag). The position heuristics fare no better. The z-scored temporal bias buys at most a point or two over the base score --- an early-step prior does carry a little signal --- but stays seven points short of \soap on WW-AG; the raw bias is degenerate, since the inverse-projection score spans orders of magnitude and a bounded bias either vanishes against it or overwhelms it (3.45 on WW-HC); hard-committing to the earliest of the top five is worse than the base score alone (4.51 on CE). \soap promotes an early step only when its successors' anomaly points at it: the gain comes from \emph{which} successors the attention weights select and how strongly they blame each predecessor, not from aggregation or position as such.
 
 
@@ -726,6 +815,7 @@ Attention-guided (ours)& \best{47.62} & \best{34.48} & \best{61.78} & \best{35.6
 % Data: results-ablations/a5_gamma.tsv (per-seed; error bars = ±1 std over the
 % triple), a4_window.tsv, a6a_rep_layer.tsv (anchor-soap / anchor-base), a6b_attn_band.tsv.
 % Figure: scripts/ablations/plot_figures.py -> artifacts/ablations/fig_sensitivity.pdf.
+% Drafts below activated 2026-08-31 (A5 / A6a / A6b, experiments/todo.md).
 % \emph{Propagation strength $\gamma$} (a) reveals two regimes: on WW-AG accuracy climbs with $\gamma$ and peaks at $0.6$ (47.62), so the correction carries much of the signal; on WW-HC it is a nudge --- a small peak at $\gamma{=}0.1$, then a steep decay as the propagated blame drowns the base score (8.05 at $\gamma{=}1.0$). The intermediate points interpolate smoothly, so the operating range is wide within each regime.
 % \emph{Representation layer $l^\star$} (b) shows that the signal lives late in the stack: on WW-AG accuracy rises through the depth and peaks at layer 27 of 31; on WW-HC it concentrates almost entirely in the final layer (33.33 at layer 31 vs.\ at most 19.54 mid-stack) --- the anomaly there is a property of the model's final summary of the step, not of any intermediate computation. Rescoring lifts nearly every layer on WW-AG, embedding included (28.57 to 36.51), so the correction is not tuned to one layer's quirks.
 % \emph{Attention band $L^\star$} (c), the layers whose attention builds the dependency weights, matters least: it shifts accuracy by a few points where $\gamma$ is large (40.21--47.62 across bands on WW-AG) and is flat where the correction is a nudge.

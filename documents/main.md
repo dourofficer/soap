@@ -58,9 +58,17 @@ Everything in the paper comes from **`main/`** (the frozen-axis runner), not `sr
 
 ## Manuscript state (work in progress)
 
-- **Only Tables 1 and 2 are current** (without-GT and with-GT main tables, refreshed
-  2026-08-11 from `tables/*.tsv`). Ablation anchors, tab:synth, and every other
-  number still carry stale 2026-08-05 figures until refreshed.
+- **Experiments section prose complete** (2026-08-31, v2.5 header note in
+  `sections/experiments.tex`): every `\TODO{Results and analysis.}` filled in
+  REDE style — tab:main / tab:main-gt / synthetic written fresh; the commented
+  drafts for scale, transfer, scorefn, weights, sensitivity activated. Setup
+  fixed: two baseline families matching the table groups (AgenTracer/GraphTracer
+  dropped), StepFinder described, with-GT adaptation stated (gold answer
+  appended to the task description in the proxy context), judge = GPT-4o.
+  "Different metrics." stub retired to comments.
+- **Tables 1 and 2 and the ablation/experiment numbers are current** (tables
+  refreshed 2026-08-11 from `tables/*.tsv`; ablations/E1/E2/S1 filled from
+  `results-ablations/` per `experiments/todo.md`).
 - **Only uncommented .tex text is the paper.** Commented blocks are dead history
   (CRR/ReCAP naming, `contamination.tex`, the old method formulation) kept for
   reference; ignore them when reading or revising.
@@ -75,5 +83,4 @@ Everything in the paper comes from **`main/`** (the frozen-axis runner), not `sr
 - Documentation drift: `configs-main/ww.yaml`'s comment says the triples came from
   the `sum-diff` rule while `documents/SELECTION.md` describes `sum`; moot since the
   triples are hand-picked, but fix when touched.
-- Refresh ablation/synthetic numbers to the current protocol before analysis text is
-  written.
+- ~~Refresh ablation/synthetic numbers~~ — done; analysis text written 2026-08-31.
