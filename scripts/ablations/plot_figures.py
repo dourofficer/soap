@@ -1,22 +1,24 @@
 """Draw the manuscript's ablation figures from `results-ablations/`.
 
-Seven PDFs (with PNG previews) land in `artifacts/ablations/`:
+The PDFs (with PNG previews) land in `artifacts/ablations/`:
 
-- `fig_sensitivity`          — main text: rows WW-AG / WW-HC on Qwen3.5-9B, panels
-                               (a) gamma, (b) representation layer (line), (c)
-                               attention band. Dashed orange line = base score of
-                               the selected configuration (no rescoring); darker
-                               bar / large marker = the selected configuration.
-- `fig_transfer_synth`       — main text: (a) 4x4 source->target heatmap (Qwen),
-                               (b) SOAP with the reference fit on real vs synthetic
-                               trajectories (WW-AG / WW-HC).
-- `fig_datasize`             — analysis: accuracy vs reference-data fraction.
+- `fig_scale_transfer`       — main text, one row: (a,b) S1 scalability bars on
+                               WW-AG / WW-HC (±1 std: seeds for SOAP, training
+                               seeds for the baselines), (c) 4x4 source->target
+                               transfer heatmap (Qwen), (d) SOAP with the reference
+                               fit on real vs synthetic trajectories.
+- `fig_ablations`            — main text, one row on Qwen3.5-9B: (a) gamma, (b)
+                               representation layer (line), (c) attention band —
+                               all WW-AG; dashed orange line = base score of the
+                               selected configuration (no rescoring), darker bar /
+                               large marker = the selected configuration — and (d)
+                               accuracy vs reference-data fraction (WW-AG + WW-HC).
 - `fig_sensitivity_appendix_{qwen,deepseek}` — the four cells of each backbone, plus
                                the window-w panel (one page-high figure per backbone).
 - `fig_transfer_appendix`    — heatmaps for both backbones and both conventions.
-- `fig_scale`                — main text: S1 scalability, grouped bars per backbone size
-                               (9B / 27B), panels WW-AG / WW-HC, ±1 std error bars
-                               (seeds for SOAP, training seeds for the baselines).
+- `fig_scale`, `fig_transfer_synth`, `fig_sensitivity`, `fig_datasize` — the unmerged
+                               predecessors of the two main-text figures (2026-09-02
+                               merge); kept so either layout can be regenerated.
 
 `--print-tables` dumps ready-to-paste tabular bodies for the hand-typed tables (best
 per column wrapped in `\\best{}`), so no number is typed from memory. Nothing is
@@ -221,12 +223,12 @@ def sensitivity(cells, stem: str, out: Path, panels=("gamma", "layer", "band")) 
         return save(fig, stem, out)
 
 
-def heatmap(ax, grid: pd.DataFrame, title: str | None = None) -> None:
+def heatmap(ax, grid: pd.DataFrame, title: str | None = None, annot_size: float | None = None) -> None:
     v = grid.values
     ax.imshow(v, cmap=CMAP, vmin=0, vmax=max(50, v.max()), aspect="equal")
     for i in range(4):
         for j in range(4):
-            ax.text(j, i, f"{v[i, j]:.2f}", ha="center", va="center", fontsize=plt.rcParams["font.size"] * 0.95,
+            ax.text(j, i, f"{v[i, j]:.2f}", ha="center", va="center", fontsize=annot_size or plt.rcParams["font.size"] * 0.95,
                     color="white" if v[i, j] > 0.8 * max(50, v.max()) else INK)
         ax.add_patch(Rectangle((i - 0.5, i - 0.5), 1, 1, fill=False, edgecolor=ORANGE, linewidth=1.2))
     ax.set_xticks(range(4), TARGETS)
@@ -379,6 +381,149 @@ def fig_scale(out: Path) -> list[Path]:
         return save(fig, "fig_scale", out)
 
 
+
+def fig_scale_transfer(out: Path) -> list[Path]:
+    """Main text, one row: (a,b) S1 scalability bars per WW subset (data: s1_scale.tsv),
+    (c) 4x4 source->target heatmap (e1_transfer.tsv), (d) SOAP with the SVD reference
+    fit on real vs synthetic trajectories (e2_synthfit.tsv). Merges the former
+    fig_scale + fig_transfer_synth into one \\textwidth figure."""
+    d, e1, e2 = tsv("s1_scale.tsv"), tsv("e1_transfer.tsv"), tsv("e2_synthfit.tsv")
+    sizes = [("qwen3-14b", "14B\nQwen3"), ("qwen3.5-27b", "27B\nQwen3.5")]
+    methods = [("soap", r"$+$SOAP", "#3F3D73"),
+               ("oat", "OAT", "#807EAF"), ("stepfinder", "StepFinder", "#C6C5DF")]
+    refs = [("real", "Real", "#3F3D73"), ("syn-qwen9b", "Syn. (Qwen3.5-9B)", "#807EAF"),
+            ("syn-gpt4o", "Syn. (GPT-4o)", "#C6C5DF")]
+    with plt.rc_context(RC):
+        fig, axes = plt.subplots(1, 4, figsize=(7.6, 1.55),
+                                 gridspec_kw={"width_ratios": [0.8, 0.8, 1.0, 1.05]})
+        # (a)(b) scalability bars, as in the former fig_scale.
+        width = 0.28
+        for ax, (subset, tag), letter in zip(axes[:2],
+                                             [("algorithm-generated", "WW-AG"), ("hand-crafted", "WW-HC")], "ab"):
+            c = d[d["subset"] == subset].set_index(["method", "backbone"])
+            x = np.arange(len(sizes))
+            tops, bottoms = [], []
+            for j, (m, _, color) in enumerate(methods):
+                vals = np.array([c.loc[(m, bb), "step"] for bb, _ in sizes])
+                err = np.array([c.loc[(m, bb), "step_sd"] for bb, _ in sizes])
+                ax.bar(x + (j - (len(methods) - 1) / 2) * width, vals, width, color=color, linewidth=0, yerr=err,
+                       error_kw={"ecolor": MUTED, "elinewidth": 0.6, "capsize": 0})
+                tops.append(vals + err)
+                bottoms.append(vals - err)
+            ax.set_xticks(x, [lab for _, lab in sizes])
+            ax.set_xlim(-0.52, len(sizes) - 0.48)
+            ylim(ax, *tops, *bottoms)
+            ax.set_ylim(bottom=0)
+            if letter == "a":                      # headroom for the legend
+                ax.set_ylim(top=ax.get_ylim()[1] + 16)
+            style(ax)
+            ax.set_title(f"({letter}) Scale: {tag}", pad=4, color=INK)
+        axes[0].set_ylabel("step acc. (%)", labelpad=2)
+        handles = [Patch(color=color, label=label) for _, label, color in methods]
+        axes[0].legend(handles=handles, frameon=False, loc="upper left", handlelength=1.0,
+                       handleheight=0.8, labelcolor=INK_2, borderaxespad=0.1, labelspacing=0.2)
+
+        # (c) transfer heatmap, as in fig_transfer_synth(a).
+        heatmap(axes[2], transfer_grid(e1, "qwen3.5-9b", "val"), "(c) Transfer", annot_size=5.2)
+        axes[2].set_xticklabels(TARGETS, rotation=30, ha="right", rotation_mode="anchor")
+
+        # (d) synthetic-reference bars, as in fig_transfer_synth(b).
+        ax2 = axes[3]
+        dd = e2[(e2["model"] == "qwen3.5-9b") & (e2["row"] == "soap")].set_index(["target", "reference"])
+        x = np.arange(2)
+        vals_all = []
+        for j, (ref, label, color) in enumerate(refs):
+            vals = np.array([100 * dd.loc[(t, ref), "step_acc_test"] for t in ("WW-AG", "WW-HC")])
+            vals_all.append(vals)
+            ax2.bar(x + (j - 1) * width, vals, width, color=color, linewidth=0, label=label)
+            for xi, v in zip(x + (j - 1) * width, vals):
+                ax2.text(xi, v + 0.6, f"{v:.1f}", ha="center", va="bottom", fontsize=4.4, color=INK_2)
+        style(ax2)
+        ax2.set_xticks(x, ["WW-AG", "WW-HC"])
+        ax2.set_xlim(-0.6, 1.6)
+        lo = max(0.0, np.min(vals_all) - 8)
+        ax2.set_ylim(lo, np.max(vals_all) + 17)  # headroom for the legend
+        ax2.set_ylabel("step acc. (%)", labelpad=1)
+        ax2.set_title("(d) Synthetic reference", color=INK, pad=4)
+        ax2.legend(frameon=False, loc="upper right", handlelength=1.0, handleheight=0.8,
+                   labelcolor=INK_2, borderaxespad=0.0, labelspacing=0.2)
+        fig.subplots_adjust(wspace=0.42)
+        return save(fig, "fig_scale_transfer", out)
+
+
+def fig_ablations(out: Path) -> list[Path]:
+    """Main text, one row on Qwen3.5-9B: (a) gamma, (b) representation layer, (c)
+    attention band — the former fig_sensitivity panels, WW-AG — and (d) the former
+    fig_datasize (WW-AG + WW-HC). In (d) color follows the method as in (a-c):
+    purple = SOAP, orange = base score; the subset sets the line style."""
+    model, subset = "qwen3.5-9b", "algorithm-generated"
+    d5, d4, d6a, d6b, a7 = tsv("a5_gamma.tsv"), tsv("a4_window.tsv"), \
+        tsv("a6a_rep_layer.tsv"), tsv("a6b_attn_band.tsv"), tsv("a7_datasize.tsv")
+    with plt.rc_context(RC):
+        fig, axes = plt.subplots(1, 4, figsize=(7.6, 1.55),
+                                 gridspec_kw={"width_ratios": [1.1, 1.25, 0.85, 1.0]})
+        g = cell(d5, model, subset).groupby("gamma")["step_acc_test"]
+        gm, gs = 100 * g.mean(), 100 * g.std(ddof=0)
+        base = gm.loc[0.0]
+        anchor_gamma = cell(d4, model, subset)["gamma"].iloc[0]
+
+        # (a) propagation strength.
+        ax = axes[0]
+        gammas = gm.index.values
+        bars(ax, [f"{x:g}" if i % 2 == 0 else "" for i, x in enumerate(gammas)],
+             gm.values, int(np.argmin(np.abs(gammas - anchor_gamma))), base, err=gs.values)
+        ax.set_xlabel(r"$\gamma$", labelpad=1)
+        ylim(ax, gm.values + gs.values, gm.values - gs.values, base)
+
+        # (b) representation layer.
+        ax = axes[1]
+        labels, soap, base_layer, anchor = layer_axis(d6a, model, subset)
+        layer_line(ax, labels, soap, base_layer, anchor, base)
+        ax.set_xlabel("layer", labelpad=1)
+        ylim(ax, soap, base_layer, base)
+
+        # (c) attention band.
+        ax = axes[2]
+        b = cell(d6b, model, subset).copy()
+        b["lo"] = b["layer_range"].str.split("-").str[0].astype(int)
+        b = b.sort_values("lo")
+        bars(ax, [x.replace("-", "\u2013") for x in b["layer_range"]], 100 * b["step_acc_test"].values,
+             int(np.flatnonzero(b["is_anchor"].values)[0]), base)
+        ax.set_xlabel("attn. layers", labelpad=1)
+        if b["layer_range"].str.len().max() > 3:
+            ax.tick_params(axis="x", labelsize=5, rotation=30)
+        ylim(ax, 100 * b["step_acc_test"].values, base)
+
+        # (d) reference-data quantity.
+        ax = axes[3]
+        x = [10, 20, 30]
+        for sub, ls in (("algorithm-generated", "-"), ("hand-crafted", ":")):
+            c = cell(a7, model, sub)
+            for row, color, m in (("base", ORANGE, "s"), ("soap", PURPLE_DARK, "o")):
+                y = 100 * c[c["row"] == row].set_index("fraction").loc[["1/3", "2/3", "1"], "step_acc_test"].values
+                ax.plot(x, y, color=color, linestyle=ls, marker=m, markersize=3.2,
+                        mew=0, linewidth=1.5 if ls == "-" else 1.3)
+        ax.set_xticks(x, ["10%", "20%", "30%"])
+        ax.set_xlim(7, 33)
+        ax.set_xlabel("reference data (%)", labelpad=1)
+        handles = [Line2D([], [], color=PURPLE_DARK, marker="o", markersize=3.2, mew=0, label=r"$+$SOAP"),
+                   Line2D([], [], color=ORANGE, marker="s", markersize=3.2, mew=0, label="Base score"),
+                   Line2D([], [], color=INK_2, linestyle="-", label="WW-AG"),
+                   Line2D([], [], color=INK_2, linestyle=":", label="WW-HC")]
+        ax.legend(handles=handles, ncol=2, frameon=False, loc="lower right", handlelength=1.3,
+                  columnspacing=0.5, fontsize=5.5, labelcolor=INK_2, borderaxespad=0.1, labelspacing=0.25)
+        ax.set_ylim(ax.get_ylim()[0] - 7, ax.get_ylim()[1] + 1)
+
+        for ax, key, title in zip(axes, "abcd",
+                                  (r"Propagation strength $\gamma$", r"Representation layer $l^\star$",
+                                   r"Attention band $L^\star$", "Reference data")):
+            style(ax)
+            ax.set_title(f"({key}) {title}", pad=4, color=INK)
+        axes[0].set_ylabel("step acc. (%)", labelpad=2)
+        fig.subplots_adjust(wspace=0.36)
+        return save(fig, "fig_ablations", out)
+
+
 FIGURES = {
     # Main-text figure trimmed to the WW-AG row 2026-08-31 (WW-HC stays in the appendix figure).
     "fig_sensitivity": lambda out: sensitivity(MAIN_CELLS[:1], "fig_sensitivity", out),
@@ -392,6 +537,8 @@ FIGURES = {
         "fig_sensitivity_appendix_deepseek", out, panels=("gamma", "w", "layer", "band")),
     "fig_transfer_appendix": fig_transfer_appendix,
     "fig_scale": fig_scale,
+    "fig_scale_transfer": fig_scale_transfer,
+    "fig_ablations": fig_ablations,
 }
 
 

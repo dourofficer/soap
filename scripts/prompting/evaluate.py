@@ -28,6 +28,7 @@ THE RULES. All three come from SOAP, so the numbers mean the same thing:
 
     python scripts/prompting/evaluate.py
     python scripts/prompting/evaluate.py --dataset ww          # one dataset
+    python scripts/prompting/evaluate.py --judge qwen3.5-9b    # one judge
 """
 from __future__ import annotations
 
@@ -52,7 +53,11 @@ OUT = REPO / "results-prompting"
 SETTINGS = [("outputs-nogt", False, "results-nogt", ""),
             ("outputs", True, "results-gt", "-gt")]
 
-JUDGES = ["gpt-4o", "gpt-5"]
+# The judge (for prompt-based methods, the model that reads the log). The two
+# closed-source ones answer the manuscript's GPT-4o block; the two open ones are
+# the backbones SOAP itself runs on, so their prompting rows sit in the same
+# block as SOAP and share its test splits.
+JUDGES = ["gpt-4o", "gpt-5", "qwen3.5-9b", "deepseek-8b"]
 # gpt-5 x correct-error has no `chief` run — it was excluded as too costly, so
 # that cell stays blank rather than missing.
 METHODS = ["all_at_once", "step_by_step", "binary_search", "correct", "chief",
@@ -139,7 +144,7 @@ def score(preds: dict, ids: list[str]) -> dict:
 
 
 # ── driver ──────────────────────────────────────────────────────────────────
-def evaluate(datasets: list[str]) -> pd.DataFrame:
+def evaluate(datasets: list[str], judges: list[str]) -> pd.DataFrame:
     rows = []
     for root, with_gt, tree, suffix in SETTINGS:
         for ds in datasets:
@@ -147,7 +152,7 @@ def evaluate(datasets: list[str]) -> pd.DataFrame:
             for subset in cfg["subsets"]:
                 seeds = seeds_for(cfg, subset)
                 ids_by_seed = {s: test_ids(ds, subset, tree, cfg["splits"], s) for s in seeds}
-                for judge in JUDGES:
+                for judge in judges:
                     for method in METHODS:
                         preds = read_cell(root, ds, subset, judge, method)
                         if not preds:
@@ -192,14 +197,17 @@ def main() -> int:
     p = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--dataset", action="append", dest="datasets")
+    p.add_argument("--judge", action="append", dest="judges",
+                   help=f"restrict to one judge (repeatable); default {JUDGES}")
     p.add_argument("--out-dir", default=str(OUT))
     args = p.parse_args()
 
     if not SRC.is_dir():
         raise SystemExit(f"no prompting repo at {SRC}")
     datasets = args.datasets or DATASETS
+    judges = args.judges or JUDGES
 
-    df = evaluate(datasets)
+    df = evaluate(datasets, judges)
     if df.empty:
         raise SystemExit("no cells read")
     out = Path(args.out_dir)

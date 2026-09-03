@@ -296,3 +296,105 @@ Qwen-family (larger, $\sim$27B) & \PH & \PH & \PH & \PH \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+
+% !TeX root = ../main.tex
+% =====================================================================
+% Appendix — training-based baseline setup (app:baselines), v1 (2026-09-02).
+% Covers the two training-based rows of tab:main / tab:main-gt: OAT and
+% StepFinder. Sources: experiments/todo.md §B1 and
+% ../attrib-prompting/baselines-rp/{oat,stepfinder}/{README,IMPLEMENTATION}.md;
+% numbers cross-checked against results-ablations/b1_rb_baselines/.
+% Prompt-based baseline details (judge prompts, GPT-4o settings) are NOT
+% here yet — add them as a sibling subsection or under app:implementation.
+% =====================================================================
+\section{Setup of the Training-Based Baselines}
+\label{app:baselines}
+
+This section details how we run the two training-based baselines of
+Table~\ref{tab:main}, OAT~\citep{oat} and StepFinder~\citep{zhu2026stepfinder}.
+Both methods, like \soap, score a trajectory through the internal vectors of an
+open-weight model rather than by prompting a judge. We reproduce each from the
+code its authors released, train it on the training data its paper prescribes,
+run it on the same two backbones as \soap, and score its predictions on the
+identical test splits under the shared evaluation protocol
+(\S\ref{sec:exp:setup}). Neither method sees our reference or validation
+trajectories during training. We describe each method's pipeline, its training
+data, and every place our setup departs from the released code.
+
+\textbf{OAT.}
+OAT learns the latent dynamics of \emph{successful} trajectories and flags the
+steps of a failed trajectory that depart from them. Each trajectory is
+serialized as one document --- the task description followed by every step under
+a header naming its index and agent --- and encoded in a single forward pass of
+the backbone; a step's representation is the mean of its tokens' last-layer
+hidden states, reduced to 64 dimensions by PCA fitted on the training
+trajectories. A neural controlled differential equation is then trained to
+predict each step's latent state from the trajectory so far, with squared-error
+loss. Training is one-class: because our benchmarks contain only failures, OAT
+trains on the 103 successful tool-use trajectories released with the paper
+(MCP-Atlas), which is the paper's own out-of-distribution protocol; no
+trajectory from our benchmarks enters training, and one trained model serves
+every subset. At test time, CORAL aligns the second-order statistics of each
+subset's representations with those of the training set (using no labels); a
+step's anomaly score is the squared distance between its predicted and observed
+latent state, and the predicted decisive step is the argmax. OAT predicts no
+agent, so the responsible-agent prediction is the agent of the predicted step.
+Following the released code, human and environment turns are not scored; a
+trajectory whose annotated step falls on such a turn is kept and counted as an
+error. We train five models per backbone (seeds 42--46) and report the mean. In
+the with-GT setting, the gold answer is appended to the task description with
+the same phrasing the prompt-based baselines use; the training corpus carries no
+answers, so the trained model is shared between the two settings. We note that
+the paper's own benchmark annotates every step that contributed to a failure and
+reports set metrics, whereas our benchmarks annotate one decisive step, so the
+numbers printed in the paper are not directly comparable to
+Table~\ref{tab:main}.
+
+\textbf{StepFinder.}
+StepFinder is a supervised step classifier. Each step is embedded twice --- 128
+dimensions for its text, 32 for the name of its agent --- and the sequence of
+step embeddings passes through a BiLSTM, an agent-aware attention layer, and a
+scoring head with multi-scale differencing and a position prior; training
+minimizes a cross-entropy loss across the steps of each trajectory plus a
+self-supervised next-step prediction loss. Training uses the step-labeled
+failure corpora released with the paper, which regenerate each annotated task
+into roughly eighteen alternative failures: 1{,}564 trajectories in the
+CaptainAgent style and 2{,}604 in the Magentic-One style. Because the agent
+embedding is a text embedding of the agent's name, each evaluation subset is
+paired with the corpus from the agent system that produced it: WW-AG and TE-Cap
+with the CaptainAgent corpus, WW-HC and TE-Mag with the Magentic-One corpus. CE
+matches neither system and falls back to the Magentic-One corpus, so its column
+is out-of-domain transfer. To place StepFinder on the same backbones as \soap,
+we replace the paper's encoder (Qwen3-Embedding-0.6B) with the backbone's
+last-layer hidden state at the final token and keep the leading 128 (text) and
+32 (agent) coordinates, exactly as the released code slices its embeddings; the
+slice is principled for the paper's embedding model, whose leading coordinates
+are trained to carry the most information, and arbitrary for a decoder. For
+reference, with the paper's own encoder StepFinder reaches 24.02 / 11.72 /
+32.75 / 17.98 / 21.16 on the five subsets of Table~\ref{tab:main} --- higher
+than the backbone rows on WW-AG and TE-Mag, comparable elsewhere, and still far
+below \soap{} on every subset. Our setup departs
+from the released code in two places, both protocol repairs. First, the
+released training loop selects the checkpoint by accuracy on the test set; we
+instead hold out a fraction of the training tasks --- split by question, so the
+near-duplicate regenerations of one task never straddle the boundary --- and
+select on that holdout, never touching the test data. Second, we score one
+trajectory at a time, so the position prior is normalized by the trajectory's
+own length as in the paper's equations rather than by the padded width of a
+batch. As for OAT, we train five models per backbone (seeds 42--46), report the
+mean, and derive the responsible agent from the predicted step. In the with-GT
+setting, the gold answer is appended to the content of the first step, since
+StepFinder encodes no separate task description; the trained models are shared
+between the two settings. Finally, the regenerated training corpus shares tasks
+--- though not trajectories --- with parts of our test data: 22 of 85 TE-Cap,
+51 of 91 TE-Mag, and 30 of 50 CE-GAIA trajectories are built on tasks that also
+appear in training, while both Who\&When subsets are disjoint. This overlap can
+only favor the baseline, so we leave it in place.
+
+\textbf{Evaluation.}
+Both baselines write one prediction per trajectory; a trajectory that receives
+no usable prediction --- for OAT, one whose annotated step is never scored ---
+counts as an error. A reported cell is the mean over the three test splits of
+the subset's seed triple and, within each split, over the five training seeds,
+under the same scoring rules as every other method in Table~\ref{tab:main}.

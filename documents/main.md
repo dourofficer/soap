@@ -75,6 +75,16 @@ Everything in the paper comes from **`main/`** (the frozen-axis runner), not `sr
 - **Empty cells are pending work, not omissions**: OAT, StepFinder (placeholder bib
   entry), AgenTracer, GraphTracer, RAFFLES rows; the with-GT SOAP adaptation
   description; the method figure and all figure placeholders.
+- **Main-text figures merged 2026-09-02** to match the reorganized experiments
+  section: `fig_scale_transfer.pdf` (scale WW-AG, scale WW-HC, transfer heatmap,
+  synthetic reference) and `fig_ablations.pdf` (gamma, representation layer,
+  attention band on WW-AG, plus reference-data quantity) replace the four
+  separate figures; the qualitative example (`scores_captain_traj1.pdf`) stands
+  alone in a wrapfigure. Generator: `scripts/ablations/plot_figures.py`
+  (`--only fig_scale_transfer --only fig_ablations`); the unmerged predecessors
+  stay in the script. New PDFs live in `artifacts/ablations/` and
+  `manuscript/assets/` but must be uploaded to Overleaf by hand (`pull.sh` only
+  pulls).
 
 ## Known items for later
 
