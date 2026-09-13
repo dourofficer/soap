@@ -2,21 +2,52 @@
 \section{Related Work}
 \label{sec:related}
 
-\textbf{Agentic failure attribution} has gained interest recently for ensuring LLM-based agents' reliability~\citep{qi2026trajdebug,barke2026agentrx}. 
+\textbf{Agentic failure attribution} has gained interest recently for ensuring LLM-based agents' reliability~\citep{qi2026trajdebug,barke2026agentrx}.
 \citet{whoandwhen} formulate automated failure attribution, introduce the
 Who\&When benchmark, and evaluate All-at-Once, Step-by-Step, and Binary Search
-LLM judges; complementary work categorizes common multi-agent failure
-modes~\citep{mast,deshpande2025trail,raj2026model}. Subsequent methods either improve inference-time prompting~\citep{echo,raffles,correct,bakish2026adaptive}
-or train dedicated attributors. For instance, AgenTracer and StepFinder instead learn
-from labeled or synthetically corrupted trajectories using reinforcement
-learning or temporal-semantic modeling~\citep{agentracer,zhu2026stepfinder}. These approaches, however, often rely on c\textit{omputationally intensive inference or large-scale step-level error annotations}, limiting their practicality for real-world deployment. A recent approach OAT mitigates this by
-learning continuous latent dynamics from clean successful
-trajectories by one-class learning~\citep{oat}, which \textit{provides no decisive error signals} in their data unlike our adopted step-unlabeled failure trajectories thus underperforms our \soap (Table~\ref{}). Several methods model cross-step dependencies~\citep{falat}. GraphTracer derives
-information-flow graphs from references to prior outputs and learns to trace
-root causes and propagation paths~\citep{graphtracer}; CHIEF construct
-causal dependency graphs during prompting through multi-stage LLM reasoning~\citep{chief}. We compare with both of them in Table~\ref{}. \cite{masprism} use attention signals for failure attribution but different from \soap, they calculate attention scores on steps with high negative log-likelihood for two-stage localization.
+LLM judges; Who\&When~Pro scales the benchmark to 12K failed trajectories
+across modalities~\citep{liu2026wwpro}, and complementary work categorizes
+common multi-agent failure
+modes~\citep{mast,deshpande2025trail,raj2026model,zhu2025agentdebug}.
+Subsequent methods improve inference-time prompting: RAFFLES iterates a
+judge--evaluator loop~\citep{raffles}, ErrorProbe pairs an analyzer with a
+self-improving verifier~\citep{errorprobe}, CHIEF constructs causal dependency
+graphs through multi-stage LLM reasoning~\citep{chief}, and others
+restructure the context, retrieve error schemata, or reconstruct step
+dependencies~\citep{echo,correct,bakish2026adaptive,falat}. Another line
+trains dedicated attributors: AgenTracer and StepFinder learn from labeled or
+synthetically corrupted trajectories by reinforcement learning or
+temporal-semantic modeling~\citep{agentracer,zhu2026stepfinder}, and
+GraphTracer learns to trace root causes over information-flow
+graphs~\citep{graphtracer}. These approaches, however, rely on
+\textit{computationally intensive inference or step-level error annotations},
+limiting their practicality; we compare with representatives of both lines in
+Table~\ref{tab:main}. OAT avoids both by one-class learning over clean
+successful trajectories~\citep{oat}, but its success-only data \textit{carry
+no decisive-error signal}, unlike our step-unlabeled failure trajectories,
+and it underperforms \soap (Table~\ref{tab:main}). \citet{masprism} also use
+attention signals, but score them on steps with high negative log-likelihood
+for two-stage localization; MASC targets online self-correction via
+prototype-guided next-execution reconstruction rather than post-hoc
+error attribution~\citep{shen2025masc}. 
 
-\note{update the related work}
+
+% Old version (pre-2026-09-08) kept below, commented out:
+% \textbf{Agentic failure attribution} has gained interest recently for ensuring LLM-based agents' reliability~\citep{qi2026trajdebug,barke2026agentrx}. 
+% \citet{whoandwhen} formulate automated failure attribution, introduce the
+% Who\&When benchmark, and evaluate All-at-Once, Step-by-Step, and Binary Search
+% LLM judges; complementary work categorizes common multi-agent failure
+% modes~\citep{mast,deshpande2025trail,raj2026model}. Subsequent methods either improve inference-time prompting~\citep{echo,raffles,correct,bakish2026adaptive}
+% or train dedicated attributors. For instance, AgenTracer and StepFinder instead learn
+% from labeled or synthetically corrupted trajectories using reinforcement
+% learning or temporal-semantic modeling~\citep{agentracer,zhu2026stepfinder}. These approaches, however, often rely on c\textit{omputationally intensive inference or large-scale step-level error annotations}, limiting their practicality for real-world deployment. A recent approach OAT mitigates this by
+% learning continuous latent dynamics from clean successful
+% trajectories by one-class learning~\citep{oat}, which \textit{provides no decisive error signals} in their data unlike our adopted step-unlabeled failure trajectories thus underperforms our \soap (Table~\ref{}). Several methods model cross-step dependencies~\citep{falat}. GraphTracer derives
+% information-flow graphs from references to prior outputs and learns to trace
+% root causes and propagation paths~\citep{graphtracer}; CHIEF construct
+% causal dependency graphs during prompting through multi-stage LLM reasoning~\citep{chief}. We compare with both of them in Table~\ref{}. \cite{masprism} use attention signals for failure attribution but different from \soap, they calculate attention scores on steps with high negative log-likelihood for two-stage localization.
+%
+% \note{update the related work}
 
 
 

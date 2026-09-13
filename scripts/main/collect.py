@@ -111,8 +111,8 @@ def main() -> int:
     units = [Unit(gt, tuple(t), ds)
              for gt in (False, True)
              for t in triples(args.seed_lo, args.seed_hi)
-             for ds in ("ww", "traceelephant", "correct-error")]
-    cfgs = {d: load_cfg(d) for d in ("ww", "traceelephant", "correct-error")}
+             for ds in ("ww", "traceelephant", "correct-error", "agentracer")]
+    cfgs = {d: load_cfg(d) for d in ("ww", "traceelephant", "correct-error", "agentracer")}
 
     sel_frames, index_rows, writer, buf, buf_rows = [], [], None, [], 0
     schema = None

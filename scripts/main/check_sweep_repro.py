@@ -3,13 +3,16 @@
 Every seed triple currently frozen in `configs-main/` is a CONSECUTIVE window, so all 44
 production cells are re-swept by the 48-window sweep:
 
-    ww / algorithm-generated      s03-04-05
+    ww / algorithm-generated      s03-04-05   (with GT: s38-39-40)
     ww / hand-crafted             s13-14-15
-    traceelephant / magentic      s08-09-10
-    traceelephant / captain       s14-15-16
+    traceelephant / magentic      s15-16-17   (with GT: s09-10-11)
+    traceelephant / captain       s22-23-24   (with GT: s02-03-04)
     correct-error / all 7 subsets s17-18-19
 
-x 2 backbones x 2 GT settings = 44 cells, exactly one full pass. Those cells must agree
+x 2 backbones x 2 GT settings = 44 cells, exactly one full pass. The with-GT triple
+comes from `configs-main/<ds>-gt.yaml`, which may differ from the without-GT pick.
+`agentracer` joins the list once its triple is frozen; until then it reports as
+"not swept yet". Those cells must agree
 numerically, row for row, with `results-nogt/` / `results-gt/`. Any drift means injecting
 seeds via `--set` is not equivalent to declaring them in the config — which would
 invalidate the whole driver.
@@ -34,11 +37,12 @@ KEY = ["model", "subset", "seed", "position", "c_begin", "c_end",
 def expected_cells():
     """(gt, triple_tag, dataset, model, subset) whose production run used that triple."""
     out = []
-    for ds in ("ww", "traceelephant", "correct-error"):
-        cfg = yaml.safe_load((REPO / "configs-main" / f"{ds}.yaml").read_text())
-        for subset, seeds in cfg["seeds"].items():
-            t = "s" + "-".join(f"{x:02d}" for x in seeds)
-            for gt in (False, True):
+    for ds in ("ww", "traceelephant", "correct-error", "agentracer"):
+        for gt in (False, True):
+            name = f"{ds}-gt.yaml" if gt else f"{ds}.yaml"
+            cfg = yaml.safe_load((REPO / "configs-main" / name).read_text())
+            for subset, seeds in cfg["seeds"].items():
+                t = "s" + "-".join(f"{x:02d}" for x in seeds)
                 for model in cfg["models"]:
                     out.append((gt, t, ds, model, subset))
     return out

@@ -10,73 +10,15 @@
 %     explanations commented out, not deleted; Properties paragraph
 %     commented out; contamination paragraph simplified.
 % =====================================================================
-\section{\soap: Spectral Scoring with Attention-Guided Propagation}
-\label{sec:method}
 
-
-In this section, we introduce \soap, a framework for localizing the
-decisive error from step-unlabeled failure trajectories.
-At a high level, \soap consists of two components.
-\textit{First}, we construct a spectral reference space from the step representations
-in $\mathcal{D}_{\mathrm{fail}}$ and derive a base error score for each step
-(\S\ref{sec:method:base}).
-\textit{Second}, we estimate soft dependencies between steps from the attention patterns
-of the model and propagate downstream error evidence toward the
-earlier steps on which it depends
-(\S\ref{sec:method:weights}).
-The resulting score $\Stilde(s_t)$ estimates how likely step $s_t$ is to have
-introduced the failure.
-
-\subsection{Spectral step scoring from unlabeled failure trajectories}
-\label{sec:method:base}
-
-The reference collection $\mathcal{D}_{\mathrm{fail}}$ contains many ordinary
-steps but only a small number of decisive errors within each trajectory.
-Consequently, the representations from LLM $\mathcal{M}$ are dominated by recurring patterns
-of ordinary agent behavior, while decisive-error steps form a sparse,
-unlabeled component.
-Our key idea is to characterize this representation space through spectral
-decomposition and score each step according to its alignment with selected
-spectral directions.
-
-
-For a trajectory $\traj=(s_1,\ldots,s_T)$, we encode each step in the context
-in which it was produced.
-Specifically, for step $s_t$, we provide the model $\proxy$ with the task
-description and the trajectory context
-$
-    z_t = [x; s_1;\ldots;s_t].
-$ and then extract its $d$-dimensional step representation $v_t$. \note{refer details, e.g., context cutoff, in the appendix.}
+% \note{add the ablation for context cutoff in appendix. context ablation: 1024, 2048, 4096, 8192 (what we use), 16384, on WW-AG and WW-HC only.}
 % \textcolor{blue}{Please don't mention the details here. add ablations in appendix.}
 
-Figure~\ref{fig:overview} summarizes the method.
+
 % Method figure updated 2026-09-01: artifacts/method_figure/soap_framework.{pptx,pdf}
 % -> manuscript/assets/soap_framework.pdf (two-stage schematic; matrices, scores
 % and weights illustrative). Supersedes assets/soap_overview.pdf (2026-08-25).
-\begin{figure}[t]
-\centering
-\includegraphics[width=\textwidth]{assets/soap_framework_v3.pdf}
-  \vspace{-0.6cm}
-  \caption{\small 
-  \textbf{Overview of \soap{}.}
-  % \emph{During fitting}, a frozen proxy model $\proxy$ encodes every step of the
-  % unlabeled reference failures $\mathcal{D}_{\mathrm{fail}}$, and the SVD of the
-  % stacked representations yields a spectral band $\mathcal{C}$ capturing the
-  % common mode of ordinary steps, onto which decisive errors project weakly.
-  % \emph{During localization}, the same proxy encodes the failed trajectory:
-  % each step receives the spectral base score      
-  % $\Sbase(s_t)=1/(\pi_{\mathcal{C}}(v_t)+\epsilon)$, and attention-derived 
-  % dependency weights $w_{i,t}$ propagate downstream error evidence back to the
-  % predecessors it builds on, moving the argmax of the rescored $\Stilde$ from a
-  % late symptom onto the decisive error $t^\star$; the responsible agent follows
-  % as $\hat{a}=a_{\hat{t}}$. \soap{} involves no step labels, fine-tuning, or
-  % LLM prompting. 
-  \note{New layout for the main figure. Under refinement: too much text, need more compact, avoid overlapping components.}
-  \textcolor{red}{the fonts are not proper, please avoid purely relying AI for this. characters are stitched together.} 
-  }
-\label{fig:overview}
-\vspace{-0.5cm}
-\end{figure}
+
 % Let $\mathcal{T}_t$ denote the token positions corresponding to $s_t$ in
 % $z_t$, and let $h_p^{(l)}\in\mathbb{R}^d$ be the hidden representation at
 % layer $l$ and token position $p$.
@@ -95,142 +37,330 @@ Figure~\ref{fig:overview} summarizes the method.
 
 % \note{should clarify? in practice, we trim the context by removing early steps until $z_{t}$ fits into the context limit}\textcolor{blue}{put in the appendix}
 
-\textbf{Spectral reference space.}
-We apply the same representation extraction procedure to every step in the
-reference collection $\mathcal{D}_{\mathrm{fail}}$.
+
+\section{\soap: Spectral Scoring with Attention-Guided Propagation}
+\label{sec:method}
+
+
+We introduce \soap, a framework for localizing decisive errors from
+step-unlabeled failure trajectories.
+At a high level, \soap consists of two stages.
+\textit{First}, we construct a spectral reference space from step
+representations extracted by $\proxy$ on $\mathcal{D}_{\mathrm{fail}}$ and
+derive a base error score for each step
+(\S\ref{sec:method:base}).
+\textit{Second}, we estimate soft inter-step dependencies from the attention
+patterns of $\proxy$ and propagate error evidence from anomalous downstream
+steps back to their likely upstream sources
+(\S\ref{sec:method:weights}).
+The resulting score $\Stilde(s_t)$ measures how likely step $s_t$ is to have
+introduced the failure.
+Figure~\ref{fig:overview} summarizes the framework.
+
+
+
+\subsection{Spectral Step Scoring from Unlabeled Failure Trajectories}
+\label{sec:method:base}
+
+
+Although every trajectory in $\mathcal{D}_{\mathrm{fail}}$ ends in failure,
+most individual steps remain locally valid, while failure-related steps
+constitute only a small fraction of each trajectory~\citep{whoandwhen}.
+Consequently, the representation space induced by $\proxy$ is dominated by
+recurring patterns of ordinary agent behavior, with failure-related steps
+forming a sparse, unlabeled component.
+We exploit this imbalance by spectrally decomposing the  reference
+representations and measuring how strongly each step aligns with selected
+spectral directions.
+
+
+For a trajectory $\traj=(s_1,\ldots,s_T)$, we encode each step using the task
+description $x$ and selected trajectory context associated with that step.
 Let
 $
-    M=\sum_{n=1}^{N}T_n
+    v_t\in\mathbb{R}^{d}
 $
-be the total number of reference steps.
-We stack their representations into $R=[(v_t^{(n)})^\top]_{n\in[N],\,t\in[T_n]}\in\mathbb{R}^{M\times d}$ where $v_t^{(n)}$ is representation of the $t$-th step in the $n$-th sequence or trajectory. We then compute its  singular value decomposition
+denote the resulting representation extracted by $\proxy$ for step $s_t$ (cf. Appendix~\ref{app:implementation}).
+
+
+
+\textbf{Spectral reference space.}
+We apply the representation extraction procedure to every step in
+$\mathcal{D}_{\mathrm{fail}}$, obtaining
+$v_t^{(n)}\in\mathbb{R}^{d}$ for the $t$-th step of the $n$-th reference
+trajectory.
+Let
+$
+    M_{\mathrm{ref}}
+    =
+    \sum_{n=1}^{N}T_n
+$
+denote the total number of reference steps.
+Stacking these representations row-wise gives
+$R\in\mathbb{R}^{M_{\mathrm{ref}}\times d}$.
+Let $r=\min\{M_{\mathrm{ref}},d\}$.
+We compute the compact singular value decomposition
 \begin{equation}
-    R = U\Sigma V^\top.
+\small
+    R
+    =
+    U\Sigma V^\top,
+    \qquad
+    V\in\mathbb{R}^{d\times r}.
     \label{eq:reference-svd}
 \end{equation}
-The columns of $V$ describe orthogonal directions of variation among the
-unlabeled steps, ordered by decreasing singular value. 
+The columns of $V$ define orthogonal directions in the reference
+representation space, ordered by non-increasing singular value.
+
+
+Because ordinary steps dominate $R$, the leading singular directions may
+primarily encode frequent shared structure, such as response style,
+trajectory format, and common tool-use patterns.
+Conversely, directions at the extreme tail may capture irrelevant
+variation.
+We therefore do not restrict scoring to either end of the spectrum.
+Instead, we select a contiguous spectral band
+\begin{equation}
+\small
+    \mathcal{C}
+    =
+    \{c_{\mathrm{begin}},\ldots,c_{\mathrm{end}}\},
+    \qquad
+    1
+    \leq
+    c_{\mathrm{begin}}
+    \leq
+    c_{\mathrm{end}}
+    \leq
+    r,
+    \label{eq:spectral-band}
+\end{equation}
+whose boundaries are selected as described in
+\S\ref{app:implementation}.
+
+% \textbf{Spectral reference space.}
+% We apply the same representation extraction procedure to every step in the
+% reference collection $\mathcal{D}_{\mathrm{fail}}$.
+% Let
+% $
+%     M=\sum_{n=1}^{N}T_n
+% $
+% be the total number of reference steps.
+% We stack their representations into $R=[(v_t^{(n)})^\top]_{n\in[N],\,t\in[T_n]}\in\mathbb{R}^{M\times d}$ where $v_t^{(n)}$ is representation of the $t$-th step in the $n$-th sequence or trajectory. We then compute its  singular value decomposition
+% \begin{equation}
+%     R = U\Sigma V^\top.
+%     \label{eq:reference-svd}
+% \end{equation}
+% The columns of $V$ describe dominant orthogonal directions in the
+% LLM representation space, ordered by decreasing singular value. 
 
 \begin{wrapfigure}{r}{0.35\linewidth}
 \vspace{-0.9\baselineskip}
 \centering
 \includegraphics[width=\linewidth]{{assets/qwen3.5-9b_arc_seeds-6-7-8_seed-7}.pdf}
 \vspace{-0.8cm}
-\caption{\small Base-score distribution on a \textsc{CORRECT-Error} test split. Decisive-error steps concentrate at smaller projection magnitudes than ordinary steps.}
+\caption{\small \textbf{Base-score distributions} on a \textsc{CORRECT-Error} test
+split~\citep{correct}.
+Decisive-error steps exhibit lower projection energy than ordinary steps.}
 \label{fig:score-dist}
 \vspace{-\baselineskip}
 \end{wrapfigure}
 
-Importantly, the reference set $R$ is dominated by ordinary steps because
-each failure trajectory typically contains \textit{only a small number of
-decisive errors}.
-Consequently, the leading singular directions may primarily encode
-frequent shared structure, such as  response style,
-trajectory format, and common tool-use patterns.
-Conversely, components at the extreme tail may contain irrelevant variation.
-We therefore do not assume that the most informative signal must lie in
-the leading components.
-Instead, we consider a contiguous spectral band to represent the decisive-error information
-$
-    \mathcal{C}
-    =
-    \{c_{\mathrm{begin}},\ldots,c_{\mathrm{end}}-1\},
-$ whose boundaries are selected as described in
-\S\ref{sec:experiments}.
-
-
+% Importantly, the reference set $R$ is dominated by ordinary steps because
+% each failure trajectory typically contains \textit{only a small number of
+% decisive errors}.
+% Consequently, the leading singular directions may primarily encode
+% frequent shared structure, such as  response style,
+% trajectory format, and common tool-use patterns.
+% Conversely, components at the extreme tail may contain irrelevant variation.
+% We therefore do not assume that the most informative signal must lie in
+% the leading components.
+% Instead, we consider a contiguous spectral band to represent the decisive-error information
+% $
+%     \mathcal{C}
+%     =
+%     \{c_{\mathrm{begin}},\ldots,c_{\mathrm{end}}\},
+% $ whose boundaries are selected as described in
+% % \S\ref{sec:experiments}.
+% \S\ref{app:implementation}.
+% \textcolor{red}{which precise section?} \note{cited.}
 
 \textbf{Spectral base score.}
-For a step representation $v_t$, we measure its average squared projection
-onto the selected spectral band:
+For a step representation $v_t$, we compute its average squared projection
+onto the selected spectral band and invert this quantity:
 \begin{equation}
-    \pi_{\mathcal{C}}(v_t)
+\small
+    q_{\mathcal{C}}(v_t)
     =
     \frac{1}{|\mathcal{C}|}
     \sum_{c\in\mathcal{C}}
-    \left\langle v_t,V_{:,c}\right\rangle^2.
-    \label{eq:proj}
+    \left\langle v_t,V_{:,c}\right\rangle^2,\quad
+    \Sbase(s_t)
+    =
+    \frac{1}{q_{\mathcal{C}}(v_t)+\epsilon},
+\label{eq:base-score}
 \end{equation}
+where $\epsilon>0$ ensures numerical stability.
+Because the reference spectrum is learned primarily from ordinary steps,
+decisive-error steps tend to exhibit lower projection energy within the
+selected band
+(Figure~\ref{fig:score-dist}).
+The reciprocal therefore assigns larger base scores to steps exhibiting
+stronger decisive-error evidence.
+Constructing $R$ and its spectral decomposition \textit{uses no decisive-error or
+responsible-agent annotations.}
+
+
+% \textbf{Spectral base score.}
+% For a step representation $v_t$, we first compute its average squared
+% projection onto the selected spectral band and then invert this quantity:
+% \begin{equation}
+% q_{\mathcal C}(v_t)
+% =
+% \frac{1}{|\mathcal C|}
+% \sum_{c\in\mathcal C}
+% \left\langle v_t,V_{:,c}\right\rangle^2,\quad
+% \Sbase(s_t)
+% =
+% \frac{1}{q_{\mathcal C}(v_t)+\epsilon},
+% \label{eq:base-score}
+% \end{equation}
+% where $\epsilon>0$ ensures numerical stability.
+% Because ordinary steps dominate the reference corpus, recurring patterns of
+% ordinary behavior are more strongly represented in its spectral structure.
+% Decisive-error steps therefore tend to have lower projection energy within
+% the selected band (Figure~\ref{fig:score-dist}), yielding larger base scores.
+% The reference matrix $R$ is constructed exclusively from
+% $\mathcal D_{\mathrm{fail}}$, \textit{without decisive-error or responsible-agent
+% annotations.}
 
 
 
 
-\noindent Because ordinary steps dominate the unlabeled reference corpus, decisive-error steps exhibit smaller projection magnitudes on
-the selected directions than ordinary steps (Figure~\ref{fig:score-dist}).
-We therefore define
-$ 
-S(s_t)
-=
-\frac{1}{\pi_{\mathcal C}(v_t)+\epsilon}.
-$  so that a larger score indicates stronger decisive-error
-evidence. $\epsilon>0$ is a small constant that ensures numerical stability. Note that $R$ is constructed solely from the step-unlabeled reference
-collection where \textit{no decisive-error or responsible-agent annotation is used}.
-
-
-\subsection{Dependency-aware rescoring}
+\subsection{Dependency-aware Rescoring}
 \label{sec:method:weights}
 
-\textbf{Attention-guided step dependencies.} \note{add context cutoff explanation}\textcolor{blue}{appendix} The base score in Eqn.~\ref{eq:proj} evaluates each step independently
+\textbf{Attention-guided step dependencies.} The base score in Eq.~\ref{eq:base-score} evaluates each step independently
 and therefore cannot distinguish an error source from its downstream
 consequences.
-Once a decisive error occurs, later steps may inherit the corrupted
+Once a decisive error occurs, subsequent steps may inherit the corrupted
 context and exhibit stronger failure signals than the original error.
-An earlier step is therefore more plausible as the root cause when
-subsequent anomalous steps depend strongly on it.
-To capture this structure, we construct a soft dependency graph over
-the target trajectory.
+An earlier step is therefore a more plausible root cause when anomalous
+downstream steps depend strongly on it.
+We capture this structure through a soft dependency graph over the target
+trajectory.
 
-
-
-For every pair $(i,t)$ with $i<t$, we define a non-negative coefficient
-$w_{i,t}$ that measures how strongly the later step $s_t$ depends on the
-earlier step $s_i$.
-We derive this coefficient from the post-softmax attention produced by
-$\proxy$. Specifically, we aggregate the attention routed from tokens in $s_t$ to
-tokens in $s_i$, yielding
-an attention mass $m_{i,t}$.
-We then normalize over all predecessor steps:
+For each step $s_t$, let
+$
+    \mathcal{P}_t
+    \subseteq
+    \{1,\ldots,t-1\}
+$
+denote the index set of eligible predecessor steps retained by our context
+construction.
+For each $i\in\mathcal{P}_t$, we aggregate the post-softmax attention routed
+from tokens in $s_t$ to tokens in $s_i$, yielding a non-negative attention
+mass $m_{i,t}$.
+We normalize these masses over the retained predecessors:
 \begin{equation}
+\small
     w_{i,t}
     =
-    \frac{m_{i,t}}
-         {\sum_{j<t}m_{j,t}},
-    \qquad i<t.
+    \begin{cases}
+        \displaystyle
+        \frac{m_{i,t}}
+             {\sum_{j\in\mathcal{P}_t}m_{j,t}},
+        & i\in\mathcal{P}_t,\\[1.2ex]
+        0,
+        & \text{otherwise}.
+    \end{cases}
     \label{eq:dependency-weight}
 \end{equation}
-Thus, $\sum_{i<t}w_{i,t}=1$, and $w_{i,t}$ represents the relative
-dependency of step $s_t$ on predecessor $s_i$. The resulting weights provide soft evidence about which preceding
-steps contribute to the proxy model's representation of a later step. They require neither repeated LLM prompting, which introduces
-substantial inference cost~\citep{whoandwhen,oat}, nor explicit
-dependency reconstruction through LLM-based graph reasoning
-~\citep{falat,chief}, nor task-specific post-training on attributed
-failure trajectories~\citep{agentracer,graphtracer}.
+Thus,
+$
+    \sum_{i\in\mathcal{P}_t}w_{i,t}=1
+$
+whenever $\mathcal{P}_t$ is nonempty, and $w_{i,t}$ represents the relative
+dependency of the later step $s_t$ on the earlier step $s_i$.
+The construction of $\mathcal{P}_t$ and the attention aggregation procedure
+are detailed in Appendix~\ref{app:window} and~\ref{app:implementation}, respectively. \note{revise ~\ref{app:window}}
+
+These weights provide model-internal evidence about which earlier steps
+contribute to the representation of a later step.
+Because they are obtained directly from the frozen LLM model, their
+construction requires neither repeated generative prompting, which
+introduces substantial inference cost~\citep{whoandwhen,oat}, nor explicit
+dependency reconstruction and traversal through LLM-based graph
+reasoning~\citep{falat,chief,bakish2026adaptive}, nor task-specific
+post-training on attributed failure trajectories
+~\citep{agentracer,graphtracer}.
 
 
 
 
 
 
-\textbf{Rescoring.}
-Given the dependency weights, we treat the error signal of a downstream
-step as additional evidence for the earlier steps on which it depends.
-For each step $s_i$, we compute the dependency-weighted average of the
-base scores of its downstream dependents:
+% The base score in Eqn.~\ref{eq:base-score} evaluates each step independently
+% and therefore cannot distinguish an error source from its downstream
+% consequences.
+% Once a decisive error occurs, later steps may inherit the corrupted
+% context and exhibit stronger failure signals than the original error.
+% An earlier step is therefore more plausible as the root cause when
+% subsequent anomalous steps depend strongly on it.
+% To capture this structure, we construct a soft dependency graph over
+% the target trajectory.
+
+
+
+% For every pair $(i,t)$ with $i<t$, we define a non-negative coefficient
+% $w_{i,t}$ that measures how strongly the later step $s_t$ depends on the
+% earlier step $s_i$.
+% We derive this coefficient from the post-softmax attention produced by
+% $\proxy$. Specifically, we aggregate the attention routed from tokens in $s_t$ to
+% tokens in $s_i$, yielding
+% an attention mass $m_{i,t}$.
+% We then normalize over all predecessor steps:
+% \begin{equation}
+%     w_{i,t}
+%     =
+%     \frac{m_{i,t}}
+%          {\sum_{j<t}m_{j,t}},
+%     \qquad i<t.
+%     \label{eq:dependency-weight}
+% \end{equation}
+% Thus, $\sum_{i<t}w_{i,t}=1$, and $w_{i,t}$ represents the relative
+% dependency of step $s_t$ on predecessor $s_i$. The resulting weights provide soft evidence about which preceding
+% steps contribute to the LLM model's representation of a later step. They require neither repeated LLM prompting, which introduces
+% substantial inference cost~\citep{whoandwhen,oat}, nor explicit dependency
+% reconstruction and traversal through LLM-based graph reasoning~\citep{falat,chief,bakish2026adaptive}, nor task-specific post-training on attributed
+% failure trajectories~\citep{agentracer,graphtracer}. 
+% \note{in practice, we don't use all dependencies, indicated by the hyperparameter window size $w$. refer this details in the appendix.}
+
+
+
+
+
+
+\textbf{Rescoring.} We treat the error signal of a downstream step as additional evidence for
+the earlier steps on which it depends.
+For each step $s_i$, we compute the dependency-weighted average of its downstream base
+scores:
 \begin{equation}
+\small
     B_i
     =
-    \frac{
-        \sum_{t>i}
-        w_{i,t}\,\Sbase(s_t)
-    }{
-        \sum_{t>i}w_{i,t}
-    },
-    \qquad
-    B_T=0.
+        \frac{
+            \sum_{t>i}
+            w_{i,t}\,\Sbase(s_t)
+        }{
+           \sum_{t>i}w_{i,t}
+        },
     \label{eq:backward-evidence}
 \end{equation}
-We then combine the step's local error signal with the downstream evidence attributed to it:
+In particular, $B_T=0$ because the final step has no downstream dependents. We combine the local error signal with the downstream evidence attributed to
+the step:
 \begin{equation}
+\small
     \Stilde(s_i)
     =
     \Sbase(s_i)
@@ -240,21 +370,19 @@ We then combine the step's local error signal with the downstream evidence attri
     \gamma\in[0,1].
     \label{eq:recap}
 \end{equation}
-Here, $\gamma$ controls the strength of dependency-aware rescoring, and
-$\gamma=0$ recovers the base score.
+Here, $\gamma$ controls the strength of dependency-aware rescoring, with
+$\gamma=0$ recovering the spectral base score. The normalization in Eq.~\ref{eq:backward-evidence} prevents an early step
+from receiving a large correction merely because it has many downstream
+dependents.
+Instead, downstream steps with larger dependency weights exert greater
+influence on its correction.
+Thus, an earlier step is promoted when the downstream steps that depend
+strongly on it exhibit large base error scores.
 
-The normalization in Eqn.~\ref{eq:backward-evidence} produces a
-dependency-weighted average, which prevents an early or frequently attended step from receiving a
-large correction merely because it has many downstream steps.
-Instead, a step is promoted when the later steps that depend on it
-consistently exhibit strong failure signals.
-Conversely, an anomalous downstream step contributes little evidence to
-a predecessor on which it places little dependency weight.
-
-
-Finally, we predict the decisive-error step and the corresponding
-responsible agent as
+Finally, we predict the decisive-error step and corresponding responsible
+agent as
 \begin{equation}
+\small
     \hat{t}
     =
     \arg\max_{i\in\{1,\ldots,T\}}
@@ -265,6 +393,62 @@ responsible agent as
     a_{\hat{t}}.
     \label{eq:prediction}
 \end{equation}
+
+
+
+% Given the dependency weights, we treat the error signal of a downstream
+% step as additional evidence for the earlier steps on which it depends.
+% For each step $s_i$, we compute the dependency-weighted average of the
+% base scores of its downstream dependents:
+% \begin{equation}
+%     B_i
+%     =
+%     \frac{
+%         \sum_{t>i}
+%         w_{i,t}\,\Sbase(s_t)
+%     }{
+%         \sum_{t>i}w_{i,t}
+%     },
+%     \qquad
+%     B_T=0.
+%     \label{eq:backward-evidence}
+% \end{equation}
+% We then combine the step's local error signal with the downstream evidence attributed to it:
+% \begin{equation}
+%     \Stilde(s_i)
+%     =
+%     \Sbase(s_i)
+%     +
+%     \gamma B_i,
+%     \qquad
+%     \gamma\in[0,1].
+%     \label{eq:recap}
+% \end{equation}
+% Here, $\gamma$ controls the strength of dependency-aware rescoring, and
+% $\gamma=0$ recovers the base score.
+
+% The normalization in Eqn.~\ref{eq:backward-evidence} produces a
+% dependency-weighted average, which prevents an early or frequently attended step from receiving a
+% large correction merely because it has many downstream steps.
+% Instead, a step is promoted when the later steps that depend on it
+% consistently exhibit strong failure signals.
+% Conversely, an anomalous downstream step contributes little evidence to
+% a predecessor on which it places little dependency weight.
+
+
+% Finally, we predict the decisive-error step and the corresponding
+% responsible agent as
+% \begin{equation}
+%     \hat{t}
+%     =
+%     \arg\max_{i\in\{1,\ldots,T\}}
+%     \Stilde(s_i),
+%     \qquad
+%     \hat{a}
+%     =
+%     a_{\hat{t}}.
+%     \label{eq:prediction}
+% \end{equation}
 
 
 

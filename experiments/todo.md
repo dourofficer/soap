@@ -5,7 +5,7 @@ anchor configs, procedure, and cost. Agreed 2026-08-13; revised 2026-08-17 (cove
 naming, orientations, grids, A7 re-selection); 2026-08-23 (B1 baseline rows);
 2026-08-25 (E2 concretized on the gathered synthetic corpora); 2026-08-27 (S1 scalability
 planned); 2026-09-03 (B2 open-backbone prompting rows); 2026-09-06 (B3 ErrorProbe,
-paper mode). The two main experiments fill
+paper mode); 2026-09-07 (B3 GPT-4o row). The two main experiments fill
 `fig:transfer` and `tab:synth`; the seven ablations fill `tab:scorefn`, `tab:weights`,
 `tab:position`, `tab:attnsel`, `fig:gamma`, `fig:layers`, `fig:datasize`; S1 fills
 `fig:scale`.
@@ -1113,6 +1113,155 @@ coincide with the Table-1 number.
   diagnoser", which names the truncated mode, not the reported paper pipeline.
   Appendix (std/agent tables, `tab:gt-full`, GPT-5, `app:baselines` prose) still
   lacks ErrorProbe entirely, as before.
+- **GPT-4o landed — 2026-09-07.** The paper-mode run now covers the GPT-4o
+  judge too (full decode budget; still no truncated/backward GPT-4o runs):
+  without GT all five subsets, with GT WW + TE (no CE). Scored the same way;
+  zero missing and zero null-step predictions. Step acc %:
+
+  | gpt-4o, paper mode | WW-AG | WW-HC | CE | TE-Cap | TE-Mag |
+  |---|---|---|---|---|---|
+  | without GT | 38.62 | 21.84 | 59.52 | 27.13 | 28.26 |
+  | with GT | 34.92 | 28.74 | — | 30.23 | 26.81 |
+
+  Manuscript edit — APPLIED 2026-09-07: `tab:main`'s GPT-block ErrorProbe row
+  filled (was `\PH`). With RAFFLES dropped from the comparison (2026-09-06),
+  ErrorProbe is best on all five columns of that block, so the block now
+  carries full markers (seconds: CHIEF WW-AG/WW-HC, Step-by-Step CE,
+  All-at-Once TE-Cap, CORRECT TE-Mag), computed against the PRINTED rows — the
+  kept pre-reconciliation numbers; see the RAFFLES discrepancy note in
+  `documents/main.md`. `tab:main-gt` untouched (a Qwen-judge table); the with-GT
+  GPT-4o cells await `app:gt`. Newly stale prose: the main-comparison
+  paragraph's example "47.62 vs 35.98 for RAFFLES" now cites a dropped row —
+  the strongest GPT prompt-based method is ErrorProbe at 38.62.
+
+## Datasets
+
+### D1 — AgenTracer TracerTraj-code (`agentracer/code`)  `[GPU]`  — NUMBERS DONE 2026-09-07; FOUND TO BE AN ARTIFACT 2026-09-10 — do not report
+
+- [x] **Target.** A fourth benchmark: the code split of AgenTracer's TracerTraj test
+  set (Zhang et al., "AgenTracer: Who Is Inducing Failure in the LLM Agentic
+  Systems?"). Numbers first, wiring later: `results-nogt/agentracer/` and
+  `results-gt/agentracer/` are populated and verified; nothing reaches `tables/`
+  or the manuscript yet, and the manuscript label is undecided (`AT-Code` is the
+  candidate; note `make_main_tables.py` already reserves an `AgenTracer` ROW for
+  the AgenTracer-8B *method*, so the dataset needs a distinct name).
+- **Data.** 127 trajectories, 2,642 steps (mean 20.8, min 2, max 151), from a
+  MetaGPT-style software team (Team Leader, Product Manager, Architect, Engineer,
+  Data Analyst). Downloaded from `github.com/bingreeky/AgenTracer/data/
+  tracertraj-code-test.parquet` and converted by `scripts/build_agentracer.py`
+  (`name` -> `role`, per-turn `step` counter dropped, labels copied verbatim and
+  asserted: `history[mistake_step]["role"] == mistake_agent` for 127/127).
+  `data/agentracer/_provenance.json` records the rest. Two properties matter:
+  the **errors are injected** (one agent turn perturbed per trajectory) rather than
+  naturally occurring, and **only the test split is public** — the repo ships no
+  train parquet — so the reference split comes from these 127, like every other
+  subset. Three of 127 are degenerate: two trajectories have 2 steps, one has its
+  error at step 0 (no predecessors, so rescoring cannot lift it).
+- **Scope.** Both backbones, both GT settings, SOAP only (base score plus the
+  three strategies). No prompting baselines, no API spend. The with-GT block here
+  is the full problem statement plus a reference Python solution: 456 tokens mean,
+  1,123 max on the Qwen3.5 tokenizer, against ~83 for WW-AG and TE-Cap. Because
+  the block is pinned, truncation drops real predecessor turns to fit it.
+- **Splits.** 30/20/50 -> 37 / 26 / 64 trajectories; test accuracy is quantized to
+  1/64 = 1.6 points. Triples chosen by the standard sweep — 48 triples (seeds 1-50),
+  `pick_triple.py`, frozen by `sync_seeds.py --write`; `--rule sum` and `--rule
+  sum-diff` agree — NOT hand-picked, unlike the five reported subsets:
+
+  | Arm | Triple | margin over runner-up | runners-up |
+  |---|---|---|---|
+  | without GT | 20, 21, 22 | 0.021 | 47, 16, 46 |
+  | with GT    | 15, 16, 17 | 0.010 | 46, 16, 47 |
+
+  Worst-to-best across the 48 triples spans 0.59 -> 0.85 (summed backprop step
+  accuracy over both backbones), so the seeds matter as much as on the other
+  datasets; read the margins as "a pick", not "the pick".
+- **Procedure.** `python -m main extract` for both configs (no `outputs/` tree
+  exists to seed from) -> `scripts/check_gt_parity.py --dataset agentracer --roots
+  results` (new flag; passes file-for-file and step-for-step) ->
+  `scripts/main/sweep_triples.py --datasets agentracer --plan agentracer:1-50`
+  (96 units) -> `collect.py --force` -> `pick_triple.py` -> `sync_seeds.py --write`
+  -> `main sweep` + `select` + `reproduce --row backprop` on both configs ->
+  `check_sweep_repro.py` (48/48 cells reproduce).
+- **Cost.** Extraction 4 GPU-hours on H200s: DeepSeek-8B 38 min per arm, Qwen3.5-9B
+  82 min per arm, run four-way in parallel; 4 GB on disk. Triple sweep ~1 h on four
+  GPUs with 12 workers (three per GPU triple the per-unit time; `UNIT_COST` says
+  150 s for one worker per GPU). Reported run: minutes.
+- **Results** — step@1 on test, mean over the frozen triple (per-seed sd for
+  backprop in brackets), `results-{nogt,gt}/agentracer/select/selection.tsv`:
+
+  | Arm | Backbone | SVD (base) | backprop | succ-strong | succ-near |
+  |---|---|---|---|---|---|
+  | without GT | Qwen3.5-9B   | 33.33 | **42.71** (sd 2.7) | 41.15 | 40.10 |
+  | without GT | DeepSeek-8B  | 38.54 | 42.71 (sd 3.2) | **43.75** | 43.23 |
+  | with GT    | Qwen3.5-9B   | 33.33 | **45.31** (sd 3.8) | 44.79 | 44.79 |
+  | with GT    | DeepSeek-8B  | 35.42 | **43.75** (sd 5.1) | 43.75 | 43.23 |
+
+  Rescoring lifts the base score by 4-12 points in every cell, and the with-GT
+  arm adds 1-3 more. Random step@1 is ~4.8 % (1/20.8). Agent@1 is 81-87 %, but
+  the Engineer owns 92 of the 127 decisive errors, so always-guess-Engineer already
+  scores ~72 %; step@1 is the only informative headline here.
+- **2026-09-10 audit — the SOAP number is a structural artifact, not error detection.**
+  Prompted by every baseline in `../attrib-prompting` (`tracertraj`, byte-aligned with
+  this corpus) scoring near random on the same frozen splits (best: CORRECT/Qwen 16.7,
+  RAFFLES 12.5; SOAP 42.7). Findings, all on the no-GT frozen test splits:
+  1. **58 % of gold turns (74/127) are scaffold dumps** — the MetaGPT prompt template
+     (`# Past Experience / # Tool State / # Current Plan`, "No Plan", "Open file:
+     None") with no code and no decision — while `mistake_reason` describes a code
+     change that appears in the NEXT turn (`history[L+1]`, same agent in 122/127).
+     The label sits on the prompt turn preceding the faulty action. In 50/127 that
+     turn is also the trajectory's first handoff away from the Team Leader.
+  2. **SOAP hits only those.** Qwen backprop: 68.5 % on scaffold-gold, **0.0 %** on
+     action-gold; DeepSeek 64.7 / 6.8. SOAP/Qwen predicts a scaffold turn 99.5 % of
+     the time, an agent's first turn 92 %, the first handoff 86 %. The zero-parameter
+     rule "predict the first handoff turn" scores **41.7 %**, equal to SOAP's 42.7.
+     This is why `embed` was selected: a new role name and an empty template are a
+     lexical novelty, visible before any attention.
+  3. **The baselines localise the faulty action and are penalised for it.** Under
+     action-aligned labels (gold+1 when gold is a scaffold): RAFFLES/Qwen 54.7,
+     ErrorProbe/Qwen 38.5, RAFFLES/DeepSeek 37.5 — SOAP 0.0 / 3.1. Within ±1 step,
+     RAFFLES/Qwen 58.9 vs SOAP 52.1. The "one step late" pattern noted on 09-10 is the
+     judges being right about the content and the label being on the template turn.
+  4. Baseline evaluation artifact, agent level only: judges answer with MetaGPT
+     persona names (Alex = Engineer, Alice = Product Manager, Mike = Team Leader,
+     Bob = Architect, David = Data Analyst) and `_resolve_agent` cannot map them to
+     roles; DeepSeek All-at-Once agent@1 8.7 -> 50.4 with the map. step@1 unaffected.
+     Not run for this corpus: GPT-4o/GPT-5 judges, `errorprobe_paper`, the weak judge.
+  5. **Root cause, from AgenTracer's own pipeline (2026-09-10; `MetaGPT/Who_When_Data_
+     Pipeline/attack_monitor.py`, `universal_framework.py:1046-1068`).** The failure is
+     a PROMPT INJECTION: at the first "think step" after a detected pre-attack turn, a
+     "CRITICAL SECURITY ALERT ... REQUIRED IMPLEMENTATION" block is prepended to the
+     agent's prompt (`PromptInjectionInterceptor._modify_prompt`); `mistake_step` is
+     that step number and `mistake_agent` the name logged at it. The injected text is
+     NOT kept in the stored history (markers in 1/127 trajectories, none at the label),
+     so the labelled turn's content is the ORIGINAL prompt-template dump; the agent's
+     compliant, faulty response lands in the following entry. `scripts/
+     build_agentracer.py` is faithful — 2,642/2,642 turns identical to the parquet,
+     `step` == list index throughout — the offset is the benchmark's convention.
+  Verdict: unusable as a SOAP benchmark under its shipped labels. If it is ever used,
+  relabel to the action turn first (then SOAP must be re-selected from scratch — its
+  current configs encode the artifact) and treat the sweep below as void. The
+  numbers that follow are kept as the record of what was measured.
+- **Three things to know before reporting these** (written 2026-09-07, before the audit).
+  1. **The selected position is `embed` in 3 of 4 cells** (the token-embedding
+     layer, before any attention), with DeepSeek without-GT on `act/29`. On the
+     five reported subsets the picks are mid-to-late layers. An injected error is
+     a surface edit of one turn, and a bag-of-embeddings signal is enough to see
+     it — consistent with the injected-error caveat, and a reason not to read
+     this corpus as a peer of Who&When.
+  2. **Validation accuracy sits 10-15 points below test** (e.g. Qwen without-GT:
+     test 42.7, val 30.8). Test selection is the protocol everywhere, but the gap
+     is wider here than on the reported subsets, so a switch to val-selection
+     would move these cells more than the others.
+  3. Selected rescoring configs: without GT Qwen `embed[9,18)`, layers 2-4,
+     gamma 1.0, w 2; DeepSeek `act/29[4,7)`, layers 24-32, gamma 0.8, w all.
+     With GT Qwen `embed[6,15)`, layers 2-4, gamma 1.0, w 2; DeepSeek
+     `embed[7,20)`, layers 16-24, gamma 0.8, w 1.
+- **Wiring, when wanted** (out of scope now, all hardcoded lists): `COLUMNS` in
+  `scripts/tables/make_main_tables.py`, `make_appendix_tables.py` (+ its `ds_of`
+  map), `open_backbone_rows.py`, `dataset_stats.py`; `scripts/prompting/
+  evaluate.py` `DATASETS`/`COLUMNS` and `verify.py` `CORPUS`; the sibling repo's
+  corpus copy and per-baseline configs if prompting baselines are ever run; then
+  `tab:main`/`tab:main-gt` and the appendix mirrors by hand.
 
 ## Deferred (in the plan, blocked on inputs)
 
@@ -1127,6 +1276,8 @@ coincide with the Table-1 number.
   the open GPU item.
 - **Baseline rows**: AgenTracer, GraphTracer (dashes in Tables 1–2). OAT and
   StepFinder are scored under B1; RAFFLES landed with the prompting rows.
+  AgenTracer's own test data is now public and staged as `data/agentracer/`
+  (D1); the AgenTracer-8B tracer itself is still not run.
 - **With-GT SOAP adaptation**: announced in Setup, not yet described or planned here.
 
 ## Execution order
@@ -1139,11 +1290,15 @@ coincide with the Table-1 number.
 5. **S1** — DONE 2026-08-28 (extract 14B ∥ 27B into `results-nogt/ww/` → sweep
    + `select --force` → merged with the prefilled baseline rows into
    `results-ablations/s1_scale.tsv`; figure and manuscript edits still pending).
+6. **D1** — NUMBERS DONE 2026-09-07 (extract both arms → parity → 96-unit triple
+   sweep → pick + freeze → reported run; no table or manuscript wiring).
 
-Environment note: the venv's torchvision/torchaudio are compiled against a different
-torch and crash transformers' lazy imports; `a1_scorefn.py --stage nll` blocks both
-modules before importing (`sys.modules[...] = None`). Fix the venv if extraction is
-ever needed elsewhere.
+Environment note: the venv's torchvision/torchaudio were compiled against a different
+torch and crashed transformers' lazy imports; `a1_scorefn.py --stage nll` blocks both
+modules before importing (`sys.modules[...] = None`). FIXED 2026-09-07: torchvision
+-> 0.28.0+cu130, torchaudio uninstalled (no cu130 build exists for torch 2.13; the
+cu130 index would downgrade torch to get one). `main extract` now runs unmodified;
+the a1 workaround is harmless and can stay.
 
 ## Manuscript edits this plan implies — APPLIED 2026-08-18 on user request
 

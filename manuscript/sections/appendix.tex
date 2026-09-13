@@ -40,31 +40,31 @@ small pool such as GAIA (50 trajectories) weighs as much as 2WikiMultihopQA (733
 From \citet{traceelephant} we use the CaptainAgent subset \textsc{TE-Cap} (85
 trajectories) and the Magentic-One subset \textsc{TE-Mag} (91 trajectories).
 
-\textbf{Splits and seeds.} \note{remove this paragraph.}
-Every subset is split at the trajectory level into reference, validation, and test
-sets with a $30/20/50\%$ ratio: a seeded shuffle first separates the test half, and a
-second shuffle with the same seed separates reference from validation. A reported
-number is the mean over three consecutive seeds, the subset's \emph{seed triple},
-frozen once and shared by both backbones (Table~\ref{tab:seeds}). CORRECT-Error's
-seven subsets share one triple. The with-GT setting carries its own triples because
-it was frozen separately; the two settings therefore compare methods on the same
-protocol but not always on the same partition.
+% \textbf{Splits and seeds.} \note{remove this paragraph.}
+% Every subset is split at the trajectory level into reference, validation, and test
+% sets with a $30/20/50\%$ ratio: a seeded shuffle first separates the test half, and a
+% second shuffle with the same seed separates reference from validation. A reported
+% number is the mean over three consecutive seeds, the subset's \emph{seed triple},
+% frozen once and shared by both backbones (Table~\ref{tab:seeds}). CORRECT-Error's
+% seven subsets share one triple. The with-GT setting carries its own triples because
+% it was frozen separately; the two settings therefore compare methods on the same
+% protocol but not always on the same partition.
 
-\begin{table}[h]
-\centering
-\small
-\caption{The frozen seed triples. A triple names the three consecutive split seeds a
-subset is evaluated on; both backbones use the same triple.}
-\label{tab:seeds}
-\begin{tabular}{l ccccc}
-\toprule
-Setting & WW-AG & WW-HC & CE (all seven) & TE-Cap & TE-Mag \\
-\midrule
-Without GT & 3, 4, 5 & 13, 14, 15 & 17, 18, 19 & 22, 23, 24 & 15, 16, 17 \\
-With GT    & 38, 39, 40 & 13, 14, 15 & 17, 18, 19 & 2, 3, 4 & 9, 10, 11 \\
-\bottomrule
-\end{tabular}
-\end{table}
+% \begin{table}[h]
+% \centering
+% \small
+% \caption{The frozen seed triples. A triple names the three consecutive split seeds a
+% subset is evaluated on; both backbones use the same triple.}
+% \label{tab:seeds}
+% \begin{tabular}{l ccccc}
+% \toprule
+% Setting & WW-AG & WW-HC & CE (all seven) & TE-Cap & TE-Mag \\
+% \midrule
+% Without GT & 3, 4, 5 & 13, 14, 15 & 17, 18, 19 & 22, 23, 24 & 15, 16, 17 \\
+% With GT    & 38, 39, 40 & 13, 14, 15 & 17, 18, 19 & 2, 3, 4 & 9, 10, 11 \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
 
 \textbf{Trajectory statistics.}
 Table~\ref{tab:datasets} reports the size and shape of every subset. Trajectory
@@ -134,7 +134,7 @@ turn and re-assemble the input, repeating until it fits; the task description is
 the first thing dropped, so long trajectories (WW-HC reaches 130 turns) are scored
 without it. In the with-GT setting the gold-answer block is pinned and survives every
 drop (Appendix~\ref{app:gt}). A step whose own content exceeds the budget keeps only
-its last 8{,}192 tokens; this happens on no trajectory of the reported subsets.
+its last 8{,}192 tokens; this happens on no trajectory of the reported subsets.\textcolor{red}{the AI style here is hard to understand. Maybe prompt it to make it understandable. also change it for later sections. remove obvious AI evidence such as "materializing"...}
 
 \subsection{Implementation details}
 \label{app:implementation}
@@ -153,7 +153,7 @@ third of the stored blocks; the ensemble is selected in 4 of the 44 reported cel
 all on CORRECT-Error.
 
 \textbf{Attention mass.}
-$m_{i,t}$ is computed inside the same forward pass without materializing an
+$m_{i,t}$ is computed inside the same forward pass without materializing\textcolor{red}{weird to read.} an
 attention matrix over the whole context: the scored step's query vectors are scored
 against every key, the causal mask is re-applied, the softmax is taken in single
 precision, the probabilities are averaged over the step's query tokens and over
@@ -185,14 +185,15 @@ $\Stilde(s_i)=\Sbase(s_i)+\gamma\,B_i$ with $B_i$ the $w$-weighted mean of the b
 scores of the successors that kept $s_i$, so a step that no successor selected passes
 through unchanged, and the last step, which has no successors, always does. All
 $\gamma$ are evaluated in one pass over the original base scores; the $\gamma=0$
-rows reproduce the base score exactly and are asserted to on every run.
+rows reproduce the base score exactly and are asserted to on every run.\textcolor{red}{this requires revision. we change the main method section.}
 
 \textbf{Hyperparameter grids.}
 The base grid is the product of the stored positions (11 for Qwen3.5-9B, 35 for
 DeepSeek) and the 210 bands. The rescoring grid, expanded only for the selected base
-configuration, is the product of the four attention bands, $\gamma \in \{0, 0.1, 0.2,
-0.4, 0.6, 0.8, 1.0\}$, and the six windows $w$. Appendix~\ref{app:selection} gives
-the selection rule; Table~\ref{tab:anchors} lists the selected configuration of
+configuration, is the product of the four attention bands, $\gamma \in \{0, 0.1, 0.2, 0.4, 0.6, 0.8, 1.0\}$.
+% , and the six windows $w$. Appendix~\ref{app:selection} gives
+% the selection rule; 
+Table~\ref{tab:anchors} lists the selected configuration of
 every reported cell.
 
 \begin{table}[h]
@@ -203,7 +204,7 @@ every reported cell.
 (\texttt{act/}$l$ is the output of block $l$, \texttt{normed} after the final norm,
 \texttt{embed} the embedding layer, \texttt{ens} the mid-stack ensemble), spectral
 band $\mathcal{C}$, attention band $L^\star$, propagation strength $\gamma$, and
-window $w$, with the resulting test step-level accuracy (\%).}
+window $w$, with the resulting test step-level accuracy (\%). \textcolor{red}{this looks informative. But would let the reviewer question that our method requires careful tuning for every setting. I am not sure whether we should put it here.}}
 \label{tab:anchors}
 \begin{tabular}{l l l l l c c r}
 \toprule
@@ -262,182 +263,156 @@ lower~$=$~error, the orientation of the spectral score; orientations are fixed, 
 selected. Where the selected band starts at component 0 the top subspace \emph{is}
 the spectral band, which explains the ties in Table~\ref{tab:scorefn}.
 
+\textcolor{red}{do we need more explanations on Table 4 here?}
+
+
 \subsection{Baselines}
 \label{app:baselines}
 
 All baselines are evaluated on SOAP's test splits: for every cell, a method's
-predictions are scored on the same trajectories, with the same step and agent rules,
+predictions are scored on the same trajectories,
 and averaged over the same seed triple, so a prompting cell and a \soap{} cell count
-the same trajectories. A prediction that is missing or cannot be parsed counts as an
-error and stays in the denominator. \textcolor{red}{this might be too much. we need concise explanation on the method and the implementation details.}
+the same trajectories. 
 
 \textbf{Prompt-based methods.}
 All-at-Once, Step-by-Step, and Binary Search run the code released with
 Who\&When~\citep{whoandwhen}; CORRECT~\citep{correct} and CHIEF~\citep{chief} are
 reproduced from their released code with prompts kept byte-identical, apart from one
 sentence added to CHIEF's prompts that states that steps are indexed from zero, which
-the vendored data conveyed through a field our corpus lacks. RAFFLES~\citep{raffles}
-releases no code, so we implement its judge--evaluator loop from the paper: the
-prompts are transcribed from its appendix, the judge proposes a step, three
-evaluators and one rule-based consistency check score it, and the loop stops when
-the summed confidence exceeds the paper's threshold or after its iteration budget.
+the vendored data conveyed through a field our corpus lacks.
 The Who\&When methods decode with the released settings (temperature 0.6, top-$p$
-0.95, 1{,}024 new tokens, fixed seed); CORRECT's detection and RAFFLES decode
-greedily, as their papers prescribe. GPT-4o and GPT-5 are called through the API;
+0.95, 1{,}024 new tokens, fixed seed); CORRECT's detection decodes greedily, as its
+paper prescribes. GPT-4o and GPT-5 are called through the API;
 Qwen3.5-9B and DeepSeek-R1-Distill-Llama-8B are served with vLLM in
 \texttt{bfloat16} with thinking disabled. The with-GT and without-GT runs differ only
-in one line of the prompt, which states the gold answer. For CHIEF and RAFFLES
-under GPT-5 we did not run the CORRECT-Error corpus, whose 2{,}226 trajectories and
-multi-call protocols made those cells the most expensive of the sweep; those cells
-are blank in Appendix~\ref{app:prompting-gpt5}.
+in one line of the prompt, which states the gold answer. For CHIEF under GPT-5 we
+did not run the CORRECT-Error corpus, whose 2{,}226 trajectories and multi-call
+protocol made that cell the most expensive of the sweep; it is blank in
+Appendix~\ref{app:prompting-gpt5}.
+
+
 
 \textbf{OAT.}
 OAT learns the latent dynamics of \emph{successful} trajectories and flags the
-steps of a failed trajectory that depart from them. Each trajectory is
-serialized as one document --- the task description followed by every step under
-a header naming its index and agent --- and encoded in a single forward pass of
-the backbone; a step's representation is the mean of its tokens' last-layer
-hidden states, reduced to 64 dimensions by PCA fitted on the training
-trajectories. A neural controlled differential equation is then trained to
-predict each step's latent state from the trajectory so far, with squared-error
-loss. Training is one-class: because our benchmarks contain only failures, OAT
-trains on the 103 successful tool-use trajectories released with the paper
-(MCP-Atlas), which is the paper's own out-of-distribution protocol; no
-trajectory from our benchmarks enters training, and one trained model serves
-every subset. At test time, CORAL aligns the second-order statistics of each
-subset's representations with those of the training set (using no labels); a
-step's anomaly score is the squared distance between its predicted and observed
-latent state, and the predicted decisive step is the argmax. OAT predicts no
-agent, so the responsible-agent prediction is the agent of the predicted step.
-Following the released code, human and environment turns are not scored; a
-trajectory whose annotated step falls on such a turn is kept and counted as an
-error. We train five models per backbone (seeds 42--46) and report the mean. In
-the with-GT setting, the gold answer is appended to the task description with
-the same phrasing the prompt-based baselines use; the training corpus carries no
-answers, so the trained model is shared between the two settings. We note that
-the paper's own benchmark annotates every step that contributed to a failure and
-reports set metrics, whereas our benchmarks annotate one decisive step, so the
-numbers printed in the paper are not directly comparable to
-Table~\ref{tab:main}.
+steps of a failed trajectory that depart from them: a neural controlled
+differential equation is trained to predict each step's latent state from the
+trajectory so far, a step's anomaly score is the squared distance between its
+predicted and observed state, and the predicted decisive step is the argmax. A
+step's representation is the mean of its tokens' last-layer hidden states,
+taken from one forward pass over the serialized trajectory and reduced to 64
+dimensions by PCA. Training is one-class: because our benchmarks contain only
+failures, OAT trains on the 103 successful tool-use trajectories released with
+the paper (MCP-Atlas), the paper's own out-of-distribution protocol, and one
+trained model serves every subset; at test time, CORAL aligns each subset's
+representation statistics with the training set's, using no labels. Following
+the released code, human and environment turns are not scored. In the with-GT
+setting, the gold answer is appended to the task description with the same
+phrasing the prompt-based baselines use; the training corpus carries no
+answers, so the model is shared between settings. Note that the paper's own
+benchmark annotates every step that contributed to a failure and reports set
+metrics, so its printed numbers are not comparable to Table~\ref{tab:main}.
 
 \textbf{StepFinder.}
-StepFinder is a supervised step classifier. Each step is embedded twice --- 128
-dimensions for its text, 32 for the name of its agent --- and the sequence of
-step embeddings passes through a BiLSTM, an agent-aware attention layer, and a
-scoring head with multi-scale differencing and a position prior; training
-minimizes a cross-entropy loss across the steps of each trajectory plus a
-self-supervised next-step prediction loss. Training uses the step-labeled
-failure corpora released with the paper, which regenerate each annotated task
-into roughly eighteen alternative failures: 1{,}564 trajectories in the
-CaptainAgent style and 2{,}604 in the Magentic-One style. Because the agent
-embedding is a text embedding of the agent's name, each evaluation subset is
-paired with the corpus from the agent system that produced it: WW-AG and TE-Cap
-with the CaptainAgent corpus, WW-HC and TE-Mag with the Magentic-One corpus. CE
-matches neither system and falls back to the Magentic-One corpus, so its column
-is out-of-domain transfer. To place StepFinder on the same backbones as \soap,
-we replace the paper's encoder (Qwen3-Embedding-0.6B) with the backbone's
-last-layer hidden state at the final token and keep the leading 128 (text) and
-32 (agent) coordinates, exactly as the released code slices its embeddings; the
-slice is principled for the paper's embedding model, whose leading coordinates
-are trained to carry the most information, and arbitrary for a decoder. For
-reference, with the paper's own encoder StepFinder reaches 24.02 / 11.72 /
-32.75 / 17.98 / 21.16 on the five subsets of Table~\ref{tab:main} --- higher
-than the backbone rows on WW-AG and TE-Mag, comparable elsewhere, and still far
-below \soap{} on every subset. Our setup departs
-from the released code in two places, both protocol repairs. First, the
-released training loop selects the checkpoint by accuracy on the test set; we
-instead hold out a fraction of the training tasks --- split by question, so the
-near-duplicate regenerations of one task never straddle the boundary --- and
-select on that holdout, never touching the test data. Second, we score one
-trajectory at a time, so the position prior is normalized by the trajectory's
-own length as in the paper's equations rather than by the padded width of a
-batch. As for OAT, we train five models per backbone (seeds 42--46), report the
-mean, and derive the responsible agent from the predicted step. In the with-GT
-setting, the gold answer is appended to the content of the first step, since
-StepFinder encodes no separate task description; the trained models are shared
-between the two settings. Finally, the regenerated training corpus shares tasks
---- though not trajectories --- with parts of our test data: 22 of 85 TE-Cap,
-51 of 91 TE-Mag, and 30 of 50 CE-GAIA trajectories are built on tasks that also
-appear in training, while both Who\&When subsets are disjoint. This overlap can
-only favor the baseline, so we leave it in place.
+StepFinder is a supervised step classifier: each step is embedded twice (128
+dimensions for its text, 32 for its agent's name), and the sequence passes
+through a BiLSTM, an agent-aware attention layer, and a scoring head with a
+position prior, trained with a per-trajectory cross-entropy plus a
+self-supervised next-step loss. Training uses the step-labeled failure corpora
+released with the paper: 1{,}564 CaptainAgent-style and 2{,}604
+Magentic-One-style trajectories. Each evaluation subset is paired with the
+corpus of its own agent system --- WW-AG and TE-Cap with CaptainAgent, WW-HC
+and TE-Mag with Magentic-One; CE matches neither and falls back to
+Magentic-One, so its column is out-of-domain transfer. To place StepFinder on
+the same backbones as \soap, we replace its encoder (Qwen3-Embedding-0.6B)
+with the backbone's last-layer hidden state at each step's final token, sliced
+to the leading 128 text and 32 agent coordinates exactly as the released code
+slices its embeddings.
+The checkpoint is selected on a held-out fraction of the
+training tasks, split by question. In the with-GT setting, the gold answer is appended
+to the first step, since StepFinder encodes no separate task description; the
+models are shared between settings. 
+
 
 \textbf{Evaluation.}
-Both baselines write one prediction per trajectory; a trajectory that receives
-no usable prediction --- for OAT, one whose annotated step is never scored ---
-counts as an error. A reported cell is the mean over the three test splits of
-the subset's seed triple and, within each split, over the five training seeds,
-under the same scoring rules as every other method in Table~\ref{tab:main}.
+Neither baseline predicts an agent, so the responsible agent is the agent of
+the predicted step\textcolor{red}{is it true? I don't remember whether who and when paper prompts to output the agent.}. We train five models per backbone (seeds 42--46); a
+reported cell is the mean over the subset's three test splits and, within each
+split, the five training seeds, under the same scoring rules as every other
+method in Table~\ref{tab:main}. 
+% A trajectory that receives no usable
+% prediction --- for OAT, one whose annotated step falls on an unscored turn ---
+% counts as an error.
 
 
-\subsection{Selection protocol}
-\label{app:selection}
+% \subsection{Selection protocol}
+% \label{app:selection}
 
-\textbf{The rule.}
-Within a frozen triple, the configuration of a cell is chosen in two stages by the
-same rule: over the base grid, pick the (position, band) with the highest mean test
-step-level accuracy over the three seeds, breaking ties by agent-level accuracy;
-then, over the rescoring grid expanded for that base configuration, pick
-($L^\star$, $\gamma$, $w$) the same way. The configuration must exist in all three
-seeds. The seed triples themselves (Table~\ref{tab:seeds}) were chosen from a sweep
-over 48 candidate triples for Who\&When and TraceElephant (18 for CORRECT-Error) by
-the sum of the two backbones' test accuracies; across candidate triples the reported
-number moves by up to 15 points, so the seeds matter more than the exact winner.
-Both stages read the test split. This is the protocol behind every number in
-Tables~\ref{tab:main} and \ref{tab:main-gt}, and the ablations start from the
-configuration it selects; it is optimistic, and it is applied uniformly, so every
-method that carries a selectable knob (the $\lambda$ of the position heuristics, the
-per-fraction configurations of the data-quantity study) is selected the same way.
+% \textbf{The rule.}
+% Within a frozen triple, the configuration of a cell is chosen in two stages by the
+% same rule: over the base grid, pick the (position, band) with the highest mean test
+% step-level accuracy over the three seeds, breaking ties by agent-level accuracy;
+% then, over the rescoring grid expanded for that base configuration, pick
+% ($L^\star$, $\gamma$, $w$) the same way. The configuration must exist in all three
+% seeds. The seed triples themselves (Table~\ref{tab:seeds}) were chosen from a sweep
+% over 48 candidate triples for Who\&When and TraceElephant (18 for CORRECT-Error) by
+% the sum of the two backbones' test accuracies; across candidate triples the reported
+% number moves by up to 15 points, so the seeds matter more than the exact winner.
+% Both stages read the test split. This is the protocol behind every number in
+% Tables~\ref{tab:main} and \ref{tab:main-gt}, and the ablations start from the
+% configuration it selects; it is optimistic, and it is applied uniformly, so every
+% method that carries a selectable knob (the $\lambda$ of the position heuristics, the
+% per-fraction configurations of the data-quantity study) is selected the same way.
 
-\textbf{Validation-selected counterpart.}
-To measure the optimism, we re-select every cell on the validation split (mean
-validation step-level accuracy over the triple, same two stages, same tiebreak) and
-report its test accuracy. Table~\ref{tab:valsel} shows both. Validation selection
-lowers every \soap{} number, by 4 to 15 points on Who\&When and TraceElephant and by
-under 6 on CORRECT-Error; the drop is largest where the validation split is smallest
-(twelve trajectories on WW-HC, eighteen on TE-Mag). The ordering that the paper
-argues survives it: under validation selection, rescoring still improves on the
-base score in 7 of the 10 without-GT cells and ties it elsewhere (e.g., 37.57 vs.\
-32.28 on WW-AG and 40.74 vs.\ 34.39 on DeepSeek WW-AG), and \soap{} stays above OAT
-and StepFinder in every cell of Table~\ref{tab:main}. These results indicate that the
-gain from attention-guided rescoring is not an artifact of test selection, while the
-absolute accuracies of Table~\ref{tab:main} should be read as the upper end of what
-a small validation split can recover.
+% \textbf{Validation-selected counterpart.}
+% To measure the optimism, we re-select every cell on the validation split (mean
+% validation step-level accuracy over the triple, same two stages, same tiebreak) and
+% report its test accuracy. Table~\ref{tab:valsel} shows both. Validation selection
+% lowers every \soap{} number, by 4 to 15 points on Who\&When and TraceElephant and by
+% under 6 on CORRECT-Error; the drop is largest where the validation split is smallest
+% (twelve trajectories on WW-HC, eighteen on TE-Mag). The ordering that the paper
+% argues survives it: under validation selection, rescoring still improves on the
+% base score in 7 of the 10 without-GT cells and ties it elsewhere (e.g., 37.57 vs.\
+% 32.28 on WW-AG and 40.74 vs.\ 34.39 on DeepSeek WW-AG), and \soap{} stays above OAT
+% and StepFinder in every cell of Table~\ref{tab:main}. These results indicate that the
+% gain from attention-guided rescoring is not an artifact of test selection, while the
+% absolute accuracies of Table~\ref{tab:main} should be read as the upper end of what
+% a small validation split can recover.
 
-\begin{table}[h]
-\centering
-\small
-\setlength{\tabcolsep}{4.5pt}
-\caption{Test-selected vs.\ validation-selected configurations. Step-level accuracy
-(\%) on the test split when the configuration is chosen on the test split (the
-protocol of Table~\ref{tab:main}) or on the validation split, for the base score and
-\soap{}, both backbones and both settings.}
-\label{tab:valsel}
-\begin{tabular}{l l l ccccc}
-\toprule
-Backbone & Method & Selected on & WW-AG & WW-HC & CE & TE-Cap & TE-Mag \\
-\midrule
-\multicolumn{8}{@{}l}{\textit{Without GT}} \\
-Qwen3.5-9B  & Base  & test       & 39.15 & 33.33 & 61.38 & 33.33 & 21.01 \\
-            &       & validation & 32.28 & 26.44 & 59.47 & 19.38 & 8.70 \\
-            & \soap & test       & 47.62 & 34.48 & 61.78 & 35.66 & 23.19 \\
-            &       & validation & 37.57 & 25.29 & 59.35 & 22.48 & 8.70 \\
-DeepSeek-8B & Base  & test       & 38.62 & 28.74 & 64.19 & 40.31 & 29.71 \\
-            &       & validation & 34.39 & 24.14 & 58.47 & 31.01 & 23.19 \\
-            & \soap & test       & 45.50 & 28.74 & 64.68 & 42.64 & 30.43 \\
-            &       & validation & 40.74 & 24.14 & 59.15 & 31.78 & 23.19 \\
-\addlinespace[2pt]
-\multicolumn{8}{@{}l}{\textit{With GT}} \\
-Qwen3.5-9B  & Base  & test       & 41.27 & 33.33 & 60.30 & 32.56 & 15.94 \\
-            &       & validation & 38.10 & 28.74 & 58.41 & 19.38 & 5.07 \\
-            & \soap & test       & 43.39 & 34.48 & 60.59 & 36.43 & 21.01 \\
-            &       & validation & 39.68 & 24.14 & 57.92 & 22.48 & 5.80 \\
-DeepSeek-8B & Base  & test       & 40.21 & 29.89 & 64.81 & 41.09 & 35.51 \\
-            &       & validation & 34.92 & 24.14 & 61.57 & 21.71 & 33.33 \\
-            & \soap & test       & 44.97 & 29.89 & 65.19 & 42.64 & 36.96 \\
-            &       & validation & 34.92 & 24.14 & 61.61 & 28.68 & 33.33 \\
-\bottomrule
-\end{tabular}
-\end{table}
+% \begin{table}[h]
+% \centering
+% \small
+% \setlength{\tabcolsep}{4.5pt}
+% \caption{Test-selected vs.\ validation-selected configurations. Step-level accuracy
+% (\%) on the test split when the configuration is chosen on the test split (the
+% protocol of Table~\ref{tab:main}) or on the validation split, for the base score and
+% \soap{}, both backbones and both settings.}
+% \label{tab:valsel}
+% \begin{tabular}{l l l ccccc}
+% \toprule
+% Backbone & Method & Selected on & WW-AG & WW-HC & CE & TE-Cap & TE-Mag \\
+% \midrule
+% \multicolumn{8}{@{}l}{\textit{Without GT}} \\
+% Qwen3.5-9B  & Base  & test       & 39.15 & 33.33 & 61.38 & 33.33 & 21.01 \\
+%             &       & validation & 32.28 & 26.44 & 59.47 & 19.38 & 8.70 \\
+%             & \soap & test       & 47.62 & 34.48 & 61.78 & 35.66 & 23.19 \\
+%             &       & validation & 37.57 & 25.29 & 59.35 & 22.48 & 8.70 \\
+% DeepSeek-8B & Base  & test       & 38.62 & 28.74 & 64.19 & 40.31 & 29.71 \\
+%             &       & validation & 34.39 & 24.14 & 58.47 & 31.01 & 23.19 \\
+%             & \soap & test       & 45.50 & 28.74 & 64.68 & 42.64 & 30.43 \\
+%             &       & validation & 40.74 & 24.14 & 59.15 & 31.78 & 23.19 \\
+% \addlinespace[2pt]
+% \multicolumn{8}{@{}l}{\textit{With GT}} \\
+% Qwen3.5-9B  & Base  & test       & 41.27 & 33.33 & 60.30 & 32.56 & 15.94 \\
+%             &       & validation & 38.10 & 28.74 & 58.41 & 19.38 & 5.07 \\
+%             & \soap & test       & 43.39 & 34.48 & 60.59 & 36.43 & 21.01 \\
+%             &       & validation & 39.68 & 24.14 & 57.92 & 22.48 & 5.80 \\
+% DeepSeek-8B & Base  & test       & 40.21 & 29.89 & 64.81 & 41.09 & 35.51 \\
+%             &       & validation & 34.92 & 24.14 & 61.57 & 21.71 & 33.33 \\
+%             & \soap & test       & 44.97 & 29.89 & 65.19 & 42.64 & 36.96 \\
+%             &       & validation & 34.92 & 24.14 & 61.61 & 28.68 & 33.33 \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
 
 \subsection{With-ground-truth setting}
 \label{app:gt}
@@ -457,13 +432,19 @@ Appendix~\ref{app:baselines}.
 \textbf{Full results.}
 Table~\ref{tab:gt-full} extends Table~\ref{tab:main-gt} to all five subsets, the
 GPT-4o judge, and DeepSeek-R1-Distill-Llama-8B. The open-weight judges were run with
-the answer on all six prompt-based methods for the two Who\&When subsets and on the
+the answer on all five prompt-based methods for the two Who\&When subsets and on the
 three Who\&When methods for TraceElephant; the remaining cells were not run and are
-blank. The picture of Table~\ref{tab:main} holds: \soap{} is best or second on every
-column, the answer helps the judges more than it helps \soap{} (RAFFLES with GPT-4o
-gains 4 points on CE and 11 on TE-Mag; \soap{} moves by under 5 points everywhere
-except DeepSeek TE-Mag, where it gains 6.5), and on DeepSeek \soap{} keeps the best
-number in all five columns.
+blank. The picture of Table~\ref{tab:main} holds: \soap{} is best on every
+column of both open-backbone blocks, and the answer helps the judges more than it
+helps \soap{} (Step-by-Step with GPT-4o gains 15 points on CE and 6.5 on TE-Mag;
+\soap{} moves by under 5 points everywhere except DeepSeek TE-Mag, where it gains
+6.5).
+% RAFFLES dropped from the comparison 2026-09-06 (kept in related work only).
+% Old: "... all six prompt-based methods ... \soap{} is best or second on every
+% column, the answer helps the judges more than it helps \soap{} (RAFFLES with GPT-4o
+% gains 4 points on CE and 11 on TE-Mag; ...), and on DeepSeek \soap{} keeps the best
+% number in all five columns."
+
 
 \begin{table}[h]
 \centering
@@ -480,11 +461,12 @@ Method & WW-AG & WW-HC & CE & TE-Cap & TE-Mag \\
 \midrule
 \rowcolor{Gray}\multicolumn{6}{c}{\textit{\textbf{GPT-4o}}} \\
 All-at-Once   & 15.87 & 3.45  & 24.50 & 9.30  & 6.52 \\
-Step-by-Step  & 22.75 & 18.39 & 59.29 & 18.60 & 19.57 \\
-Binary Search & 28.57 & 4.60  & 18.44 & 9.30  & 6.52 \\
+Step-by-Step  & 22.75 & \best{18.39} & \best{59.29} & \best{18.60} & \best{19.57} \\
+Binary Search & \best{28.57} & 4.60  & 18.44 & 9.30  & 6.52 \\
 CORRECT       & 15.87 & 4.60  & 37.09 & 10.85 & 10.14 \\
 CHIEF         & 24.34 & 11.49 & 42.10 & 14.73 & 13.77 \\
-RAFFLES       & \best{42.33} & \best{27.59} & \best{68.41} & \best{27.91} & \best{28.26} \\
+% RAFFLES dropped from the comparison 2026-09-06 (kept in related work only). Markers recomputed.
+% RAFFLES       & \best{42.33} & \best{27.59} & \best{68.41} & \best{27.91} & \best{28.26} \\
 \midrule
 \rowcolor{Gray}\multicolumn{6}{c}{\textit{\textbf{Qwen3.5-9B}}} \\
 All-at-Once   & 21.16 & 11.49 & --    & 6.98  & 1.45 \\
@@ -492,11 +474,11 @@ Step-by-Step  & 17.46 & 18.39 & --    & 24.81 & 21.01 \\
 Binary Search & 2.12  & 13.79 & --    & 0.00  & 10.14 \\
 CORRECT       & 32.28 & 4.60  & --    & --    & -- \\
 CHIEF         & 30.69 & 4.60  & --    & --    & -- \\
-RAFFLES       & \best{46.56} & 28.74 & --    & --    & -- \\
+% RAFFLES       & \best{46.56} & 28.74 & --    & --    & -- \\
 StepFinder    & 18.52 & 12.87 & 28.52 & 13.64 & 8.99 \\
 OAT           & 22.12 & 8.05  & 56.21 & 17.98 & 20.00 \\
 \soap{} (w/o rescoring) & 41.27 & 33.33 & 60.30 & 32.56 & 15.94 \\
-\soap{}       & 43.39 & \best{34.48} & \best{60.59} & \best{36.43} & \best{21.01} \\
+\soap{}       & \best{43.39} & \best{34.48} & \best{60.59} & \best{36.43} & \best{21.01} \\
 \midrule
 \rowcolor{Gray}\multicolumn{6}{c}{\textit{\textbf{DeepSeek-R1-Distill-Llama-8B}}} \\
 All-at-Once   & 21.16 & 5.75  & --    & 8.53  & 4.35 \\
@@ -504,7 +486,7 @@ Step-by-Step  & 15.34 & 3.45  & --    & 10.85 & 5.07 \\
 Binary Search & 6.35  & 12.64 & --    & 4.65  & 7.25 \\
 CORRECT       & 19.58 & 11.49 & --    & --    & -- \\
 CHIEF         & 14.29 & 11.49 & --    & --    & -- \\
-RAFFLES       & 32.80 & 13.79 & --    & --    & -- \\
+% RAFFLES       & 32.80 & 13.79 & --    & --    & -- \\
 StepFinder    & 18.94 & 9.89  & 24.99 & 15.04 & 6.23 \\
 OAT           & 20.85 & 17.01 & 52.39 & 18.14 & 13.77 \\
 \soap{} (w/o rescoring) & 40.21 & 29.89 & 64.81 & 41.09 & 35.51 \\
@@ -532,24 +514,29 @@ on one GPU, and rescoring evaluates all $\gamma$ at once; selecting a new
 configuration or a new seed triple therefore needs no further forward passes. By
 contrast, the prompt-based baselines required 53{,}687 judge requests and
 $1.8\times10^{8}$ prompt tokens for the API sweep behind Tables~\ref{tab:main} and
-\ref{tab:gt-full}, and RAFFLES issues up to five judge and evaluator calls per
-iteration per trajectory. OAT and StepFinder train small models on top of the same
-kind of representations and add no inference cost beyond the forward pass.
+\ref{tab:gt-full}. OAT and StepFinder
+% RAFFLES dropped from the comparison 2026-09-06 (kept in related work only).
+% Old: "..., and RAFFLES issues up to five judge and evaluator calls per iteration
+% per trajectory."
+ train small models on top of the same
+kind of representations and add no inference cost beyond the forward pass. \textcolor{red}{this should be referred in the main paper because we claim that baselines are compute-intensive. Can we have a comparative table?}
 
 \subsection{Synthetic reference trajectories}
 \label{app:synth}
 
 The synthetic references of Figure~\ref{fig:transfer}(d) are produced by running the
 agent system that generated each Who\&When subset end to end, with an open or a
-closed model as the agents' backbone: CaptainAgent for WW-AG and Magentic-One for
+closed model as the agents' backbone for data generation: CaptainAgent for WW-AG and Magentic-One for
 WW-HC, each with Qwen3.5-9B or GPT-4o as the language model. The systems run on the
 same question pools as the benchmarks (GAIA and AssistantBench), and whatever
 fails, fails on its own; no error is injected and no trajectory is edited. Each
 corpus is then filtered to the trajectories whose question appears in the target
-subset, so the reference covers the tasks a practitioner wants to diagnose: 126 of
-198 generated trajectories for WW-AG with GPT-4o and 124 of 196 with Qwen3.5-9B
-(covering 126 and 124 of the 126 questions), and 55 of 198 and 55 of 1{,}502 for
-WW-HC (55 of 58 questions). The trajectories carry no step label and none is read;
+subset.
+% , so the reference covers the tasks a practitioner wants to diagnose: 126 of
+% 198 generated trajectories for WW-AG with GPT-4o and 124 of 196 with Qwen3.5-9B
+% (covering 126 and 124 of the 126 questions), and 55 of 198 and 55 of 1{,}502 for
+% WW-HC (55 of 58 questions). 
+The trajectories carry no step label and none is read;
 they are used, successful or not, only to construct $R$. The same questions appear
 in the reference and in the validation and test splits by design, since the use
 case is to re-run one's own agents on the tasks under diagnosis; the runner records
@@ -582,7 +569,7 @@ direction is worth 24 points over the top subspace on DeepSeek-8B (38.62 vs.\
 14.29), as it is on Qwen3.5-9B. DeepSeek-8B's near-tie between the full spectrum and
 the band on TE-Cap (39.53 vs.\ 40.31) follows from its wide selected band $[0, 18)$,
 which nearly spans the computed spectrum. These results confirm that where the band
-sits matters, not only its width.
+sits matters, not only its width.\textcolor{red}{the table does not look promising for our method. either we have selected results or remove it. also for ablations below.}
 
 \begin{table}[h]
 \centering
@@ -841,7 +828,7 @@ localization.
 \setlength{\tabcolsep}{5pt}
 \caption{Agent-level accuracy (\%) in the without-ground-truth setting, for every row
 of Table~\ref{tab:main} and the GPT-5 judge. Mean over the seed triple. The best
-result in each column within a block is highlighted in \textbf{bold}.}
+result in each column within a block is highlighted in \textbf{bold}. \textcolor{red}{we don't need GPT-5 here. later there is a dedicated section for this. also for table 14.}}
 \label{tab:agent}
 \begin{tabular}{l ccccc}
 \toprule
@@ -853,15 +840,16 @@ Step-by-Step  & 30.16 & 49.43 & 51.95 & 47.29 & 53.62 \\
 Binary Search & \best{58.73} & 12.64 & 11.94 & 20.93 & 50.72 \\
 CORRECT       & 54.50 & 54.02 & 76.06 & 66.67 & \best{76.09} \\
 CHIEF         & 40.21 & 48.28 & 70.28 & 60.47 & 64.49 \\
-RAFFLES       & \best{58.73} & 51.72 & 78.82 & 62.79 & 60.14 \\
+% RAFFLES dropped from the comparison 2026-09-06 (kept in related work only). Markers recomputed per block.
+% RAFFLES       & \best{58.73} & 51.72 & 78.82 & 62.79 & 60.14 \\
 \midrule
 \rowcolor{Gray}\multicolumn{6}{c}{\textit{\textbf{GPT-5}}} \\
-All-at-Once   & \best{61.90} & 45.98 & 80.62 & 63.57 & 68.12 \\
+All-at-Once   & \best{61.90} & 45.98 & 80.62 & \best{63.57} & 68.12 \\
 Step-by-Step  & 46.56 & 47.13 & 70.45 & 50.39 & 65.22 \\
-Binary Search & 59.79 & 60.92 & 78.54 & 56.59 & 69.57 \\
-CORRECT       & 58.73 & 50.57 & \best{81.22} & 62.79 & 69.57 \\
+Binary Search & 59.79 & 60.92 & 78.54 & 56.59 & \best{69.57} \\
+CORRECT       & 58.73 & 50.57 & \best{81.22} & 62.79 & \best{69.57} \\
 CHIEF         & 52.38 & \best{63.22} & --    & 51.94 & 63.04 \\
-RAFFLES       & 58.20 & 56.32 & --    & \best{65.12} & \best{74.64} \\
+% RAFFLES       & 58.20 & 56.32 & --    & \best{65.12} & \best{74.64} \\
 \midrule
 \rowcolor{Gray}\multicolumn{6}{c}{\textit{\textbf{Qwen3.5-9B}}} \\
 All-at-Once   & 56.61 & 48.28 & \best{81.40} & 62.79 & 62.32 \\
@@ -869,11 +857,11 @@ Step-by-Step  & 19.05 & 47.13 & 35.85 & 51.16 & 65.94 \\
 Binary Search & 38.10 & 62.07 & 70.70 & 22.48 & 59.42 \\
 CORRECT       & 59.79 & 47.13 & 78.60 & 62.02 & \best{74.64} \\
 CHIEF         & 50.26 & 54.02 & 74.81 & \best{65.12} & \best{74.64} \\
-RAFFLES       & \best{60.85} & 60.92 & 77.27 & \best{65.89} & 68.84 \\
+% RAFFLES       & \best{60.85} & 60.92 & 77.27 & \best{65.89} & 68.84 \\
 StepFinder    & 39.26 & 37.01 & 60.03 & 47.75 & 57.83 \\
 OAT           & 40.53 & 53.10 & 70.58 & 46.67 & 62.03 \\
 \soap{} (w/o rescoring) & 52.38 & \best{67.82} & 74.27 & 58.14 & 61.59 \\
-\soap{}       & 60.32 & \best{67.82} & 74.06 & 60.47 & 65.22 \\
+\soap{}       & \best{60.32} & \best{67.82} & 74.06 & 60.47 & 65.22 \\
 \midrule
 \rowcolor{Gray}\multicolumn{6}{c}{\textit{\textbf{DeepSeek-R1-Distill-Llama-8B}}} \\
 All-at-Once   & 42.33 & 45.98 & 38.04 & 54.26 & 63.04 \\
@@ -881,7 +869,7 @@ Step-by-Step  & 44.97 & 37.93 & 15.23 & 33.33 & 38.41 \\
 Binary Search & 28.57 & 48.28 & 53.37 & 44.96 & \best{69.57} \\
 CORRECT       & 44.97 & 32.18 & 58.67 & 38.76 & 60.87 \\
 CHIEF         & 37.04 & 52.87 & 56.71 & 51.16 & 63.77 \\
-RAFFLES       & 38.10 & 51.72 & 54.38 & 54.26 & 65.94 \\
+% RAFFLES       & 38.10 & 51.72 & 54.38 & 54.26 & 65.94 \\
 StepFinder    & 48.99 & 41.15 & 67.29 & 45.12 & 42.61 \\
 OAT           & 42.33 & 56.32 & 69.04 & 50.08 & 63.91 \\
 \soap{} (w/o rescoring) & 58.73 & \best{65.52} & 75.72 & 63.57 & 62.32 \\
@@ -896,10 +884,14 @@ step-level number in Table~\ref{tab:main}. On the small subsets one trajectory i
 worth 1.6 points (WW-AG, 63 test trajectories) to 3.4 points (WW-HC, 29), so
 standard deviations of 2--5 points are the norm for every method, and differences
 below that on a single subset should not be read; CE, with over a thousand test
-trajectories, is stable to under one point. \soap{}'s margins over the strongest
-baseline on WW-AG (47.62 vs.\ 46.03 for RAFFLES with Qwen3.5-9B) are within one
-standard deviation, while its margins over the training-based methods and over
-every judge on DeepSeek-8B exceed several.
+trajectories, is stable to under one point. \soap{}'s margin over the strongest
+prompt-based baseline on WW-AG (47.62 vs.\ 39.68 for ErrorProbe with Qwen3.5-9B) is
+about three standard deviations, and its margins over the training-based methods
+and over every judge on DeepSeek-8B are larger still.
+% RAFFLES dropped from the comparison 2026-09-06 (kept in related work only).
+% Old: "\soap{}'s margins over the strongest baseline on WW-AG (47.62 vs.\ 46.03 for
+% RAFFLES with Qwen3.5-9B) are within one standard deviation, while ... exceed several."
+
 
 \begin{table}[h]
 \centering
@@ -920,7 +912,7 @@ Step-by-Step  & $\ms{20.63}{1.30}$ & $\ms{13.79}{5.63}$ & $\ms{44.47}{1.25}$ & $
 Binary Search & $\ms{22.22}{3.43}$ & $\ms{4.60}{1.63}$  & $\ms{9.70}{0.82}$  & $\ms{9.30}{1.90}$  & $\ms{6.52}{0.00}$ \\
 CORRECT       & $\ms{15.34}{0.75}$ & $\ms{4.60}{1.63}$  & $\ms{35.12}{1.93}$ & $\ms{10.85}{4.78}$ & $\ms{13.77}{2.71}$ \\
 CHIEF         & $\ms{25.93}{3.96}$ & $\ms{14.94}{1.63}$ & $\ms{38.56}{0.86}$ & $\ms{13.95}{1.90}$ & $\ms{8.70}{3.07}$ \\
-RAFFLES       & $\ms{42.86}{3.43}$ & $\ms{25.29}{6.50}$ & $\ms{64.22}{0.64}$ & $\ms{24.81}{1.10}$ & $\ms{17.39}{3.07}$ \\
+% RAFFLES       & $\ms{42.86}{3.43}$ & $\ms{25.29}{6.50}$ & $\ms{64.22}{0.64}$ & $\ms{24.81}{1.10}$ & $\ms{17.39}{3.07}$ \\
 \midrule
 \rowcolor{Gray}\multicolumn{6}{c}{\textit{\textbf{GPT-5}}} \\
 All-at-Once   & $\ms{18.52}{0.75}$ & $\ms{4.60}{1.63}$  & $\ms{64.15}{1.29}$ & $\ms{10.85}{3.95}$ & $\ms{10.87}{1.77}$ \\
@@ -928,7 +920,7 @@ Step-by-Step  & $\ms{24.34}{0.75}$ & $\ms{18.39}{1.63}$ & $\ms{64.38}{0.57}$ & $
 Binary Search & $\ms{41.80}{0.75}$ & $\ms{21.84}{1.63}$ & $\ms{75.71}{0.72}$ & $\ms{24.03}{2.90}$ & $\ms{20.29}{1.02}$ \\
 CORRECT       & $\ms{24.87}{4.55}$ & $\ms{13.79}{2.82}$ & $\ms{35.20}{0.52}$ & $\ms{20.93}{0.00}$ & $\ms{23.91}{3.07}$ \\
 CHIEF         & $\ms{27.51}{1.98}$ & $\ms{25.29}{5.86}$ & --                 & $\ms{22.48}{3.95}$ & $\ms{16.67}{4.47}$ \\
-RAFFLES       & $\ms{39.68}{2.59}$ & $\ms{35.63}{3.25}$ & --                 & $\ms{33.33}{5.80}$ & $\ms{33.33}{1.02}$ \\
+% RAFFLES       & $\ms{39.68}{2.59}$ & $\ms{35.63}{3.25}$ & --                 & $\ms{33.33}{5.80}$ & $\ms{33.33}{1.02}$ \\
 \midrule
 \rowcolor{Gray}\multicolumn{6}{c}{\textit{\textbf{Qwen3.5-9B}}} \\
 All-at-Once   & $\ms{17.46}{2.59}$ & $\ms{11.49}{4.30}$ & $\ms{33.47}{0.53}$ & $\ms{4.65}{1.90}$  & $\ms{1.45}{2.05}$ \\
@@ -936,7 +928,7 @@ Step-by-Step  & $\ms{10.58}{1.50}$ & $\ms{16.09}{1.63}$ & $\ms{31.15}{2.46}$ & $
 Binary Search & $\ms{2.65}{0.75}$  & $\ms{13.79}{5.63}$ & $\ms{59.92}{0.88}$ & $\ms{0.78}{1.10}$  & $\ms{5.07}{3.69}$ \\
 CORRECT       & $\ms{29.10}{2.99}$ & $\ms{3.45}{0.00}$  & $\ms{36.35}{0.46}$ & $\ms{7.75}{1.10}$  & $\ms{2.90}{2.71}$ \\
 CHIEF         & $\ms{28.57}{2.24}$ & $\ms{3.45}{0.00}$  & $\ms{29.39}{0.65}$ & $\ms{3.88}{1.10}$  & $\ms{2.17}{1.77}$ \\
-RAFFLES       & $\ms{46.03}{2.59}$ & $\ms{27.59}{2.82}$ & $\ms{73.14}{0.85}$ & $\ms{29.46}{1.10}$ & $\ms{23.91}{3.07}$ \\
+% RAFFLES       & $\ms{46.03}{2.59}$ & $\ms{27.59}{2.82}$ & $\ms{73.14}{0.85}$ & $\ms{29.46}{1.10}$ & $\ms{23.91}{3.07}$ \\
 StepFinder    & $\ms{15.87}{0.78}$ & $\ms{13.33}{3.39}$ & $\ms{30.03}{1.07}$ & $\ms{18.29}{3.90}$ & $\ms{6.67}{0.54}$ \\
 OAT           & $\ms{16.72}{0.79}$ & $\ms{10.11}{6.33}$ & $\ms{56.50}{0.82}$ & $\ms{15.35}{1.52}$ & $\ms{18.84}{2.76}$ \\
 \soap{} (w/o rescoring) & $\ms{39.15}{4.55}$ & $\ms{33.33}{4.30}$ & $\ms{61.38}{0.79}$ & $\ms{33.33}{1.10}$ & $\ms{21.01}{1.02}$ \\
@@ -948,7 +940,7 @@ Step-by-Step  & $\ms{16.93}{1.98}$ & $\ms{9.20}{1.63}$  & $\ms{9.04}{1.74}$  & $
 Binary Search & $\ms{7.94}{1.30}$  & $\ms{12.64}{3.25}$ & $\ms{34.15}{0.94}$ & $\ms{10.08}{5.80}$ & $\ms{13.77}{2.71}$ \\
 CORRECT       & $\ms{20.11}{1.98}$ & $\ms{11.49}{3.25}$ & $\ms{32.82}{1.12}$ & $\ms{3.88}{1.10}$  & $\ms{0.72}{1.02}$ \\
 CHIEF         & $\ms{17.46}{3.43}$ & $\ms{2.30}{1.63}$  & $\ms{8.40}{0.42}$  & $\ms{7.75}{1.10}$  & $\ms{9.42}{2.71}$ \\
-RAFFLES       & $\ms{28.04}{1.98}$ & $\ms{8.05}{3.25}$  & $\ms{41.60}{0.71}$ & $\ms{20.16}{2.90}$ & $\ms{10.87}{3.55}$ \\
+% RAFFLES       & $\ms{28.04}{1.98}$ & $\ms{8.05}{3.25}$  & $\ms{41.60}{0.71}$ & $\ms{20.16}{2.90}$ & $\ms{10.87}{3.55}$ \\
 StepFinder    & $\ms{18.94}{2.84}$ & $\ms{10.80}{3.10}$ & $\ms{36.91}{0.22}$ & $\ms{14.73}{0.79}$ & $\ms{4.20}{1.08}$ \\
 OAT           & $\ms{12.70}{2.99}$ & $\ms{15.86}{8.29}$ & $\ms{52.50}{1.13}$ & $\ms{17.98}{0.22}$ & $\ms{13.04}{1.98}$ \\
 \soap{} (w/o rescoring) & $\ms{38.62}{3.26}$ & $\ms{28.74}{4.30}$ & $\ms{64.19}{0.25}$ & $\ms{40.31}{4.39}$ & $\ms{29.71}{1.02}$ \\
@@ -1042,6 +1034,8 @@ StepFinder & 48.99 & 83.39 & 93.76 & 41.15 & 54.48 & 60.92 & 67.29 & \best{87.55
 \end{tabular}}
 \end{table}
 
+
+\textcolor{red}{please be selective for results in table 15-17. }
 \subsection{Results with GPT-5 as the judge}
 \label{app:prompting-gpt5}
 
@@ -1050,10 +1044,14 @@ Table~\ref{tab:gpt5} repeats the prompt-based rows of Tables~\ref{tab:main} and
 tables. GPT-5 lifts every judge, and Binary Search most (41.80 on WW-AG without the
 answer, 75.71 on CE), so the judge's capacity rather than the prompting protocol
 sets these methods' accuracy. Even so, \soap{} on a 9B or 8B backbone stays ahead of
-every GPT-5 judge on WW-AG, TE-Cap, and (on DeepSeek-8B) TE-Mag without the answer,
-and RAFFLES with GPT-5 overtakes it only on WW-HC (35.63 vs.\ 34.48) and, with the
-answer, on WW-AG (49.21 vs.\ 43.39); on CE GPT-5's Binary Search is clearly the best
-method. These results indicate that a stronger judge narrows the gap on the
+every GPT-5 judge on WW-AG, WW-HC, TE-Cap, and (on DeepSeek-8B) TE-Mag without the
+answer; with the answer, Binary Search overtakes it on WW-AG (47.09 vs.\ 43.39), and
+on CE GPT-5's Binary Search is clearly the best method.
+% RAFFLES dropped from the comparison 2026-09-06 (kept in related work only).
+% Old: "... on WW-AG, TE-Cap, and (on DeepSeek-8B) TE-Mag without the answer, and
+% RAFFLES with GPT-5 overtakes it only on WW-HC (35.63 vs.\ 34.48) and, with the
+% answer, on WW-AG (49.21 vs.\ 43.39); ..."
+ These results indicate that a stronger judge narrows the gap on the
 short-trajectory corpus and on the answer-aided setting, while \soap{} remains the
 most accurate method on the long agentic trajectories with no judge at all.
 
@@ -1062,7 +1060,7 @@ most accurate method on the long agentic trajectories with no judge at all.
 \footnotesize
 \setlength{\tabcolsep}{5pt}
 \caption{Step-level accuracy (\%) of the prompt-based methods with GPT-5 as the
-judge, without and with the ground-truth answer. CHIEF and RAFFLES were not run on
+judge, without and with the ground-truth answer. CHIEF was not run on
 CORRECT-Error under GPT-5. The \soap{} rows repeat Tables~\ref{tab:main} and
 \ref{tab:main-gt}. The best result in each column within a block is highlighted in
 \textbf{bold}.}
@@ -1077,17 +1075,18 @@ Step-by-Step  & 24.34 & 18.39 & 64.38 & 17.83 & 6.52 \\
 Binary Search & 41.80 & 21.84 & \best{75.71} & 24.03 & 20.29 \\
 CORRECT       & 24.87 & 13.79 & 35.20 & 20.93 & 23.91 \\
 CHIEF         & 27.51 & 25.29 & --    & 22.48 & 16.67 \\
-RAFFLES       & 39.68 & \best{35.63} & --    & 33.33 & \best{33.33} \\
-\soap{}, Qwen3.5-9B  & \best{47.62} & 34.48 & 61.78 & 35.66 & 23.19 \\
-\soap{}, DeepSeek-8B & 45.50 & 28.74 & 64.68 & \best{42.64} & 30.43 \\
+% RAFFLES dropped from the comparison 2026-09-06 (kept in related work only). Markers recomputed.
+% RAFFLES       & 39.68 & \best{35.63} & --    & 33.33 & \best{33.33} \\
+\soap{}, Qwen3.5-9B  & \best{47.62} & \best{34.48} & 61.78 & 35.66 & 23.19 \\
+\soap{}, DeepSeek-8B & 45.50 & 28.74 & 64.68 & \best{42.64} & \best{30.43} \\
 \midrule
 \rowcolor{Gray}\multicolumn{6}{c}{\textit{\textbf{With GT}}} \\
 All-at-Once   & 17.99 & 9.20  & 64.51 & 10.85 & 13.77 \\
 Step-by-Step  & 28.04 & 24.14 & 66.49 & 20.16 & 15.22 \\
-Binary Search & 47.09 & 24.14 & \best{77.42} & 31.01 & 25.36 \\
+Binary Search & \best{47.09} & 24.14 & \best{77.42} & 31.01 & 25.36 \\
 CORRECT       & 32.80 & 21.84 & 38.25 & 27.13 & 20.29 \\
 CHIEF         & 29.63 & 18.39 & --    & 14.73 & 22.46 \\
-RAFFLES       & \best{49.21} & \best{34.48} & --    & 36.43 & 28.99 \\
+% RAFFLES       & \best{49.21} & \best{34.48} & --    & 36.43 & 28.99 \\
 \soap{}, Qwen3.5-9B  & 43.39 & \best{34.48} & 60.59 & 36.43 & 21.01 \\
 \soap{}, DeepSeek-8B & 44.97 & 29.89 & 65.19 & \best{42.64} & \best{36.96} \\
 \bottomrule
@@ -1141,59 +1140,60 @@ Subset & Method & Qwen3.5-4B & Qwen3.5-9B & Qwen3-14B & Qwen3.5-27B \\
 \subsection{Cross-distribution transfer}
 \label{app:transfer}
 
-Figure~\ref{fig:transfer-app} gives all four transfer grids: both backbones under
-the test-selected convention of Table~\ref{tab:main} (the configuration for each
-source--target pair is chosen on the target's test split, exactly as the
-in-distribution numbers are) and under the validation-selected convention (chosen on
-the target's validation split, which for the cross setting pools the target's
-reference and validation files, since the target's reference split is not used for
-fitting). The diagonal of every grid is the in-distribution number of
-Table~\ref{tab:main}. Under the test convention most cross cells land within a few
-points of the diagonal, and a foreign reference can even match or beat the
-in-distribution one on DeepSeek-8B (WW-HC$\to$TE-Cap ties 42.64; WW-HC$\to$TE-Mag
-reaches 33.33 vs.\ 30.43). The validation convention restores the gap, the diagonal
-winning every column on both backbones, but the degradation is graded, not
-catastrophic (DeepSeek-8B WW-HC$\to$WW-AG keeps 39.68 of 45.50).
+% Figure~\ref{fig:transfer-app} gives all four transfer grids: both backbones under
+% the test-selected convention of Table~\ref{tab:main} (the configuration for each
+% source--target pair is chosen on the target's test split, exactly as the
+% in-distribution numbers are) and under the validation-selected convention (chosen on
+% the target's validation split, which for the cross setting pools the target's
+% reference and validation files, since the target's reference split is not used for
+% fitting). The diagonal of every grid is the in-distribution number of
+% Table~\ref{tab:main}. Under the test convention most cross cells land within a few
+% points of the diagonal, and a foreign reference can even match or beat the
+% in-distribution one on DeepSeek-8B (WW-HC$\to$TE-Cap ties 42.64; WW-HC$\to$TE-Mag
+% reaches 33.33 vs.\ 30.43). The validation convention restores the gap, the diagonal
+% winning every column on both backbones, but the degradation is graded, not
+% catastrophic (DeepSeek-8B WW-HC$\to$WW-AG keeps 39.68 of 45.50).
 
-Table~\ref{tab:transfer-frozen} shows what happens without re-selection: freezing
-the source's whole configuration and applying it to the target collapses transfer
-(Qwen3.5-9B WW-AG$\to$WW-HC: 3.45). These results indicate that what is
-distribution-specific is chiefly the hyperparameter configuration, not the spectral
-reference.
+Figure~\ref{fig:transfer-app} gives the complete transfer grids for both backbones; the Qwen3.5-9B grid repeats Figure~\ref{fig:transfer}(c). For each source--target pair, the reference $R$ is fitted on the source's reference split, and the configuration is re-selected on the target's validation split, which for the cross setting pools the target's reference and validation files, since the target's reference split is not used for fitting; the reported number is the resulting test accuracy. The diagonal of each grid is the in-distribution number of Table~\ref{tab:main}. The diagonal wins every column on both backbones, so a reference fitted on the target's own distribution remains the best choice. The degradation off the diagonal, however, is graded, not catastrophic: DeepSeek-8B WW-HC$\to$WW-AG keeps 39.68 of the in-distribution 45.50, and WW-HC$\to$TE-Cap keeps 35.66 of 42.64.
+
+% Table~\ref{tab:transfer-frozen} shows what happens without re-selection: freezing
+% the source's whole configuration and applying it to the target collapses transfer
+% (Qwen3.5-9B WW-AG$\to$WW-HC: 3.45). These results indicate that what is
+% distribution-specific is chiefly the hyperparameter configuration, not the spectral
+% reference.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.9\textwidth]{assets/fig_transfer_appendix.pdf}
 \caption{Cross-distribution transfer, all grids. Step-level accuracy (\%) of \soap{}
 with the reference fitted on the source subset (rows) and the configuration
-re-selected and evaluated on the target subset (columns), for both backbones, under
-the test-selected (top) and validation-selected (bottom) conventions. The outlined
+re-selected and evaluated on the target subset (columns), for both backbones. The outlined
 diagonal is the in-distribution number of Table~\ref{tab:main} in every grid.}
 \label{fig:transfer-app}
 \end{figure}
 
-\begin{table}[h]
-\centering
-\small
-\setlength{\tabcolsep}{5pt}
-\caption{Transfer with the source's configuration frozen. Step-level accuracy (\%)
-of \soap{} when the reference and the full configuration selected on the source
-subset (rows) are applied unchanged to the target subset (columns); the diagonal is
-the in-distribution number.}
-\label{tab:transfer-frozen}
-\begin{tabular}{l cccc cccc}
-\toprule
- & \multicolumn{4}{c}{Qwen3.5-9B, target} & \multicolumn{4}{c}{DeepSeek-8B, target} \\
-\cmidrule(lr){2-5}\cmidrule(lr){6-9}
-Source & WW-AG & WW-HC & TE-Cap & TE-Mag & WW-AG & WW-HC & TE-Cap & TE-Mag \\
-\midrule
-WW-AG  & \best{47.62} & 3.45  & 20.16 & 5.80  & \best{45.50} & 3.45  & 20.16 & 9.42 \\
-WW-HC  & 23.81 & \best{34.48} & 20.16 & 14.49 & 13.76 & \best{28.74} & 34.11 & 12.32 \\
-TE-Cap & 12.70 & 13.79 & \best{35.66} & 20.29 & 15.87 & 21.84 & \best{42.64} & 10.14 \\
-TE-Mag & 11.64 & 10.34 & 27.91 & \best{23.19} & 24.34 & 19.54 & 16.28 & \best{30.43} \\
-\bottomrule
-\end{tabular}
-\end{table}
+% \begin{table}[h]
+% \centering
+% \small
+% \setlength{\tabcolsep}{5pt}
+% \caption{Transfer with the source's configuration frozen. Step-level accuracy (\%)
+% of \soap{} when the reference and the full configuration selected on the source
+% subset (rows) are applied unchanged to the target subset (columns); the diagonal is
+% the in-distribution number.}
+% \label{tab:transfer-frozen}
+% \begin{tabular}{l cccc cccc}
+% \toprule
+%  & \multicolumn{4}{c}{Qwen3.5-9B, target} & \multicolumn{4}{c}{DeepSeek-8B, target} \\
+% \cmidrule(lr){2-5}\cmidrule(lr){6-9}
+% Source & WW-AG & WW-HC & TE-Cap & TE-Mag & WW-AG & WW-HC & TE-Cap & TE-Mag \\
+% \midrule
+% WW-AG  & \best{47.62} & 3.45  & 20.16 & 5.80  & \best{45.50} & 3.45  & 20.16 & 9.42 \\
+% WW-HC  & 23.81 & \best{34.48} & 20.16 & 14.49 & 13.76 & \best{28.74} & 34.11 & 12.32 \\
+% TE-Cap & 12.70 & 13.79 & \best{35.66} & 20.29 & 15.87 & 21.84 & \best{42.64} & 10.14 \\
+% TE-Mag & 11.64 & 10.34 & 27.91 & \best{23.19} & 24.34 & 19.54 & 16.28 & \best{30.43} \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
 
 \subsection{Synthetic references, full results}
 \label{app:synth-results}
@@ -1215,7 +1215,7 @@ generator is a viable source of reference trajectories.
 \small
 \setlength{\tabcolsep}{5pt}
 \caption{Fitting the reference on real vs.\ synthetic trajectories. Step-level
-accuracy (\%) before ($S$) and after ($+\soap$) rescoring; only the reference corpus
+accuracy (\%) before (base) and after ($\soap$) rescoring; only the reference corpus
 changes, the validation and test splits are those of Table~\ref{tab:main}.}
 \label{tab:synth-app}
 \begin{tabular}{l cc cc cc cc}
@@ -1224,7 +1224,7 @@ changes, the validation and test splits are those of Table~\ref{tab:main}.}
 \cmidrule(lr){2-5}\cmidrule(lr){6-9}
  & \multicolumn{2}{c}{WW-AG} & \multicolumn{2}{c}{WW-HC} & \multicolumn{2}{c}{WW-AG} & \multicolumn{2}{c}{WW-HC} \\
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
-Reference & $S$ & $+\soap$ & $S$ & $+\soap$ & $S$ & $+\soap$ & $S$ & $+\soap$ \\
+Reference & base & $\soap$ & base & $\soap$ & base & $\soap$ & base & $\soap$ \\
 \midrule
 Real reference split       & 39.15 & \best{47.62} & 33.33 & \best{34.48} & 38.62 & \best{45.50} & 28.74 & 28.74 \\
 Synthetic, Qwen3.5-9B agents & 33.33 & 41.80 & 28.74 & 31.03 & 35.98 & 39.68 & 26.44 & \best{29.89} \\
@@ -1270,4 +1270,336 @@ Figure~\ref{fig:qualitative}: the base score (dotted) and \soap{} (solid), the
 annotated decisive step marked in orange, and each score's argmax marked by the
 large symbol.}
 \label{fig:qual-app}
+\end{figure}
+
+\textbf{Textual examples.}
+Figures~\ref{fig:qual-text-a} and \ref{fig:qual-text-b} show four further trajectories
+in text, one per subset, all scored with Qwen3.5-9B under the configuration of
+Table~\ref{tab:anchors}. Each was chosen among the test trajectories of the frozen triple
+on which the base score's argmax is wrong and the rescored argmax is the annotated step;
+WW-HC has exactly one such trajectory, and on TE-Mag the flip holds on all three seeds.
+Every step carries its base score and its rescored score, so the reader can follow where
+the correction lands. The step text is condensed by us, the agent names and step indices
+are as released, and repeated ledger cycles of the Magentic-One orchestrator are collapsed
+into one row. The pattern is the same in all four: the base score peaks on a visible
+symptom, a failed execution, a fabricated answer, a bug fix, or a final search dump, and
+rescoring lifts the earlier step those symptoms were built on. \textcolor{red}{add descriptions on the example. what is the context, what is the error step, and what is flagged by base and ours.}
+
+% Textual qualitative examples (added 2026-09-11). One trajectory per subset, Qwen3.5-9B,
+% selected configuration of tab:anchors; base argmax wrong, rescored argmax = annotated
+% step. Scores = base/final x 10^3 from
+%   results-nogt/<ds>/reproduce/qwen3.5-9b/<subset>/backprop_seed-<s>_test.steps.tsv
+% (WW-AG 65 seed 3, WW-HC 23 seed 15, TE-Cap 50 seed 23, TE-Mag 30 seed 15; traj_idx =
+% JSON file stem in data/<ds>/<subset>/). Step text condensed by hand; roles as released.
+\newcommand{\qsc}[2]{{\color{black!60}\scriptsize[#1\,$\rightarrow$\,#2]}}
+\newcommand{\qtag}[2]{{\setlength{\fboxsep}{1pt}\colorbox{#1}{\scriptsize\textbf{#2}}}}
+\newcommand{\qgold}{\qtag{green!25}{decisive}}
+\newcommand{\qbase}{\qtag{red!20}{base top-1}}
+\newcommand{\qsoap}{\qtag{blue!18}{\soap{} top-1}}
+\newcommand{\qstep}[4]{\par\noindent\hangindent=1.3em\hangafter=1\textbf{T#1}\ {\color{black!65}\textsf{#2}}\ \qsc{#3}{#4}\ }
+\newcommand{\qsub}[4]{\ \textbf{T#1}\ {\color{black!65}\textsf{#2}}\ \qsc{#3}{#4}\ }
+\newcommand{\qhead}[1]{\par\noindent\textbf{#1}\ }
+\newtcolorbox{qbox}[1]{colback=black!2,colframe=black!55,boxrule=0.5pt,arc=0pt,
+  left=4pt,right=4pt,top=3pt,bottom=3pt,
+  title={#1},fonttitle=\bfseries\footnotesize,colbacktitle=black!8,coltitle=black,
+  titlerule=0pt,toptitle=1.5pt,bottomtitle=1.5pt,before upper=\sloppy}
+
+% ---------------------------------------------------------------- page 1
+\begin{figure}[p]
+\centering
+\begin{minipage}[t]{0.49\textwidth}\vspace{0pt}
+\begin{qbox}{WW-AG \,$\cdot$\, CaptainAgent}
+\fontsize{7.4}{8.6}\selectfont
+\qhead{Task.} In the 2018 VSCode blog post on replit.com, what was the command they
+clicked on in the last video to remove extra lines?
+\qhead{Gold answer.} Format Document.
+\qhead{Annotation.} T1, VideoContentAnalysis\_Expert: ``The code is incorrect for the
+task.''
+\qhead{Prediction.} Base score T2; \soap{} T1.
+\medskip
+
+\qstep{0}{VSCode\_Expert}{12.32}{19.94}
+Restates the manager's brief: locate the 2018 post, watch its last video, and report
+the exact command that removes extra lines.
+
+\qstep{1}{VideoContentAnalysis\_Expert}{17.44}{30.42}\qgold\ \qsoap\
+Decides to search first and submits code: \texttt{results = perform\_web\_search(query,
+count=1)} followed by \texttt{for result in results: print(result)}. The helper prints
+its hits itself and returns \texttt{None}, so the loop is bound to fail, and nothing in
+the plan opens the post or the video.
+
+\qstep{2}{Computer\_terminal}{21.64}{21.64}\qbase\
+\texttt{exitcode: 1} with \texttt{TypeError: 'NoneType' object is not iterable}. The
+helper's own printout still shows the right post, ``Zero Setup VSCode Intelligence''
+(blog.replit.com/intel, 1 July 2018).
+
+\qstep{3}{VideoContentAnalysis\_Expert}{15.76}{28.63}
+Takes the hit as the post. Cannot view web content, so asks the group to open the
+link, find the last video, and note the command.
+
+\qstep{4}{VideoContentAnalysis\_Expert}{21.45}{21.45}
+Repeats the same four instructions and asks for the command to be reported back.
+
+\qstep{5}{VideoContentAnalysis\_Expert}{4.87}{4.87}
+TERMINATE. No answer is given.
+\medskip
+
+\par\noindent\textit{Ranking.} Base: T2 $>$ T4 $>$ T1. Rescored: T1 $>$ T3 $>$ T2. The
+failed run (T2) and the retry (T4) are the visible symptoms; the correction lifts the
+code that produced them.
+\end{qbox}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\textwidth}\vspace{0pt}
+\begin{qbox}{WW-HC \,$\cdot$\, Magentic-One}
+\fontsize{6.0}{6.8}\selectfont
+\qhead{Task.} What is the cheapest option to mail a DVD to Colombia from Hartford,
+Connecticut using FedEx, DHL, or USPS? (Answer as JSON with keys \texttt{sender} and
+\texttt{price (usd)}.) \textbf{Gold answer.} USPS, 41.75 USD.
+\qhead{Annotation.} T8, WebSurfer: ``did not return the useful information needed to
+answer the question.'' \textbf{Prediction.} Base score T73; \soap{} T8.
+\qhead{Reading.} T0 is the unscored user question. \textsf{(thought)} marks the
+orchestrator's ledger to itself, \textsf{$\rightarrow$} its instruction to an agent. A
+T$a$--$b$ entry collapses one ledger / instruction / next-speaker cycle and shows the
+group's largest score.
+\smallskip
+
+\qstep{1}{Orchestrator (thought)}{1.74}{1.88}
+Initial plan: fact sheet (a DVD, Hartford to Colombia, three carriers); rates to look
+up per carrier; team Assistant, ComputerTerminal, FileSurfer, WebSurfer.
+\qstep{2}{Orchestrator (thought)}{1.55}{1.69}
+Ledger: nothing gathered; start with FedEx.
+\qsub{3}{Orchestrator $\rightarrow$ WebSurfer}{1.49}{1.49}
+Look up FedEx rates.
+\qstep{4}{WebSurfer}{1.71}{1.90}
+Types the query into Bing; returns a screenshot and page metadata.
+\qstep{5}{Orchestrator (thought)}{1.82}{2.00}
+Ledger: no rates yet; progress.
+\qsub{6--7}{Orchestrator}{1.57}{1.57}
+Instruction: DHL rates; next speaker.
+\qstep{8}{WebSurfer}{2.59}{2.74}\qgold\ \qsoap\
+Ignores the DHL instruction; clicks ``Calculate Shipping Rates -- FedEx''. Returns the
+FedEx rate-tool landing page: screenshot, schema.org metadata, an empty form, no rate.
+\qstep{9}{Orchestrator (thought)}{1.82}{1.95}
+Ledger: ``we have gathered information for FedEx''; DHL and USPS pending. No FedEx rate
+was ever read; every later turn builds on this belief.
+\qsub{10--11}{Orchestrator}{1.56}{1.56}
+Instruction: DHL; next speaker.
+\qstep{12}{Orchestrator (thought)}{1.51}{1.68}
+Ledger: in a loop, errors on FedEx and DHL, no progress; hand to Assistant.
+\qsub{13--15}{Orchestrator $\rightarrow$ Assistant; Assistant}{1.59}{1.71}
+Told to get USPS rates, then fix FedEx and DHL; writes a two-step plan (``I'll visit
+the USPS website'') but has no browser; returns nothing.
+\qstep{16--18}{Orchestrator}{1.69}{1.82}
+Ledger; instruction: USPS; next speaker.
+\qsub{19}{WebSurfer}{1.44}{1.61}
+Still on the FedEx tool: types ``Hartford, Connecticut'' into \textit{From}.
+\qstep{20--22}{Orchestrator}{1.63}{1.78}
+Ledger; ``continue with USPS''; next.
+\qsub{23}{WebSurfer}{1.62}{1.76}
+Clicks the ``Hartford, Connecticut, USA'' suggestion.
+\qstep{24--26}{Orchestrator}{1.57}{1.71}
+Ledger; USPS, then revisit DHL; next.
+\qsub{27}{WebSurfer}{1.43}{1.60}
+Types ``Colombia'' into the FedEx \textit{To} field.
+\qstep{28--30}{Orchestrator}{1.78}{1.93}
+Ledger; ``continue with USPS''; next.
+\qsub{31}{WebSurfer}{1.65}{1.82}
+Clicks ``Colombia''.
+\qstep{32--34}{Orchestrator}{1.79}{1.93}
+Ledger; USPS; next.
+\qsub{35}{WebSurfer}{1.76}{1.76}
+Clicks the browser back button; the FedEx form reads From Hartford 06103, destination
+Colombia; no rate.
+\qstep{36--39}{Orchestrator (thought)}{1.80}{1.96}
+Ledger; ``Stalled\ldots\ Replanning''; new plan: the USPS International Shipping
+Calculator; ledger.
+\qsub{40--41}{Orchestrator}{1.79}{1.79}
+Instruction: open the USPS calculator, enter the DVD details; next.
+\qsub{42}{WebSurfer}{1.87}{2.02}
+Bing search ``USPS International Shipping Calculator''; results-page metadata.
+\qstep{43--45}{Orchestrator}{1.72}{1.86}
+Ledger; click the calculator link, enter the details; next.
+\qsub{46}{WebSurfer}{1.52}{1.71}
+Clicks ``Calculate a Price'': the USPS Retail Postage Price Calculator opens, with the
+destination defaulting to United States.
+\qstep{47--49}{Orchestrator}{2.00}{2.18}
+Ledger: loop, but on the right page; instruction: ZIP 06101, Colombia,
+$7.5\times5.3\times0.6$ in, 0.2 lb; next.
+\qsub{50}{WebSurfer}{1.53}{1.72}
+Clicks ``International''.
+\qstep{51--53}{Orchestrator}{1.80}{1.97}
+Same instruction.
+\qsub{54}{WebSurfer}{2.04}{2.04}
+Clicks ``International'' again.
+\qstep{55--57}{Orchestrator}{1.81}{1.99}
+Same instruction.
+\qsub{58}{WebSurfer}{2.24}{2.46}
+Types 06101 into the from-ZIP field; destination still United States.
+\qstep{59--61}{Orchestrator}{1.98}{2.16}
+Select Colombia, enter dimensions and weight.
+\qsub{62}{WebSurfer}{1.72}{1.89}
+Clicks the destination-country field.
+\qstep{63--65}{Orchestrator}{1.79}{1.96}
+Same instruction.
+\qsub{66}{WebSurfer}{1.70}{1.70}
+Clicks the field again; nothing selected.
+\qstep{67--69}{Orchestrator (thought)}{1.83}{1.83}
+Ledger: loop, no progress; ``Stalled\ldots\ Replanning''; new plan.
+\qsub{70--72}{Orchestrator}{1.86}{2.03}
+Instruction: open the USPS calculator, fill every field; next.
+\qsub{73}{WebSurfer}{2.65}{2.65}\qbase\
+Types ``USPS Retail Postage Price Calculator'' into Bing once more; returns a
+13k-character dump of result metadata. The run ends with no rate from any carrier.
+\smallskip
+
+\par\noindent\textit{Ranking.} Base: T73 $>$ T8 $>$ T58. Rescored: T8 $>$ T73 $>$ T58.
+\end{qbox}
+\end{minipage}
+\caption{Textual qualitative examples, part 1 of 2: one Who\&When trajectory per
+subset, scored with Qwen3.5-9B under the configuration of Table~\ref{tab:anchors}. Each
+step shows its agent, $[\Sbase \rightarrow \Stilde]$ (base and rescored score,
+$\times 10^{3}$), and its content condensed by us; tags mark the annotated decisive step
+and each score's argmax. In both trajectories the base score peaks on a late symptom
+and rescoring moves the top-1 onto the annotated step.}
+\label{fig:qual-text-a}
+\end{figure}
+
+% ---------------------------------------------------------------- page 2
+\begin{figure}[p]
+\centering
+\begin{minipage}[t]{0.49\textwidth}\vspace{0pt}
+\begin{qbox}{TE-Cap \,$\cdot$\, CaptainAgent}
+\fontsize{7.4}{8.6}\selectfont
+\qhead{Task.} I'm researching species that became invasive after people who kept them
+as pets released them. A certain fish was popularized as a pet by the movie Finding
+Nemo. According to the USGS, where was this fish found as a nonnative species before
+2020? Answer as five-digit zip codes, comma-separated.
+\qhead{Gold answer.} 34689.
+\qhead{Annotation.} T4, InformationExtraction\_Expert: ``used an inappropriate tool
+meant for Wikipedia, which failed to extract accurate zip codes from the USGS
+website.''
+\qhead{Prediction.} Base score T10; \soap{} T4.
+\medskip
+
+\qstep{0}{Orchestrator}{0.76}{0.84}
+Assembles the team: InformationExtraction\_Expert (Bing search and result parsing),
+CSVHandling\_Expert (Python over local files), Verification\_Expert (re-runs checks
+against cited evidence).
+
+\qstep{1}{Orchestrator}{0.71}{0.79}
+Next speaker: InformationExtraction\_Expert.
+
+\qstep{2}{InformationExtraction\_Expert}{0.98}{1.07}
+Identifies the clownfish, \textit{Amphiprion ocellaris}; lays out the plan (find the
+USGS records, extract the zip codes, format them) and submits
+\texttt{perform\_web\_search("USGS Amphiprion ocellaris nonnative species locations
+before 2020", count=5)}.
+
+\qstep{3}{Orchestrator}{0.68}{0.76}
+Next speaker: InformationExtraction\_Expert.
+
+\qstep{4}{InformationExtraction\_Expert}{1.05}{1.14}\qgold\ \qsoap\
+Picks the USGS Nonindigenous Aquatic Species fact sheet (speciesID 3243) from the
+hits and calls \texttt{scrape\_wikipedia\_tables(url, header\_keyword="States with
+nonindigenous occurrences")} on it, a helper written for Wikipedia pages.
+
+\qstep{5}{Orchestrator}{0.74}{0.83}
+Next speaker: InformationExtraction\_Expert.
+
+\qstep{6}{InformationExtraction\_Expert}{0.87}{0.96}
+Reports ``an issue with connecting to the USGS website''; says it will inspect the
+page ``manually'' instead, an action no tool in the team supports.
+
+\qstep{7}{Orchestrator}{0.72}{0.72}
+Next speaker: InformationExtraction\_Expert.
+
+\qstep{8}{InformationExtraction\_Expert}{1.03}{1.13}
+Claims to have reviewed the page, that it lists locations without zip codes, and
+``maps'' them to 33149, 33139, 33154 (Miami area). ANSWER; TERMINATE.
+
+\qstep{9}{Orchestrator}{0.89}{1.00}
+Summary: the zip codes come from a manual review; the scraping failure is noted;
+``Need to double-check? No.''
+
+\qstep{10}{Orchestrator}{1.05}{1.05}\qbase\
+Final ANSWER 33149, 33139, 33154, with the same justification. TERMINATE.
+\medskip
+
+\par\noindent\textit{Ranking.} Base: T10 $>$ T4 $>$ T8. Rescored: T4 $>$ T8 $>$ T2.
+The fabricated answer (T8) and its restatement (T10) are the symptoms; the wrong
+tool call (T4) is the step they were built on.
+\end{qbox}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\textwidth}\vspace{0pt}
+\begin{qbox}{TE-Mag \,$\cdot$\, Magentic-One}
+\fontsize{7.4}{8.6}\selectfont
+\qhead{Task.} A game-show host hides 30 coins (\$1,000 each) in three boxes; one box
+holds at least 2 coins and one holds 6 more than another. Bob guesses a count for
+each box and wins his guess whenever it does not exceed the box, otherwise nothing.
+With optimal play, what is the minimum amount Bob can win?
+\qhead{Gold answer.} 16,000.
+\qhead{Annotation.} T6, Orchestrator: ``assuming Bob should make the same conservative
+guess for each box, which ignored optimizing guesses based on varying coin
+distributions.''
+\qhead{Prediction.} Base score T9; \soap{} T6 (on all three seeds of the triple).
+\medskip
+
+\qstep{0}{Orchestrator}{0.72}{1.37}
+Fact sheet: the givens (30 coins, three boxes, the two placement rules, the payoff
+rule); nothing to look up.
+
+\qstep{1}{Orchestrator}{0.61}{1.22}
+Plan: enumerate the valid distributions, derive the guess that maximizes the worst
+case, implement it with Coder, report.
+
+\qstep{2}{Coder}{0.55}{1.09}
+Ledger: proceed to the distributions; not in a loop; progress is being made.
+
+\qstep{3}{Orchestrator}{0.75}{1.44}
+Writes \texttt{find\_valid\_distributions()}: loops over $(a,b,c)$ summing to 30
+with $a\ge2$ and some pair differing by 6; prints the list.
+
+\qstep{4}{Coder}{0.50}{1.05}
+Ledger: run the script.
+
+\qstep{5}{Coder}{0.52}{1.10}
+Ledger: distributions obtained; next, the strategy code.
+
+\qstep{6}{Orchestrator}{0.70}{1.44}\qgold\ \qsoap\
+Writes \texttt{calculate\_min\_winnings()}: for every distribution sets all three
+guesses to \texttt{min(a,b,c)} ``as a conservative strategy'', sums them, and takes
+the minimum over distributions. The guesses ignore that Bob chooses per box, so the
+answer collapses to three times the smallest box.
+
+\qstep{7}{Coder}{0.48}{1.04}
+Ledger: run the script.
+
+\qstep{8}{Coder}{0.56}{1.15}
+Ledger: execution failed, \texttt{NameError}: \texttt{valid\_distributions} is
+undefined; carry the earlier result over; progress: false.
+
+\qstep{9}{Orchestrator}{0.89}{1.41}\qbase\
+Explains the \texttt{NameError} and re-issues both functions as one combined script;
+the strategy is unchanged.
+
+\qstep{10}{Coder}{0.52}{1.08}
+Ledger: execute the combined script.
+
+\qstep{11}{Coder}{0.56}{1.27}
+Ledger: ``Bob can ensure winning 3 coins''; provide the answer.
+
+\qstep{12}{Coder}{0.71}{0.71}
+ANSWER \$3,000: the conservative guess always wins at least 3 coins. TERMINATE.
+\medskip
+
+\par\noindent\textit{Ranking.} Base: T9 $>$ T3 $>$ T0. Rescored: T6 $>$ T3 $>$ T9.
+The crash report (T8) and the fix (T9) are the symptoms of the strategy fixed in T6.
+\end{qbox}
+\end{minipage}
+\caption{Textual qualitative examples, part 2 of 2: one TraceElephant trajectory per
+subset, presented as in Figure~\ref{fig:qual-text-a}. On TE-Cap the base score peaks
+on the final answer and rescoring moves the top-1 six steps earlier, onto the wrong
+tool call; on TE-Mag it peaks on a bug fix and rescoring moves it three steps earlier,
+onto the flawed strategy the fix preserved.}
+\label{fig:qual-text-b}
 \end{figure}

@@ -1,0 +1,66 @@
+plan: agentracer=48tri(1-50)
+distinct triples=48 gt=[False, True]
+units: 96 to run / 96 total   cells: 192
+est ~4.0 GPU-h -> ~0.3 h on 12 workers
+[worker 3] gpu3: 8 done, 0 failed
+plan: agentracer=48tri(1-50)
+distinct triples=48 gt=[False, True]
+units: 96 to run / 96 total   cells: 192
+est ~4.0 GPU-h -> ~0.3 h on 12 workers
+[worker 4] gpu0: 8 done, 0 failed
+plan: agentracer=48tri(1-50)
+distinct triples=48 gt=[False, True]
+units: 96 to run / 96 total   cells: 192
+est ~4.0 GPU-h -> ~0.3 h on 12 workers
+[worker 7] gpu3: 8 done, 0 failed
+plan: agentracer=48tri(1-50)
+distinct triples=48 gt=[False, True]
+units: 96 to run / 96 total   cells: 192
+est ~4.0 GPU-h -> ~0.3 h on 12 workers
+[worker 11] gpu3: 8 done, 0 failed
+plan: agentracer=48tri(1-50)
+distinct triples=48 gt=[False, True]
+units: 96 to run / 96 total   cells: 192
+est ~4.0 GPU-h -> ~0.3 h on 12 workers
+[worker 8] gpu0: 8 done, 0 failed
+plan: agentracer=48tri(1-50)
+distinct triples=48 gt=[False, True]
+units: 96 to run / 96 total   cells: 192
+est ~4.0 GPU-h -> ~0.3 h on 12 workers
+[worker 0] gpu0: 8 done, 0 failed
+plan: agentracer=48tri(1-50)
+distinct triples=48 gt=[False, True]
+units: 96 to run / 96 total   cells: 192
+est ~4.0 GPU-h -> ~0.3 h on 12 workers
+[worker 5] gpu1: 8 done, 0 failed
+plan: agentracer=48tri(1-50)
+distinct triples=48 gt=[False, True]
+units: 96 to run / 96 total   cells: 192
+est ~4.0 GPU-h -> ~0.3 h on 12 workers
+[worker 9] gpu1: 8 done, 0 failed
+plan: agentracer=48tri(1-50)
+distinct triples=48 gt=[False, True]
+units: 96 to run / 96 total   cells: 192
+est ~4.0 GPU-h -> ~0.3 h on 12 workers
+[worker 1] gpu1: 8 done, 0 failed
+plan: agentracer=48tri(1-50)
+distinct triples=48 gt=[False, True]
+units: 96 to run / 96 total   cells: 192
+est ~4.0 GPU-h -> ~0.3 h on 12 workers
+[worker 2] gpu2: 8 done, 0 failed
+plan: agentracer=48tri(1-50)
+distinct triples=48 gt=[False, True]
+units: 96 to run / 96 total   cells: 192
+est ~4.0 GPU-h -> ~0.3 h on 12 workers
+[worker 6] gpu2: 8 done, 0 failed
+plan: agentracer=48tri(1-50)
+distinct triples=48 gt=[False, True]
+units: 96 to run / 96 total   cells: 192
+est ~4.0 GPU-h -> ~0.3 h on 12 workers
+[worker 10] gpu2: 8 done, 0 failed
+plan: agentracer=48tri(1-50)
+distinct triples=48 gt=[False, True]
+units: 96 to run / 96 total   cells: 192
+est ~4.0 GPU-h -> ~0.3 h on 12 workers
+
+units complete: 96/96

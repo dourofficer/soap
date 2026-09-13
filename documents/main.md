@@ -38,12 +38,19 @@ Everything in the paper comes from **`main/`** (the frozen-axis runner), not `sr
 
 - **Data**: 5 reported subsets — WW-AG (126), WW-HC (58), CE (2,226; macro-average
   over its 7 internal subsets on one shared triple), TE-Cap (85), TE-Mag (91).
-  Trajectory-level 30/20/50 reference/val/test split.
+  Trajectory-level 30/20/50 reference/val/test split. A sixth, **AgenTracer
+  TracerTraj-code (`agentracer/code`, 127)**, was extracted, swept and frozen on
+  2026-09-07 (`experiments/todo.md`, D1) but is NOT in any table or the manuscript.
+  The 2026-09-10 audit in D1 found its SOAP number to be a label artifact (58 % of
+  gold turns are prompt-template dumps; SOAP scores 0 % on the rest) — do not report.
 - **Seed triples are DONE.** The selection phase is finished; the triples are
   hand-picked by the author, frozen in `configs-main/<ds>.yaml`, one per subset,
   shared by both backbones. The per-triple sweep machinery (`scripts/main/`)
   produced candidates, but the final triples are the author's call — including the
-  WW-HC manual override [13, 14, 15]. Do not re-run triple selection.
+  WW-HC manual override [13, 14, 15]. Do not re-run triple selection. The one
+  exception is `agentracer`, whose triples ([20, 21, 22] without GT, [15, 16, 17]
+  with GT) came straight from `pick_triple.py` on 2026-09-07 — `sum` and `sum-diff`
+  agree — because it is a new cell, not a re-selection.
 - **Config selection is test-selected, deliberately.** Within the frozen triple, the
   winning config maximizes mean TEST step accuracy. This is an optimistic interim
   choice; the plan is to convert to validation-selected later (`pick_triple.py
@@ -106,6 +113,29 @@ Everything in the paper comes from **`main/`** (the frozen-axis runner), not `sr
   implementation-details sentences now state test selection and point to
   `app:selection`; method section states the top-w trimming; the blue/red notes
   covered by the appendix removed.
+- **Textual qualitative examples added 2026-09-11** (inline in `sections/appendix.tex`,
+  `app:qualitative`; two `figure[p]` pages, two trajectories each, one
+  per subset, Qwen3.5-9B on the frozen triples): WW-AG 65 (seed 3), WW-HC 23 (seed
+  15, the ONLY base-wrong/SOAP-right flip on that triple, 73 steps, set at 6pt with
+  the orchestrator cycles collapsed), TE-Cap 50 (seed 23), TE-Mag 30 (seed 15; flips
+  on all three seeds). Scores are `base`/`final` x 10^3 from
+  `results-nogt/<ds>/reproduce/qwen3.5-9b/<subset>/backprop_seed-<s>_test.steps.tsv`;
+  `traj_idx` there is the JSON file stem. The TraceElephant reproduce tree was
+  regenerated on the frozen seeds for this (captain 22-24, magentic 15-17); the stale
+  pre-freeze files (captain 14-16, magentic 8-10) still sit beside them. The main
+  text's qualitative paragraph now points at `app:qualitative` (was an empty `\ref{}`).
+  Titles name only subset and agent system. Preview:
+  `artifacts/qualitative_examples/textual_examples_preview.pdf`.
+- **`app:transfer` rewritten to the validation convention only 2026-09-08**: the
+  test-selected grids and the two-convention comparison are commented out;
+  `fig_transfer_appendix.pdf` regenerated as a 1x2 val-only figure
+  (`scripts/ablations/plot_figures.py`, old 2x2 layout noted in a comment) and
+  copied to `manuscript/assets/` — upload to Overleaf by hand. Off-diagonals come
+  from `e1_transfer.tsv` conv=val (target val pools reference+val, 40%); diagonals
+  stay Table-1 per E1's rule. NOT the E3 protocol (`e3_valsel_transfer.tsv`, main
+  20% val split) — swap the TSV if the headline converts to val selection. The
+  main text's DeepSeek transfer pointer now refs `app:transfer` (was
+  `app:deepseek-ablations`).
 - **ErrorProbe added 2026-09-05, switched to the paper mode 2026-09-06**
   (`\citep{errorprobe}`, Li et al., Findings of ACL 2026; reproduced in
   `../attrib-prompting/baselines/errorprobe/`). The row in `tab:main` (Qwen and
@@ -119,8 +149,14 @@ Everything in the paper comes from **`main/`** (the frozen-axis runner), not `sr
   stale: the with-GT paragraph ("second best on WW-AG"), the main-comparison
   claim ("best on all five subsets with both backbones", false since the RAFFLES
   fill), and the Baselines description ("analyzer--verifier diagnoser" names the
-  truncated mode). No GPT-4o ErrorProbe run exists, so the GPT block row is
-  `\PH`. `tab:main-gt`'s six prompting rows were refilled from
+  truncated mode). The GPT-4o paper-mode run landed and fills the GPT block row
+  (2026-09-07: 38.62 / 21.84 / 59.52 / 27.13 / 28.26, best on all five columns
+  of that block, which now carries full markers). NOTE the block states above
+  predate two 2026-09-06 changes made in the .tex directly: RAFFLES was dropped
+  from the comparison (kept in related work; rows commented out) and the
+  Qwen-block/`tab:main-gt` ErrorProbe rows moved to the `qwen3.5-9b-weak` judge
+  (same checkpoint, handicapped decoding) — the dated .tex comments and B3 in
+  `experiments/todo.md` are current. `tab:main-gt`'s six prompting rows were refilled from
   `tables/open_backbones_step_with_gt.tsv` (Qwen3.5-9B judge); RAFFLES 46.56 beats
   SOAP 43.39 on WW-AG and the prose says so. Named in the Baselines paragraph. NOT yet
   in the appendix: `app:baselines` prose, `tab:gt-full`, the std/agent tables, GPT-5.
@@ -134,6 +170,15 @@ Everything in the paper comes from **`main/`** (the frozen-axis runner), not `sr
   in .tex comments. The table labels the row "Qwen3.5-9B" with no mention of the
   reduced decoding budget; disclose it in the caption or `app:baselines` before
   submission.
+- **RAFFLES dropped from the comparison 2026-09-06** (user decision; it stays in
+  related work only). Every RAFFLES table row in `experiments.tex` and `appendix.tex`
+  (tab:main, tab:main-gt, tab:gt-full, tab:agent, tab:std, tab:gpt5) is commented
+  out under a "RAFFLES dropped" comment, best/second marks were recomputed per block,
+  and the seven prose sentences that cited RAFFLES numbers were rewritten with the
+  old text kept in comments (ErrorProbe is now the strongest prompt-based baseline in
+  the Qwen block). The prompting pipeline and `tables/*.tsv` still carry RAFFLES; only
+  the LaTeX changed. The RAFFLES discrepancy item below is therefore moot for the
+  manuscript.
 - **Open discrepancy**: `tab:main`'s GPT-4o RAFFLES row (35.98 / 18.39 / 53.05 /
   23.26 / 23.91) and DeepSeek RAFFLES CE (35.84) do not match
   `results-prompting/by_column.tsv` and `tables/table1_without_gt.tsv`

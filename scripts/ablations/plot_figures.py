@@ -333,14 +333,14 @@ def fig_datasize(out: Path) -> list[Path]:
 
 
 def fig_transfer_appendix(out: Path) -> list[Path]:
+    # Val convention only since 2026-09-08 (manuscript reports a single convention);
+    # the 2x2 test+val layout was: for conv in ("test", "val") over axes[i, j].
     e1 = tsv("e1_transfer.tsv")
     with plt.rc_context(RC):
-        fig, axes = plt.subplots(2, 2, figsize=(5.0, 5.0))
-        for i, conv in enumerate(("test", "val")):
-            for j, model in enumerate(BACKBONES):
-                heatmap(axes[i, j], transfer_grid(e1, model, conv),
-                        f"{BACKBONES[model]}, {conv}-selected")
-        fig.subplots_adjust(wspace=0.45, hspace=0.45)
+        fig, axes = plt.subplots(1, 2, figsize=(5.0, 2.5))
+        for j, model in enumerate(BACKBONES):
+            heatmap(axes[j], transfer_grid(e1, model, "val"), BACKBONES[model])
+        fig.subplots_adjust(wspace=0.45)
         return save(fig, "fig_transfer_appendix", out)
 
 
@@ -350,7 +350,7 @@ def fig_scale(out: Path) -> list[Path]:
     # 9B dropped 2026-08-31 v2 (already in Table 1); Qwen3-14B restored. Columns are
     # shades of one purple, darkest = SOAP.
     sizes = [("qwen3-14b", "14B\nQwen3"), ("qwen3.5-27b", "27B\nQwen3.5")]
-    methods = [("soap", r"$+$SOAP", "#3F3D73"),
+    methods = [("soap", "SOAP", "#3F3D73"),
                ("oat", "OAT", "#807EAF"), ("stepfinder", "StepFinder", "#C6C5DF")]
     with plt.rc_context(RC):
         fig, axes = plt.subplots(1, 2, figsize=(3.3, 1.5))
@@ -389,7 +389,7 @@ def fig_scale_transfer(out: Path) -> list[Path]:
     fig_scale + fig_transfer_synth into one \\textwidth figure."""
     d, e1, e2 = tsv("s1_scale.tsv"), tsv("e1_transfer.tsv"), tsv("e2_synthfit.tsv")
     sizes = [("qwen3-14b", "14B\nQwen3"), ("qwen3.5-27b", "27B\nQwen3.5")]
-    methods = [("soap", r"$+$SOAP", "#3F3D73"),
+    methods = [("soap", "SOAP", "#3F3D73"),
                ("oat", "OAT", "#807EAF"), ("stepfinder", "StepFinder", "#C6C5DF")]
     refs = [("real", "Real", "#3F3D73"), ("syn-qwen9b", "Syn. (Qwen3.5-9B)", "#807EAF"),
             ("syn-gpt4o", "Syn. (GPT-4o)", "#C6C5DF")]
@@ -417,14 +417,14 @@ def fig_scale_transfer(out: Path) -> list[Path]:
             if letter == "a":                      # headroom for the legend
                 ax.set_ylim(top=ax.get_ylim()[1] + 16)
             style(ax)
-            ax.set_title(f"({letter}) Scale: {tag}", pad=4, color=INK)
+            ax.set_title(f"({letter}) Scalability: {tag}", pad=4, color=INK)
         axes[0].set_ylabel("step acc. (%)", labelpad=2)
         handles = [Patch(color=color, label=label) for _, label, color in methods]
         axes[0].legend(handles=handles, frameon=False, loc="upper left", handlelength=1.0,
                        handleheight=0.8, labelcolor=INK_2, borderaxespad=0.1, labelspacing=0.2)
 
         # (c) transfer heatmap, as in fig_transfer_synth(a).
-        heatmap(axes[2], transfer_grid(e1, "qwen3.5-9b", "val"), "(c) Transfer", annot_size=5.2)
+        heatmap(axes[2], transfer_grid(e1, "qwen3.5-9b", "val"), "(c) Generalization", annot_size=5.2)
         axes[2].set_xticklabels(TARGETS, rotation=30, ha="right", rotation_mode="anchor")
 
         # (d) synthetic-reference bars, as in fig_transfer_synth(b).
@@ -437,7 +437,7 @@ def fig_scale_transfer(out: Path) -> list[Path]:
             vals_all.append(vals)
             ax2.bar(x + (j - 1) * width, vals, width, color=color, linewidth=0, label=label)
             for xi, v in zip(x + (j - 1) * width, vals):
-                ax2.text(xi, v + 0.6, f"{v:.1f}", ha="center", va="bottom", fontsize=4.4, color=INK_2)
+                ax2.text(xi, v + 0.6, f"{v:.2f}", ha="center", va="bottom", fontsize=4.0, color=INK_2)
         style(ax2)
         ax2.set_xticks(x, ["WW-AG", "WW-HC"])
         ax2.set_xlim(-0.6, 1.6)
@@ -461,7 +461,7 @@ def fig_ablations(out: Path) -> list[Path]:
         tsv("a6a_rep_layer.tsv"), tsv("a6b_attn_band.tsv"), tsv("a7_datasize.tsv")
     with plt.rc_context(RC):
         fig, axes = plt.subplots(1, 4, figsize=(7.6, 1.55),
-                                 gridspec_kw={"width_ratios": [1.1, 1.25, 0.85, 1.0]})
+                                 gridspec_kw={"width_ratios": [1.1, 1.25, 0.85, 1.3]})
         g = cell(d5, model, subset).groupby("gamma")["step_acc_test"]
         gm, gs = 100 * g.mean(), 100 * g.std(ddof=0)
         base = gm.loc[0.0]
@@ -506,7 +506,7 @@ def fig_ablations(out: Path) -> list[Path]:
         ax.set_xticks(x, ["10%", "20%", "30%"])
         ax.set_xlim(7, 33)
         ax.set_xlabel("reference data (%)", labelpad=1)
-        handles = [Line2D([], [], color=PURPLE_DARK, marker="o", markersize=3.2, mew=0, label=r"$+$SOAP"),
+        handles = [Line2D([], [], color=PURPLE_DARK, marker="o", markersize=3.2, mew=0, label="SOAP"),
                    Line2D([], [], color=ORANGE, marker="s", markersize=3.2, mew=0, label="Base score"),
                    Line2D([], [], color=INK_2, linestyle="-", label="WW-AG"),
                    Line2D([], [], color=INK_2, linestyle=":", label="WW-HC")]

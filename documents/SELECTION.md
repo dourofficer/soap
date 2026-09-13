@@ -31,7 +31,7 @@ The triples pinned in `configs-main/<ds>.yaml` come from a sweep over many tripl
 driven by `scripts/main/`:
 
 1. `sweep_triples.py` runs `main/`'s sweep for every triple: 48 triples (seeds 1-50)
-   for `ww` and `traceelephant`, 18 (seeds 1-20) for `correct-error`. Writes
+   for `ww`, `traceelephant` and `agentracer`, 18 (seeds 1-20) for `correct-error`. Writes
    `results-sweep/` (gitignored). Resumable.
 2. `collect.py` gathers the per-triple selections into `selections_all.tsv` (one row
    per triple, backbone, subset, method) and `grid_all.parquet` (every config, for
@@ -41,7 +41,7 @@ driven by `scripts/main/`:
    Other rules: `sum-diff` (SOAP must beat the base scorer on BOTH backbones) and
    `val` (read validation instead of test).
 
-`ww` and `traceelephant` pick one triple per subset; `correct-error` picks one triple
+`ww`, `traceelephant` and `agentracer` pick one triple per subset; `correct-error` picks one triple
 for all seven subsets, because the manuscript reports their mean. The winning margin is
 usually below 0.02 while best-to-worst spans up to 0.15: the seeds matter a lot, the
 exact winner does not — read the `margin` column before trusting a pick.

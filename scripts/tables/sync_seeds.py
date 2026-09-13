@@ -22,7 +22,7 @@ import pandas as pd
 import yaml
 
 REPO = Path(__file__).resolve().parents[2]
-DATASETS = ["ww", "traceelephant", "correct-error"]
+DATASETS = ["ww", "traceelephant", "correct-error", "agentracer"]
 
 # (dataset, subset) -> (triple, reason). These deliberately ignore the rule.
 MANUAL = {

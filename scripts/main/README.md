@@ -9,7 +9,7 @@ no new GPU extraction. It only re-scores the activations already on disk.
 
 A triple is three consecutive seeds: (1,2,3), then (2,3,4), and so on.
 
-We sweep 48 triples for `ww` and `traceelephant`, from seed 1 to seed 50. We sweep 18 for
+We sweep 48 triples for `ww`, `traceelephant` and `agentracer`, from seed 1 to seed 50. We sweep 18 for
 `correct-error`, from seed 1 to seed 20. One `correct-error` triple costs five times more
 than the others, and 18 triples already cover the span the older protocol used.
 
@@ -27,7 +27,7 @@ Two other rules are available:
 - `sum-diff` prefers a triple where SOAP beats the base scorer on **both** backbones.
 - `val` reads the validation accuracy instead of the test accuracy.
 
-`ww` and `traceelephant` choose one triple per subset. `correct-error` chooses one triple
+`ww`, `traceelephant` and `agentracer` choose one triple per subset. `correct-error` chooses one triple
 for all seven subsets, because we report the average over those subsets.
 
 **Read the margin before you trust a pick.** The gap between the best and second-best
@@ -59,7 +59,7 @@ python scripts/main/check_sweep_repro.py           # compare the sweep to known 
 ```
 
 Run `check_sweep_repro.py` before you trust a long sweep. Five triples already exist from
-an earlier run. The new sweep must reproduce all 44 of their cells exactly. Start with two
+an earlier run. The new sweep must reproduce all 48 of their cells exactly. Start with two
 triples, check them, and only then sweep the rest.
 
 Change the rule and run step 3 again. It reads one small file, so it costs seconds. You do
@@ -88,7 +88,7 @@ One row per cell. A cell is one dataset, one subset, and one GT setting.
 
 ### `selections_all.tsv` — the chosen config for every triple
 
-5,088 rows. One row per triple, backbone, subset, and method.
+5,856 rows. One row per triple, backbone, subset, and method.
 
 `row` names the method: `svd` is SOAP without rescoring; `backprop`, `succ-strong` and
 `succ-near` are the three rescoring strategies. `position`, `c_begin` and `c_end` describe
@@ -99,7 +99,7 @@ Use this file to see how the chosen hyperparameters move as the seeds change.
 
 ### `grid_all.parquet` — every config for every triple
 
-6.8 million rows in 63 MB. Same columns, but for **all** configs, not just the winners.
+7.8 million rows in 72 MB. Same columns, but for **all** configs, not just the winners.
 Each row averages the three seeds of its triple.
 
 Use this file to change how a config is chosen. You might want a different tiebreak, the

@@ -6,7 +6,8 @@ A multi-agent LLM run fails. Somewhere in its trajectory one step — the **deci
 error** — derailed it beyond recovery. This repo predicts that step, and hence the
 responsible agent, from the internal representations of a **proxy model** that merely
 reads the trajectory. Benchmarks: Who&When (`ww`), CORRECT-Error (`correct-error`), and
-TraceElephant (`traceelephant`).
+TraceElephant (`traceelephant`); AgenTracer's TracerTraj-code (`agentracer`) is
+onboarded in `main/` only and not yet reported (`experiments/todo.md`, D1).
 
 Two packages implement the method. **`src/` is the full sweep**: every scorer,
 orientation, normalization and centering arm stays implemented, so any axis can be

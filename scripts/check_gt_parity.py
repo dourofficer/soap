@@ -1,4 +1,4 @@
-"""Assert outputs-gt/<ds> extraction mirrors outputs/<ds> exactly (read-only).
+"""Assert the with-GT extraction of <ds> mirrors the without-GT one exactly (read-only).
 
 Why this matters: ``src.stores.split_files`` derives the seed->partition mapping from
 the FILE SET of a reps directory, and the baseline cells' splits are derived the same
@@ -6,14 +6,19 @@ way. If the with-GT extraction produced a different set of trajectory files — 
 different set of step entries inside one — every split silently shifts and GT vs non-GT
 numbers stop being comparable. Run this after GT extraction, before scoring.
 
+Two tree pairs exist. `--roots outputs` (default) checks the frozen `src/` reference
+trees outputs/ vs outputs-gt/; `--roots results` checks `main/`'s results-nogt/ vs
+results-gt/, the only pair a dataset extracted by `python -m main extract` has.
+
 Checked per (dataset, model, subset), for activations and attention:
-  * the sorted .safetensors stems match between outputs/ and outputs-gt/;
+  * the sorted .safetensors stems match between the plain and the GT tree;
   * per file, the set of step indices in the keys matches
     (activations: identical key sets; attention: identical step-entry sets — GT files
     gain one extra ctx column per step, never a step entry).
 
     python scripts/check_gt_parity.py --dataset ww
     python scripts/check_gt_parity.py --dataset traceelephant
+    python scripts/check_gt_parity.py --dataset agentracer --roots results
 """
 from __future__ import annotations
 
@@ -25,6 +30,7 @@ import yaml
 from safetensors import safe_open
 
 REPO = Path(__file__).resolve().parents[1]
+ROOTS = {"outputs": ("outputs", "outputs-gt"), "results": ("results-nogt", "results-gt")}
 
 
 def _steps(path: Path) -> set[str]:
@@ -62,7 +68,10 @@ def main() -> None:
     ap.add_argument("--dataset", required=True)
     ap.add_argument("--models", nargs="*", default=None)
     ap.add_argument("--subsets", nargs="*", default=None)
+    ap.add_argument("--roots", choices=sorted(ROOTS), default="outputs",
+                    help="which tree pair to compare (default: outputs)")
     args = ap.parse_args()
+    plain_root, gt_root = ROOTS[args.roots]
 
     manifest = yaml.safe_load((REPO / "configs" / "datasets" / f"{args.dataset}.yaml").read_text())
     models = args.models or manifest["models"]
@@ -72,8 +81,8 @@ def main() -> None:
     for model in models:
         for subset in subsets:
             for stage, per_file in (("activations", _keys), ("attention", _steps)):
-                plain = REPO / "outputs" / args.dataset / stage / model / subset
-                gt = REPO / "outputs-gt" / args.dataset / stage / model / subset
+                plain = REPO / plain_root / args.dataset / stage / model / subset
+                gt = REPO / gt_root / args.dataset / stage / model / subset
                 found = check_dir(plain, gt, per_file)
                 tag = f"{args.dataset}/{stage}/{model}/{subset}"
                 if found:
@@ -83,7 +92,7 @@ def main() -> None:
     if errs:
         print("\n".join(errs), file=sys.stderr)
         sys.exit(1)
-    print(f"[parity] {args.dataset}: outputs-gt mirrors outputs exactly")
+    print(f"[parity] {args.dataset}: {gt_root} mirrors {plain_root} exactly")
 
 
 if __name__ == "__main__":

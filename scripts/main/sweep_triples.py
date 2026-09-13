@@ -45,10 +45,11 @@ SWEEP_ROOT = REPO / "results-sweep"
 QUEUE = SWEEP_ROOT / "queue"
 LOGS = SWEEP_ROOT / "logs"
 
-DATASETS = ["ww", "traceelephant", "correct-error"]
+DATASETS = ["ww", "traceelephant", "correct-error", "agentracer"]
 # Measured on the production run; used only to order the queue longest-first so the
 # 950 s correct-error units start early and the tail is short.
-UNIT_COST = {"ww": 200, "traceelephant": 190, "correct-error": 950}
+UNIT_COST = {"ww": 200, "traceelephant": 190, "correct-error": 950,
+             "agentracer": 150}   # one subset, 2,642 steps: estimated, not measured
 
 # Set once by main(); run_unit reads it to size BLAS thread pinning.
 N_WORKERS = [8]
@@ -115,8 +116,15 @@ def load_cfg(dataset: str) -> dict:
     return yaml.safe_load((REPO / "configs-main" / f"{dataset}.yaml").read_text())
 
 
+# The seed sweep is defined over the two production backbones. configs-main/ww.yaml
+# also lists qwen3-14b and qwen3.5-27b (the S1 scalability arm, added 2026-08-27);
+# they were never part of triple selection, and counting them made every ww unit
+# look incomplete to collect.py.
+SWEEP_MODELS = ("qwen3.5-9b", "deepseek-8b")
+
+
 def cells(dataset: str, cfg: dict) -> list[tuple[str, str]]:
-    return [(m, s) for m in cfg["models"] for s in cfg["subsets"]]
+    return [(m, s) for m in cfg["models"] if m in SWEEP_MODELS for s in cfg["subsets"]]
 
 
 def seed_overrides(cfg: dict, triple: tuple[int, ...]) -> list[str]:
@@ -310,7 +318,8 @@ def main() -> int:
     p.add_argument("--seed-hi", type=int, default=50)
     p.add_argument("--plan", default=None,
                    help="per-dataset seed ranges, e.g. "
-                        "'ww:1-50,traceelephant:1-50,correct-error:1-20'. Overrides "
+                        "'ww:1-50,traceelephant:1-50,correct-error:1-20,agentracer:1-50'. "
+                        "Overrides "
                         "--seed-lo/--seed-hi for the datasets it names.")
     p.add_argument("--dry-run", action="store_true")
     p.add_argument("--worker-id", type=int, default=None, help=argparse.SUPPRESS)
@@ -321,7 +330,7 @@ def main() -> int:
 
     # Per-dataset triple ranges. correct-error costs 5x per unit, and 18 windows over
     # seeds 1-20 already matches the original protocol's span, so it does not need the
-    # full 48 that ww/traceelephant get.
+    # full 48 that ww/traceelephant/agentracer get.
     ranges = {d: (args.seed_lo, args.seed_hi) for d in ds_list}
     for part in (args.plan or "").split(","):
         if not part.strip():

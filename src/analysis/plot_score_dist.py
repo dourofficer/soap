@@ -47,7 +47,7 @@ MODEL_DISPLAY = {"qwen3.5-9b": "Qwen3.5-9B", "deepseek-8b": "DeepSeek-8B"}
 SUBSET_DISPLAY = {"algorithm-generated": "WW-AG", "hand-crafted": "WW-HC"}
 VARIANTS = ("raw", "znorm")
 XLABEL = {
-    "raw":   r"base score  $\pi_\mathcal{C}(v_t)$",
+    "raw":   r"Base score  $\pi_\mathcal{C}(v_t)$",
     # The scorer only ever ranks steps WITHIN a trajectory, so pooling raw scores
     # across trajectories adds between-trajectory scale variation the ranking never
     # sees -- which is what smears the two groups together. Standardizing per
