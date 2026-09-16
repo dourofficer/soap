@@ -72,12 +72,11 @@ Rather than treating downstream failure signals as independent and competing evi
 An earlier step is therefore promoted when anomalous downstream behavior is systematically built upon it.
 
 
+We evaluate \soap on three failure-attribution benchmarks comprising five subsets---\textsc{Who\&When}, \textsc{Correct-Error}, and \textsc{TraceElephant} using Qwen3.5-9B and DeepSeek-R1-Distill-Llama-8B.
+Across different evaluation settings, \soap consistently improves decisive-step localization over competitive prompt-based and training-based baselines.
+In particular, on \textsc{TraceElephant} with DeepSeek-R1-Distill-Llama-8B, \soap improves step-level Accuracy by 24.66\% over the strongest baseline.
+Ablation studies further show that both spectral step scoring and attention-guided rescoring contribute to the improvements (Section~\ref{sec:exp:analysis}). Our main contributions are summarized as follows:
 
-
-We evaluate \soap on \TODO{benchmarks} using \TODO{agent systems and proxy models}.
-Across \TODO{number} evaluation settings, \soap consistently improves decisive-step localization over different competitive baselines.
-In particular, \soap improves \TODO{primary metric} by \TODO{result} over the strongest baseline on \TODO{benchmark}.
-Ablation studies further show that both spectral step scoring and attention-guided rescoring contribute to the improvements, which cannot be explained by simply favoring earlier steps or uniformly aggregating downstream scores (Section~\ref{sec:exp:analysis}). Our main contributions are summarized as follows:
 
 \vspace{-1em}
 \begin{itemize}
