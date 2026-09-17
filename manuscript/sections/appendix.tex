@@ -297,17 +297,21 @@ score. Appendix~\ref{app:window} varies $w$.
 % \textcolor{red}{this looks informative. But would let the reviewer question that our method requires careful tuning for every setting. I am not sure whether we should put it here.}
 % \note{removed the hyperparameter table.}
 
+% [commented out 2026-09-17] Revised for clarity; original below.
+% \textbf{Alternative scoring functions.}
+% The seven alternatives of Table~\ref{tab:scorefn} share the selected layer and band
+% width $|\mathcal{C}|$ of the spectral score and replace only the score. \emph{Perplexity}
+% is the mean negative log-likelihood of the step's tokens under the LLM in context,
+% read as higher~$=$~error. \emph{Random subspace} projects onto a random orthonormal
+% basis of dimension $|\mathcal{C}|$; \emph{top subspace} uses the band
+% $[0, |\mathcal{C}|)$; \emph{tail subspace} the last $|\mathcal{C}|$ of the 20 computed
+% components; \emph{full spectrum} all 20. The $\ell_1$ and $\ell_2$ norms score
+% $\|v_t\|_1$ and $\|v_t\|_2$. Every projection and norm score is read as
+% lower~$=$~error, the orientation of the spectral score. Where the selected band starts at component 0 the top subspace \emph{is}
+% the spectral band, which explains the ties in Table~\ref{tab:scorefn}.
+
 \textbf{Alternative scoring functions.}
-The seven alternatives of Table~\ref{tab:scorefn} share the selected layer and band
-width $|\mathcal{C}|$ of the spectral score and replace only the score. \emph{Perplexity}
-is the mean negative log-likelihood of the step's tokens under the LLM in context,
-read as higher~$=$~error. \emph{Random subspace} projects onto a random orthonormal
-basis of dimension $|\mathcal{C}|$; \emph{top subspace} uses the band
-$[0, |\mathcal{C}|)$; \emph{tail subspace} the last $|\mathcal{C}|$ of the 20 computed
-components; \emph{full spectrum} all 20. The $\ell_1$ and $\ell_2$ norms score
-$\|v_t\|_1$ and $\|v_t\|_2$. Every projection and norm score is read as
-lower~$=$~error, the orientation of the spectral score. Where the selected band starts at component 0 the top subspace \emph{is}
-the spectral band, which explains the ties in Table~\ref{tab:scorefn}.
+The seven alternatives of Table~\ref{tab:scorefn} share the selected layer and band width $|\mathcal{C}|$ of the spectral score; only the score itself changes. \emph{Perplexity} is the mean negative log-likelihood of the step's tokens under the LLM in context, read as higher~$=$~error. Four projection variants replace the spectral band with a different subspace of the same dimension: \emph{random subspace} uses a random orthonormal basis of dimension $|\mathcal{C}|$, \emph{top subspace} the leading band $[0, |\mathcal{C}|)$, \emph{tail subspace} the last $|\mathcal{C}|$ of the 20 computed components, and \emph{full spectrum} all 20. The $\ell_1$ and $\ell_2$ norms score $\|v_t\|_1$ and $\|v_t\|_2$. Every projection and norm score is read as lower~$=$~error, the same orientation as the spectral score. When the selected band starts at component~0, the top subspace \emph{is} the spectral band, which explains the ties in Table~\ref{tab:scorefn}.
 
 % \textcolor{red}{do we need more explanations on Table 4 here?}
 % \note{added.}
@@ -385,24 +389,36 @@ All-at-Once, Step-by-Step, and Binary Search run the code released with Who\&Whe
 
 
 
+% [commented out 2026-09-17] Revised OAT, StepFinder, Evaluation for clarity; originals below.
+% \textbf{OAT.}
+% OAT learns the latent dynamics of \emph{successful} trajectories and flags the steps of a failed trajectory that depart from them: a neural controlled differential equation is trained to predict each step's latent state from the trajectory so far, a step's anomaly score is the squared distance between its predicted and observed state, and the predicted decisive step is the argmax.
+% Training is one-class on the 103 successful tool-use trajectories released with the paper (MCP-Atlas), the paper's own out-of-distribution protocol, and one trained model serves every subset;
+% In the with-GT setting, the gold answer is appended to the task description with the same phrasing the prompt-based baselines use; the training corpus carries no answers, so the model is shared between settings.
+%
+% \textbf{StepFinder.}
+% StepFinder is a supervised step classifier: each step is embedded twice (128 dimensions for its text, 32 for its agent's name), and the sequence passes through a BiLSTM, an agent-aware attention layer, and a scoring head with a position prior, trained with a per-trajectory cross-entropy plus a self-supervised next-step loss. Training uses the step-labeled failure corpora released with the paper: 1{,}564 CaptainAgent-style and 2{,}604 Magentic-One-style trajectories. Each evaluation subset is paired with the corpus of its own agent system --- WW-AG and TE-Cap with CaptainAgent, WW-HC and TE-Mag with Magentic-One; CE matches neither and falls back to Magentic-One, so its column is out-of-domain transfer. To place StepFinder on the same backbones as \soap, we replace its encoder (Qwen3-Embedding-0.6B) with the backbone's last-layer hidden state at each step's final token, sliced to the leading 128 text and 32 agent coordinates exactly as the released code slices its embeddings.
+% In the with-GT setting, the gold answer is appended to the first step, since StepFinder encodes no separate task description; the
+% models are shared between settings.
+%
+% \textbf{Evaluation.}
+% OAT and StepFinder score steps and name no agent, so their responsible agent is the agent of the predicted step; the prompt-based judges name an agent in their answer, as the Who\&When prompts ask, and that name is scored. We train five models per backbone (seeds 42--46); a reported cell is the mean over the subset's three test splits and, within each split, the five training seeds, under the same scoring rules as every other method in Table~\ref{tab:main}.
+
 \textbf{OAT.}
-OAT learns the latent dynamics of \emph{successful} trajectories and flags the steps of a failed trajectory that depart from them: a neural controlled differential equation is trained to predict each step's latent state from the trajectory so far, a step's anomaly score is the squared distance between its predicted and observed state, and the predicted decisive step is the argmax. 
-% A step's representation is the mean of its tokens' last-layer hidden states, taken from one forward pass over the serialized trajectory and reduced to 64 dimensions by PCA. 
-Training is one-class on the 103 successful tool-use trajectories released with the paper (MCP-Atlas), the paper's own out-of-distribution protocol, and one trained model serves every subset; 
-% at test time, CORAL aligns each subset's representation statistics with the training set's, using no labels. 
-% Following the released code, human and environment turns are not scored. 
-In the with-GT setting, the gold answer is appended to the task description with the same phrasing the prompt-based baselines use; the training corpus carries no answers, so the model is shared between settings. 
+OAT models the latent dynamics of \emph{successful} trajectories and scores each step of a failed trajectory by how far it departs from them. A neural controlled differential equation predicts each step's latent state from the trajectory so far; the anomaly score is the squared distance between the predicted and observed states, and the predicted decisive step is the argmax.
+% A step's representation is the mean of its tokens' last-layer hidden states, taken from one forward pass over the serialized trajectory and reduced to 64 dimensions by PCA.
+Training is one-class on the 103 successful tool-use trajectories released with the paper (MCP-Atlas), following the paper's own out-of-distribution protocol; one trained model serves every subset.
+% at test time, CORAL aligns each subset's representation statistics with the training set's, using no labels.
+% Following the released code, human and environment turns are not scored.
+In the with-GT setting the gold answer is appended to the task description with the same phrasing the prompt-based baselines use; the training corpus carries no answers, so the model is shared between settings.
 % Note that the paper's own benchmark annotates every step that contributed to a failure and reports set metrics, so its printed numbers are not comparable to Table~\ref{tab:main}.
 
 \textbf{StepFinder.}
-StepFinder is a supervised step classifier: each step is embedded twice (128 dimensions for its text, 32 for its agent's name), and the sequence passes through a BiLSTM, an agent-aware attention layer, and a scoring head with a position prior, trained with a per-trajectory cross-entropy plus a self-supervised next-step loss. Training uses the step-labeled failure corpora released with the paper: 1{,}564 CaptainAgent-style and 2{,}604 Magentic-One-style trajectories. Each evaluation subset is paired with the corpus of its own agent system --- WW-AG and TE-Cap with CaptainAgent, WW-HC and TE-Mag with Magentic-One; CE matches neither and falls back to Magentic-One, so its column is out-of-domain transfer. To place StepFinder on the same backbones as \soap, we replace its encoder (Qwen3-Embedding-0.6B) with the backbone's last-layer hidden state at each step's final token, sliced to the leading 128 text and 32 agent coordinates exactly as the released code slices its embeddings. 
-% The checkpoint is selected on a held-out fraction of the training tasks, split by question. 
-In the with-GT setting, the gold answer is appended to the first step, since StepFinder encodes no separate task description; the
-models are shared between settings. 
-
+StepFinder is a supervised step classifier. Each step is embedded twice---128 dimensions for its text, 32 for its agent's name---and the sequence passes through a BiLSTM, an agent-aware attention layer, and a scoring head with a position prior, trained with a per-trajectory cross-entropy loss plus a self-supervised next-step objective. Training uses the step-labeled failure corpora released with the paper: 1{,}564 CaptainAgent-style and 2{,}604 Magentic-One-style trajectories. Each evaluation subset is paired with the corpus of its own agent system---WW-AG and TE-Cap with CaptainAgent, WW-HC and TE-Mag with Magentic-One---while CE matches neither and falls back to Magentic-One. To place StepFinder on the same backbones as \soap{}, we replace its encoder (Qwen3-Embedding-0.6B) with the backbone's last-layer hidden state at each step's final token, sliced to the leading 128 text and 32 agent coordinates exactly as the released code slices its embeddings.
+% The checkpoint is selected on a held-out fraction of the training tasks, split by question.
+In the with-GT setting the gold answer is appended to the first step, since StepFinder encodes no separate task description; the models are shared between settings.
 
 \textbf{Evaluation.}
-OAT and StepFinder score steps and name no agent, so their responsible agent is the agent of the predicted step; the prompt-based judges name an agent in their answer, as the Who\&When prompts ask, and that name is scored. We train five models per backbone (seeds 42--46); a reported cell is the mean over the subset's three test splits and, within each split, the five training seeds, under the same scoring rules as every other method in Table~\ref{tab:main}. 
+OAT and StepFinder score steps but name no agent; their responsible-agent prediction is the agent of the predicted step. The prompt-based judges name an agent directly, as the Who\&When prompts request, and that name is scored. We train five models per backbone; a reported cell averages over the subset's three test splits and, within each split, the five training seeds. All methods follow the same scoring rules as Table~\ref{tab:main}. 
 % A trajectory that receives no usable
 % prediction --- for OAT, one whose annotated step falls on an unscored turn ---
 % counts as an error.
@@ -484,9 +500,9 @@ OAT and StepFinder score steps and name no agent, so their responsible agent is 
 \textbf{How \soap{} receives the answer.}
 In the with-GT setting, the LLM's context opens with a pinned block, \textit{``The problem is: \{question\}. The answer for the problem is: \{answer\}''}, phrased as in the prompting baselines so the LLM reads the answer in the same register. The block precedes every turn and survives context truncation. Nothing else changes: the same grids, the same selection rule, its own frozen seed triples. OAT appends the answer to the task description and StepFinder to the first step, as described in Appendix~\ref{app:baselines}.
 
+
 \textbf{Full results.}
-Table~\ref{tab:gt-full} extends Table~\ref{tab:main-gt} to all five subsets, the GPT-4o judge, and DeepSeek-R1-Distill-Llama-8B.
-The picture of Table~\ref{tab:main} holds: \soap{} is best on every column of both open-backbone blocks, tied once by Step-by-Step on TE-Mag with Qwen3.5-9B (21.01). The answer helps the judges more than it helps \soap{}: Step-by-Step gains 21 points on CE with Qwen3.5-9B and 15 with GPT-4o, and ErrorProbe with GPT-4o gains 7 on WW-HC, whereas \soap{} moves by under 5 points everywhere except DeepSeek TE-Mag, where it gains 6.5. On CE with the answer, Binary Search and ErrorProbe with Qwen3.5-9B come within a point of \soap{} (59.89 and 59.57 vs.\ 60.59), the closest any judge gets in this table.
+Table~\ref{tab:gt-full} extends Table~\ref{tab:main-gt} to all five subsets, the GPT-4o judge, and DeepSeek-R1-Distill-Llama-8B. \soap{} is best on every column of both open-backbone blocks, tied only by Step-by-Step on TE-Mag with Qwen3.5-9B (21.01). The answer helps the judges more than it helps \soap{}: Step-by-Step gains 21 points on CE with Qwen3.5-9B and 15 with GPT-4o, while \soap{} moves by under 5 points everywhere except DeepSeek TE-Mag (+6.5). The closest a judge gets is on CE with the answer, where Binary Search and ErrorProbe with Qwen3.5-9B reach 59.89 and 59.57 against \soap{}'s 60.59.
 
 
 \begin{table}[h]
@@ -717,32 +733,42 @@ OAT           & 20.85 & 17.01 & 52.39 & 18.14 & 13.77 \\
 % scripts/ablations/c4_cost_tables.py --print-table (columns one_pass_s, scoring_ms,
 % one_pass_plus_scoring_s).
 
-We compare the execution time of \soap{} with the training-based and prompt-based
-methods on the frozen Qwen3.5-9B backbone. All experiments use Python 3.10, PyTorch
-2.13, and Transformers 5.15. GPU measurements use one NVIDIA H200 with 141\,GB memory
-and process one trajectory at a time.
+% Commented out 2026-09-17 (style revision: tighten prose, shorten captions, compact
+% tab:cost-judges into wraptable).
+% We compare the execution time of \soap{} with the training-based and prompt-based
+% methods on the frozen Qwen3.5-9B backbone. All experiments use Python 3.10, PyTorch
+% 2.13, and Transformers 5.15. GPU measurements use one NVIDIA H200 with 141\,GB memory
+% and process one trajectory at a time.
+%
+% \textbf{Fitting and inference time.}
+% Table~\ref{tab:cost-inference} reports the fitting time, the time of
+% one embedding extraction forward pass, and the CPU scoring time per trajectory. \soap{} fits
+% its SVD with the unlabeled reference set in 0.08\,s on WW-AG and 0.29\,s on WW-HC, against 51 to 115\,s per training
+% seed for OAT and StepFinder. One forward pass for embedding extraction costs 0.38\,s on WW-AG and 0.76\,s on
+% WW-HC, on par with OAT's single pass (0.42 and 2.13\,s) and with StepFinder's 0.23 and 0.19s per pass. Scoring on the stored vectors takes 0.7 and
+% 5.5\,ms per trajectory, the fastest of the three.
+
+We compare execution time on the frozen Qwen3.5-9B backbone. All experiments use Python 3.10, PyTorch 2.13, and Transformers 5.15 on one NVIDIA H200 (141\,GB), processing one trajectory at a time.
 
 \textbf{Fitting and inference time.}
-Table~\ref{tab:cost-inference} reports the fitting time, the time of
-one embedding extraction forward pass, and the CPU scoring time per trajectory. \soap{} fits
-its SVD with the unlabeled reference set in 0.08\,s on WW-AG and 0.29\,s on WW-HC, against 51 to 115\,s per training
-seed for OAT and StepFinder. One forward pass for embedding extraction costs 0.38\,s on WW-AG and 0.76\,s on
-WW-HC, on par with OAT's single pass (0.42 and 2.13\,s) and with StepFinder's 0.23 and 0.19s per pass. Scoring on the stored vectors takes 0.7 and
-5.5\,ms per trajectory, the fastest of the three.
+Table~\ref{tab:cost-inference} reports fitting time, forward-pass time, and CPU scoring time per trajectory. \soap{} fits its SVD on the unlabeled reference set in 0.08\,s on WW-AG and 0.29\,s on WW-HC, two to three orders of magnitude faster than OAT and StepFinder (51--115\,s per training seed). One forward pass costs 0.38\,s on WW-AG and 0.76\,s on WW-HC, on par with OAT (0.42 and 2.13\,s) and StepFinder (0.23 and 0.19\,s). Scoring the stored vectors then takes 0.7 and 5.5\,ms per trajectory, the fastest of the three.
+
+% Old caption for tab:cost-inference:
+% \caption{\textbf{Fitting and inference time of training-based methods.}
+% All methods use Qwen3.5-9B on Who\&When.
+% Fitting operates on extracted reference for \soap;
+% baseline fitting time denotes the training time consumption per training seed (mean of five), \soap{}'s
+% is one CPU SVD fit.
+% Extraction is one forward pass of the backbone: for OAT its pass over
+% the whole trajectory, for StepFinder its pass over one step alone
+% (mean over passes) following their original design, and for \soap{} its pass over the whole trajectory. }
 
 \begin{table}[htbp]
 \centering
 \footnotesize
 \setlength{\tabcolsep}{12pt}
 \renewcommand{\arraystretch}{1.12}
-\caption{\textbf{Fitting and inference time of training-based methods.}
-All methods use Qwen3.5-9B on Who\&When.
-Fitting operates on extracted reference for \soap;
-baseline fitting time denotes the training time consumption per training seed (mean of five), \soap{}'s
-is one CPU SVD fit.
-Extraction is one forward pass of the backbone: for OAT its pass over
-the whole trajectory, for StepFinder its pass over one step alone
-(mean over passes) following their original design, and for \soap{} its pass over the whole trajectory. }
+\caption{Fitting and inference time on Who\&When with Qwen3.5-9B. Fitting is per training seed (mean of five) for OAT and StepFinder, one CPU SVD fit for \soap{}. Extraction is one forward pass of the backbone.}
 \label{tab:cost-inference}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{l rr rr rr}
@@ -773,49 +799,73 @@ StepFinder
 \end{tabular}}
 \end{table}
 
+% Commented out 2026-09-17 (style revision: wraptable, tighter prose, shorter caption).
+% \textbf{Comparison with prompt-based methods.}
+% Table~\ref{tab:cost-judges} compares every method on the same 40 WW-AG and 17 WW-HC
+% trajectories. To ensure a fair comparison, all methods use Qwen3.5-9B
+% without the ground-truth answer. We report the time per trajectory: for a prompt-based
+% method, every judge request it issues, prompt processing and decoding included; for
+% \soap{}, one forward pass plus the scoring on the stored vectors. \soap{} takes
+% 0.38\,s on WW-AG and 0.76\,s on WW-HC, faster than every judge except Binary Search,
+% whose short prompts and one-token answers cost 0.2 and 0.4\,s; the multi-call judges
+% ErrorProbe and CHIEF take 6 and 24\,s.
+%
+% \begin{table}[htbp]
+% \centering
+% \footnotesize
+% \setlength{\tabcolsep}{12pt}
+% \renewcommand{\arraystretch}{1.12}
+% \caption{\textbf{Time per trajectory on the shared subset.}
+% All methods use Qwen3.5-9B on the same 40 WW-AG and 17 WW-HC
+% trajectories, one trajectory at a time.
+% A prompt-based method is timed over all of its judge requests for the
+% trajectory, prompt processing and decoding included; \soap{} is timed
+% over one forward pass over the trajectory plus its CPU scoring.}
+% \label{tab:cost-judges}
+% \begin{tabular}{l rr}
+% \toprule
+% Method & WW-AG (s/trajectory) & WW-HC (s/trajectory) \\
+% \midrule
+% All-at-Once   & 2.0  & 2.1 \\
+% Step-by-Step  & 2.0  & 3.6 \\
+% Binary Search & {0.2}  & {0.4} \\
+% CORRECT       & 1.9  & 1.6 \\
+% CHIEF         & 23.9 & 23.5 \\
+% ErrorProbe    & 5.9  & 6.5 \\
+% \midrule
+% \rowcolor{gray!10}
+% \soap{}      & 0.38 & 0.76 \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+
 \textbf{Comparison with prompt-based methods.}
-Table~\ref{tab:cost-judges} compares every method on the same 40 WW-AG and 17 WW-HC
-trajectories. To ensure a fair comparison, all methods use Qwen3.5-9B
-without the ground-truth answer. We report the time per trajectory: for a prompt-based
-method, every judge request it issues, prompt processing and decoding included; for
-\soap{}, one forward pass plus the scoring on the stored vectors. \soap{} takes
-0.38\,s on WW-AG and 0.76\,s on WW-HC, faster than every judge except Binary Search,
-whose short prompts and one-token answers cost 0.2 and 0.4\,s; the multi-call judges
-ErrorProbe and CHIEF take 6 and 24\,s. 
+Table~\ref{tab:cost-judges} compares all methods on the same 40 WW-AG and 17 WW-HC trajectories with Qwen3.5-9B, without the ground-truth answer. Each judge is timed over all of its requests per trajectory, prompt processing and decoding included; \soap{} is timed over one forward pass plus CPU scoring. \soap{} takes 0.38\,s on WW-AG and 0.76\,s on WW-HC, faster than every judge except Binary Search (0.2 and 0.4\,s). The multi-call judges are the slowest: CHIEF takes 24\,s and ErrorProbe 6\,s per trajectory.
 
-% The pass is cheaper here than in
-% % Table~\ref{tab:cost-inference} on WW-HC because the in-budget sample holds the shorter
-% trajectories: 5{,}400 tokens per pass on average, against 6{,}800 over the whole
-% subset.
-
-\begin{table}[htbp]
+\begin{wraptable}{r}{0.32\textwidth}
+\vspace{-0.7\baselineskip}
 \centering
 \footnotesize
-\setlength{\tabcolsep}{12pt}
-\renewcommand{\arraystretch}{1.12}
-\caption{\textbf{Time per trajectory on the shared subset.}
-All methods use Qwen3.5-9B on the same 40 WW-AG and 17 WW-HC
-trajectories, one trajectory at a time.
-A prompt-based method is timed over all of its judge requests for the
-trajectory, prompt processing and decoding included; \soap{} is timed
-over one forward pass over the trajectory plus its CPU scoring.}
+\setlength{\tabcolsep}{8pt}
+\caption{Time per trajectory (s) on the shared Who\&When subset.}
 \label{tab:cost-judges}
 \begin{tabular}{l rr}
 \toprule
-Method & WW-AG (s/trajectory) & WW-HC (s/trajectory) \\
+Method & AG & HC \\
 \midrule
 All-at-Once   & 2.0  & 2.1 \\
 Step-by-Step  & 2.0  & 3.6 \\
-Binary Search & {0.2}  & {0.4} \\
+Binary Search & 0.2  & 0.4 \\
 CORRECT       & 1.9  & 1.6 \\
 CHIEF         & 23.9 & 23.5 \\
 ErrorProbe    & 5.9  & 6.5 \\
 \midrule
 \rowcolor{gray!10}
-\soap{}      & 0.38 & 0.76 \\
+\soap{}       & 0.38 & 0.76 \\
 \bottomrule
 \end{tabular}
-\end{table}
+\vspace{-\baselineskip}
+\end{wraptable}
 
 % [resolved 2026-09-17, superseded above] The 0.33 / 0.53 s cells were seconds per
 % forward pass on the in-budget sample (15.27 s / 29.1 passes on WW-HC), while
@@ -988,7 +1038,14 @@ ErrorProbe    & 5.9  & 6.5 \\
 \subsection{Synthetic reference trajectories}
 \label{app:synth}
 
-The synthetic references of Figure~\ref{fig:transfer}(d) come from re-running the agent systems behind the two Who\&When subsets, CaptainAgent for WW-AG and Magentic-One for WW-HC, once with Qwen3.5-9B and once with GPT-4o as the language model of their agents. The systems run on the question pools the benchmarks draw from (GAIA and AssistantBench), and we keep the trajectories whose question belongs to the target unlabeled subset. The runs are unsupervised, so the corpus mixes successes and failures; it carries no step-level annotation and serves only to construct $R$. The existing benchmarks and our synthetic trajectories share a question pool, never a trajectory. The evaluation is that of Table~\ref{tab:main}; only the reference changes, and the configuration is re-selected for each reference corpus. Two further details explain why our GPT-4o corpus differs from the Who\&When trajectories despite the shared model name: the benchmark was generated with the \texttt{2024-08-01-preview} version of GPT-4o, whereas ours uses \texttt{2024-08-06} version, and because the benchmark does not release its generation code, we rebuilt the generation pipeline from the paper's description. Appendix~\ref{app:synth-results} reports the full results for both backbones.
+% Commented out 2026-09-17 (style revision: split wall paragraph into
+% one-idea-per-sentence structure following REDE appendix style).
+% The synthetic references of Figure~\ref{fig:transfer}(d) come from re-running the agent systems behind the two Who\&When subsets, CaptainAgent for WW-AG and Magentic-One for WW-HC, once with Qwen3.5-9B and once with GPT-4o as the language model of their agents. The systems run on the question pools the benchmarks draw from (GAIA and AssistantBench), and we keep the trajectories whose question belongs to the target unlabeled subset. The runs are unsupervised, so the corpus mixes successes and failures; it carries no step-level annotation and serves only to construct $R$. The existing benchmarks and our synthetic trajectories share a question pool, never a trajectory. The evaluation is that of Table~\ref{tab:main}; only the reference changes, and the configuration is re-selected for each reference corpus. Two further details explain why our GPT-4o corpus differs from the Who\&When trajectories despite the shared model name: the benchmark was generated with the \texttt{2024-08-01-preview} version of GPT-4o, whereas ours uses \texttt{2024-08-06} version, and because the benchmark does not release its generation code, we rebuilt the generation pipeline from the paper's description. Appendix~\ref{app:synth-results} reports the full results for both backbones.
+% \textcolor{red}{disclose information on GPT-4o used.} \note{added.}
+
+The synthetic references of Figure~\ref{fig:transfer}(d) come from re-running the agent systems behind the two Who\&When subsets, CaptainAgent for WW-AG and Magentic-One for WW-HC, once with Qwen3.5-9B and once with GPT-4o as the backbone of their agents. The systems run on the same question pools the benchmarks draw from (GAIA and AssistantBench), and we keep the trajectories whose question belongs to the target subset. The runs are unsupervised: the corpus mixes successes and failures, carries no step-level annotation, and serves only to construct $R$. The existing benchmarks and our synthetic trajectories share a question pool but never a trajectory.
+
+The evaluation follows Table~\ref{tab:main}; only the reference changes, and the configuration is re-selected for each reference corpus. Our GPT-4o corpus differs from the Who\&When trajectories despite the shared model name for two reasons: Who\&When was generated with the \texttt{2024-08-01-preview} version of GPT-4o, whereas ours uses \texttt{2024-08-06}, and we rebuilt the generation pipeline from the paper's description because the benchmark does not release its generation code. Appendix~\ref{app:synth-results} reports the full results for both backbones.
 
 % \textcolor{red}{disclose information on GPT-4o used.} \note{added.}
 
@@ -1093,7 +1150,10 @@ selected for Table~\ref{tab:main}, vary one axis, hold everything else fixed.
 \subsection{Context window of the dependency weights}
 \label{app:window}
 
-We vary the window $w$, which controls how many predecessors in $\mathcal{P}_t$ each step distributes its blame over, with everything else at the selected configuration. As shown in Table~\ref{tab:attnsel}, the preference is dataset-shaped. On Who\&When both backbones favor the sharpest window: accuracy is highest at $w=1$--$2$ and declines toward all predecessors (47.62 at $w=1$ vs.\ 40.21 at all, Qwen3.5-9B WW-AG), so restricting each step to its few strongest dependencies keeps the correction targeted, while averaging over every predecessor dilutes it back toward the uniform weights of Table~\ref{tab:weights}. On TE-Cap wider windows win on both backbones, up to all predecessors on DeepSeek-8B. A badly chosen $w$ can land below the base score (Qwen3.5-9B TE-Mag at $w=1$: 15.94 vs.\ 21.01). These results indicate that $w$ is worth selecting rather than fixing.
+% Commented out 2026-09-17 (style revision: split wall paragraph into separate claims).
+% We vary the window $w$, which controls how many predecessors in $\mathcal{P}_t$ each step distributes its blame over, with everything else at the selected configuration. As shown in Table~\ref{tab:attnsel}, the preference is dataset-shaped. On Who\&When both backbones favor the sharpest window: accuracy is highest at $w=1$--$2$ and declines toward all predecessors (47.62 at $w=1$ vs.\ 40.21 at all, Qwen3.5-9B WW-AG), so restricting each step to its few strongest dependencies keeps the correction targeted, while averaging over every predecessor dilutes it back toward the uniform weights of Table~\ref{tab:weights}. On TE-Cap wider windows win on both backbones, up to all predecessors on DeepSeek-8B. A badly chosen $w$ can land below the base score (Qwen3.5-9B TE-Mag at $w=1$: 15.94 vs.\ 21.01). These results indicate that $w$ is worth selecting rather than fixing.
+
+Table~\ref{tab:attnsel} varies the window $w$, which controls the number of predecessors each step distributes its blame over, with everything else at the selected configuration. The preference is dataset-dependent. On Who\&When both backbones favor the sharpest window: accuracy peaks at $w{=}1$--$2$ and declines toward $w{=}\text{all}$ (47.62 vs.\ 40.21 on Qwen3.5-9B WW-AG), because restricting each step to its strongest dependencies keeps the correction targeted rather than diluting it toward the uniform weights of Table~\ref{tab:weights}. On TE-Cap the pattern reverses: wider windows win on both backbones, up to $w{=}\text{all}$ on DeepSeek-8B. A poorly chosen $w$ can fall below the base score (Qwen3.5-9B TE-Mag at $w{=}1$: 15.94 vs.\ 21.01), confirming that $w$ is worth selecting rather than fixing.
 
 \begin{table}[h]
 \centering
@@ -1279,6 +1339,7 @@ Reference data & WW-AG & WW-HC & TE-Cap & TE-Mag \\
 \textbf{Agent-level accuracy.}
 Table~\ref{tab:agent} reports the responsible-agent accuracy of every row of Table~\ref{tab:main} on Who\&When, i.e., how often the agent of the predicted step is the annotated agent. The metric is far more forgiving than step-level accuracy because a trajectory involves 3.6 agents on WW-AG and 5.7 on WW-HC on average (Table~\ref{tab:datasets}), so a method that names the right agent at a wrong step still scores. \soap{} is best on both subsets with both open-weight backbones (60.32 on WW-AG and 67.82 on WW-HC with Qwen3.5-9B; 61.90 and 65.52 with DeepSeek-8B). The prompt-based judges close much of their step-level gap here: All-at-Once with GPT-4o reaches 59.77 on WW-HC while locating the step in 6.90\% of cases, which says that a judge often blames the right agent for the wrong reason. These results indicate that agent-level accuracy rewards the coarse verdict a judge produces naturally, whereas step-level accuracy measures localization.
 
+% \begin{wraptable}{r}{0.33\textwidth}
 \begin{table}[h]
 \centering
 \footnotesize
@@ -1325,6 +1386,7 @@ OAT           & 42.33 & 56.32 \\
 \bottomrule
 \end{tabular}
 \end{table}
+% \end{wraptable}
 
 % Five-column table (all subsets), commented out 2026-09-17; numbers from
 % tables/appendix_agent_without_gt.tsv.
@@ -1427,7 +1489,7 @@ CORRECT       & $\ms{15.34}{0.75}$ & $\ms{4.60}{1.63}$  & $\ms{35.12}{1.93}$ & $
 CHIEF         & $\ms{25.93}{3.96}$ & $\ms{14.94}{1.63}$ & $\ms{38.56}{0.86}$ & $\ms{13.95}{1.90}$ & $\ms{8.70}{3.07}$ \\
 % RAFFLES       & $\ms{42.86}{3.43}$ & $\ms{25.29}{6.50}$ & $\ms{64.22}{0.64}$ & $\ms{24.81}{1.10}$ & $\ms{17.39}{3.07}$ \\
 % ErrorProbe rows added 2026-09-13 from tables/appendix_std_without_gt.tsv.
-ErrorProbe    & $\ms{38.62}{1.98}$ & $\ms{21.84}{3.25}$ & $\ms{59.52}{1.49}$ & $\ms{27.13}{2.19}$ & $\ms{28.26}{3.07}$ \\
+ErrorProbe    & \textcolor{gray}{{\boldmath$\ms{38.62}{1.98}$}} & \textcolor{gray}{{\boldmath$\ms{21.84}{3.25}$}} & \textcolor{gray}{{\boldmath$\ms{59.52}{1.49}$}} & \textcolor{gray}{{\boldmath$\ms{27.13}{2.19}$}} & \textcolor{gray}{{\boldmath$\ms{28.26}{3.07}$}} \\
 % GPT-5 block removed 2026-09-13 (author's note; see app:prompting-gpt5).
 % \midrule
 % \rowcolor{Gray}\multicolumn{6}{c}{\textit{\textbf{GPT-5}}} \\
@@ -1449,8 +1511,8 @@ CHIEF         & $\ms{28.57}{2.24}$ & $\ms{3.45}{0.00}$  & $\ms{29.39}{0.65}$ & $
 ErrorProbe    & $\ms{39.68}{2.24}$ & $\ms{21.84}{5.86}$ & $\ms{55.03}{1.21}$ & $\ms{23.26}{3.80}$ & $\ms{20.29}{2.71}$ \\
 StepFinder    & $\ms{15.87}{0.78}$ & $\ms{13.33}{3.39}$ & $\ms{30.03}{1.07}$ & $\ms{18.29}{3.90}$ & $\ms{6.67}{0.54}$ \\
 OAT           & $\ms{16.72}{0.79}$ & $\ms{10.11}{6.33}$ & $\ms{56.50}{0.82}$ & $\ms{15.35}{1.52}$ & $\ms{18.84}{2.76}$ \\
-\rowcolor{gray!10}\soap{} (w/o rescoring) & $\ms{39.15}{4.55}$ & $\ms{33.33}{4.30}$ & $\ms{61.38}{0.79}$ & $\ms{33.33}{1.10}$ & $\ms{21.01}{1.02}$ \\
-\rowcolor{gray!10}\soap{}       & $\ms{47.62}{2.59}$ & $\ms{34.48}{2.82}$ & $\ms{61.78}{0.73}$ & $\ms{35.66}{1.10}$ & $\ms{23.19}{4.47}$ \\
+% [commented out 2026-09-17] \rowcolor{gray!10}\soap{} (w/o rescoring) & $\ms{39.15}{4.55}$ & $\ms{33.33}{4.30}$ & $\ms{61.38}{0.79}$ & $\ms{33.33}{1.10}$ & $\ms{21.01}{1.02}$ \\
+\rowcolor{gray!10}\soap{}       & {\boldmath$\ms{47.62}{2.59}$} & {\boldmath$\ms{34.48}{2.82}$} & {\boldmath$\ms{61.78}{0.73}$} & {\boldmath$\ms{35.66}{1.10}$} & {\boldmath$\ms{23.19}{4.47}$} \\
 \midrule
 \rowcolor{Gray}\multicolumn{6}{c}{\textit{\textbf{DeepSeek-R1-Distill-Llama-8B}}} \\
 All-at-Once   & $\ms{7.41}{3.26}$  & $\ms{5.75}{1.63}$  & $\ms{21.95}{0.85}$ & $\ms{4.65}{1.90}$  & $\ms{2.90}{1.02}$ \\
@@ -1462,8 +1524,8 @@ CHIEF         & $\ms{17.46}{3.43}$ & $\ms{2.30}{1.63}$  & $\ms{8.40}{0.42}$  & $
 ErrorProbe    & $\ms{24.34}{1.98}$ & $\ms{10.34}{2.82}$ & $\ms{35.97}{0.41}$ & $\ms{17.05}{2.90}$ & $\ms{8.70}{1.77}$ \\
 StepFinder    & $\ms{18.94}{2.84}$ & $\ms{10.80}{3.10}$ & $\ms{36.91}{0.22}$ & $\ms{14.73}{0.79}$ & $\ms{4.20}{1.08}$ \\
 OAT           & $\ms{12.70}{2.99}$ & $\ms{15.86}{8.29}$ & $\ms{52.50}{1.13}$ & $\ms{17.98}{0.22}$ & $\ms{13.04}{1.98}$ \\
-\rowcolor{gray!10}\soap{} (w/o rescoring) & $\ms{38.62}{3.26}$ & $\ms{28.74}{4.30}$ & $\ms{64.19}{0.25}$ & $\ms{40.31}{4.39}$ & $\ms{29.71}{1.02}$ \\
-\rowcolor{gray!10}\soap{}       & $\ms{45.50}{2.70}$ & $\ms{28.74}{4.30}$ & $\ms{64.68}{0.42}$ & $\ms{42.64}{4.39}$ & $\ms{30.43}{3.07}$ \\
+% [commented out 2026-09-17] \rowcolor{gray!10}\soap{} (w/o rescoring) & $\ms{38.62}{3.26}$ & $\ms{28.74}{4.30}$ & $\ms{64.19}{0.25}$ & $\ms{40.31}{4.39}$ & $\ms{29.71}{1.02}$ \\
+\rowcolor{gray!10}\soap{}       & {\boldmath$\ms{45.50}{2.70}$} & {\boldmath$\ms{28.74}{4.30}$} & {\boldmath$\ms{64.68}{0.42}$} & {\boldmath$\ms{42.64}{4.39}$} & {\boldmath$\ms{30.43}{3.07}$} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1471,10 +1533,15 @@ OAT           & $\ms{12.70}{2.99}$ & $\ms{15.86}{8.29}$ & $\ms{52.50}{1.13}$ & $
 \subsection{Accuracy at $k$}
 \label{app:ranked}
 
-\soap{}, OAT, and StepFinder each score every step of a trajectory, so the top-$k$ steps form a ranked shortlist for triage; the prompt-based judges emit one verdict and are excluded here. We report step-level accuracy at $k \in \{1, 3, 5\}$ and the mean reciprocal rank of the decisive step (MRR), all on the test splits of Table~\ref{tab:main}. For OAT and StepFinder we rank their stored per-step scores; a decisive step OAT never scored counts as a miss at every $k$.
-As shown in Table~\ref{tab:ranked-step}, \soap{} keeps its lead as the shortlist grows: at $k=3$ it locates the decisive step in 74.60\% of WW-AG trajectories with Qwen3.5-9B against 56.72 for OAT and 55.24 for StepFinder, and at $k=5$ in 91.01\% against 86.46 and 75.87; on WW-HC, whose trajectories average 52 turns, the gap at $k=5$ is 12 points over OAT (50.57 vs.\ 38.39). The baselines close in on the short CORRECT-Error trajectories, where five candidates cover most of a trajectory (Table~\ref{tab:datasets}). 
-% Rescoring helps most at $k=1$ and $k=3$, the ranks a triage would read first, and by $k=5$ the base score and \soap{} are within a point: the correction moves the decisive step to the top rather than reshuffling the tail. 
-MRR summarizes the same picture, 63.92 vs.\ 41.46 for OAT on WW-AG. These results indicate that \soap{} produces a better-ordered shortlist, not only a better top-1.
+% [commented out 2026-09-17, revised below for REDE-style prose]
+% \soap{}, OAT, and StepFinder each score every step of a trajectory, so the top-$k$ steps form a ranked shortlist for triage; the prompt-based judges emit one verdict and are excluded here. We report step-level accuracy at $k \in \{1, 3, 5\}$ and the mean reciprocal rank of the decisive step (MRR), all on the test splits of Table~\ref{tab:main}. For OAT and StepFinder we rank their stored per-step scores; a decisive step OAT never scored counts as a miss at every $k$.
+% As shown in Table~\ref{tab:ranked-step}, \soap{} keeps its lead as the shortlist grows: at $k=3$ it locates the decisive step in 74.60\% of WW-AG trajectories with Qwen3.5-9B against 56.72 for OAT and 55.24 for StepFinder, and at $k=5$ in 91.01\% against 86.46 and 75.87; on WW-HC, whose trajectories average 52 turns, the gap at $k=5$ is 12 points over OAT (50.57 vs.\ 38.39). The baselines close in on the short CORRECT-Error trajectories, where five candidates cover most of a trajectory (Table~\ref{tab:datasets}).
+% Rescoring helps most at $k=1$ and $k=3$, the ranks a triage would read first, and by $k=5$ the base score and \soap{} are within a point: the correction moves the decisive step to the top rather than reshuffling the tail.
+% MRR summarizes the same picture, 63.92 vs.\ 41.46 for OAT on WW-AG. These results indicate that \soap{} produces a better-ordered shortlist, not only a better top-1.
+
+\soap{}, OAT, and StepFinder each produce a per-step score, so the top-$k$ steps form a ranked shortlist for triage; the prompt-based judges return a single verdict and are excluded. Table~\ref{tab:ranked-step} reports step-level accuracy at $k \in \{1, 3, 5\}$ and mean reciprocal rank (MRR) on the test splits of Table~\ref{tab:main}. For OAT and StepFinder we rank their stored scores; a step that OAT never scored counts as a miss at every $k$.
+
+\soap{} holds its lead as the shortlist grows. On WW-AG with Qwen3.5-9B, it locates the decisive step in 74.60\% of trajectories at $k{=}3$, against 56.72 for OAT and 55.24 for StepFinder, and in 91.01\% at $k{=}5$. On WW-HC, whose trajectories average 52 turns, the $k{=}5$ gap is 12 points over OAT (50.57 vs.\ 38.39). The baselines close in on CORRECT-Error, where five candidates already cover most of a trajectory (Table~\ref{tab:datasets}). MRR confirms the ranking: 63.92 on WW-AG with Qwen3.5-9B, against 41.46 for OAT and 41.23 for StepFinder.
 
 % Removed 2026-09-14 (author's note): "Agent-level accuracy at $k$
 % (Table~\ref{tab:ranked-agent}) saturates quickly for every method because a
@@ -1757,44 +1824,74 @@ diagonal is the in-distribution number of Table~\ref{tab:main} in every grid.}
 % \end{tabular}
 % \end{table}
 
+% \subsection{Synthetic references, full results}
+% \label{app:synth-results}
+
+% Table~\ref{tab:synth-app} completes Figure~\ref{fig:transfer}(d) with the base
+% scores and DeepSeek-8B (generation details in Appendix~\ref{app:synth}). Every
+% synthetic cell lands within 1--7 points of its existing benchmark row, the best generator
+% per cell within about one point on Qwen3.5-9B WW-AG (46.56 vs.\ 47.62) and above using the
+% existing benchmark as reference set on DeepSeek-8B WW-HC (29.89 vs.\ 28.74), and every synthetic \soap{}
+% row stays far above the training-based baselines of Table~\ref{tab:main}. Rescoring
+% keeps working on synthetic references, by up to 8.5 points over the base score
+% (Qwen3.5-9B WW-AG, Qwen corpus), except where $\gamma=0$ is selected. Neither
+% generator dominates: the GPT-4o corpus wins Qwen3.5-9B on WW-AG and the Qwen3.5-9B
+% corpus wins the other three cells. These results indicate that a cheap open-weight
+% generator is a viable alternative source of reference trajectories. \textcolor{red}{please refine all the texts.}
+
+
+% \begin{table}[h]
+% \centering
+% \small
+% \setlength{\tabcolsep}{5pt}
+% \caption{Fitting the reference on existing benchmarks vs.\ our alternative synthetic trajectories. Step-level
+% accuracy (\%) before (base) and after (\soap{}) rescoring; only the reference corpus
+% changes, the validation and test splits are those of Table~\ref{tab:main}.}
+% \label{tab:synth-app}
+% \begin{tabular}{l cc cc cc cc}
+% \toprule
+%  & \multicolumn{4}{c}{Qwen3.5-9B} & \multicolumn{4}{c}{DeepSeek-8B} \\
+% \cmidrule(lr){2-5}\cmidrule(lr){6-9}
+%  & \multicolumn{2}{c}{WW-AG} & \multicolumn{2}{c}{WW-HC} & \multicolumn{2}{c}{WW-AG} & \multicolumn{2}{c}{WW-HC} \\
+% \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
+% Reference & base & \soap{} & base & \soap{} & base & \soap{} & base & \soap{} \\
+% \midrule
+% Existing benchmarks       & 39.15 & \best{47.62} & 33.33 & \best{34.48} & 38.62 & \best{45.50} & 28.74 & 28.74 \\
+% Synthetic, Qwen3.5-9B agents & 33.33 & 41.80 & 28.74 & 31.03 & 35.98 & 39.68 & 26.44 & \best{29.89} \\
+% Synthetic, GPT-4o agents     & 40.74 & 46.56 & 28.74 & 29.89 & 33.33 & 38.10 & 25.29 & 25.29 \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+
+
 \subsection{Synthetic references, full results}
 \label{app:synth-results}
 
-Table~\ref{tab:synth-app} completes Figure~\ref{fig:transfer}(d) with the base
-scores and DeepSeek-8B (generation details in Appendix~\ref{app:synth}). Every
-synthetic cell lands within 1--7 points of its existing benchmark row, the best generator
-per cell within about one point on Qwen3.5-9B WW-AG (46.56 vs.\ 47.62) and above using the
-existing benchmark as reference set on DeepSeek-8B WW-HC (29.89 vs.\ 28.74), and every synthetic \soap{}
-row stays far above the training-based baselines of Table~\ref{tab:main}. Rescoring
-keeps working on synthetic references, by up to 8.5 points over the base score
-(Qwen3.5-9B WW-AG, Qwen corpus), except where $\gamma=0$ is selected. Neither
-generator dominates: the GPT-4o corpus wins Qwen3.5-9B on WW-AG and the Qwen3.5-9B
-corpus wins the other three cells. These results indicate that a cheap open-weight
-generator is a viable alternative source of reference trajectories. \textcolor{red}{please refine all the texts.}
-
-
-\begin{table}[h]
+\begin{table}
+\vspace{-0.3\baselineskip}
 \centering
-\small
-\setlength{\tabcolsep}{5pt}
-\caption{Fitting the reference on existing benchmarks vs.\ our alternative synthetic trajectories. Step-level
-accuracy (\%) before (base) and after (\soap{}) rescoring; only the reference corpus
-changes, the validation and test splits are those of Table~\ref{tab:main}.}
+\footnotesize
+\setlength{\tabcolsep}{4.5pt}
+\renewcommand{\arraystretch}{1.04}
+\caption{\small \textbf{Synthetic references with DeepSeek-R1-Distill-Llama-8B.}
+Step-level accuracy (\%) of \soap{}; only the reference corpus changes.}
+\vspace{-0.3cm}
 \label{tab:synth-app}
-\begin{tabular}{l cc cc cc cc}
+\begin{tabular}{l cc}
 \toprule
- & \multicolumn{4}{c}{Qwen3.5-9B} & \multicolumn{4}{c}{DeepSeek-8B} \\
-\cmidrule(lr){2-5}\cmidrule(lr){6-9}
- & \multicolumn{2}{c}{WW-AG} & \multicolumn{2}{c}{WW-HC} & \multicolumn{2}{c}{WW-AG} & \multicolumn{2}{c}{WW-HC} \\
-\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
-Reference & base & \soap{} & base & \soap{} & base & \soap{} & base & \soap{} \\
+Reference & WW-AG & WW-HC \\
 \midrule
-Existing benchmarks       & 39.15 & \best{47.62} & 33.33 & \best{34.48} & 38.62 & \best{45.50} & 28.74 & 28.74 \\
-Synthetic, Qwen3.5-9B agents & 33.33 & 41.80 & 28.74 & 31.03 & 35.98 & 39.68 & 26.44 & \best{29.89} \\
-Synthetic, GPT-4o agents     & 40.74 & 46.56 & 28.74 & 29.89 & 33.33 & 38.10 & 25.29 & 25.29 \\
+Existing benchmarks          & \best{45.50} & 28.74 \\
+Synthetic, Qwen3.5-9B & 39.68 & \best{29.89} \\
+Synthetic, GPT-4o      & 38.10 & 25.29 \\
 \bottomrule
 \end{tabular}
+\vspace{-\baselineskip}
 \end{table}
+
+Table~\ref{tab:synth-app} extends Figure~\ref{fig:transfer}(d) to DeepSeek-R1-Distill-Llama-8B (generation details in Appendix~\ref{app:synth}). On WW-AG the existing benchmark reference remains strongest (45.50), while both synthetic corpora stay within 6--7 points (39.68 and 38.10). On WW-HC the Qwen3.5-9B-generated corpus slightly exceeds the existing benchmark reference (29.89 vs.\ 28.74). Neither generator consistently dominates: GPT-4o wins on WW-AG and Qwen3.5-9B wins on WW-HC, matching the pattern observed with the Qwen3.5-9B backbone in Figure~\ref{fig:transfer}(d). All synthetic rows remain well above the training-based baselines of Table~\ref{tab:main}.
+\textcolor{red}{please refine all the texts.}
+\note{revised: removed redundant results on base scores to avoid delivering mixed messages.}
 
 \subsection{Qualitative examples}
 \label{app:qualitative}
@@ -1843,28 +1940,20 @@ Synthetic, GPT-4o agents     & 40.74 & 46.56 & 28.74 & 29.89 & 33.33 & 38.10 & 2
 % all three seeds
 
 
-Figures~\ref{fig:qual-text-a} and \ref{fig:qual-text-b} show four textual trajectories
-in the test set, one per dataset, all scored with Qwen3.5-9B under the configuration selected
-for Table~\ref{tab:main}. We show the base score and our rescoring by \soap{} for every step in the trajectory. We condensed the step text for presentation clarity; the agent
-names and step indices are as released, and repeated intermediate steps of the Magentic-One
-orchestrator are collapsed into one row.\textcolor{red}{specify which example corresponds to the score plot in the main paper.}
+Figures~\ref{fig:qual-text-1}--\ref{fig:qual-text-4} show four textual trajectories
+in the test set, all scored with Qwen3.5-9B under the configuration selected
+for Table~\ref{tab:main}. We denote step $i$ as $S_i$. Each step shows its agent, $[\Sbase \rightarrow \Stilde]$ (base and rescored score, $\times 10^{3}$), and its content condensed by us; tags mark the annotated decisive step and each score's argmax. The third example (Figure~\ref{fig:qual-text-3}) is the trajectory whose score plot appears in Figure~\ref{fig:qualitative}. Agent names and step indices are as released. The WW-HC trajectory (Figure~\ref{fig:qual-text-2}) uses Magentic-One, whose orchestrator alternates between private ledger entries and dispatches: \textsf{(thought)} marks a ledger entry where the orchestrator reasons about progress, and $\rightarrow$ marks an instruction sent to an agent.
 
-The four trajectories fail in different ways, but the base score misreads them in the same way. \soap{} rescores each step that accounts for the uncertainty of the later steps, which corrects this downstream contamination and thus showcases the effectiveness of our approach.      For each example, we give the task, the annotated decisive step and what went wrong there, where the base score peaks, and where \soap{} lands.
+The four trajectories fail in different ways, but the base score misreads them in the same way: it flags a late symptom rather than the step that caused it. \soap{} rescores each step by accounting for the attention its successors pay to it, correcting this downstream contamination. For each example we give the task, the annotated decisive step and what went wrong, where the base score peaks, and where \soap{} lands.
 \begin{itemize}
-    \item \textbf{WW-AG} (Figure~\ref{fig:qual-text-a}, left). \emph{Task:} find the command clicked in the last video of a 2018 blog post. \emph{Decisive step, T1:} the video-analysis expert submits search code that loops over a helper's return value of \texttt{None}. The code cannot run, and the plan never opens the post or the video.
-    \emph{Base score:} peaks at T2, the terminal's \texttt{TypeError}, which is only the
-    message the broken code produced. \emph{\soap{}:} moves the top-1 to T1. The failed run at T2 and the retry at T4 attend to T1, so their anomaly flows back to it.
+    \item \textbf{WW-AG} (Figure~\ref{fig:qual-text-1}). \emph{Task:} identify the command clicked in the last video of a 2018 VSCode blog post on replit.com. \emph{Decisive step, $S_1$:} the video-analysis expert submits code that loops over a \texttt{None} return from \texttt{perform\_web\_search}; the loop crashes immediately. \emph{Base score:} peaks at $S_2$, the \texttt{TypeError} traceback. \emph{\soap{}:} lifts $S_1$, the buggy call that produced the crash.
 
-    \item \textbf{WW-HC} (Figure~\ref{fig:qual-text-a}, right). \emph{Task:} price mailing a DVD to Colombia with three carriers. \emph{Decisive step, T8:} the WebSurfer ignores the instruction to look up DHL, clicks a FedEx rate tool, and returns an empty form with no rate. The orchestrator records FedEx as done, and every later turn builds on that belief. \emph{Base score:} peaks at T73, the final search dump after 65 turns of loops and replans, a symptom at the far end of the contamination. \emph{\soap{}:} lifts T8 above it, because the turns that stalled on the FedEx form attend to T8.
+    \item \textbf{WW-HC} (Figure~\ref{fig:qual-text-2}). \emph{Task:} price mailing a DVD to Colombia with three carriers. \emph{Decisive step, $S_8$:} the WebSurfer ignores the instruction to look up DHL, clicks a FedEx rate tool, and returns an empty form with no rate. The orchestrator records FedEx as done, and every later turn builds on that belief. \emph{Base score:} peaks at $S_{73}$, the final search dump after 65 turns of loops and replans, a symptom at the far end of the contamination. \emph{\soap{}:} lifts $S_8$ above it, because the turns that stalled on the FedEx form attend to $S_8$.
 
-    \item \textbf{TE-Cap} (Figure~\ref{fig:qual-text-b}, left). \emph{Task:} read zip codes from a USGS species page. \emph{Decisive step, T4:} the extraction expert calls a scraper written for Wikipedia tables on the USGS site, and the call fails. At T8 the agent claims a manual review and fabricates three Miami zip codes, which the orchestrator restates at T10 as the final answer. \emph{Base score:} peaks at T10, the fabricated answer. \emph{\soap{}:} lifts T4, the wrong tool call that left the agent with nothing to report.
-    
-    \item \textbf{TE-Mag} (Figure~\ref{fig:qual-text-b}, right). \emph{Task:} solve a game-show puzzle by code. \emph{Decisive step, T6:} the orchestrator fixes a conservative strategy, the same guess for every box. A \texttt{NameError} follows at T8, and at T9 the orchestrator re-issues the script with the bug fixed and the strategy unchanged. \emph{Base score:} peaks at T9, the bug fix. \emph{\soap{}:} lifts T6, on which both the crash and the fix depend. 
+    \item \textbf{TE-Cap} (Figure~\ref{fig:qual-text-3}; score plot in Figure~\ref{fig:qualitative}). \emph{Task:} identify the missing character in an Unlambda program that should output ``For penguins''. \emph{Decisive step, $S_1$:} the extraction expert misanalyzes the code's combinator structure, concludes a dot is needed before \texttt{s}, and answers ``.'' (the correct answer is ``backtick''). \emph{Base score:} peaks at $S_5$, the orchestrator's final restatement of the wrong answer. \emph{\soap{}:} moves the top-1 to $S_1$, because $S_3$--$S_5$ attend to the analysis at $S_1$.
+
+    \item \textbf{TE-Mag} (Figure~\ref{fig:qual-text-4}). \emph{Task:} solve a game-show puzzle by code. \emph{Decisive step, $S_6$:} the orchestrator fixes a conservative strategy, the same guess for every box. A \texttt{NameError} follows at $S_8$, and at $S_9$ the orchestrator re-issues the script with the bug fixed and the strategy unchanged. \emph{Base score:} peaks at $S_9$, the bug fix. \emph{\soap{}:} lifts $S_6$, on which both the crash and the fix depend.
 \end{itemize}
-
-% In all four, the base score flags the loudest consequence: a stack trace, a search dump, a made-up answer, a repair. Those consequences attend to the step that caused them, and that is the step \soap{} returns.
-% \textcolor{red}{add descriptions on the example. what is the context, what is the error step, and what is flagged by base and ours.}
-% \note{added.}
 
 % Textual qualitative examples (added 2026-09-11). One trajectory per subset, Qwen3.5-9B,
 % selected configuration of tab:anchors; base argmax wrong, rescored argmax = annotated
@@ -1877,241 +1966,469 @@ The four trajectories fail in different ways, but the base score misreads them i
 \newcommand{\qgold}{\qtag{green!25}{decisive}}
 \newcommand{\qbase}{\qtag{red!20}{base top-1}}
 \newcommand{\qsoap}{\qtag{blue!18}{\soap{} top-1}}
-\newcommand{\qstep}[4]{\par\noindent\hangindent=1.3em\hangafter=1\textbf{T#1}\ {\color{black!65}\textsf{#2}}\ \qsc{#3}{#4}\ }
-\newcommand{\qsub}[4]{\ \textbf{T#1}\ {\color{black!65}\textsf{#2}}\ \qsc{#3}{#4}\ }
+\newcommand{\qstep}[4]{\par\noindent\hangindent=1.3em\hangafter=1$\mathbf{S_{\text{#1}}}$\ {\color{black!65}\textsf{#2}}\ \qsc{#3}{#4}\ }
+\newcommand{\qsub}[4]{\par\noindent\hangindent=1.3em\hangafter=1$\mathbf{S_{\text{#1}}}$\ {\color{black!65}\textsf{#2}}\ \qsc{#3}{#4}\ }
 \newcommand{\qhead}[1]{\par\noindent\textbf{#1}\ }
 \newtcolorbox{qbox}[1]{colback=black!2,colframe=black!55,boxrule=0.5pt,arc=0pt,
   left=4pt,right=4pt,top=3pt,bottom=3pt,
   title={#1},fonttitle=\bfseries\footnotesize,colbacktitle=black!8,coltitle=black,
   titlerule=0pt,toptitle=1.5pt,bottomtitle=1.5pt,before upper=\sloppy}
 
-% ---------------------------------------------------------------- page 1
-\begin{figure}[p]
+% ---------------------------------------------------------------- Figure 1: WW-AG (restored)
+\begin{figure}[ht]
 \centering
-\begin{minipage}[t]{0.49\textwidth}\vspace{0pt}
+\begin{minipage}{\textwidth}
 \begin{qbox}{WW-AG \,$\cdot$\, CaptainAgent}
 \fontsize{7.4}{8.6}\selectfont
 \qhead{Task.} In the 2018 VSCode blog post on replit.com, what was the command they
 clicked on in the last video to remove extra lines?
 \qhead{Gold answer.} Format Document.
-\qhead{Annotation.} T1, VideoContentAnalysis\_Expert: ``The code is incorrect for the
-task.''
-\qhead{Prediction.} Base score T2; \soap{} T1.
+\qhead{Annotation.} $S_1$, VideoContentAnalysis\_Expert: ``The code is incorrect for the task.''
+\qhead{Prediction.} Base score $S_2$; \soap{} $S_1$.
+\medskip
+\qstep{0}{VSCode\_Expert}{12.32}{19.94} Restates the manager's brief.
+\qstep{1}{VideoContentAnalysis\_Expert}{17.44}{30.42}\qgold\ \qsoap\ Submits code that
+loops over \texttt{perform\_web\_search}'s \texttt{None} return. The loop fails.
+\qstep{2}{Computer\_terminal}{21.64}{21.64}\qbase\ \texttt{TypeError}: \texttt{'NoneType'} not iterable.
+\qstep{3}{VideoContentAnalysis\_Expert}{15.76}{28.63} Asks the group to open the link.
+\qstep{4}{VideoContentAnalysis\_Expert}{21.45}{21.45} Repeats the instructions.
+\qstep{5}{VideoContentAnalysis\_Expert}{4.87}{4.87} TERMINATE. No answer.
 \medskip
 
-\qstep{0}{VSCode\_Expert}{12.32}{19.94}
-Restates the manager's brief: locate the 2018 post, watch its last video, and report
-the exact command that removes extra lines.
-
-\qstep{1}{VideoContentAnalysis\_Expert}{17.44}{30.42}\qgold\ \qsoap\
-Decides to search first and submits code: \texttt{results = perform\_web\_search(query,
-count=1)} followed by \texttt{for result in results: print(result)}. The helper prints
-its hits itself and returns \texttt{None}, so the loop is bound to fail, and nothing in
-the plan opens the post or the video.
-
-\qstep{2}{Computer\_terminal}{21.64}{21.64}\qbase\
-\texttt{exitcode: 1} with \texttt{TypeError: 'NoneType' object is not iterable}. The
-helper's own printout still shows the right post, ``Zero Setup VSCode Intelligence''
-(blog.replit.com/intel, 1 July 2018).
-
-\qstep{3}{VideoContentAnalysis\_Expert}{15.76}{28.63}
-Takes the hit as the post. Cannot view web content, so asks the group to open the
-link, find the last video, and note the command.
-
-\qstep{4}{VideoContentAnalysis\_Expert}{21.45}{21.45}
-Repeats the same four instructions and asks for the command to be reported back.
-
-\qstep{5}{VideoContentAnalysis\_Expert}{4.87}{4.87}
-TERMINATE. No answer is given.
-\medskip
-
-\par\noindent\textit{Ranking.} Base: T2 $>$ T4 $>$ T1. Rescored: T1 $>$ T3 $>$ T2. The
-failed run (T2) and the retry (T4) are the visible symptoms; the correction lifts the
-code that produced them.
+\par\noindent\textit{Ranking.} Base: $S_2 > S_4$. Rescored: $S_1 > S_3$.
 \end{qbox}
-\end{minipage}\hfill
-\begin{minipage}[t]{0.49\textwidth}\vspace{0pt}
+\end{minipage}
+\caption{WW-AG CaptainAgent trajectory, scored with Qwen3.5-9B.}
+\label{fig:qual-text-1}
+\end{figure}
+
+% ---------------------------------------------------------------- Figure 2: WW-HC
+\begin{figure}[p]
+\centering
+\begin{minipage}{\textwidth}
 \begin{qbox}{WW-HC \,$\cdot$\, Magentic-One}
-\fontsize{6.0}{6.8}\selectfont
+\fontsize{6.4}{7.2}\selectfont
 \qhead{Task.} What is the cheapest option to mail a DVD to Colombia from Hartford,
 Connecticut using FedEx, DHL, or USPS? (Answer as JSON with keys \texttt{sender} and
 \texttt{price (usd)}.) \textbf{Gold answer.} USPS, 41.75 USD.
-\qhead{Annotation.} T8, WebSurfer: ``did not return the useful information needed to
-answer the question.'' \textbf{Prediction.} Base score T73; \soap{} T8.
-\qhead{Reading.} T0 is the unscored user question. \textsf{(thought)} marks the
-orchestrator's ledger to itself, \textsf{$\rightarrow$} its instruction to an agent. A
-T$a$--$b$ entry collapses one ledger / instruction / next-speaker cycle and shows the
-group's largest score.
+\qhead{Annotation.} $S_8$, WebSurfer: ``did not return the useful information needed to
+answer the question.'' \textbf{Prediction.} Base score $S_{73}$; \soap{} $S_8$.
+\qhead{Reading.} $S_0$ is the unscored user question. \textsf{(thought)} marks the
+orchestrator's ledger to itself, \textsf{$\rightarrow$} its instruction to an agent.
 \smallskip
 
 \qstep{1}{Orchestrator (thought)}{1.74}{1.88}
 Initial plan: fact sheet (a DVD, Hartford to Colombia, three carriers); rates to look
 up per carrier; team Assistant, ComputerTerminal, FileSurfer, WebSurfer.
+
 \qstep{2}{Orchestrator (thought)}{1.55}{1.69}
 Ledger: nothing gathered; start with FedEx.
-\qsub{3}{Orchestrator $\rightarrow$ WebSurfer}{1.49}{1.49}
+
+\qstep{3}{Orchestrator $\rightarrow$ WebSurfer}{1.49}{1.49}
 Look up FedEx rates.
+
 \qstep{4}{WebSurfer}{1.71}{1.90}
 Types the query into Bing; returns a screenshot and page metadata.
+
 \qstep{5}{Orchestrator (thought)}{1.82}{2.00}
 Ledger: no rates yet; progress.
-\qsub{6--7}{Orchestrator}{1.57}{1.57}
-Instruction: DHL rates; next speaker.
+
+\qstep{6}{Orchestrator $\rightarrow$ WebSurfer}{1.57}{1.57}
+Look up DHL rates.
+
+\qstep{7}{Orchestrator (thought)}{0.92}{0.92}
+Next speaker: WebSurfer.
+
 \qstep{8}{WebSurfer}{2.59}{2.74}\qgold\ \qsoap\
 Ignores the DHL instruction; clicks ``Calculate Shipping Rates -- FedEx''. Returns the
 FedEx rate-tool landing page: screenshot, schema.org metadata, an empty form, no rate.
+
 \qstep{9}{Orchestrator (thought)}{1.82}{1.95}
 Ledger: ``we have gathered information for FedEx''; DHL and USPS pending. No FedEx rate
 was ever read; every later turn builds on this belief.
-\qsub{10--11}{Orchestrator}{1.56}{1.56}
-Instruction: DHL; next speaker.
+
+\qstep{10}{Orchestrator $\rightarrow$ WebSurfer}{1.56}{1.56}
+Look up DHL rates.
+
+\qstep{11}{Orchestrator (thought)}{0.93}{0.93}
+Next speaker: WebSurfer.
+
 \qstep{12}{Orchestrator (thought)}{1.51}{1.68}
 Ledger: in a loop, errors on FedEx and DHL, no progress; hand to Assistant.
-\qsub{13--15}{Orchestrator $\rightarrow$ Assistant; Assistant}{1.59}{1.71}
-Told to get USPS rates, then fix FedEx and DHL; writes a two-step plan (``I'll visit
-the USPS website'') but has no browser; returns nothing.
-\qstep{16--18}{Orchestrator}{1.69}{1.82}
-Ledger; instruction: USPS; next speaker.
-\qsub{19}{WebSurfer}{1.44}{1.61}
+
+\qstep{13}{Orchestrator $\rightarrow$ Assistant}{1.51}{1.51}
+Get USPS rates, then fix FedEx and DHL.
+
+\qstep{14}{Orchestrator (thought)}{1.59}{1.71}
+Next speaker: Assistant.
+
+\qstep{15}{Assistant}{1.45}{1.61}
+Writes a two-step plan (``I'll visit the USPS website'') but has no browser; returns nothing.
+
+\qstep{16}{Orchestrator (thought)}{1.69}{1.82}
+Ledger: rates still missing; try USPS next.
+
+\qstep{17}{Orchestrator $\rightarrow$ WebSurfer}{1.56}{1.56}
+Look up USPS rates.
+
+\qstep{18}{Orchestrator (thought)}{0.91}{1.02}
+Next speaker: WebSurfer.
+
+\qstep{19}{WebSurfer}{1.44}{1.61}
 Still on the FedEx tool: types ``Hartford, Connecticut'' into \textit{From}.
-\qstep{20--22}{Orchestrator}{1.63}{1.78}
-Ledger; ``continue with USPS''; next.
-\qsub{23}{WebSurfer}{1.62}{1.76}
+
+\qstep{20}{Orchestrator (thought)}{1.63}{1.78}
+Ledger: FedEx partially explored, DHL and USPS still pending.
+
+\qstep{21}{Orchestrator $\rightarrow$ WebSurfer}{1.47}{1.47}
+Continue with USPS.
+
+\qstep{22}{Orchestrator (thought)}{0.94}{0.94}
+Next speaker: WebSurfer.
+
+\qstep{23}{WebSurfer}{1.62}{1.76}
 Clicks the ``Hartford, Connecticut, USA'' suggestion.
-\qstep{24--26}{Orchestrator}{1.57}{1.71}
-Ledger; USPS, then revisit DHL; next.
-\qsub{27}{WebSurfer}{1.43}{1.60}
+
+\qstep{24}{Orchestrator (thought)}{1.57}{1.71}
+Ledger: FedEx form partially filled; USPS and DHL incomplete.
+
+\qstep{25}{Orchestrator $\rightarrow$ WebSurfer}{1.46}{1.46}
+USPS rates, then revisit DHL.
+
+\qstep{26}{Orchestrator (thought)}{0.95}{0.95}
+Next speaker: WebSurfer.
+
+\qstep{27}{WebSurfer}{1.43}{1.60}
 Types ``Colombia'' into the FedEx \textit{To} field.
-\qstep{28--30}{Orchestrator}{1.78}{1.93}
-Ledger; ``continue with USPS''; next.
-\qsub{31}{WebSurfer}{1.65}{1.82}
+
+\qstep{28}{Orchestrator (thought)}{1.78}{1.93}
+Ledger: USPS rates still needed; FedEx form in progress.
+
+\qstep{29}{Orchestrator $\rightarrow$ WebSurfer}{1.51}{1.51}
+Continue with USPS.
+
+\qstep{30}{Orchestrator (thought)}{0.96}{1.07}
+Next speaker: WebSurfer.
+
+\qstep{31}{WebSurfer}{1.65}{1.82}
 Clicks ``Colombia''.
-\qstep{32--34}{Orchestrator}{1.79}{1.93}
-Ledger; USPS; next.
-\qsub{35}{WebSurfer}{1.76}{1.76}
+
+\qstep{32}{Orchestrator (thought)}{1.79}{1.93}
+Ledger: USPS and DHL rates still missing.
+
+\qstep{33}{Orchestrator $\rightarrow$ WebSurfer}{1.58}{1.58}
+Look up USPS rates.
+
+\qstep{34}{Orchestrator (thought)}{0.96}{0.96}
+Next speaker: WebSurfer.
+
+\qstep{35}{WebSurfer}{1.76}{1.76}
 Clicks the browser back button; the FedEx form reads From Hartford 06103, destination
 Colombia; no rate.
-\qstep{36--39}{Orchestrator (thought)}{1.80}{1.96}
-Ledger; ``Stalled\ldots\ Replanning''; new plan: the USPS International Shipping
-Calculator; ledger.
-\qsub{40--41}{Orchestrator}{1.79}{1.79}
-Instruction: open the USPS calculator, enter the DVD details; next.
-\qsub{42}{WebSurfer}{1.87}{2.02}
+
+\qstep{36}{Orchestrator (thought)}{1.58}{1.69}
+Ledger: cheapest option not yet determined.
+
+\qstep{37}{Orchestrator (thought)}{1.67}{1.79}
+Stalled; replanning.
+
+\qstep{38}{Orchestrator (thought)}{1.55}{1.72}
+New plan: use the USPS International Shipping Calculator.
+
+\qstep{39}{Orchestrator (thought)}{1.80}{1.96}
+Ledger: request not yet addressed; proceed with new plan.
+
+\qstep{40}{Orchestrator $\rightarrow$ WebSurfer}{1.79}{1.79}
+Open the USPS calculator, enter the DVD details.
+
+\qstep{41}{Orchestrator (thought)}{1.06}{1.16}
+Next speaker: WebSurfer.
+
+\qstep{42}{WebSurfer}{1.87}{2.02}
 Bing search ``USPS International Shipping Calculator''; results-page metadata.
-\qstep{43--45}{Orchestrator}{1.72}{1.86}
-Ledger; click the calculator link, enter the details; next.
-\qsub{46}{WebSurfer}{1.52}{1.71}
+
+\qstep{43}{Orchestrator (thought)}{1.72}{1.86}
+Ledger: on the right track; click the calculator link.
+
+\qstep{44}{Orchestrator $\rightarrow$ WebSurfer}{1.50}{1.50}
+Click the calculator link, enter the details.
+
+\qstep{45}{Orchestrator (thought)}{1.05}{1.05}
+Next speaker: WebSurfer.
+
+\qstep{46}{WebSurfer}{1.52}{1.71}
 Clicks ``Calculate a Price'': the USPS Retail Postage Price Calculator opens, with the
 destination defaulting to United States.
-\qstep{47--49}{Orchestrator}{2.00}{2.18}
+
+\qstep{47}{Orchestrator (thought)}{2.00}{2.18}
 Ledger: loop, but on the right page; instruction: ZIP 06101, Colombia,
-$7.5\times5.3\times0.6$ in, 0.2 lb; next.
-\qsub{50}{WebSurfer}{1.53}{1.72}
+$7.5\times5.3\times0.6$ in, 0.2 lb.
+
+\qstep{48}{Orchestrator $\rightarrow$ WebSurfer}{1.83}{1.83}
+Enter ZIP 06101, Colombia, DVD dimensions and weight.
+
+\qstep{49}{Orchestrator (thought)}{1.01}{1.01}
+Next speaker: WebSurfer.
+
+\qstep{50}{WebSurfer}{1.53}{1.72}
 Clicks ``International''.
-\qstep{51--53}{Orchestrator}{1.80}{1.97}
+
+\qstep{51}{Orchestrator (thought)}{1.80}{1.97}
+Ledger: USPS rates not yet obtained.
+
+\qstep{52}{Orchestrator $\rightarrow$ WebSurfer}{1.76}{1.76}
 Same instruction.
-\qsub{54}{WebSurfer}{2.04}{2.04}
+
+\qstep{53}{Orchestrator (thought)}{1.09}{1.09}
+Next speaker: WebSurfer.
+
+\qstep{54}{WebSurfer}{2.04}{2.04}
 Clicks ``International'' again.
-\qstep{55--57}{Orchestrator}{1.81}{1.99}
+
+\qstep{55}{Orchestrator (thought)}{1.81}{1.99}
+Ledger: USPS rates not yet retrieved.
+
+\qstep{56}{Orchestrator $\rightarrow$ WebSurfer}{1.79}{1.79}
 Same instruction.
-\qsub{58}{WebSurfer}{2.24}{2.46}
+
+\qstep{57}{Orchestrator (thought)}{1.11}{1.11}
+Next speaker: WebSurfer.
+
+\qstep{58}{WebSurfer}{2.24}{2.46}
 Types 06101 into the from-ZIP field; destination still United States.
-\qstep{59--61}{Orchestrator}{1.98}{2.16}
+
+\qstep{59}{Orchestrator (thought)}{1.98}{2.16}
+Ledger: USPS rates still pending.
+
+\qstep{60}{Orchestrator $\rightarrow$ WebSurfer}{1.88}{1.88}
 Select Colombia, enter dimensions and weight.
-\qsub{62}{WebSurfer}{1.72}{1.89}
+
+\qstep{61}{Orchestrator (thought)}{1.14}{1.14}
+Next speaker: WebSurfer.
+
+\qstep{62}{WebSurfer}{1.72}{1.89}
 Clicks the destination-country field.
-\qstep{63--65}{Orchestrator}{1.79}{1.96}
-Same instruction.
-\qsub{66}{WebSurfer}{1.70}{1.70}
+
+\qstep{63}{Orchestrator (thought)}{1.79}{1.96}
+Ledger: USPS rates not yet obtained.
+
+\qstep{64}{Orchestrator $\rightarrow$ WebSurfer}{1.71}{1.71}
+Select Colombia, enter dimensions and weight.
+
+\qstep{65}{Orchestrator (thought)}{1.08}{1.08}
+Next speaker: WebSurfer.
+
+\qstep{66}{WebSurfer}{1.70}{1.70}
 Clicks the field again; nothing selected.
-\qstep{67--69}{Orchestrator (thought)}{1.83}{1.83}
-Ledger: loop, no progress; ``Stalled\ldots\ Replanning''; new plan.
-\qsub{70--72}{Orchestrator}{1.86}{2.03}
-Instruction: open the USPS calculator, fill every field; next.
-\qsub{73}{WebSurfer}{2.65}{2.65}\qbase\
+
+\qstep{67}{Orchestrator (thought)}{1.83}{1.83}
+Ledger: loop, no progress.
+
+\qstep{68}{Orchestrator (thought)}{1.23}{1.23}
+Stalled; replanning.
+
+\qstep{69}{Orchestrator (thought)}{1.49}{1.67}
+New plan: retry the USPS calculator from scratch.
+
+\qstep{70}{Orchestrator (thought)}{1.86}{2.03}
+Ledger: full answer not yet provided; proceed.
+
+\qstep{71}{Orchestrator $\rightarrow$ WebSurfer}{1.70}{1.70}
+Open the USPS calculator, fill every field.
+
+\qstep{72}{Orchestrator (thought)}{0.97}{0.97}
+Next speaker: WebSurfer.
+
+\qstep{73}{WebSurfer}{2.65}{2.65}\qbase\
 Types ``USPS Retail Postage Price Calculator'' into Bing once more; returns a
 13k-character dump of result metadata. The run ends with no rate from any carrier.
 \smallskip
 
-\par\noindent\textit{Ranking.} Base: T73 $>$ T8 $>$ T58. Rescored: T8 $>$ T73 $>$ T58.
+\par\noindent\textit{Ranking.} Base: $S_{73} > S_8$. Rescored: $S_8 > S_{73}$.
 \end{qbox}
 \end{minipage}
-\caption{Textual qualitative examples, part 1 of 2: one Who\&When trajectory per
-subset, scored with Qwen3.5-9B under the configuration selected for Table~\ref{tab:main}. Each
-step shows its agent, $[\Sbase \rightarrow \Stilde]$ (base and rescored score,
-$\times 10^{3}$), and its content condensed by us; tags mark the annotated decisive step
-and each score's argmax. In both trajectories the base score peaks on a late symptom
-and rescoring moves the top-1 onto the annotated step.}
-\label{fig:qual-text-a}
+\caption{WW-HC Magentic-One trajectory, scored with Qwen3.5-9B.}
+\label{fig:qual-text-2}
 \end{figure}
+% ---------------------------------------------------------------- old Figure 1: TE-Cap traj-59 (moved to Figure 3)
+% \begin{figure}[ht]
+% \centering
+% \begin{minipage}{\textwidth}
+% \begin{qbox}{TE-Cap (traj-59) \,$\cdot$\, CaptainAgent}
+% \fontsize{7.4}{8.6}\selectfont
+% \qhead{Task.} In Unlambda, what exact character or text needs to be added to correct
+% the following code to output ``For penguins''? If what is needed is a character, answer
+% with the name of the character.
+% Code: \texttt{`r```````````.F.o.r.\ .p.e.n.g.u.i.n.si}
+% \qhead{Gold answer.} backtick.
+% \qhead{Annotation.} $S_1$, InformationExtraction\_Expert: ``a missing backtick disrupted
+% function application, preventing the code from correctly constructing and outputting
+% `For penguins'.\!''
+% \qhead{Prediction.} Base score $S_5$; \soap{} $S_1$.
+% \medskip
+%
+% \qstep{0}{Orchestrator}{0.75}{0.84}
+% Assembles the team: InformationExtraction\_Expert (web search and result parsing),
+% CSVHandling\_Expert (Python over local files), Verification\_Expert (re-runs checks
+% against cited evidence).
+%
+% \qstep{1}{InformationExtraction\_Expert}{0.87}{0.95}\qgold\ \qsoap\
+% Analyzes the Unlambda code. Identifies the dot operators and backtick-based function
+% application, but miscounts the applications: concludes a dot is needed before
+% \texttt{s} to include it in the output string. Answers ``.'' (dot).
+%
+% \qstep{2}{Orchestrator}{0.69}{0.78}
+% Next speaker: Verification\_Expert.
+%
+% \qstep{3}{Verification\_Expert}{0.82}{0.90}
+% Agrees with the dot answer. Repeats the reasoning without independent verification of
+% the combinator structure.
+%
+% \qstep{4}{Orchestrator}{0.85}{0.93}
+% Summarizes: the task required identifying the missing character, determined to be a
+% dot before \texttt{s}.
+%
+% \qstep{5}{Orchestrator}{0.88}{0.88}\qbase\
+% Final ANSWER ``.'' with the same justification. TERMINATE. The correct answer is
+% ``backtick''.
+% \medskip
+%
+% \par\noindent\textit{Ranking.} Base: $S_5 > S_1$. Rescored: $S_1 > S_4$.
+% The final answer ($S_5$) and the summary ($S_4$) are restatements; the correction lifts
+% the flawed analysis that produced them.
+% \end{qbox}
+% \captionof{figure}{TE-Cap CaptainAgent trajectory (traj-59), scored with Qwen3.5-9B. This is the trajectory whose score plot appears in Figure~\ref{fig:qualitative}.}
+% \label{fig:qual-text-1}
+% \end{minipage}
+% \end{figure}
 
-% ---------------------------------------------------------------- page 2
-\begin{figure}[p]
+
+% ---------------------------------------------------------------- old Figure 3: TE-Cap traj-50 (replaced by traj-59)
+% \begin{figure}[ht]
+% \centering
+% \begin{minipage}{\textwidth}
+% \begin{qbox}{TE-Cap (traj-50) \,$\cdot$\, CaptainAgent}
+% \fontsize{7.4}{8.6}\selectfont
+% \qhead{Task.} I'm researching species that became invasive after people who kept them
+% as pets released them. A certain fish was popularized as a pet by the movie Finding
+% Nemo. According to the USGS, where was this fish found as a nonnative species before
+% 2020? Answer as five-digit zip codes, comma-separated.
+% \qhead{Gold answer.} 34689.
+% \qhead{Annotation.} $S_4$, InformationExtraction\_Expert: ``used an inappropriate tool
+% meant for Wikipedia, which failed to extract accurate zip codes from the USGS
+% website.''
+% \qhead{Prediction.} Base score $S_{10}$; \soap{} $S_4$.
+% \medskip
+%
+% \qstep{0}{Orchestrator}{0.76}{0.84}
+% Assembles the team: InformationExtraction\_Expert (Bing search and result parsing),
+% CSVHandling\_Expert (Python over local files), Verification\_Expert (re-runs checks
+% against cited evidence).
+%
+% \qstep{1}{Orchestrator}{0.71}{0.79}
+% Next speaker: InformationExtraction\_Expert.
+%
+% \qstep{2}{InformationExtraction\_Expert}{0.98}{1.07}
+% Identifies the clownfish, \textit{Amphiprion ocellaris}; lays out the plan (find the
+% USGS records, extract the zip codes, format them) and submits
+% \texttt{perform\_web\_search("USGS Amphiprion ocellaris nonnative species locations
+% before 2020", count=5)}.
+%
+% \qstep{3}{Orchestrator}{0.68}{0.76}
+% Next speaker: InformationExtraction\_Expert.
+%
+% \qstep{4}{InformationExtraction\_Expert}{1.05}{1.14}\qgold\ \qsoap\
+% Picks the USGS Nonindigenous Aquatic Species fact sheet (speciesID 3243) from the
+% hits and calls \texttt{scrape\_wikipedia\_tables(url, header\_keyword="States with
+% nonindigenous occurrences")} on it, a helper written for Wikipedia pages.
+%
+% \qstep{5}{Orchestrator}{0.74}{0.83}
+% Next speaker: InformationExtraction\_Expert.
+%
+% \qstep{6}{InformationExtraction\_Expert}{0.87}{0.96}
+% Reports ``an issue with connecting to the USGS website''; says it will inspect the
+% page ``manually'' instead, an action no tool in the team supports.
+%
+% \qstep{7}{Orchestrator}{0.72}{0.72}
+% Next speaker: InformationExtraction\_Expert.
+%
+% \qstep{8}{InformationExtraction\_Expert}{1.03}{1.13}
+% Claims to have reviewed the page, that it lists locations without zip codes, and
+% ``maps'' them to 33149, 33139, 33154 (Miami area). ANSWER; TERMINATE.
+%
+% \qstep{9}{Orchestrator}{0.89}{1.00}
+% Summary: the zip codes come from a manual review; the scraping failure is noted;
+% ``Need to double-check? No.''
+%
+% \qstep{10}{Orchestrator}{1.05}{1.05}\qbase\
+% Final ANSWER 33149, 33139, 33154, with the same justification. TERMINATE.
+% \medskip
+%
+% \par\noindent\textit{Ranking.} Base: $S_{10} > S_4 > S_8$. Rescored: $S_4 > S_8 > S_2$.
+% The fabricated answer ($S_8$) and its restatement ($S_{10}$) are the symptoms; the wrong
+% tool call ($S_4$) is the step they were built on.
+% \end{qbox}
+% \end{minipage}
+% \caption{TE-Cap CaptainAgent trajectory (traj-50), scored with Qwen3.5-9B.}
+% \label{fig:qual-text-3}
+% \end{figure}
+
+% ---------------------------------------------------------------- Figure 3: TE-Cap traj-59 (matches fig:qualitative)
+\begin{figure}[ht]
 \centering
-\begin{minipage}[t]{0.49\textwidth}\vspace{0pt}
+\begin{minipage}{\textwidth}
 \begin{qbox}{TE-Cap \,$\cdot$\, CaptainAgent}
 \fontsize{7.4}{8.6}\selectfont
-\qhead{Task.} I'm researching species that became invasive after people who kept them
-as pets released them. A certain fish was popularized as a pet by the movie Finding
-Nemo. According to the USGS, where was this fish found as a nonnative species before
-2020? Answer as five-digit zip codes, comma-separated.
-\qhead{Gold answer.} 34689.
-\qhead{Annotation.} T4, InformationExtraction\_Expert: ``used an inappropriate tool
-meant for Wikipedia, which failed to extract accurate zip codes from the USGS
-website.''
-\qhead{Prediction.} Base score T10; \soap{} T4.
+\qhead{Task.} In Unlambda, what exact character or text needs to be added to correct
+the following code to output ``For penguins''? If what is needed is a character, answer
+with the name of the character.
+Code: \texttt{`r```````````.F.o.r.\ .p.e.n.g.u.i.n.si}
+\qhead{Gold answer.} backtick.
+\qhead{Annotation.} $S_1$, InformationExtraction\_Expert: ``a missing backtick disrupted
+function application, preventing the code from correctly constructing and outputting
+`For penguins'.\!''
+\qhead{Prediction.} Base score $S_5$; \soap{} $S_1$.
 \medskip
 
-\qstep{0}{Orchestrator}{0.76}{0.84}
-Assembles the team: InformationExtraction\_Expert (Bing search and result parsing),
+\qstep{0}{Orchestrator}{0.75}{0.84}
+Assembles the team: InformationExtraction\_Expert (web search and result parsing),
 CSVHandling\_Expert (Python over local files), Verification\_Expert (re-runs checks
 against cited evidence).
 
-\qstep{1}{Orchestrator}{0.71}{0.79}
-Next speaker: InformationExtraction\_Expert.
+\qstep{1}{InformationExtraction\_Expert}{0.87}{0.95}\qgold\ \qsoap\
+Analyzes the Unlambda code. Identifies the dot operators and backtick-based function
+application, but miscounts the applications: concludes a dot is needed before
+\texttt{s} to include it in the output string. Answers ``.'' (dot).
 
-\qstep{2}{InformationExtraction\_Expert}{0.98}{1.07}
-Identifies the clownfish, \textit{Amphiprion ocellaris}; lays out the plan (find the
-USGS records, extract the zip codes, format them) and submits
-\texttt{perform\_web\_search("USGS Amphiprion ocellaris nonnative species locations
-before 2020", count=5)}.
+\qstep{2}{Orchestrator}{0.69}{0.78}
+Next speaker: Verification\_Expert.
 
-\qstep{3}{Orchestrator}{0.68}{0.76}
-Next speaker: InformationExtraction\_Expert.
+\qstep{3}{Verification\_Expert}{0.82}{0.90}
+Agrees with the dot answer. Repeats the reasoning without independent verification of
+the combinator structure.
 
-\qstep{4}{InformationExtraction\_Expert}{1.05}{1.14}\qgold\ \qsoap\
-Picks the USGS Nonindigenous Aquatic Species fact sheet (speciesID 3243) from the
-hits and calls \texttt{scrape\_wikipedia\_tables(url, header\_keyword="States with
-nonindigenous occurrences")} on it, a helper written for Wikipedia pages.
+\qstep{4}{Orchestrator}{0.85}{0.93}
+Summarizes: the task required identifying the missing character, determined to be a
+dot before \texttt{s}.
 
-\qstep{5}{Orchestrator}{0.74}{0.83}
-Next speaker: InformationExtraction\_Expert.
-
-\qstep{6}{InformationExtraction\_Expert}{0.87}{0.96}
-Reports ``an issue with connecting to the USGS website''; says it will inspect the
-page ``manually'' instead, an action no tool in the team supports.
-
-\qstep{7}{Orchestrator}{0.72}{0.72}
-Next speaker: InformationExtraction\_Expert.
-
-\qstep{8}{InformationExtraction\_Expert}{1.03}{1.13}
-Claims to have reviewed the page, that it lists locations without zip codes, and
-``maps'' them to 33149, 33139, 33154 (Miami area). ANSWER; TERMINATE.
-
-\qstep{9}{Orchestrator}{0.89}{1.00}
-Summary: the zip codes come from a manual review; the scraping failure is noted;
-``Need to double-check? No.''
-
-\qstep{10}{Orchestrator}{1.05}{1.05}\qbase\
-Final ANSWER 33149, 33139, 33154, with the same justification. TERMINATE.
+\qstep{5}{Orchestrator}{0.88}{0.88}\qbase\
+Final ANSWER ``.'' with the same justification. TERMINATE. The correct answer is
+``backtick''.
 \medskip
 
-\par\noindent\textit{Ranking.} Base: T10 $>$ T4 $>$ T8. Rescored: T4 $>$ T8 $>$ T2.
-The fabricated answer (T8) and its restatement (T10) are the symptoms; the wrong
-tool call (T4) is the step they were built on.
+\par\noindent\textit{Ranking.} Base: $S_5 > S_1$. Rescored: $S_1 > S_4$.
+The final answer ($S_5$) and the summary ($S_4$) are restatements; the correction lifts
+the flawed analysis that produced them.
 \end{qbox}
-\end{minipage}\hfill
-\begin{minipage}[t]{0.49\textwidth}\vspace{0pt}
+\end{minipage}
+\caption{TE-Cap CaptainAgent trajectory (traj-59), scored with Qwen3.5-9B. This is the trajectory whose score plot appears in Figure~\ref{fig:qualitative}.}
+\label{fig:qual-text-3}
+\end{figure}
+
+% ---------------------------------------------------------------- Figure 4: TE-Mag
+\begin{figure}[ht]
+\centering
+\begin{minipage}{\textwidth}
 \begin{qbox}{TE-Mag \,$\cdot$\, Magentic-One}
 \fontsize{7.4}{8.6}\selectfont
 \qhead{Task.} A game-show host hides 30 coins (\$1,000 each) in three boxes; one box
@@ -2119,10 +2436,10 @@ holds at least 2 coins and one holds 6 more than another. Bob guesses a count fo
 each box and wins his guess whenever it does not exceed the box, otherwise nothing.
 With optimal play, what is the minimum amount Bob can win?
 \qhead{Gold answer.} 16,000.
-\qhead{Annotation.} T6, Orchestrator: ``assuming Bob should make the same conservative
+\qhead{Annotation.} $S_6$, Orchestrator: ``assuming Bob should make the same conservative
 guess for each box, which ignored optimizing guesses based on varying coin
 distributions.''
-\qhead{Prediction.} Base score T9; \soap{} T6 (on all three seeds of the triple).
+\qhead{Prediction.} Base score $S_9$; \soap{} $S_6$ (on all three seeds of the triple).
 \medskip
 
 \qstep{0}{Orchestrator}{0.72}{1.37}
@@ -2173,14 +2490,10 @@ Ledger: ``Bob can ensure winning 3 coins''; provide the answer.
 ANSWER \$3,000: the conservative guess always wins at least 3 coins. TERMINATE.
 \medskip
 
-\par\noindent\textit{Ranking.} Base: T9 $>$ T3 $>$ T0. Rescored: T6 $>$ T3 $>$ T9.
-The crash report (T8) and the fix (T9) are the symptoms of the strategy fixed in T6.
+\par\noindent\textit{Ranking.} Base: $S_9 > S_3$. Rescored: $S_6 > S_3$.
+The crash report ($S_8$) and the fix ($S_9$) are the symptoms of the strategy fixed in $S_6$.
 \end{qbox}
 \end{minipage}
-\caption{Textual qualitative examples, part 2 of 2: one TraceElephant trajectory per
-subset, presented as in Figure~\ref{fig:qual-text-a}. On TE-Cap the base score peaks
-on the final answer and rescoring moves the top-1 six steps earlier, onto the wrong
-tool call; on TE-Mag it peaks on a bug fix and rescoring moves it three steps earlier,
-onto the flawed strategy the fix preserved.}
-\label{fig:qual-text-b}
+\caption{TE-Mag Magentic-One trajectory, scored with Qwen3.5-9B.}
+\label{fig:qual-text-4}
 \end{figure}
