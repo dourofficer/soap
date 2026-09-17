@@ -73,7 +73,6 @@ CE-MATH-500 & CORRECT & 157 & 6.3  & 5  & 21 & 3.1 & 3.3 \\
 CE-MMLU-Pro & CORRECT & 92  & 6.1  & 2  & 22 & 2.6 & 2.0 \\
 CE-MuSiQue  & CORRECT & 312 & 14.7 & 21 & 22 & 3.0 & 6.1 \\
 CE-2WikiMQA & CORRECT & 733 & 14.5 & 14 & 22 & 3.0 & 6.7 \\
-\rowcolor{Gray}
 CE (mean)   & CORRECT & 2{,}226 & 10.1 & 9.1 & 22 & 2.8 & 4.7 \\
 \bottomrule
 \end{tabular}
@@ -119,7 +118,7 @@ until the input fits. The task description and the scored step are never dropped
 % \textcolor{red}{the AI style here is hard to understand. Maybe prompt it to make it understandable. also change it for later sections. remove obvious AI evidence such as "materializing"...}
 % \note{revised.}
 
-\subsection{Implementation details}
+\subsection{Implementation details of \soap{}}
 \label{app:implementation}
 
 \textbf{Step representations.}
@@ -194,7 +193,7 @@ contiguous band $[c_{\mathrm{begin}}, c_{\mathrm{end}})$ with $0 \le c_{\mathrm{
 $\Sbase(s_t)=1/(\pi_{\mathcal{C}}(v_t)+\epsilon)$ with $\epsilon=10^{-12}$. Ranking is
 within a trajectory, and ties resolve to the earliest step.
 
-\textbf{Construction of the predecessor set.}
+\textbf{Construction of the predecessor set during rescoring.}
 Section~\ref{sec:method:weights} normalizes the attention mass over an index set
 $\mathcal{P}_t$ of retained predecessors. We build $\mathcal{P}_t$ in three steps.
 First, context truncation (Appendix~\ref{app:input}) fixes which earlier steps the
@@ -486,25 +485,9 @@ OAT and StepFinder score steps and name no agent, so their responsible agent is 
 In the with-GT setting, the LLM's context opens with a pinned block, \textit{``The problem is: \{question\}. The answer for the problem is: \{answer\}''}, phrased as in the prompting baselines so the LLM reads the answer in the same register. The block precedes every turn and survives context truncation. Nothing else changes: the same grids, the same selection rule, its own frozen seed triples. OAT appends the answer to the task description and StepFinder to the first step, as described in Appendix~\ref{app:baselines}.
 
 \textbf{Full results.}
-Table~\ref{tab:gt-full} extends Table~\ref{tab:main-gt} to all five subsets, the GPT-4o judge, and DeepSeek-R1-Distill-Llama-8B. Every prompt-based method was run with the answer on both open-weight judges; the one blank cell, ErrorProbe with GPT-4o on CORRECT-Error, was not run.\textcolor{red}{reason?} \note{the text was outdated, this is a pending run, will finish soon.}
+Table~\ref{tab:gt-full} extends Table~\ref{tab:main-gt} to all five subsets, the GPT-4o judge, and DeepSeek-R1-Distill-Llama-8B.
 The picture of Table~\ref{tab:main} holds: \soap{} is best on every column of both open-backbone blocks, tied once by Step-by-Step on TE-Mag with Qwen3.5-9B (21.01). The answer helps the judges more than it helps \soap{}: Step-by-Step gains 21 points on CE with Qwen3.5-9B and 15 with GPT-4o, and ErrorProbe with GPT-4o gains 7 on WW-HC, whereas \soap{} moves by under 5 points everywhere except DeepSeek TE-Mag, where it gains 6.5. On CE with the answer, Binary Search and ErrorProbe with Qwen3.5-9B come within a point of \soap{} (59.89 and 59.57 vs.\ 60.59), the closest any judge gets in this table.
-% \note{revised 2026-09-14 (evening): the open-judge blocks are now complete (the
-% remaining with-GT runs of All-at-Once, Step-by-Step, Binary Search, CORRECT, and
-% CHIEF on CE and TraceElephant landed); the coverage sentence, the best marks, and
-% the CE comparison were updated to the filled table.}
-% \note{revised: filled the two finished open-judge cells, ErrorProbe on CE with the answer (Qwen3.5-9B 59.57, DeepSeek-8B 40.39; scored by scripts/prompting/evaluate.py on the frozen with-GT triple 17--19, macro mean over the seven pools), and updated the coverage sentence. The other blank cells (CORRECT and CHIEF on CE and TraceElephant; the three Who\&When judges on CE) have no open-judge run yet.}
-% Verified 2026-09-14: scripts/prompting/evaluate.py re-run over every with-GT cell in
-% ../attrib-prompting/outputs, then scripts/tables/open_backbone_rows.py --gt and
-% scripts/tables/make_appendix_tables.py; every printed open-judge, OAT, StepFinder,
-% and \soap{} cell below equals tables/appendix_with_gt_full.tsv. The blank open-judge
-% cells (All-at-Once, Step-by-Step, Binary Search on CE; CORRECT and CHIEF on CE,
-% TE-Cap, TE-Mag) have no prediction directory under outputs/ and stay blank.
 
-% RAFFLES dropped from the comparison 2026-09-06 (kept in related work only).
-% Old: "... all six prompt-based methods ... \soap{} is best or second on every
-% column, the answer helps the judges more than it helps \soap{} (RAFFLES with GPT-4o
-% gains 4 points on CE and 11 on TE-Mag; ...), and on DeepSeek \soap{} keeps the best
-% number in all five columns."
 
 \begin{table}[h]
 \centering
@@ -512,7 +495,7 @@ The picture of Table~\ref{tab:main} holds: \soap{} is best on every column of bo
 \setlength{\tabcolsep}{5pt}
 \caption{Step-level accuracy (\%) in the with-ground-truth setting on all five
 subsets. The prompt-based rows use the judge named in the block; the training-based
-rows and \soap{} use the backbone named in the block. A blank cell was not run. The
+rows and \soap{} use the backbone named in the block. The
 best result in each column within a block is highlighted in \textbf{bold}.}
 \label{tab:gt-full}
 \begin{tabular}{l ccccc}
@@ -521,32 +504,20 @@ Method & WW-AG & WW-HC & CE & TE-Cap & TE-Mag \\
 \midrule
 \rowcolor{Gray}\multicolumn{6}{c}{\textit{\textbf{GPT-4o}}} \\
 All-at-Once   & 15.87 & 3.45  & 24.50 & 9.30  & 6.52 \\
-Step-by-Step  & 22.75 & 18.39 & \textcolor{gray}{\best{59.29}} & 18.60 & 19.57 \\
+Step-by-Step  & 22.75 & 18.39 & 59.29 & 18.60 & 19.57 \\
 Binary Search & 28.57 & 4.60  & 18.44 & 9.30  & 6.52 \\
 CORRECT       & 15.87 & 4.60  & 37.09 & 10.85 & 10.14 \\
 CHIEF         & 24.34 & 11.49 & 42.10 & 14.73 & 13.77 \\
-% RAFFLES dropped from the comparison 2026-09-06 (kept in related work only). Markers recomputed.
-% RAFFLES       & \best{42.33} & \best{27.59} & \best{68.41} & \best{27.91} & \best{28.26} \\
-% ErrorProbe rows added 2026-09-13 from tables/appendix_with_gt_full.tsv (paper mode, not
-% run on CE with the answer). GPT-4o block: ErrorProbe takes best on the four run columns.
-ErrorProbe    & \textcolor{gray}{\best{34.92}} & \textcolor{gray}{\best{28.74}} & --    & \textcolor{gray}{\best{30.23}} & \textcolor{gray}{\best{26.81}} \\
+
+ErrorProbe    & \textcolor{gray}{\best{34.92}} & \textcolor{gray}{\best{28.74}} & \textcolor{gray}{\best{62.26}} & \textcolor{gray}{\best{30.23}} & \textcolor{gray}{\best{26.81}} \\
 \midrule
 \rowcolor{Gray}\multicolumn{6}{c}{\textit{\textbf{Qwen3.5-9B}}} \\
-% Open-judge blocks refilled 2026-09-14 (evening): the remaining with-GT runs of the
-% two open judges landed in ../attrib-prompting/outputs (All-at-Once, Step-by-Step,
-% Binary Search, CORRECT, CHIEF on CE, TE-Cap, TE-Mag; every cell complete, a null
-% verdict counts as wrong as everywhere else). Scored by scripts/prompting/evaluate.py
-% on the frozen with-GT triples -> tables/appendix_with_gt_full.tsv. Markers
-% recomputed: \soap{} best in every column of both blocks; Step-by-Step ties it on
-% Qwen TE-Mag (21.01), so both are bold there.
+
 All-at-Once   & 21.16 & 11.49 & 33.32 & 6.98  & 1.45 \\
 Step-by-Step  & 17.46 & 18.39 & 52.04 & 24.81 & \best{21.01} \\
 Binary Search & 2.12  & 13.79 & 59.89 & 0.00  & 10.14 \\
 CORRECT       & 32.28 & 4.60  & 36.43 & 10.08 & 8.70 \\
 CHIEF         & 30.69 & 4.60  & 30.78 & 6.98  & 10.87 \\
-% RAFFLES       & \best{46.56} & 28.74 & --    & --    & -- \\
-% ErrorProbe CE cell filled 2026-09-14 (with-GT paper mode, both open judges finished;
-% scored on the frozen with-GT triple 17-19, macro mean over the seven pools).
 ErrorProbe    & 40.74 & 19.54 & 59.57 & 24.81 & 20.29 \\
 StepFinder    & 18.52 & 12.87 & 28.52 & 13.64 & 8.99 \\
 OAT           & 22.12 & 8.05  & 56.21 & 17.98 & 20.00 \\
@@ -594,25 +565,170 @@ OAT           & 20.85 & 17.01 & 52.39 & 18.14 & 13.77 \\
 
 
 
+% \subsection{Compute resources and cost}
+% \label{app:compute}
+
+% We compare the average execution time of \soap{} with
+% training-based and prompt-based methods using the frozen
+% Qwen3.5-9B backbone. All experiments use Python 3.10, PyTorch 2.13, and Transformers 5.15.
+% GPU measurements use one NVIDIA H200 with 141\,GB memory,
+% processing one trajectory at a time.
+
+% \textbf{Fitting and inference time.}
+% Table~\ref{tab:cost-inference} reports fitting time, average
+% feature extraction time per forward pass, and CPU scoring
+% time per trajectory.
+% \soap{} fits the SVD model taking 0.15\,s on WW-AG
+% and 0.30\,s on WW-HC.
+% Its CPU scoring during inference is also the fastest among the compared methods,
+% taking 0.7 and 5.4\,ms per trajectory, respectively.
+% The average embedding extraction time per forward pass during inference is 0.34\,s on
+% WW-AG and 1.59\,s on WW-HC, which is on par with OAT and StepFinder.
+
+% \begin{table}[htbp]
+% \centering
+% \footnotesize
+% \setlength{\tabcolsep}{12pt}
+% \renewcommand{\arraystretch}{1.12}
+% \caption{\textbf{Fitting and inference time of training-based methods.}
+% All methods use Qwen3.5-9B on Who\&When.
+% Fitting operates on extracted reference or training features;
+% baseline fitting times are averaged over five seeds, while
+% \soap{} reports one CPU SVD fit.
+% Average extraction time is total extraction time divided by
+% the number of forward passes; peak memory is the largest GPU
+% memory observed over both subsets, model weights included.
+% CPU scoring times are per-trajectory means and exclude extraction.}
+% \label{tab:cost-inference}
+% \resizebox{\textwidth}{!}{%
+% \begin{tabular}{l rr rrr rr}
+% \toprule
+% & \multicolumn{2}{c}{\shortstack{Fitting\\(s/fit)}}
+% & \multicolumn{3}{c}{\shortstack{Embedding extraction\\(s/forward pass; peak GB)}}
+% & \multicolumn{2}{c}{\shortstack{CPU scoring\\(ms/trajectory)}} \\
+% \cmidrule(lr){2-3}\cmidrule(lr){4-6}\cmidrule(lr){7-8}
+% Method
+% & WW-AG & WW-HC
+% & WW-AG & WW-HC & Peak
+% & WW-AG & WW-HC \\
+% \midrule
+% OAT
+% & 51.10 & 51.10
+% & 0.42 & 2.13 & 31.6
+% & 2.6 & 12.2 \\
+% StepFinder
+% & 51.80 & 115.44
+% & 0.23 & 0.19 & 16.5
+% & 63.6 & 88.2 \\
+% \rowcolor{gray!10}
+% \soap{}
+% & \textbf{0.15} & \textbf{0.30}
+% & 0.34 & 1.59 & 25.1
+% & \textbf{0.7} & \textbf{5.4} \\
+% \bottomrule
+% \end{tabular}}
+% \end{table}
+
+% \textbf{Comparison with prompt-based methods.}
+% Table~\ref{tab:cost-judges} compares all methods on the same
+% 40 WW-AG and 17 WW-HC trajectories that satisfy the
+% 8,192-token input budget without truncation.
+% The comparison uses Qwen3.5-9B without access to the ground-truth
+% answer.
+% We report the average time per trajectory: every judge request
+% of a prompt-based method, prompt processing and decoding
+% included, or the CPU scoring of \soap{} once its representations
+% are extracted.
+
+% \begin{table}[htbp]
+% \centering
+% \footnotesize
+% \setlength{\tabcolsep}{12pt}
+% \renewcommand{\arraystretch}{1.12}
+% \caption{\textbf{Average time per trajectory on the shared subset.}
+% All methods use Qwen3.5-9B on the same 40 WW-AG and 17 WW-HC
+% trajectories.
+% A prompt-based method is timed over all of its judge requests
+% for the trajectory; \soap{} is timed over its CPU scoring with
+% the representations of Table~\ref{tab:cost-inference} already
+% extracted.}
+% \label{tab:cost-judges}
+% \begin{tabular}{l rr}
+% \toprule
+% Method & WW-AG (s/trajectory) & WW-HC (s/trajectory) \\
+% \midrule
+% All-at-Once   & 2.0  & 2.1 \\
+% Step-by-Step  & 2.0  & 3.6 \\
+% Binary Search & 0.2  & 0.4 \\
+% CORRECT       & 1.9  & 1.6 \\
+% CHIEF         & 23.9 & 23.5 \\
+% ErrorProbe    & 5.9  & 6.5 \\
+% \midrule
+% \rowcolor{gray!10}
+% \soap{}      & 0.0007 & 0.0054 \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+
+% \textcolor{red}{can you double check on this? using your provided stats, the evaluation time for SOAP is 0.53s but the embedding extraction takes more than 1 seconds.}
+
+% [resolved 2026-09-17] The 0.33 / 0.53 s cells were seconds per forward pass on
+% the in-budget sample (15.27 s / 29.1 passes on WW-HC), while tab:cost-inference
+% averages every trajectory, long ones included (160.6 s / 101 passes = 1.59 s per
+% pass); both were right, per-pass time grows with context length. The judge cells
+% were always per trajectory (../attrib-prompting/reports/latency/<method>_*.tsv,
+% `seconds` with `n_calls` alongside), so the header now says so, and the SOAP row
+% reports CPU scoring per trajectory (0.7 / 5.4 ms, c4_cost_inference.tsv) on
+% request. Was: \textcolor{red}{can you double check on this? using your provided
+% stats, the evaluation time for SOAP is 0.53s but the embedding extraction takes
+% more than 1 seconds.}
+
+
 \subsection{Compute resources and cost}
 \label{app:compute}
 
-We compare the average execution time of \soap{} with
-training-based and prompt-based methods using the frozen
-Qwen3.5-9B backbone. All experiments use Python 3.10, PyTorch 2.13, and Transformers 5.15.
-GPU measurements use one NVIDIA H200 with 141\,GB memory,
-processing one trajectory at a time.
+% Revised 2026-09-17 (author's request: one-pass convention; re-check of StepFinder's
+% CPU scoring; tab:cost-judges = one pass + scoring). Against the 2026-09-15 numbers:
+%  (1) One-pass convention: SOAP is charged ONE forward pass per trajectory, timed as the
+%      last step's activation pass, whose input is the whole trajectory in its context
+%      under the budget (scripts/ablations/c4_onepass_cost.py ->
+%      results-ablations/c4_extract_cost/soap_onepass_qwen3.5-9b.tsv; pure forward, warm,
+%      mean of 3 repeats, idle H200). All trajectories: 0.38 s WW-AG / 0.76 s WW-HC,
+%      peak 23.7 / 23.8 GB; the in-budget sample of tab:cost-judges: 0.36 / 0.62 s.
+%      The per-step extractor as run costs 5.54 / 160.6 s per trajectory (16.4 / 101
+%      passes; 5.4 / 15.3 s on the sample). Its pooled per-pass time, 0.34 / 1.59 s
+%      (both stages; 0.35 / 1.62 activation stage alone), is what the old table printed
+%      as "s/forward pass"; on WW-HC it exceeds a full-budget pass (0.91 s max) because
+%      that loop also tokenizes and re-assembles the context for every step (checked
+%      2026-09-17 on five WW-HC trajectories: pure forward 0.60-0.81 s per pass on every
+%      one, but the 129-step trajectory spends 99 s tokenizing against 105 s of forward
+%      passes, so its loop averages 1.6 s per pass).
+%  (2) CPU scoring re-timed with the torch thread pool pinned to 4 threads (--cpu-threads
+%      in scripts/ablations/c4_stage2_cost.py and ../attrib-prompting/scripts/
+%      cost_rb_stage2.py; 10 repeats). The 09-15 StepFinder cells (63.6 / 88.2 ms) were
+%      an artifact of the lazy default pool on the 240-core host: the same 278k-parameter
+%      BiLSTM forward takes 1.8 / 5.0 ms once the pool is pinned, identical at 1, 4, or 16
+%      threads, and 2.2 / 3.4 ms on the GPU. OAT and SOAP move by under 2 ms
+%      (OAT 2.4 / 10.4, SOAP 0.7 / 5.5 ms); SVD fit 0.08 / 0.29 s. Old TSVs kept as
+%      *.2026-09-15.bak.tsv next to the new ones.
+%  (3) tab:cost-judges: SOAP = one pass on the sample + CPU scoring (0.36 + 0.0007,
+%      0.62 + 0.0055); the judges' cells are unchanged (all requests per trajectory).
+% Sources: results-ablations/c4_cost_{setup,inference,judges}.tsv from
+% scripts/ablations/c4_cost_tables.py --print-table (columns one_pass_s, scoring_ms,
+% one_pass_plus_scoring_s).
+
+We compare the execution time of \soap{} with the training-based and prompt-based
+methods on the frozen Qwen3.5-9B backbone. All experiments use Python 3.10, PyTorch
+2.13, and Transformers 5.15. GPU measurements use one NVIDIA H200 with 141\,GB memory
+and process one trajectory at a time.
 
 \textbf{Fitting and inference time.}
-Table~\ref{tab:cost-inference} reports fitting time, average
-feature extraction time per forward pass, and CPU scoring
-time per trajectory.
-\soap{} fits the SVD model taking 0.15\,s on WW-AG
-and 0.30\,s on WW-HC.
-Its CPU scoring during inference is also the fastest among the compared methods,
-taking 0.7 and 5.4\,ms per trajectory, respectively.
-The average embedding extraction time per forward pass during inference is 0.34\,s on
-WW-AG and 1.59\,s on WW-HC, which is on par with OAT and StepFinder.
+Table~\ref{tab:cost-inference} reports the fitting time, the time of
+one embedding extraction forward pass, and the CPU scoring time per trajectory. \soap{} fits
+its SVD with the unlabeled reference set in 0.08\,s on WW-AG and 0.29\,s on WW-HC, against 51 to 115\,s per training
+seed for OAT and StepFinder. One forward pass for embedding extraction costs 0.38\,s on WW-AG and 0.76\,s on
+WW-HC, on par with OAT's single pass (0.42 and 2.13\,s) and with StepFinder's 0.23 and 0.19s per pass. Scoring on the stored vectors takes 0.7 and
+5.5\,ms per trajectory, the fastest of the three.
 
 \begin{table}[htbp]
 \centering
@@ -621,14 +737,13 @@ WW-AG and 1.59\,s on WW-HC, which is on par with OAT and StepFinder.
 \renewcommand{\arraystretch}{1.12}
 \caption{\textbf{Fitting and inference time of training-based methods.}
 All methods use Qwen3.5-9B on Who\&When.
-Fitting operates on extracted reference or training features;
-baseline fitting times are averaged over five seeds, while
-\soap{} reports one CPU SVD fit.
-Average extraction time is total extraction time divided by
-the number of forward passes.
-CPU scoring times are per-trajectory means and exclude extraction.}
+Fitting operates on extracted reference for \soap;
+baseline fitting time denotes the training time consumption per training seed (mean of five), \soap{}'s
+is one CPU SVD fit.
+Extraction is one forward pass of the backbone: for OAT its pass over
+the whole trajectory, for StepFinder its pass over one step alone
+(mean over passes) following their original design, and for \soap{} its pass over the whole trajectory. }
 \label{tab:cost-inference}
-\label{tab:cost-setup}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{l rr rr rr}
 \toprule
@@ -638,68 +753,78 @@ CPU scoring times are per-trajectory means and exclude extraction.}
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
 Method
 & WW-AG & WW-HC
-& WW-AG & WW-HC
+& WW-AG & WW-HC 
 & WW-AG & WW-HC \\
 \midrule
 OAT
 & 51.10 & 51.10
-& 0.42 & 2.13
-& 2.6 & 12.2 \\
+& 0.42 & 2.13 
+& 2.4 & 10.4 \\
 StepFinder
-& 51.80 & 115.44
-& 0.23 & 0.19
-& 63.6 & 88.2 \\
+& 51.79 & 115.43
+& {0.23} & {0.19} 
+& 1.8 & 5.0 \\
 \rowcolor{gray!10}
 \soap{}
-& \textbf{0.15} & \textbf{0.30}
-& 0.34 & 1.59
-& \textbf{0.7} & \textbf{5.4} \\
+& \textbf{0.08} & \textbf{0.29}
+& 0.38 & 0.76 
+& \textbf{0.7} & \textbf{5.5} \\
 \bottomrule
 \end{tabular}}
 \end{table}
 
 \textbf{Comparison with prompt-based methods.}
-Table~\ref{tab:cost-judges} compares all methods on the same
-40 WW-AG and 17 WW-HC trajectories that satisfy the
-8,192-token input budget without truncation.
-The comparison uses Qwen3.5-9B without access to the ground-truth
-answer.
-We report average time per model evaluation: one judge request
-for prompt-based methods or one backbone forward pass for \soap{}.
-On this shared subset, the average forward-pass time of \soap{}
-is 0.33\,s on WW-AG and 0.53\,s on WW-HC, which outperforms most of the baselines except Binary Search.
+Table~\ref{tab:cost-judges} compares every method on the same 40 WW-AG and 17 WW-HC
+trajectories. To ensure a fair comparison, all methods use Qwen3.5-9B
+without the ground-truth answer. We report the time per trajectory: for a prompt-based
+method, every judge request it issues, prompt processing and decoding included; for
+\soap{}, one forward pass plus the scoring on the stored vectors. \soap{} takes
+0.38\,s on WW-AG and 0.76\,s on WW-HC, faster than every judge except Binary Search,
+whose short prompts and one-token answers cost 0.2 and 0.4\,s; the multi-call judges
+ErrorProbe and CHIEF take 6 and 24\,s. 
+
+% The pass is cheaper here than in
+% % Table~\ref{tab:cost-inference} on WW-HC because the in-budget sample holds the shorter
+% trajectories: 5{,}400 tokens per pass on average, against 6{,}800 over the whole
+% subset.
 
 \begin{table}[htbp]
 \centering
 \footnotesize
 \setlength{\tabcolsep}{12pt}
 \renewcommand{\arraystretch}{1.12}
-\caption{\textbf{Average time per model evaluation on the shared subset.}
+\caption{\textbf{Time per trajectory on the shared subset.}
 All methods use Qwen3.5-9B on the same 40 WW-AG and 17 WW-HC
-trajectories.
-An evaluation is one judge request, including prompt processing
-and decoding, for prompt-based methods or one feature-extraction
-forward pass for \soap{}.}
+trajectories, one trajectory at a time.
+A prompt-based method is timed over all of its judge requests for the
+trajectory, prompt processing and decoding included; \soap{} is timed
+over one forward pass over the trajectory plus its CPU scoring.}
 \label{tab:cost-judges}
 \begin{tabular}{l rr}
 \toprule
-Method & WW-AG (s/evaluation) & WW-HC (s/evaluation) \\
+Method & WW-AG (s/trajectory) & WW-HC (s/trajectory) \\
 \midrule
 All-at-Once   & 2.0  & 2.1 \\
 Step-by-Step  & 2.0  & 3.6 \\
-Binary Search & 0.2  & 0.4 \\
+Binary Search & {0.2}  & {0.4} \\
 CORRECT       & 1.9  & 1.6 \\
 CHIEF         & 23.9 & 23.5 \\
 ErrorProbe    & 5.9  & 6.5 \\
 \midrule
 \rowcolor{gray!10}
-\soap{}      & 0.33 & 0.53 \\
+\soap{}      & 0.38 & 0.76 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textcolor{red}{can you double check on this? using your provided stats, the evaluation time for SOAP is 0.53s but the embedding extraction takes more than 1 seconds.}
-
+% [resolved 2026-09-17, superseded above] The 0.33 / 0.53 s cells were seconds per
+% forward pass on the in-budget sample (15.27 s / 29.1 passes on WW-HC), while
+% tab:cost-inference averaged every trajectory, long ones included (160.6 s / 101
+% passes = 1.59 s per pass). The judge cells were always per trajectory
+% (../attrib-prompting/reports/latency/<method>_*.tsv, `seconds` with `n_calls`
+% alongside). Was: \textcolor{red}{can you double check on this? using your provided
+% stats, the evaluation time for SOAP is 0.53s but the embedding extraction takes
+% more than 1 seconds.}
 
 % \subsection{Compute resources and cost}
 % \label{app:compute}
@@ -860,13 +985,12 @@ ErrorProbe    & 5.9  & 6.5 \\
 
 
 
-
 \subsection{Synthetic reference trajectories}
 \label{app:synth}
 
-The synthetic references of Figure~\ref{fig:transfer}(d) come from re-running the agent systems that produced the two Who\&When subsets: CaptainAgent for WW-AG and Magentic-One for WW-HC. We run each system twice, once with Qwen3.5-9B and once with GPT-4o as the language model behind its agents, on the same question pools the benchmarks draw from (GAIA and AssistantBench). We then keep only the trajectories whose question appears in the target subset of the unlabeled reference split. As trajectories are generated without any supervision, they are a mix of succeesses and failures. These unlabeled trajectories come with no step-level annotation and serve only to construct $R$. The reference shares questions with the validation and test splits by design, because the use case is to re-run one's own agents on the tasks under diagnosis.\textcolor{red}{why this is the case?} Everything else stays as in Table~\ref{tab:main}: the validation and test splits, the seed triples, and the selection rule. Only the reference changes, and the configuration is re-selected for each reference corpus. Appendix~\ref{app:synth-results} reports the full results for both backbones. 
+The synthetic references of Figure~\ref{fig:transfer}(d) come from re-running the agent systems behind the two Who\&When subsets, CaptainAgent for WW-AG and Magentic-One for WW-HC, once with Qwen3.5-9B and once with GPT-4o as the language model of their agents. The systems run on the question pools the benchmarks draw from (GAIA and AssistantBench), and we keep the trajectories whose question belongs to the target unlabeled subset. The runs are unsupervised, so the corpus mixes successes and failures; it carries no step-level annotation and serves only to construct $R$. The existing benchmarks and our synthetic trajectories share a question pool, never a trajectory. The evaluation is that of Table~\ref{tab:main}; only the reference changes, and the configuration is re-selected for each reference corpus. Two further details explain why our GPT-4o corpus differs from the Who\&When trajectories despite the shared model name: the benchmark was generated with the \texttt{2024-08-01-preview} version of GPT-4o, whereas ours uses \texttt{2024-08-06} version, and because the benchmark does not release its generation code, we rebuilt the generation pipeline from the paper's description. Appendix~\ref{app:synth-results} reports the full results for both backbones.
 
-\textcolor{red}{disclose information on GPT-4o used.}
+% \textcolor{red}{disclose information on GPT-4o used.} \note{added.}
 
 \section{Additional ablation studies}
 \label{app:deepseek-ablations}
@@ -1089,30 +1213,59 @@ WW-HC and TE-Mag at 10\%); this is selection noise on tiny fits, not a real gain
 These results confirm that a handful of unlabeled trajectories suffices to construct
 the reference.
 
+% Commented out 2026-09-17 (author request): base-score columns dropped; the
+% SOAP-only table below replaces it. Kept for reference.
+% \begin{table}[h]
+% \centering
+% \small
+% \setlength{\tabcolsep}{4pt}
+% \caption{Quantity of unlabeled reference data, all cells. Step-level accuracy (\%)
+% before (base) and after (\soap{}) rescoring when the reference is fit on
+% $\{10, 20, 30\}\%$ of the corpus, validation and test fixed, full configuration
+% re-selected per fraction. The best result in each column within a block is
+% highlighted in \textbf{bold}.}
+% \label{tab:datasize-app}
+% \begin{tabular}{l cc cc cc cc}
+% \toprule
+%  & \multicolumn{2}{c}{WW-AG} & \multicolumn{2}{c}{WW-HC} & \multicolumn{2}{c}{TE-Cap} & \multicolumn{2}{c}{TE-Mag} \\
+% \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
+% Reference data & base & \soap{} & base & \soap{} & base & \soap{} & base & \soap{} \\
+% \midrule
+% \multicolumn{9}{@{}l}{\textit{Qwen3.5-9B}} \\
+% \quad 10\% & 35.98 & 43.39 & \best{33.33} & 33.33 & \best{33.33} & 34.88 & \best{21.74} & \best{23.19} \\
+% \quad 20\% & 38.10 & 44.44 & \best{33.33} & 33.33 & \best{33.33} & 34.88 & \best{21.74} & \best{23.19} \\
+% \quad 30\% & \best{39.15} & \best{47.62} & \best{33.33} & \best{34.48} & \best{33.33} & \best{35.66} & 21.01 & \best{23.19} \\
+% \addlinespace[2pt]
+% \multicolumn{9}{@{}l}{\textit{DeepSeek-8B}} \\
+% \quad 10\% & 36.51 & 37.04 & 27.59 & \best{29.89} & 37.21 & 41.86 & \best{31.16} & \best{31.88} \\
+% \quad 20\% & \best{38.62} & \best{46.03} & \best{28.74} & 28.74 & 39.53 & \best{42.64} & 30.43 & 30.43 \\
+% \quad 30\% & \best{38.62} & 45.50 & \best{28.74} & 28.74 & \best{40.31} & \best{42.64} & 29.71 & 30.43 \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+
 \begin{table}[h]
 \centering
 \small
-\setlength{\tabcolsep}{4pt}
-\caption{Quantity of unlabeled reference data, all cells. Step-level accuracy (\%)
-before (base) and after (\soap{}) rescoring when the reference is fit on
-$\{10, 20, 30\}\%$ of the corpus, validation and test fixed, full configuration
-re-selected per fraction.}
+\setlength{\tabcolsep}{6pt}
+\caption{Quantity of unlabeled reference data, all cells. Step-level accuracy (\%) of
+\soap{} when the reference is fit on $\{10, 20, 30\}\%$ of the corpus, validation and
+test fixed, full configuration re-selected per fraction. The best result in each column
+within a block is highlighted in \textbf{bold}.}
 \label{tab:datasize-app}
-\begin{tabular}{l cc cc cc cc}
+\begin{tabular}{l cccc}
 \toprule
- & \multicolumn{2}{c}{WW-AG} & \multicolumn{2}{c}{WW-HC} & \multicolumn{2}{c}{TE-Cap} & \multicolumn{2}{c}{TE-Mag} \\
-\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
-Reference data & base & \soap{} & base & \soap{} & base & \soap{} & base & \soap{} \\
+Reference data & WW-AG & WW-HC & TE-Cap & TE-Mag \\
 \midrule
-\multicolumn{9}{@{}l}{\textit{Qwen3.5-9B}} \\
-\quad 10\% & 35.98 & 43.39 & 33.33 & 33.33 & 33.33 & 34.88 & 21.74 & 23.19 \\
-\quad 20\% & 38.10 & 44.44 & 33.33 & 33.33 & 33.33 & 34.88 & 21.74 & 23.19 \\
-\quad 30\% & 39.15 & 47.62 & 33.33 & 34.48 & 33.33 & 35.66 & 21.01 & 23.19 \\
-\addlinespace[2pt]
-\multicolumn{9}{@{}l}{\textit{DeepSeek-8B}} \\
-\quad 10\% & 36.51 & 37.04 & 27.59 & 29.89 & 37.21 & 41.86 & 31.16 & 31.88 \\
-\quad 20\% & 38.62 & 46.03 & 28.74 & 28.74 & 39.53 & 42.64 & 30.43 & 30.43 \\
-\quad 30\% & 38.62 & 45.50 & 28.74 & 28.74 & 40.31 & 42.64 & 29.71 & 30.43 \\
+\rowcolor{Gray}\multicolumn{5}{c}{\textit{\textbf{Qwen3.5-9B}}} \\
+\quad 10\% & 43.39 & 33.33 & 34.88 & \best{23.19} \\
+\quad 20\% & 44.44 & 33.33 & 34.88 & \best{23.19} \\
+\quad 30\% & \best{47.62} & \best{34.48} & \best{35.66} & \best{23.19} \\
+\midrule
+\rowcolor{Gray}\multicolumn{5}{c}{\textit{\textbf{DeepSeek-R1-Distill-Llama-8B}}} \\
+\quad 10\% & 37.04 & \best{29.89} & 41.86 & \best{31.88} \\
+\quad 20\% & \best{46.03} & 28.74 & \best{42.64} & 30.43 \\
+\quad 30\% & 45.50 & 28.74 & \best{42.64} & 30.43 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1124,82 +1277,119 @@ Reference data & base & \soap{} & base & \soap{} & base & \soap{} & base & \soap
 \label{app:metrics}
 
 \textbf{Agent-level accuracy.}
-Table~\ref{tab:agent} reports the responsible-agent accuracy of every row of
-Table~\ref{tab:main}, i.e., how often the agent of the predicted step is the
-annotated agent. The metric is far more forgiving than step-level accuracy because
-trajectories involve two to six agents (Table~\ref{tab:datasets}), so a method that
-names the right agent at a wrong step still scores. \soap{} is best or second on
-every column of both open-backbone blocks (60.32 on WW-AG and 67.82 on WW-HC with
-Qwen3.5-9B; 61.90 and 65.52 with DeepSeek-8B), and rescoring never lowers it by more
-than a fraction of a point. The prompt-based judges close much of their step-level
-gap here: All-at-Once with Qwen3.5-9B reaches 81.40 on CE while locating the step
-in 33.47\% of cases, which says that a judge often blames the right agent for the
-wrong reason. These results indicate that agent-level accuracy rewards the coarse
-verdict a judge produces naturally, whereas step-level accuracy measures
-localization.
+Table~\ref{tab:agent} reports the responsible-agent accuracy of every row of Table~\ref{tab:main} on Who\&When, i.e., how often the agent of the predicted step is the annotated agent. The metric is far more forgiving than step-level accuracy because a trajectory involves 3.6 agents on WW-AG and 5.7 on WW-HC on average (Table~\ref{tab:datasets}), so a method that names the right agent at a wrong step still scores. \soap{} is best on both subsets with both open-weight backbones (60.32 on WW-AG and 67.82 on WW-HC with Qwen3.5-9B; 61.90 and 65.52 with DeepSeek-8B). The prompt-based judges close much of their step-level gap here: All-at-Once with GPT-4o reaches 59.77 on WW-HC while locating the step in 6.90\% of cases, which says that a judge often blames the right agent for the wrong reason. These results indicate that agent-level accuracy rewards the coarse verdict a judge produces naturally, whereas step-level accuracy measures localization.
 
 \begin{table}[h]
 \centering
 \footnotesize
 \setlength{\tabcolsep}{5pt}
-\caption{Agent-level accuracy (\%) in the without-ground-truth setting, for every row
-of Table~\ref{tab:main}. Mean over the seed triple. The best
-result in each column within a block is highlighted in \textbf{bold}. \textcolor{red}{Please report only on WW-AG and WW-HC.}}
+\caption{Agent-level accuracy (\%) in the without-ground-truth setting on
+Who\&When, for every row of Table~\ref{tab:main}. Mean over the seed triple. The
+best result in each column within a block is highlighted in \textbf{bold}. \textcolor{red}{wraptable.} }
 \label{tab:agent}
-\begin{tabular}{l ccccc}
+\begin{tabular}{l cc}
 \toprule
-Method & WW-AG & WW-HC & CE & TE-Cap & TE-Mag \\
+Method & WW-AG & WW-HC \\
 \midrule
-\rowcolor{Gray}\multicolumn{6}{c}{\textit{\textbf{GPT-4o}}} \\
-All-at-Once   & 53.44 & \textcolor{gray}{\best{59.77}} & \textcolor{gray}{\best{78.86}} & \textcolor{gray}{\best{67.44}} & 66.67 \\
-Step-by-Step  & 30.16 & 49.43 & 51.95 & 47.29 & 53.62 \\
-Binary Search & \textcolor{gray}{\best{58.73}} & 12.64 & 11.94 & 20.93 & 50.72 \\
-CORRECT       & 54.50 & 54.02 & 76.06 & 66.67 & \textcolor{gray}{\best{76.09}} \\
-CHIEF         & 40.21 & 48.28 & 70.28 & 60.47 & 64.49 \\
-% RAFFLES dropped from the comparison 2026-09-06 (kept in related work only). Markers recomputed per block.
-% RAFFLES       & \best{58.73} & 51.72 & 78.82 & 62.79 & 60.14 \\
-% ErrorProbe rows added 2026-09-13 from tables/appendix_agent_without_gt.tsv (paper mode;
-% Qwen3.5-9B = the handicapped decoding of Table 1). No best marker moves.
-ErrorProbe    & 56.08 & 55.17 & 76.17 & 58.14 & 73.19 \\
-% GPT-5 block removed 2026-09-13 (author's note: it has its own section, app:prompting-gpt5).
-% \midrule
-% \rowcolor{Gray}\multicolumn{6}{c}{\textit{\textbf{GPT-5}}} \\
-% All-at-Once   & \best{61.90} & 45.98 & 80.62 & \best{63.57} & 68.12 \\
-% Step-by-Step  & 46.56 & 47.13 & 70.45 & 50.39 & 65.22 \\
-% Binary Search & 59.79 & 60.92 & 78.54 & 56.59 & \best{69.57} \\
-% CORRECT       & 58.73 & 50.57 & \best{81.22} & 62.79 & \best{69.57} \\
-% CHIEF         & 52.38 & \best{63.22} & --    & 51.94 & 63.04 \\
-% ErrorProbe    & 64.02 & 54.02 & --    & 62.02 & 76.09 \\
-% RAFFLES       & 58.20 & 56.32 & --    & \best{65.12} & \best{74.64} \\
+\rowcolor{Gray}\multicolumn{3}{c}{\textit{\textbf{GPT-4o}}} \\
+All-at-Once   & 53.44 & \textcolor{gray}{\best{59.77}} \\
+Step-by-Step  & 30.16 & 49.43 \\
+Binary Search & \textcolor{gray}{\best{58.73}} & 12.64 \\
+CORRECT       & 54.50 & 54.02 \\
+CHIEF         & 40.21 & 48.28 \\
+ErrorProbe    & 56.08 & 55.17 \\
 \midrule
-\rowcolor{Gray}\multicolumn{6}{c}{\textit{\textbf{Qwen3.5-9B}}} \\
-All-at-Once   & 56.61 & 48.28 & \best{81.40} & 62.79 & 62.32 \\
-Step-by-Step  & 19.05 & 47.13 & 35.85 & 51.16 & 65.94 \\
-Binary Search & 38.10 & 62.07 & 70.70 & 22.48 & 59.42 \\
-CORRECT       & 59.79 & 47.13 & 78.60 & 62.02 & \best{74.64} \\
-CHIEF         & 50.26 & 54.02 & 74.81 & \best{65.12} & \best{74.64} \\
-% RAFFLES       & \best{60.85} & 60.92 & 77.27 & \best{65.89} & 68.84 \\
-ErrorProbe    & 53.44 & 65.52 & 69.60 & 55.04 & 71.01 \\
-StepFinder    & 39.26 & 37.01 & 60.03 & 47.75 & 57.83 \\
-OAT           & 40.53 & 53.10 & 70.58 & 46.67 & 62.03 \\
-\rowcolor{gray!10}\soap{} (w/o rescoring) & 52.38 & \best{67.82} & 74.27 & 58.14 & 61.59 \\
-\rowcolor{gray!10}\soap{}       & \best{60.32} & \best{67.82} & 74.06 & 60.47 & 65.22 \\
+\rowcolor{Gray}\multicolumn{3}{c}{\textit{\textbf{Qwen3.5-9B}}} \\
+All-at-Once   & 56.61 & 48.28 \\
+Step-by-Step  & 19.05 & 47.13 \\
+Binary Search & 38.10 & 62.07 \\
+CORRECT       & 59.79 & 47.13 \\
+CHIEF         & 50.26 & 54.02 \\
+ErrorProbe    & 53.44 & 65.52 \\
+StepFinder    & 39.26 & 37.01 \\
+OAT           & 40.53 & 53.10 \\
+% \rowcolor{gray!10}\soap{} (w/o rescoring) & 52.38 & \best{67.82} \\
+\rowcolor{gray!10}\soap{}       & \best{60.32} & \best{67.82} \\
 \midrule
-\rowcolor{Gray}\multicolumn{6}{c}{\textit{\textbf{DeepSeek-R1-Distill-Llama-8B}}} \\
-All-at-Once   & 42.33 & 45.98 & 38.04 & 54.26 & 63.04 \\
-Step-by-Step  & 44.97 & 37.93 & 15.23 & 33.33 & 38.41 \\
-Binary Search & 28.57 & 48.28 & 53.37 & 44.96 & \best{69.57} \\
-CORRECT       & 44.97 & 32.18 & 58.67 & 38.76 & 60.87 \\
-CHIEF         & 37.04 & 52.87 & 56.71 & 51.16 & 63.77 \\
-% RAFFLES       & 38.10 & 51.72 & 54.38 & 54.26 & 65.94 \\
-ErrorProbe    & 43.39 & 47.13 & 66.42 & 55.81 & 53.62 \\
-StepFinder    & 48.99 & 41.15 & 67.29 & 45.12 & 42.61 \\
-OAT           & 42.33 & 56.32 & 69.04 & 50.08 & 63.91 \\
-\rowcolor{gray!10}\soap{} (w/o rescoring) & 58.73 & \best{65.52} & 75.72 & 63.57 & 62.32 \\
-\rowcolor{gray!10}\soap{}       & \best{61.90} & \best{65.52} & \best{75.84} & \best{65.12} & 62.32 \\
+\rowcolor{Gray}\multicolumn{3}{c}{\textit{\textbf{DeepSeek-R1-Distill-Llama-8B}}} \\
+All-at-Once   & 42.33 & 45.98 \\
+Step-by-Step  & 44.97 & 37.93 \\
+Binary Search & 28.57 & 48.28 \\
+CORRECT       & 44.97 & 32.18 \\
+CHIEF         & 37.04 & 52.87 \\
+ErrorProbe    & 43.39 & 47.13 \\
+StepFinder    & 48.99 & 41.15 \\
+OAT           & 42.33 & 56.32 \\
+% \rowcolor{gray!10}\soap{} (w/o rescoring) & 58.73 & \best{65.52} \\
+\rowcolor{gray!10}\soap{}       & \best{61.90} & \best{65.52} \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+% Five-column table (all subsets), commented out 2026-09-17; numbers from
+% tables/appendix_agent_without_gt.tsv.
+% \begin{table}[h]
+% \centering
+% \footnotesize
+% \setlength{\tabcolsep}{5pt}
+% \caption{Agent-level accuracy (\%) in the without-ground-truth setting, for every row
+% of Table~\ref{tab:main}. Mean over the seed triple. The best
+% result in each column within a block is highlighted in \textbf{bold}. \textcolor{red}{Please report only on WW-AG and WW-HC.}}
+% \label{tab:agent}
+% \begin{tabular}{l ccccc}
+% \toprule
+% Method & WW-AG & WW-HC & CE & TE-Cap & TE-Mag \\
+% \midrule
+% \rowcolor{Gray}\multicolumn{6}{c}{\textit{\textbf{GPT-4o}}} \\
+% All-at-Once   & 53.44 & \textcolor{gray}{\best{59.77}} & \textcolor{gray}{\best{78.86}} & \textcolor{gray}{\best{67.44}} & 66.67 \\
+% Step-by-Step  & 30.16 & 49.43 & 51.95 & 47.29 & 53.62 \\
+% Binary Search & \textcolor{gray}{\best{58.73}} & 12.64 & 11.94 & 20.93 & 50.72 \\
+% CORRECT       & 54.50 & 54.02 & 76.06 & 66.67 & \textcolor{gray}{\best{76.09}} \\
+% CHIEF         & 40.21 & 48.28 & 70.28 & 60.47 & 64.49 \\
+% % RAFFLES dropped from the comparison 2026-09-06 (kept in related work only). Markers recomputed per block.
+% % RAFFLES       & \best{58.73} & 51.72 & 78.82 & 62.79 & 60.14 \\
+% % ErrorProbe rows added 2026-09-13 from tables/appendix_agent_without_gt.tsv (paper mode;
+% % Qwen3.5-9B = the handicapped decoding of Table 1). No best marker moves.
+% ErrorProbe    & 56.08 & 55.17 & 76.17 & 58.14 & 73.19 \\
+% % GPT-5 block removed 2026-09-13 (author's note: it has its own section, app:prompting-gpt5).
+% % \midrule
+% % \rowcolor{Gray}\multicolumn{6}{c}{\textit{\textbf{GPT-5}}} \\
+% % All-at-Once   & \best{61.90} & 45.98 & 80.62 & \best{63.57} & 68.12 \\
+% % Step-by-Step  & 46.56 & 47.13 & 70.45 & 50.39 & 65.22 \\
+% % Binary Search & 59.79 & 60.92 & 78.54 & 56.59 & \best{69.57} \\
+% % CORRECT       & 58.73 & 50.57 & \best{81.22} & 62.79 & \best{69.57} \\
+% % CHIEF         & 52.38 & \best{63.22} & --    & 51.94 & 63.04 \\
+% % ErrorProbe    & 64.02 & 54.02 & --    & 62.02 & 76.09 \\
+% % RAFFLES       & 58.20 & 56.32 & --    & \best{65.12} & \best{74.64} \\
+% \midrule
+% \rowcolor{Gray}\multicolumn{6}{c}{\textit{\textbf{Qwen3.5-9B}}} \\
+% All-at-Once   & 56.61 & 48.28 & \best{81.40} & 62.79 & 62.32 \\
+% Step-by-Step  & 19.05 & 47.13 & 35.85 & 51.16 & 65.94 \\
+% Binary Search & 38.10 & 62.07 & 70.70 & 22.48 & 59.42 \\
+% CORRECT       & 59.79 & 47.13 & 78.60 & 62.02 & \best{74.64} \\
+% CHIEF         & 50.26 & 54.02 & 74.81 & \best{65.12} & \best{74.64} \\
+% % RAFFLES       & \best{60.85} & 60.92 & 77.27 & \best{65.89} & 68.84 \\
+% ErrorProbe    & 53.44 & 65.52 & 69.60 & 55.04 & 71.01 \\
+% StepFinder    & 39.26 & 37.01 & 60.03 & 47.75 & 57.83 \\
+% OAT           & 40.53 & 53.10 & 70.58 & 46.67 & 62.03 \\
+% \rowcolor{gray!10}\soap{} (w/o rescoring) & 52.38 & \best{67.82} & 74.27 & 58.14 & 61.59 \\
+% \rowcolor{gray!10}\soap{}       & \best{60.32} & \best{67.82} & 74.06 & 60.47 & 65.22 \\
+% \midrule
+% \rowcolor{Gray}\multicolumn{6}{c}{\textit{\textbf{DeepSeek-R1-Distill-Llama-8B}}} \\
+% All-at-Once   & 42.33 & 45.98 & 38.04 & 54.26 & 63.04 \\
+% Step-by-Step  & 44.97 & 37.93 & 15.23 & 33.33 & 38.41 \\
+% Binary Search & 28.57 & 48.28 & 53.37 & 44.96 & \best{69.57} \\
+% CORRECT       & 44.97 & 32.18 & 58.67 & 38.76 & 60.87 \\
+% CHIEF         & 37.04 & 52.87 & 56.71 & 51.16 & 63.77 \\
+% % RAFFLES       & 38.10 & 51.72 & 54.38 & 54.26 & 65.94 \\
+% ErrorProbe    & 43.39 & 47.13 & 66.42 & 55.81 & 53.62 \\
+% StepFinder    & 48.99 & 41.15 & 67.29 & 45.12 & 42.61 \\
+% OAT           & 42.33 & 56.32 & 69.04 & 50.08 & 63.91 \\
+% \rowcolor{gray!10}\soap{} (w/o rescoring) & 58.73 & \best{65.52} & 75.72 & 63.57 & 62.32 \\
+% \rowcolor{gray!10}\soap{}       & \best{61.90} & \best{65.52} & \best{75.84} & \best{65.12} & 62.32 \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
 
 \textbf{Variance across seeds.}
 Table~\ref{tab:std} gives the standard deviation over the three seeds of every
@@ -1281,24 +1471,10 @@ OAT           & $\ms{12.70}{2.99}$ & $\ms{15.86}{8.29}$ & $\ms{52.50}{1.13}$ & $
 \subsection{Accuracy at $k$}
 \label{app:ranked}
 
-\soap{}, OAT, and StepFinder each score every step of a trajectory, so the top-$k$
-steps form a ranked shortlist for triage; the prompt-based judges emit one verdict
-and are excluded here. We report step-level accuracy at
-$k \in \{1, 3, 5\}$ and the mean reciprocal rank of the decisive step (MRR), all on the
-test splits of Table~\ref{tab:main}. For OAT and StepFinder we rank their stored
-per-step scores; a decisive step OAT never scored counts as a miss at every $k$.
-
-As shown in Table~\ref{tab:ranked-step}, \soap{} keeps its lead as the shortlist
-grows: at $k=3$ it locates the decisive step in 74.60\% of WW-AG trajectories with
-Qwen3.5-9B against 56.72 for OAT and 55.24 for StepFinder, and at $k=5$ in 91.01\%
-against 86.46 and 75.87; on WW-HC, whose trajectories average 52 turns, the gap at
-$k=5$ is 12 points over OAT (50.57 vs.\ 38.39). The baselines close in on the short
-CORRECT-Error trajectories, where five candidates cover most of a trajectory
-(Table~\ref{tab:datasets}). Rescoring helps most at $k=1$ and $k=3$, the ranks a
-triage would read first, and by $k=5$ the base score and \soap{} are within a point:
-the correction moves the decisive step to the top rather than reshuffling the tail.
-MRR summarizes the same picture, 63.92 vs.\ 41.46 for OAT on WW-AG. These results
-indicate that \soap{} produces a better-ordered shortlist, not only a better top-1.
+\soap{}, OAT, and StepFinder each score every step of a trajectory, so the top-$k$ steps form a ranked shortlist for triage; the prompt-based judges emit one verdict and are excluded here. We report step-level accuracy at $k \in \{1, 3, 5\}$ and the mean reciprocal rank of the decisive step (MRR), all on the test splits of Table~\ref{tab:main}. For OAT and StepFinder we rank their stored per-step scores; a decisive step OAT never scored counts as a miss at every $k$.
+As shown in Table~\ref{tab:ranked-step}, \soap{} keeps its lead as the shortlist grows: at $k=3$ it locates the decisive step in 74.60\% of WW-AG trajectories with Qwen3.5-9B against 56.72 for OAT and 55.24 for StepFinder, and at $k=5$ in 91.01\% against 86.46 and 75.87; on WW-HC, whose trajectories average 52 turns, the gap at $k=5$ is 12 points over OAT (50.57 vs.\ 38.39). The baselines close in on the short CORRECT-Error trajectories, where five candidates cover most of a trajectory (Table~\ref{tab:datasets}). 
+% Rescoring helps most at $k=1$ and $k=3$, the ranks a triage would read first, and by $k=5$ the base score and \soap{} are within a point: the correction moves the decisive step to the top rather than reshuffling the tail. 
+MRR summarizes the same picture, 63.92 vs.\ 41.46 for OAT on WW-AG. These results indicate that \soap{} produces a better-ordered shortlist, not only a better top-1.
 
 % Removed 2026-09-14 (author's note): "Agent-level accuracy at $k$
 % (Table~\ref{tab:ranked-agent}) saturates quickly for every method because a
@@ -1323,14 +1499,14 @@ Method & @1 & @3 & @5 & @1 & @3 & @5 & @1 & @3 & @5 & @1 & @3 & @5 & @1 & @3 & @
 \rowcolor{Gray}\multicolumn{17}{c}{\textit{\textbf{Qwen3.5-9B}}} \\
 OAT        & 16.72 & 56.72 & 86.46 & 10.11 & 25.75 & 38.39 & 56.50 & 74.60 & 82.18 & 15.35 & 53.02 & 73.80 & 18.84 & 32.17 & 40.29 & 41.46 \\
 StepFinder & 15.87 & 55.24 & 75.87 & 13.33 & 29.66 & 34.48 & 30.03 & 59.04 & 68.58 & 18.29 & 37.21 & 50.70 & 6.67 & 17.10 & 28.12 & 41.23 \\
-\rowcolor{gray!10}\soap{} (w/o rescoring) & 39.15 & 71.96 & \best{92.59} & 33.33 & \best{43.68} & 49.43 & 61.38 & 79.20 & 85.58 & 33.33 & 60.47 & 75.19 & 21.01 & 31.16 & 41.30 & 58.83 \\
-\rowcolor{gray!10}\soap{}    & \best{47.62} & \best{74.60} & 91.01 & \best{34.48} & 42.53 & \best{50.57} & \best{61.78} & \best{79.61} & \best{85.74} & \best{35.66} & \best{63.57} & \best{75.97} & \best{23.19} & \best{32.61} & \best{42.75} & \best{63.92} \\
+% \rowcolor{gray!10}\soap{} (w/o rescoring) & 39.15 & 71.96 & \best{92.59} & 33.33 & \best{43.68} & 49.43 & 61.38 & 79.20 & 85.58 & 33.33 & 60.47 & 75.19 & 21.01 & 31.16 & 41.30 & 58.83 \\
+\rowcolor{gray!10}\soap{}    & \best{47.62} & \best{74.60} & \best{91.01} & \best{34.48} & \best{42.53} & \best{50.57} & \best{61.78} & \best{79.61} & \best{85.74} & \best{35.66} & \best{63.57} & \best{75.97} & \best{23.19} & \best{32.61} & \best{42.75} & \best{63.92} \\
 \midrule
 \rowcolor{Gray}\multicolumn{17}{c}{\textit{\textbf{DeepSeek-R1-Distill-Llama-8B}}} \\
 OAT        & 12.70 & 45.19 & 83.92 & 15.86 & 37.01 & 42.30 & 52.50 & 74.08 & 83.17 & 17.98 & 47.13 & 75.04 & 13.04 & 31.01 & 41.45 & 37.62 \\
 StepFinder & 18.94 & 60.32 & 78.94 & 10.80 & 21.61 & 29.20 & 36.91 & 63.05 & 74.12 & 14.73 & 41.24 & 58.60 & 4.20 & 11.01 & 21.45 & 43.75 \\
-\rowcolor{gray!10}\soap{} (w/o rescoring) & 38.62 & 72.49 & 91.53 & \best{28.74} & \best{42.53} & \best{59.77} & 64.19 & 79.96 & 87.01 & 40.31 & 58.14 & 75.97 & 29.71 & 34.78 & \best{47.83} & 58.54 \\
-\rowcolor{gray!10}\soap{}    & \best{45.50} & \best{76.19} & \best{93.12} & \best{28.74} & \best{42.53} & \best{59.77} & \best{64.68} & \best{80.30} & \best{87.41} & \best{42.64} & \best{62.02} & \best{78.29} & \best{30.43} & \best{39.13} & 44.20 & \best{63.71} \\
+% \rowcolor{gray!10}\soap{} (w/o rescoring) & 38.62 & 72.49 & 91.53 & \best{28.74} & \best{42.53} & \best{59.77} & 64.19 & 79.96 & 87.01 & 40.31 & 58.14 & 75.97 & 29.71 & 34.78 & \best{47.83} & 58.54 \\
+\rowcolor{gray!10}\soap{}    & \best{45.50} & \best{76.19} & \best{93.12} & \best{28.74} & \best{42.53} & \best{59.77} & \best{64.68} & \best{80.30} & \best{87.41} & \best{42.64} & \best{62.02} & \best{78.29} & \best{30.43} & \best{39.13} & \best{44.20} & \best{63.71} \\
 \bottomrule
 \end{tabular}}
 \end{table}
@@ -1502,7 +1678,7 @@ that the margin of Table~\ref{tab:main} is intact at every size we could run.
 \caption{Step-level accuracy (\%) by backbone size on Who\&When, mean $\pm$ standard
 deviation (over the seed triple for \soap{}; over the five training seeds for OAT and
 StepFinder). Qwen3-14B belongs to the previous model generation. The best result in
-each column is highlighted in \textbf{bold}. \textcolor{red}{where is bold?}}
+each column is highlighted in \textbf{bold}.}
 \label{tab:scale}
 \begin{tabular}{l l ccc}
 \toprule
@@ -1512,13 +1688,13 @@ Subset & Method & Qwen3.5-9B & Qwen3-14B & Qwen3.5-27B \\
  & OAT        & $\ms{16.72}{1.7}$ & $\ms{13.97}{1.7}$ & $\ms{20.42}{1.6}$ \\
  & StepFinder & $\ms{15.87}{3.4}$ & $\ms{22.65}{4.2}$ & $\ms{13.54}{2.3}$ \\
  & \cellcolor{gray!10}\soap{} (w/o rescoring) & \cellcolor{gray!10}$\ms{39.15}{5.6}$ & \cellcolor{gray!10}$\ms{40.21}{4.6}$ & \cellcolor{gray!10}$\ms{38.62}{7.5}$ \\
- & \cellcolor{gray!10}\soap{}    & \cellcolor{gray!10}$\best{\ms{47.62}{3.2}}$ & \cellcolor{gray!10}$\best{\ms{42.86}{5.7}}$ & \cellcolor{gray!10}$\best{\ms{44.97}{3.3}}$ \\
+ & \cellcolor{gray!10}\soap{}    & \cellcolor{gray!10}{\boldmath$\ms{47.62}{3.2}$} & \cellcolor{gray!10}{\boldmath$\ms{42.86}{5.7}$} & \cellcolor{gray!10}{\boldmath$\ms{44.97}{3.3}$} \\
 \midrule
 \multirow{4}{*}{WW-HC}
  & OAT        & $\ms{10.11}{1.3}$ & $\ms{16.78}{2.2}$ & $\ms{12.41}{1.3}$ \\
  & StepFinder & $\ms{13.33}{5.4}$ & $\ms{14.02}{3.3}$ & $\ms{16.55}{7.0}$ \\
- & \cellcolor{gray!10}\soap{} (w/o rescoring) & \cellcolor{gray!10}$\ms{33.33}{5.3}$ & \cellcolor{gray!10}$\best{\ms{25.29}{8.0}}$ & \cellcolor{gray!10}$\ms{33.33}{2.0}$ \\
- & \cellcolor{gray!10}\soap{}    & \cellcolor{gray!10}$\best{\ms{34.48}{3.5}}$ & \cellcolor{gray!10}$\best{\ms{25.29}{8.0}}$ & \cellcolor{gray!10}$\best{\ms{34.48}{3.5}}$ \\
+ & \cellcolor{gray!10}\soap{} (w/o rescoring) & \cellcolor{gray!10}$\ms{33.33}{5.3}$ & \cellcolor{gray!10}{\boldmath$\ms{25.29}{8.0}$} & \cellcolor{gray!10}$\ms{33.33}{2.0}$ \\
+ & \cellcolor{gray!10}\soap{}    & \cellcolor{gray!10}{\boldmath$\ms{34.48}{3.5}$} & \cellcolor{gray!10}{\boldmath$\ms{25.29}{8.0}$} & \cellcolor{gray!10}{\boldmath$\ms{34.48}{3.5}$} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1586,22 +1762,22 @@ diagonal is the in-distribution number of Table~\ref{tab:main} in every grid.}
 
 Table~\ref{tab:synth-app} completes Figure~\ref{fig:transfer}(d) with the base
 scores and DeepSeek-8B (generation details in Appendix~\ref{app:synth}). Every
-synthetic cell lands within 1--7 points of its real-reference row, the best generator
-per cell within about one point on Qwen3.5-9B WW-AG (46.56 vs.\ 47.62) and above the
-real reference on DeepSeek-8B WW-HC (29.89 vs.\ 28.74), and every synthetic \soap{}
+synthetic cell lands within 1--7 points of its existing benchmark row, the best generator
+per cell within about one point on Qwen3.5-9B WW-AG (46.56 vs.\ 47.62) and above using the
+existing benchmark as reference set on DeepSeek-8B WW-HC (29.89 vs.\ 28.74), and every synthetic \soap{}
 row stays far above the training-based baselines of Table~\ref{tab:main}. Rescoring
 keeps working on synthetic references, by up to 8.5 points over the base score
 (Qwen3.5-9B WW-AG, Qwen corpus), except where $\gamma=0$ is selected. Neither
 generator dominates: the GPT-4o corpus wins Qwen3.5-9B on WW-AG and the Qwen3.5-9B
 corpus wins the other three cells. These results indicate that a cheap open-weight
-generator is a viable source of reference trajectories.
+generator is a viable alternative source of reference trajectories. \textcolor{red}{please refine all the texts.}
 
 
 \begin{table}[h]
 \centering
 \small
 \setlength{\tabcolsep}{5pt}
-\caption{Fitting the reference on real vs.\ synthetic trajectories. Step-level
+\caption{Fitting the reference on existing benchmarks vs.\ our alternative synthetic trajectories. Step-level
 accuracy (\%) before (base) and after (\soap{}) rescoring; only the reference corpus
 changes, the validation and test splits are those of Table~\ref{tab:main}.}
 \label{tab:synth-app}
@@ -1613,7 +1789,7 @@ changes, the validation and test splits are those of Table~\ref{tab:main}.}
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
 Reference & base & \soap{} & base & \soap{} & base & \soap{} & base & \soap{} \\
 \midrule
-Real reference split       & 39.15 & \best{47.62} & 33.33 & \best{34.48} & 38.62 & \best{45.50} & 28.74 & 28.74 \\
+Existing benchmarks       & 39.15 & \best{47.62} & 33.33 & \best{34.48} & 38.62 & \best{45.50} & 28.74 & 28.74 \\
 Synthetic, Qwen3.5-9B agents & 33.33 & 41.80 & 28.74 & 31.03 & 35.98 & 39.68 & 26.44 & \best{29.89} \\
 Synthetic, GPT-4o agents     & 40.74 & 46.56 & 28.74 & 29.89 & 33.33 & 38.10 & 25.29 & 25.29 \\
 \bottomrule
@@ -1660,17 +1836,20 @@ Synthetic, GPT-4o agents     & 40.74 & 46.56 & 28.74 & 29.89 & 33.33 & 38.10 & 2
 % \end{figure}
 
 % \textbf{Textual examples.}
-Figures~\ref{fig:qual-text-a} and \ref{fig:qual-text-b} show four further trajectories
-in text, one per subset, all scored with Qwen3.5-9B under the configuration selected
-for Table~\ref{tab:main}. Each was chosen among the test trajectories of the frozen
-triple on which the base score's argmax is wrong and the rescored argmax is the
-annotated step; WW-HC has exactly one such trajectory, and on TE-Mag the flip holds on
-all three seeds. Every step carries its base score and its rescored score, so the
-reader can follow where the correction lands. We condensed the step text; the agent
-names and step indices are as released, and repeated ledger cycles of the Magentic-One
-orchestrator are collapsed into one row.
 
-The four trajectories fail in different ways, but the base score misreads them in the same way. For each, we give the task, the annotated decisive step and what went wrong there, where the base score peaks, and where \soap{} lands.
+%  Each was chosen among the test trajectories of the frozen
+% triple on which the base score's argmax is wrong and the rescored argmax is the
+% annotated step; WW-HC has exactly one such trajectory, and on TE-Mag the flip holds on
+% all three seeds
+
+
+Figures~\ref{fig:qual-text-a} and \ref{fig:qual-text-b} show four textual trajectories
+in the test set, one per dataset, all scored with Qwen3.5-9B under the configuration selected
+for Table~\ref{tab:main}. We show the base score and our rescoring by \soap{} for every step in the trajectory. We condensed the step text for presentation clarity; the agent
+names and step indices are as released, and repeated intermediate steps of the Magentic-One
+orchestrator are collapsed into one row.\textcolor{red}{specify which example corresponds to the score plot in the main paper.}
+
+The four trajectories fail in different ways, but the base score misreads them in the same way. \soap{} rescores each step that accounts for the uncertainty of the later steps, which corrects this downstream contamination and thus showcases the effectiveness of our approach.      For each example, we give the task, the annotated decisive step and what went wrong there, where the base score peaks, and where \soap{} lands.
 \begin{itemize}
     \item \textbf{WW-AG} (Figure~\ref{fig:qual-text-a}, left). \emph{Task:} find the command clicked in the last video of a 2018 blog post. \emph{Decisive step, T1:} the video-analysis expert submits search code that loops over a helper's return value of \texttt{None}. The code cannot run, and the plan never opens the post or the video.
     \emph{Base score:} peaks at T2, the terminal's \texttt{TypeError}, which is only the
