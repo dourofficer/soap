@@ -831,6 +831,122 @@ coincide with the Table-1 number.
   within a point of base at k=5 (it moves the gold step to the top, not the tail).
   Agent@k saturates for everyone by k=3 (two- or three-agent trajectories).
 
+### C1 — Inference cost per trajectory (appendix `tab:cost`, `app:compute`)  `[CPU; timing needs an idle GPU]`  — TOKENS DONE 2026-09-13, timing partial
+
+- [x] **Target.** The appendix claims the baselines are compute-intensive; give the
+  number: judge calls, prompt tokens, output tokens and wall-clock per trajectory for
+  every prompt-based baseline against SOAP's one-forward-pass-per-step.
+- **Scope (user decision 2026-09-13).** WW-AG and WW-HC only; SOAP on qwen3.5-9b;
+  judges qwen3.5-9b (tokens + time) and gpt-4o (tokens only, no API re-runs); both GT
+  settings in the TSV, the table shows without-GT. Methods: all_at_once,
+  step_by_step, binary_search, correct, chief, errorprobe_paper.
+- **Procedure.**
+  1. Tokens, offline and exact: `../attrib-prompting/scripts/cost_report.py` drives each
+     method's generator program with the stored `calls` responses, so it re-yields the
+     very prompts the run issued; prompts are tokenized with the Qwen3.5-9B chat template
+     (thinking off) or tiktoken's o200k encoding (cookbook per-message overhead), capped
+     at the run's `truncate_prompt_tokens` (15,872 for ErrorProbe on the open judge). Every
+     replay is checked against the stored prediction (`n_mismatch`). Six with-GT
+     open-judge prompting cells were imported from a legacy JSONL with empty `calls`:
+     All-at-Once is still costed (one prompt, no response needed), Step-by-Step and
+     Binary Search are not (`n_costed = 0`).
+     Output: `../attrib-prompting/reports/cost_ww.tsv`.
+  2. Time: `scripts/ablations/c1_cost.py` harvests the predictors' own
+     `wrote <dir> (N/N files, Xs)` lines from `../attrib-prompting/logs/open/*.log` and
+     `logs/cost/*.log` (batched vLLM on one H200 -> throughput, not latency), computes
+     SOAP's tokens as the sum over scoreable steps of the extractor's exact input length
+     (`main.data.build_step_input`, 8,192 budget) and its time from
+     `logs/c1_timing_<subset>.log` when a timed run exists, else from the July mtimes
+     (10 min WW-AG, 2 h 15 min WW-HC). Output: `results-ablations/c1_cost.tsv`;
+     `--print-table` emits the `tab:cost` rows.
+  3. Still to run on an idle GPU (all eight busy 2026-09-13; commands in
+     `../attrib-prompting/scripts/TODO.md`): ErrorProbe paper mode timing on the open
+     judge (no `wrote` line exists), the six legacy with-GT prompting cells with call
+     logs, and SOAP's timed extraction.
+- **Reading the numbers.** Step-by-Step on the open judge batches EVERY step's prompt
+  (`step_mode: batch`, the vendored control flow stops at the first "Yes" on API
+  judges), so its open-judge call count is the trajectory length, not the early-stop
+  count; the GPT-4o row shows the early-stop cost. Both are what was actually run.
+- **Results** — see `results-ablations/c1_cost.tsv` (filled below when the replay
+  finishes).
+
+### C4 — Cost split into extraction and operation, setup and inference (appendix `app:compute`, `tab:cost-setup` / `tab:cost-inference` / `tab:cost-judges`)  `[GPU]`  — DONE 2026-09-15
+
+- [x] **Target.** Replace C1's single table (batched judge throughput vs SOAP's July
+  extraction mtimes) with a faithful, two-stage cost analysis: every representation-based
+  method is timed through its OWN extraction code as run, one trajectory at a time on one
+  H200, with peak GPU memory; then the operation on the stored vectors (training / SVD
+  fit; scorer at inference) is timed apart. Judges are timed one trajectory at a time.
+- **Extraction schemes, as run (user decision 2026-09-14: report the difference, do not
+  argue single-pass equivalence).** OAT: one pass over the whole trajectory (cap 262,144,
+  last layer). StepFinder: one pass per step over the step text alone (cap 8,192) plus
+  one per distinct agent name, memoized. SOAP: two passes per scoreable step (activation
+  stage + attention stage), each over the step in its context under the 8,192 budget.
+- **Scripts / outputs.**
+  * `scripts/ablations/c4_extract_cost.py` -> `results-ablations/c4_extract_cost/soap_qwen3.5-9b_<subset>.tsv`
+    (per trajectory: passes, tokens, seconds, peak/reserved GB, both stages; all 126 + 58).
+  * `../attrib-prompting/scripts/cost_rb_extract.py --method {oat,stepfinder}` ->
+    `oat_qwen3.5-9b.tsv`, `stepfinder_qwen3.5-9b*.tsv` (inference on WW; setup = 103
+    MCP-Atlas successes for OAT, the vendored regenerated failures for StepFinder,
+    1,564 + 2,604; the hand-crafted corpus was timed in two shards, `--tag _hc-shard{1,2}`).
+  * `scripts/ablations/c4_stage2_cost.py` -> `soap_stage2_qwen3.5-9b.tsv` (SVD fit,
+    projection, rescoring; CPU and GPU; first seed of the triple, Table-1 config) and
+    `soap_reference_stems_qwen3.5-9b.json` (the reference split, for the setup sums).
+  * `../attrib-prompting/scripts/cost_rb_stage2.py` -> `rb_stage2_qwen3.5-9b.tsv`
+    (OAT neural CDE + conformal decoder, StepFinder BiLSTM, in process, seed 42).
+  * Training time: `../attrib-prompting/logs/cost/{oat,stepfinder}-train-timing.log`
+    (5 seeds: OAT 255.5 s; StepFinder 259.0 s WW-AG corpus, 577.2 s WW-HC corpus).
+  * Judges: `../attrib-prompting/reports/latency/` (`scripts/cost_latency_ww.sh`, one
+    trajectory at a time on vLLM; sample = `ids_<subset>.json`, the 40 / 17 trajectories
+    whose every step fits the budget; tokens replayed by `scripts/cost_report.py`).
+  * `scripts/ablations/c4_cost_tables.py --print-table` joins everything into
+    `results-ablations/c4_cost_{setup,inference,judges}.tsv` and prints the table bodies.
+- **Results (Qwen3.5-9B, without GT).**
+  * Setup extraction (passes / tokens / s / peak GB): OAT 103 / 507,727 / 59 / 19.3 (both
+    subsets); StepFinder 24,393 / 2.26M / 3,154 / 15.1 (WW-AG) and 52,001 / 3.09M / 6,774 /
+    15.0 (WW-HC); SOAP 619 / 1.08M / 204 / 23.8 (37 WW-AG reference trajectories) and
+    1,482 / 8.81M / 1,784 / 23.8 (17 WW-HC). Operation: OAT 255.5 s, StepFinder 259.0 /
+    577.2 s, SOAP SVD 0.15 / 0.30 s (CPU).
+  * Inference extraction per trajectory (passes / tokens / s / peak GB mean, max): OAT
+    1 / 3,499 / 0.42 / 15.6, 26.3 and 1 / 19,587 / 2.13 / 18.9, 31.6; StepFinder 8.8 / 2,813
+    / 2.01 / 15.0, 16.5 and 39.2 / 17,028 / 7.41 / 15.4, 16.5; SOAP 16.4 / 30,764 / 5.54 /
+    19.7, 23.8 and 101.0 / 623,352 / 160.6 / 23.2, 25.1. SOAP's peak is bounded by the
+    budget (25.1 GB max on the 105-step trajectory); OAT's follows trajectory length.
+  * Operation at inference (ms per trajectory, CPU / GPU): OAT 2.6 / 5.2 and 12.2 / 26.3;
+    StepFinder 63.6 / 2.3 and 88.2 / 3.5; SOAP 0.7 / 2.6 and 5.4 / 15.8.
+  * Judges, one trajectory at a time (s; calls; prompt tok; gen tok), WW-AG: AAO 2.0 / 1 /
+    2,811 / 312; SBS (batch of one trajectory's steps) 2.0 / 8.6 / 16,729 / 992; BS 0.2;
+    CORRECT 1.9; CHIEF 23.9 / 6 / 27,442 / 4,362; ErrorProbe 5.9 / 5 / 11,874 / 1,494;
+    SOAP on the same 40: 5.4 s, 16.2 passes, 28,869 tokens, 0 generated. WW-HC: SOAP 15.3 s
+    vs AAO 2.1, ErrorProbe 6.5, CHIEF 23.5.
+  * Weights: SOAP loads the full checkpoint (17.5 GB), the baselines its text decoder
+    (14.8 GB); stated in the table captions.
+- **Manuscript.** `app:compute` rewritten 2026-09-15 (three tables; old subsection kept
+  commented). The C1 table `tab:cost` is retired.
+- **Revision 2026-09-17 (user request).** Three corrections to the reduced two-table
+  version of `app:compute`:
+  * **One-pass convention.** SOAP is charged ONE forward pass per trajectory, since
+    causal attention makes one pass over the trajectory yield every step's states and
+    attention; the per-step extractor re-reads the prefix as an implementation choice.
+    Timed as the last step's activation pass (the whole trajectory in its context under
+    the budget) by `scripts/ablations/c4_onepass_cost.py` ->
+    `results-ablations/c4_extract_cost/soap_onepass_qwen3.5-9b.tsv` (pure forward, warm,
+    3 repeats, idle H200): 0.38 s WW-AG / 0.76 s WW-HC over all trajectories (peak 23.7 /
+    23.8 GB), 0.36 / 0.62 s on the in-budget judge sample. The old "s/forward pass"
+    cells (0.34 / 1.59) pooled the per-step loop, whose WW-HC figure is inflated by
+    re-tokenizing the context for every step (129-step trajectory: 99 s tokenizing vs
+    105 s of forward passes; pure passes are 0.60-0.81 s each).
+  * **StepFinder CPU scoring was an artifact.** 63.6 / 88.2 ms came from torch's lazy
+    default thread pool on the 240-core host; pinning the pool (any of 1/4/16 threads)
+    gives 1.8 / 5.0 ms for the same 278k-parameter BiLSTM (GPU 2.2 / 3.4 ms). Both
+    stage-2 timers now take `--cpu-threads` (default 4) and were re-run with 10 repeats:
+    OAT 2.4 / 10.4 ms, StepFinder 1.8 / 5.0, SOAP 0.7 / 5.5 (projection + rescoring);
+    SVD fit 0.08 / 0.29 s. Old TSVs kept as `*.2026-09-15.bak.tsv`.
+  * **`tab:cost-judges` = one pass + scoring per trajectory** for SOAP (0.36 / 0.62 s)
+    against every judge request per trajectory for the prompt-based methods (unchanged).
+    `c4_cost_tables.py` now emits `one_pass_s`, `scoring_ms`, `one_pass_plus_scoring_s`
+    and reads the one-pass TSV; `--print-table` prints the manuscript layout.
+
 ## Baselines
 
 ### B1 — Representation-based baselines: OAT and StepFinder (`tab:main`, `tab:main-gt`)  `[CPU; predictions from ../attrib-prompting]`  — DONE 2026-08-23

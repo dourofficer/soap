@@ -1,28 +1,28 @@
 Backbone	Method	WW-AG	WW-HC	CE	TE-Cap	TE-Mag
-Qwen3.5-9B	All-at-Once	21.16	11.49		6.98	1.45
-Qwen3.5-9B	Step-by-Step	17.46	18.39		24.81	21.01
-Qwen3.5-9B	Binary Search	2.12	13.79		0.00	10.14
-Qwen3.5-9B	CORRECT	32.28	4.60			
-Qwen3.5-9B	CHIEF	30.69	4.60			
+Qwen3.5-9B	All-at-Once	21.16	11.49	33.32	6.98	1.45
+Qwen3.5-9B	Step-by-Step	17.46	18.39	52.04	24.81	21.01
+Qwen3.5-9B	Binary Search	2.12	13.79	59.89	0.00	10.14
+Qwen3.5-9B	CORRECT	32.28	4.60	36.43	10.08	8.70
+Qwen3.5-9B	CHIEF	30.69	4.60	30.78	6.98	10.87
 Qwen3.5-9B	RAFFLES	46.56	28.74			
-Qwen3.5-9B	ErrorProbe	21.16	20.69		21.71	15.94
-Qwen3.5-9B	ErrorProbe (backward)	9.52	12.64		0.78	7.97
-Qwen3.5-9B	ErrorProbe (paper)	40.74	19.54		31.01	23.19
-DeepSeek-R1-Distill-Llama-8B	All-at-Once	21.16	5.75		8.53	4.35
-DeepSeek-R1-Distill-Llama-8B	Step-by-Step	15.34	3.45		10.85	5.07
-DeepSeek-R1-Distill-Llama-8B	Binary Search	6.35	12.64		4.65	7.25
-DeepSeek-R1-Distill-Llama-8B	CORRECT	19.58	11.49			
-DeepSeek-R1-Distill-Llama-8B	CHIEF	14.29	11.49			
+Qwen3.5-9B	ErrorProbe	19.05	20.69		16.28	16.67
+Qwen3.5-9B	ErrorProbe (backward)	10.05	10.34		3.88	7.97
+Qwen3.5-9B	ErrorProbe (paper)	40.74	19.54	59.57	24.81	20.29
+DeepSeek-R1-Distill-Llama-8B	All-at-Once	21.16	5.75	24.16	8.53	4.35
+DeepSeek-R1-Distill-Llama-8B	Step-by-Step	15.34	3.45	16.51	10.85	5.07
+DeepSeek-R1-Distill-Llama-8B	Binary Search	6.35	12.64	40.01	4.65	7.25
+DeepSeek-R1-Distill-Llama-8B	CORRECT	19.58	11.49	36.19	14.73	1.45
+DeepSeek-R1-Distill-Llama-8B	CHIEF	14.29	11.49	10.95	4.65	0.00
 DeepSeek-R1-Distill-Llama-8B	RAFFLES	32.80	13.79			
 DeepSeek-R1-Distill-Llama-8B	ErrorProbe	14.81	16.09		20.93	19.57
 DeepSeek-R1-Distill-Llama-8B	ErrorProbe (backward)	1.06	13.79		0.00	5.80
-DeepSeek-R1-Distill-Llama-8B	ErrorProbe (paper)	18.52	14.94		21.71	11.59
+DeepSeek-R1-Distill-Llama-8B	ErrorProbe (paper)	18.52	14.94	40.39	21.71	11.59
 Qwen3.5-9B (weak)	All-at-Once					
 Qwen3.5-9B (weak)	Step-by-Step					
 Qwen3.5-9B (weak)	Binary Search					
 Qwen3.5-9B (weak)	CORRECT					
 Qwen3.5-9B (weak)	CHIEF					
 Qwen3.5-9B (weak)	RAFFLES					
-Qwen3.5-9B (weak)	ErrorProbe	19.05	20.69		16.28	16.67
-Qwen3.5-9B (weak)	ErrorProbe (backward)	10.05	10.34		3.88	7.97
-Qwen3.5-9B (weak)	ErrorProbe (paper)	40.74	19.54		24.81	20.29
+Qwen3.5-9B (weak)	ErrorProbe					
+Qwen3.5-9B (weak)	ErrorProbe (backward)					
+Qwen3.5-9B (weak)	ErrorProbe (paper)					

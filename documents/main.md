@@ -179,12 +179,77 @@ Everything in the paper comes from **`main/`** (the frozen-axis runner), not `sr
   the Qwen block). The prompting pipeline and `tables/*.tsv` still carry RAFFLES; only
   the LaTeX changed. The RAFFLES discrepancy item below is therefore moot for the
   manuscript.
+- **`app:compute` rewritten 2026-09-15** (user decision: report the extraction
+  difference faithfully, no single-pass argument). Three tables: `tab:cost-setup` (once
+  per subset: corpus, labels, extraction passes/tokens/time/peak memory, then training or
+  SVD time), `tab:cost-inference` (per trajectory: the same extraction columns, then the
+  scorer in ms on CPU / GPU), `tab:cost-judges` (one trajectory at a time on the
+  Qwen3.5-9B judge vs SOAP on the same in-budget sample). Every number is timed as run
+  through each method's own code (C4 in `experiments/todo.md`; scripts under
+  `scripts/ablations/c4_*.py` and `../attrib-prompting/scripts/cost_rb_*.py`; joined
+  TSVs `results-ablations/c4_cost_*.tsv`). Message: SOAP's per-step-in-context
+  extraction is the most expensive stage (5.5 s / 161 s per WW-AG / WW-HC trajectory vs
+  0.4 / 2.1 for OAT) but its peak memory is bounded by the 8,192 budget (25 GB max)
+  while OAT's grows with the trajectory (31.6 GB on the longest); after extraction SOAP
+  is cheapest (SVD 0.15--0.30 s vs 255--577 s of training; scorer in ms). The old
+  subsection (batched judge throughput, StepFinder mislabeled as single-pass, July
+  mtimes) is kept commented.
+- **`app:compute` reduced to two tables and revised 2026-09-17** (user decisions):
+  `tab:cost-inference` (fitting s/seed, one extraction forward pass with peak GB, CPU
+  scoring ms/trajectory at 4 pinned threads) and `tab:cost-judges` (time per trajectory
+  on the in-budget sample). SOAP is charged ONE forward pass per trajectory (the
+  one-pass convention, stated in the text: causal attention makes one pass yield every
+  step's states; the per-step extractor is an implementation choice), timed by
+  `scripts/ablations/c4_onepass_cost.py`: 0.38 / 0.76 s (all), 0.36 / 0.62 s (sample),
+  plus 0.7 / 5.5 ms scoring. StepFinder's 63.6 / 88.2 ms CPU scoring of 09-15 was a
+  torch lazy-thread-pool artifact; pinned it is 1.8 / 5.0 ms (C4 in
+  `experiments/todo.md`). The three-table 09-15 version stays commented in the .tex.
 - **Open discrepancy**: `tab:main`'s GPT-4o RAFFLES row (35.98 / 18.39 / 53.05 /
   23.26 / 23.91) and DeepSeek RAFFLES CE (35.84) do not match
   `results-prompting/by_column.tsv` and `tables/table1_without_gt.tsv`
   (42.86 / 25.29 / 64.22 / 24.81 / 17.39; 41.60). The author chose to keep the
   manuscript numbers (2026-09-03); the appendix's std/agent tables use the TSVs, so
   the two disagree until the source of the manuscript row is reconciled.
+
+- **Cost table and appendix fill 2026-09-13** (plan: one backbone qwen3.5-9b, WW-AG +
+  WW-HC; no validation-selected headline; context-budget ablation and Qwen3.5-4B
+  dropped by decision).
+  - `tab:cost` added to `app:compute` (placeholder cells until the TSV lands; lead-in
+    prose written). Numbers: `results-ablations/c1_cost.tsv` from
+    `scripts/ablations/c1_cost.py`, which joins `../attrib-prompting/reports/cost_ww.tsv`
+    (`../attrib-prompting/scripts/cost_report.py`: exact offline replay of every
+    method's generator program with the stored responses, then tokenized) with wall-clock
+    harvested from the predictors' `wrote ... (N/N files, Xs)` log lines and SOAP's own
+    token count per trajectory. Outstanding GPU runs (ErrorProbe paper-mode timing, the
+    six legacy with-GT open-judge prompting cells, SOAP's timed extraction) are listed
+    with commands in `../attrib-prompting/scripts/TODO.md`; C1 in `experiments/todo.md`.
+  - **The `qwen3.5-9b-weak` judge never existed as a directory.** The handicap is applied
+    in place to the `qwen3.5-9b` spec of the ErrorProbe config, so
+    `outputs*/ww/*/qwen3.5-9b/errorprobe_paper/` IS the reported weak run; the
+    full-budget run was overwritten 2026-09-06 and lives only in .tex comments.
+    `scripts/prompting/evaluate.py` no longer lists the phantom judge; the "lost weak
+    rows" of 2026-09-07 were a naming artifact, no data was lost.
+  - ErrorProbe rows added to `tab:agent`, `tab:std`, `tab:gt-full`, `tab:gpt5` (builders
+    `make_appendix_tables.py` / `make_main_tables.py` now carry `errorprobe_paper`; TSVs
+    rebuilt, existing cells unchanged). Marker moves: GPT-4o with-GT block, ErrorProbe
+    best on WW-AG/WW-HC/TE-Cap/TE-Mag; GPT-5 table, ErrorProbe best on WW-AG in both
+    settings (49.21 vs SOAP 47.62 without GT; 53.44 with), prose rewritten. GPT-5 blocks
+    removed from `tab:agent` and `tab:std` (kept in comments). Handicap disclosure
+    sentence added to `app:baselines`; the "neither baseline predicts an agent" sentence
+    now names OAT/StepFinder (the Who&When prompts do ask for an agent name).
+  - Dangling refs fixed (`tab:seeds` -> prose; `fig:sensitivity` -> `fig:datasize`);
+    the "Additional analysis" paragraph now cites the pooling, remaining-cell ablation,
+    and input-format appendices; the context-budget comment in `method.tex` retired.
+
+- **`tab:gt-full` complete 2026-09-16.** The last blank cell, ErrorProbe (paper mode) with
+  GPT-4o on CORRECT-Error with the answer, landed in
+  `../attrib-prompting/outputs/correct-error/*/gpt-4o/errorprobe_paper` (all seven pools,
+  2,226 predictions, none missing). `scripts/prompting/evaluate.py` rescored every cell and
+  `make_appendix_tables.py` rebuilt `tables/appendix_with_gt_full.tsv`; the cell reads
+  62.26 and takes the CE best mark in the GPT-4o block from Step-by-Step (59.29), so
+  ErrorProbe is now best on all five columns of that block. The prose's "one blank cell"
+  sentence and the caption's "a blank cell was not run" are gone. Every printed cell of the
+  table was checked against the TSV (26 rows, 0 mismatches).
 
 ## Known items for later
 

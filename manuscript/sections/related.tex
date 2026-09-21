@@ -25,13 +25,13 @@ limiting their practicality; we compare with representatives of both lines in
 Table~\ref{tab:main}. OAT avoids both by one-class learning over clean
 successful trajectories~\citep{oat}, but its success-only data \textit{carry
 no decisive-error signal}, unlike our step-unlabeled failure trajectories,
-and it underperforms \soap (Table~\ref{tab:main}). \citet{masprism} also use
+and it underperforms \soap (Table~\ref{tab:main}).  \citet{du2024haloscope} detects hallucinations using unlabeled LLM generations but trains a classifier on top of a different projection score without the dependency propagation compared to our approach. \citet{masprism} also use
 attention signals, but score them on steps with high negative log-likelihood
 for two-stage localization; MASC targets online self-correction via
 prototype-guided next-execution reconstruction rather than post-hoc
-error attribution~\citep{shen2025masc}. 
+error attribution~\citep{shen2025masc}.
 
-
+\vspace{-1em}
 % Old version (pre-2026-09-08) kept below, commented out:
 % \textbf{Agentic failure attribution} has gained interest recently for ensuring LLM-based agents' reliability~\citep{qi2026trajdebug,barke2026agentrx}. 
 % \citet{whoandwhen} formulate automated failure attribution, introduce the

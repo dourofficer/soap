@@ -57,10 +57,12 @@ SETTINGS = [("outputs-nogt", False, "results-nogt", ""),
 # closed-source ones answer the manuscript's GPT-4o block; the two open ones are
 # the backbones SOAP itself runs on, so their prompting rows sit in the same
 # block as SOAP and share its test splits.
-# `qwen3.5-9b-weak` is the same Qwen checkpoint decoded on a handicapped budget
-# (512 new tokens, temperature 1.0, top-p 0.95, 16k window clipped from the
-# front); ErrorProbe runs only.
-JUDGES = ["gpt-4o", "gpt-5", "qwen3.5-9b", "deepseek-8b", "qwen3.5-9b-weak"]
+# There is no separate `qwen3.5-9b-weak` judge directory: since 2026-09-06 the
+# handicapped ErrorProbe decoding (512 new tokens, temperature 1.0, top-p 0.95,
+# 16k window clipped from the front) is applied in place to the `qwen3.5-9b` spec
+# of ../attrib-prompting/baselines/errorprobe/configs/ww.yaml, so the
+# `qwen3.5-9b/errorprobe_paper` cells ARE the weak run the manuscript reports.
+JUDGES = ["gpt-4o", "gpt-5", "qwen3.5-9b", "deepseek-8b"]
 # gpt-5 x correct-error has no `chief` run — it was excluded as too costly, so
 # that cell stays blank rather than missing.
 # ErrorProbe ships three paths as separate method directories:

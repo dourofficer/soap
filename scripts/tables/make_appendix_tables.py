@@ -37,9 +37,12 @@ COLS = [c for c, _, _ in COLUMNS]
 DATASETS = ["ww", "traceelephant", "correct-error"]
 BACKBONES = [("Qwen3.5-9B", "qwen3.5-9b"), ("DeepSeek-R1-Distill-Llama-8B", "deepseek-8b")]
 JUDGES = [("GPT-4o", "gpt-4o"), ("GPT-5", "gpt-5")]
+# ErrorProbe = the paper's tag -> trace -> team pipeline (`errorprobe_paper`). On the
+# Qwen3.5-9B judge that directory holds the handicapped-decoding run (512 new tokens,
+# temperature 1.0, top-p 0.95, 16k window), the manuscript's row since 2026-09-06.
 PROMPT_ROWS = [("All-at-Once", "all_at_once"), ("Step-by-Step", "step_by_step"),
                ("Binary Search", "binary_search"), ("CORRECT", "correct"),
-               ("CHIEF", "chief"), ("RAFFLES", "raffles")]
+               ("CHIEF", "chief"), ("RAFFLES", "raffles"), ("ErrorProbe", "errorprobe_paper")]
 RB_ROWS = [("StepFinder", "stepfinder"), ("OAT", "oat")]
 
 

@@ -10,6 +10,62 @@
 %                                 holds the same numbers with the runner notes)
 % The OAT/StepFinder paragraphs of A.4 predate this rewrite (2026-09-02).
 % =====================================================================
+% \note{\textbf{Review TODO} (SOAP\_ICLR2027\_review.pdf). Tags: [CPU], [GPU], [text].
+
+% \textbf{W1. Selection protocol / ``without step-level labels'' --- do first.}
+% \begin{itemize}
+%     \item \st{Clarify the data setup, selection protocol}
+% \end{itemize}
+
+% \textbf{W2. Rescoring contributes little outside WW-AG.}
+% \begin{itemize}
+% \item Control: add $\gamma S(s_{i+1})$ to step $i$ [CPU]
+% \item Control: exclude the final step [CPU]
+% % \item Length-normalized attention mass; drop step 1 / sink tokens [CPU]
+% % \item Extend the tab:weights discussion to all five subsets [text]
+% % \item Replace the 0.88-vs-0.87 example; fix the Fig.~13 tie (S3 vs S6) [text]
+
+% \end{itemize}
+
+% \textbf{W3. Premise: failed trajectories are what matter.}
+% \begin{itemize}
+% \item $R$ fit on success-only trajectories [GPU if not extracted]
+% \item $R$ fit on unrelated text [GPU]
+% \item Reframe to ``in-distribution step geometry'' if both controls work [text]
+% \item Argue why errors have low energy in the band, or cut the Huber mixture [text]
+% \item OAT: state the data confound, or fit OAT in-distribution [CPU]
+% \end{itemize}
+
+% \textbf{W4. Trivial baselines and confounds.}
+% \begin{itemize}
+% \item Fixed-index, first-non-orchestrator, step-length, agent-identity baselines [CPU]
+% \item Score vs.\ step length / vector norm; angular residual as a norm-free check [CPU]
+% \item Linear probe on pooled states with the same validation labels [CPU]
+% \item Few-shot judge with the same validation labels [GPU/API]
+% \end{itemize}
+
+% \textbf{W5. Baseline fairness.}
+% \begin{itemize}
+% \item \st{StepFinder: Redescribe to mitigate fairness concerns}
+% \item state more precisely about ``persists with GPT-4o and GPT-5''; bold across blocks or say why not [text]
+% \end{itemize}
+
+% \textbf{W7. Related work.}
+% \begin{itemize}
+% \item \st{cite HaloScope and spectral signatures; state the difference.}
+% \item TBD: Cite the attention-faithfulness and attention-sink literature [text]
+% \end{itemize}
+
+% \textbf{Minor.}
+% \begin{itemize}
+% \item Scalability sentence: compare at the same model size (27B vs 14B now)
+% \item B.2 $\gamma$ claim vs.\ Fig.~13 ($\gamma = 1.0$)
+% \item One symbol: $q_{\mathcal{C}}$ or $\pi_{\mathcal{C}}$
+% % \item Fig.~3 axis: ``projection energy'', not ``base score''
+% % \item Eq.~6: define the 0/0 case (no successor retains the step)
+% \item Tables 7/8: same unit; clarify end-to-end time per WW-HC trajectory (Q4)
+% \end{itemize}
+% }
 
 \section{Additional experimental details}
 \label{app:details}
@@ -121,8 +177,11 @@ until the input fits. The task description and the scored step are never dropped
 \subsection{Implementation details of \soap{}}
 \label{app:implementation}
 
+% [commented out 2026-09-21] Previous version of Step representations:
+% \textbf{Step representations.}
+% $v_t$ is the mean of the hidden states over the tokens of the scored step at one layer by default. For Qwen3.5-9B, whose stack interleaves three linear-attention blocks with each full-attention block, we store the output of the eight full-attention blocks (3, 7, \ldots, 31), the embedding layer, and the last block after the final norm. For DeepSeek-R1-Distill-Llama-8B we store all 32 blocks plus the same two.  The representation layer $l^\star$ is selected over these positions. Ablations on our embedding design are in Appendix~\ref{app:pooling}.
 \textbf{Step representations.}
-$v_t$ is the mean of the hidden states over the tokens of the scored step at one layer by default. For Qwen3.5-9B, whose stack interleaves three linear-attention blocks with each full-attention block, we store the output of the eight full-attention blocks (3, 7, \ldots, 31), the embedding layer, and the last block after the final norm. For DeepSeek-R1-Distill-Llama-8B we store all 32 blocks plus the same two.  The representation layer $l^\star$ is selected over these positions. Ablations on our embedding design are in Appendix~\ref{app:pooling}.
+$v_t$ is the mean of the hidden states over the tokens of the scored step at one layer. We store the output of every full-attention block, the embedding layer, and the last block after the final norm; for architectures that interleave linear-attention and full-attention blocks (e.g., Qwen3.5), only the full-attention blocks are kept. The representation layer $l^\star$ is selected over these positions. Ablations on the pooling design are in Appendix~\ref{app:pooling}.
 
 
 %=========
@@ -153,7 +212,7 @@ Consider the input for step $s_t$ as the token sequence of $[s_1,\ldots,s_t]$, a
     m^{(l,h)}_{i,t},
     \label{eq:attn-mass}
 \end{equation}
-where $H$ is the number of heads. Averaging over the query tokens treats the step as
+where $H$ is the number of heads and  $L^\star$ is one of four equal bands of the full-attention blocks. Averaging over the query tokens treats the step as
 a whole; summing over the key tokens keeps the total probability that lands in the
 predecessor. Every $m_{i,t}$ for step $s_t$ comes from the forward pass that also
 produces $v_t$:
@@ -169,7 +228,9 @@ produces $v_t$:
     4.\ Normalize $m_{i,t}$ over the predecessor set $\mathcal{P}_t$ by Eq.~\ref{eq:dependency-weight}.
 \end{methodbox}
 
-The attention layer band $L^\star$ is one of four equal bands of the attention blocks: blocks $\{0\text{--}2, 2\text{--}4, 4\text{--}6, 6\text{--}8\}$ of Qwen3.5-9B's eight full-attention blocks and $\{0\text{--}8, 8\text{--}16, 16\text{--}24, 24\text{--}32\}$ of DeepSeek's 32. The band indices count only the blocks that produce attention, not the position in the network. For Qwen3.5-9B, whose full-attention blocks sit at absolute positions 3, 7, \ldots, 31, band 0--2 therefore averages blocks 3 and 7, band 2--4 blocks 11 and 15, band 4--6 blocks 19 and 23, and band 6--8 blocks 27 and 31. For DeepSeek every block attends, so the band indices are the absolute positions.
+% [commented out 2026-09-21] Previous version of the layer-band paragraph:
+% The attention layer band $L^\star$ is one of four equal bands of the attention blocks: blocks $\{0\text{--}2, 2\text{--}4, 4\text{--}6, 6\text{--}8\}$ of Qwen3.5-9B's eight full-attention blocks and $\{0\text{--}8, 8\text{--}16, 16\text{--}24, 24\text{--}32\}$ of DeepSeek's 32. The band indices count only the blocks that produce attention, not the position in the network. For Qwen3.5-9B, whose full-attention blocks sit at absolute positions 3, 7, \ldots, 31, band 0--2 therefore averages blocks 3 and 7, band 2--4 blocks 11 and 15, band 4--6 blocks 19 and 23, and band 6--8 blocks 27 and 31. For DeepSeek every block attends, so the band indices are the absolute positions.
+% The attention layer band $L^\star$ is one of four equal bands of the full-attention blocks. Band indices count only the blocks that produce attention, excluding linear-attention layers; for architectures where every block attends, band indices coincide with absolute positions.
 
 % The attention layer band $L^\star$ is one of four equal bands of the attention blocks, and the band indices count only the blocks that produce attention while excluding linear-attention layers. 
 % For Qwen3.5-9B, whose full-attention blocks sit at absolute positions 3, 7, \ldots, 31, band 0--2 therefore averages blocks 3 and 7, band 2--4 blocks 11 and 15, band 4--6 blocks 19 and 23, and band 6--8 blocks 27 and 31. For DeepSeek every block attends, so the band indices are the absolute positions.
@@ -186,29 +247,15 @@ The attention layer band $L^\star$ is one of four equal bands of the attention b
 % mentioning this.}
 
 \textbf{Spectral base score.}
-The reference matrix $R$ stacks the representations of every step of the reference
-split, uncentered. We keep the 20 leading right-singular vectors and consider every
-contiguous band $[c_{\mathrm{begin}}, c_{\mathrm{end}})$ with $0 \le c_{\mathrm{begin}}
-< c_{\mathrm{end}} \le 20$, which gives 210 bands. The score is
-$\Sbase(s_t)=1/(\pi_{\mathcal{C}}(v_t)+\epsilon)$ with $\epsilon=10^{-12}$. Ranking is
-within a trajectory, and ties resolve to the earliest step.
+The reference matrix $R$ stacks the representations of every step of the reference split, uncentered. We keep the 20 leading right-singular vectors and consider every contiguous band $[c_{\mathrm{begin}}, c_{\mathrm{end}})$ within this range.
+% with $0 \le c_{\mathrm{begin}} < c_{\mathrm{end}} \le 20$, which gives 210 bands. 
+The score is $\Sbase(s_t)=1/(\pi_{\mathcal{C}}(v_t)+\epsilon)$ with $\epsilon=10^{-12}$. Ranking is within a trajectory, and ties resolve to the earliest step.
 
 \textbf{Construction of the predecessor set during rescoring.}
-Section~\ref{sec:method:weights} normalizes the attention mass over an index set
-$\mathcal{P}_t$ of retained predecessors. We build $\mathcal{P}_t$ in three steps.
-First, context truncation (Appendix~\ref{app:input}) fixes which earlier steps the
-LLM reads when it encodes $s_t$; only those can receive attention from $s_t$.
-Second, among them we keep the $w$ predecessors with the largest mass $m_{i,t}$. The
-window $w\in\{1,2,3,4,5,\text{all}\}$ is selected per cell, and $w=\text{all}$ keeps
-every retained predecessor. Third, we remove any turn that is never a candidate
-step: the user's question turn of WW-HC and, with the ground truth, the pinned
-answer block. The weights $w_{i,t}$ of Eq.~\ref{eq:dependency-weight} are then
-normalized over the surviving set. Because $w_{i,t}=0$ outside $\mathcal{P}_t$, the
-sums in Eq.~\ref{eq:backward-evidence} run over the successors $t$ whose
-$\mathcal{P}_t$ contains $i$. A step that no successor retains keeps its base
-score, as does the last step. The propagation strength is selected from
-$\gamma\in\{0, 0.1, 0.2, 0.4, 0.6, 0.8, 1.0\}$, and $\gamma=0$ recovers the base
-score. Appendix~\ref{app:window} varies $w$.
+Section~\ref{sec:method:weights} normalizes the attention mass over an index set $\mathcal{P}_t$ of retained predecessors. We build $\mathcal{P}_t$ in three steps. First, context truncation (Appendix~\ref{app:input}) fixes which earlier steps the LLM reads when it encodes $s_t$; only those can receive attention from $s_t$. Second, among them we keep the $w$ predecessors with the largest mass $m_{i,t}$. The window $w\in\{1,2,3,4,5,\text{all}\}$ is selected per cell, and $w=\text{all}$ keeps every retained predecessor. Third, we remove any turn that is never a candidate step: the user's question turn of WW-HC and, with the ground truth, the pinned answer block. The weights $w_{i,t}$ of Eq.~\ref{eq:dependency-weight} are then normalized over the surviving set. Because $w_{i,t}=0$ outside $\mathcal{P}_t$, the sums in Eq.~\ref{eq:backward-evidence} run over the successors $t$ whose $\mathcal{P}_t$ contains $i$. A step that no successor retains keeps its base score, as does the last step. The propagation strength is selected from $\gamma\in\{0, 0.1, 0.2, 0.4, 0.6, 0.8, 1.0\}$, and $\gamma=0$ recovers the base score. Appendix~\ref{app:window} varies $w$.
+
+\textbf{Hyperparameter selection.}
+To keep the search space tractable, \soap{}'s hyperparameters are selected in two stages on the validation split. Stage~1 selects the representation layer $l^\star$ and the spectral band $\mathcal{C}$ by the validation step-level accuracy of the base score alone. Stage~2 freezes $(l^\star, \mathcal{C})$ and selects the attention band $L^\star$, propagation strength $\gamma$, and window $w$ by the validation step-level accuracy of the rescored prediction. Ties in both stages are broken by agent-level accuracy. Test labels are never consulted during selection. Baselines use the hyperparameters recommended in their respective papers.
 
 
 % \textcolor{red}{this requires revision. we change the main method section.}
@@ -406,16 +453,19 @@ All-at-Once, Step-by-Step, and Binary Search run the code released with Who\&Whe
 \textbf{OAT.}
 OAT models the latent dynamics of \emph{successful} trajectories and scores each step of a failed trajectory by how far it departs from them. A neural controlled differential equation predicts each step's latent state from the trajectory so far; the anomaly score is the squared distance between the predicted and observed states, and the predicted decisive step is the argmax.
 % A step's representation is the mean of its tokens' last-layer hidden states, taken from one forward pass over the serialized trajectory and reduced to 64 dimensions by PCA.
-Training is one-class on the 103 successful tool-use trajectories released with the paper (MCP-Atlas), following the paper's own out-of-distribution protocol; one trained model serves every subset.
+Training is one-class on the successful tool-use trajectories released with the paper (MCP-Atlas), following the paper's own out-of-distribution protocol; one trained model serves every subset.
 % at test time, CORAL aligns each subset's representation statistics with the training set's, using no labels.
 % Following the released code, human and environment turns are not scored.
 In the with-GT setting the gold answer is appended to the task description with the same phrasing the prompt-based baselines use; the training corpus carries no answers, so the model is shared between settings.
 % Note that the paper's own benchmark annotates every step that contributed to a failure and reports set metrics, so its printed numbers are not comparable to Table~\ref{tab:main}.
 
-\textbf{StepFinder.}
-StepFinder is a supervised step classifier. Each step is embedded twice---128 dimensions for its text, 32 for its agent's name---and the sequence passes through a BiLSTM, an agent-aware attention layer, and a scoring head with a position prior, trained with a per-trajectory cross-entropy loss plus a self-supervised next-step objective. Training uses the step-labeled failure corpora released with the paper: 1{,}564 CaptainAgent-style and 2{,}604 Magentic-One-style trajectories. Each evaluation subset is paired with the corpus of its own agent system---WW-AG and TE-Cap with CaptainAgent, WW-HC and TE-Mag with Magentic-One---while CE matches neither and falls back to Magentic-One. To place StepFinder on the same backbones as \soap{}, we replace its encoder (Qwen3-Embedding-0.6B) with the backbone's last-layer hidden state at each step's final token, sliced to the leading 128 text and 32 agent coordinates exactly as the released code slices its embeddings.
+% [commented out 2026-09-19] Previous version of the StepFinder paragraph:
+% \textbf{StepFinder.}
+% StepFinder is a supervised step classifier. Each step is embedded twice---128 dimensions for its text, 32 for its agent's name---and the sequence passes through a BiLSTM, an agent-aware attention layer, and a scoring head with a position prior, trained with a per-trajectory cross-entropy loss plus a self-supervised next-step objective. Training uses the step-labeled failure corpora released with the paper: 1{,}564 CaptainAgent-style and 2{,}604 Magentic-One-style trajectories. Each evaluation subset is paired with the corpus of its own agent system---WW-AG and TE-Cap with CaptainAgent, WW-HC and TE-Mag with Magentic-One---while CE matches neither and falls back to Magentic-One. To place StepFinder on the same backbones as \soap{}, we replace its encoder (Qwen3-Embedding-0.6B) with the backbone's last-layer hidden state at each step's final token, sliced to the leading 128 text and 32 agent coordinates exactly as the released code slices its embeddings.
 % The checkpoint is selected on a held-out fraction of the training tasks, split by question.
-In the with-GT setting the gold answer is appended to the first step, since StepFinder encodes no separate task description; the models are shared between settings.
+% In the with-GT setting the gold answer is appended to the first step, since StepFinder encodes no separate task description; the models are shared between settings.
+\textbf{StepFinder.}
+StepFinder is a supervised step classifier. Each step's text and agent name are embedded separately, and the sequence passes through a BiLSTM, an agent-aware attention layer, and a scoring head with a position prior, trained with a per-trajectory cross-entropy loss plus a self-supervised next-step objective. Training uses the step-labeled failure corpora released with the paper. To place StepFinder on the same backbones as \soap{}, we swap its original encoder for the backbone's last-layer hidden states. In the with-GT setting the gold answer is appended to the first step, since StepFinder encodes no separate task description; the models are shared between settings.
 
 \textbf{Evaluation.}
 OAT and StepFinder score steps but name no agent; their responsible-agent prediction is the agent of the predicted step. The prompt-based judges name an agent directly, as the Who\&When prompts request, and that name is scored. We train five models per backbone; a reported cell averages over the subset's three test splits and, within each split, the five training seeds. All methods follow the same scoring rules as Table~\ref{tab:main}. 
@@ -1045,7 +1095,7 @@ ErrorProbe    & 5.9  & 6.5 \\
 
 The synthetic references of Figure~\ref{fig:transfer}(d) come from re-running the agent systems behind the two Who\&When subsets, CaptainAgent for WW-AG and Magentic-One for WW-HC, once with Qwen3.5-9B and once with GPT-4o as the backbone of their agents. The systems run on the same question pools the benchmarks draw from (GAIA and AssistantBench), and we keep the trajectories whose question belongs to the target subset. The runs are unsupervised: the corpus mixes successes and failures, carries no step-level annotation, and serves only to construct $R$. The existing benchmarks and our synthetic trajectories share a question pool but never a trajectory.
 
-The evaluation follows Table~\ref{tab:main}; only the reference changes, and the configuration is re-selected for each reference corpus. Our GPT-4o corpus differs from the Who\&When trajectories despite the shared model name for two reasons: Who\&When was generated with the \texttt{2024-08-01-preview} version of GPT-4o, whereas ours uses \texttt{2024-08-06}, and we rebuilt the generation pipeline from the paper's description because the benchmark does not release its generation code. Appendix~\ref{app:synth-results} reports the full results for both backbones.
+The evaluation follows Table~\ref{tab:main}; only the reference changes. Our GPT-4o corpus differs from the Who\&When trajectories despite the shared model name for two reasons: Who\&When was generated with the \texttt{2024-08-01-preview} version of GPT-4o, whereas ours uses \texttt{2024-08-06}, and we rebuilt the generation pipeline from the paper's description because the benchmark does not release its generation code. Appendix~\ref{app:synth-results} reports the full results for both backbones.
 
 % \textcolor{red}{disclose information on GPT-4o used.} \note{added.}
 
@@ -1225,10 +1275,8 @@ are flat by construction.}
 \subsection{Pooling of the step representation}
 \label{app:pooling}
 
-\soap{} averages the hidden states over a step's tokens. We compare this with the
-last-token representation, the choice of OAT and StepFinder, by re-selecting the
-full configuration on last-token representations under the same rule, so each
-pooling stands on its best configuration. As shown in Table~\ref{tab:pooling}, mean
+\soap{} averages the hidden states over a step's tokens. We compare this with using the
+last-token representation. As shown in Table~\ref{tab:pooling}, mean
 pooling is clearly better: on WW-AG the base score drops from 39.15 to 29.10 on
 Qwen3.5-9B and from 38.62 to 29.10 on DeepSeek-8B, and on TE-Cap from 40.31 to 24.81
 on DeepSeek-8B; only TE-Mag is close. Rescoring still helps on last-token
@@ -1241,8 +1289,8 @@ next.
 \centering
 \footnotesize
 \setlength{\tabcolsep}{3.5pt}
-\caption{Mean vs.\ last-token pooling of the step representation. Step-level accuracy
-(\%) with the full configuration re-selected per pooling; the best result in each
+\caption{Mean vs.\ last-token pooling of the step representation. We compare the step-level accuracy
+(\%); the best result in each
 column is highlighted in \textbf{bold}.}
 \label{tab:pooling}
 \begin{tabular}{l l cccc cccc}
@@ -1346,7 +1394,7 @@ Table~\ref{tab:agent} reports the responsible-agent accuracy of every row of Tab
 \setlength{\tabcolsep}{5pt}
 \caption{Agent-level accuracy (\%) in the without-ground-truth setting on
 Who\&When, for every row of Table~\ref{tab:main}. Mean over the seed triple. The
-best result in each column within a block is highlighted in \textbf{bold}. \textcolor{red}{wraptable.} }
+best result in each column within a block is highlighted in \textbf{bold}.  }
 \label{tab:agent}
 \begin{tabular}{l cc}
 \toprule
@@ -1723,17 +1771,20 @@ ErrorProbe    & \best{53.44} & 17.24 & 29.46 & 19.57 \\
 \subsection{Larger backbones}
 \label{app:proxies}
 
-Table~\ref{tab:scale} gives the numbers behind Figure~\ref{fig:scale}(a--b), with the
-seed standard deviations and the baselines at every size. Within the Qwen3.5 family \soap{} holds its level from 9B to 27B on both
-subsets (47.62 vs.\ 44.97 on WW-AG, within one standard deviation; 34.48 on WW-HC at
-both sizes, with the same $\gamma=0.1$ lift over an identical 33.33 base). The
-Qwen3-14B point is competitive on WW-AG (42.86) but 9 points lower on WW-HC, where
-its selection degenerates to a mid-stack block with a one-component band and a
-rescoring that changes nothing; because it also crosses model generations, this is
-a family effect as much as a size effect. Neither baseline scales: OAT stays within
-14--20 on WW-AG and 10--17 on WW-HC from 9B to 27B, and StepFinder moves without a
-trend, with training-seed standard deviations of 2--7 points. These results confirm
-that the margin of Table~\ref{tab:main} is intact at every size we could run.
+% [commented out 2026-09-17] Previous version of the prose paragraph:
+% Table~\ref{tab:scale} gives the numbers behind Figure~\ref{fig:scale}(a--b), with the
+% seed standard deviations and the baselines at every size. Within the Qwen3.5 family \soap{} holds its level from 9B to 27B on both
+% subsets (47.62 vs.\ 44.97 on WW-AG, within one standard deviation; 34.48 on WW-HC at
+% both sizes, with the same $\gamma=0.1$ lift over an identical 33.33 base). The
+% Qwen3-14B point is competitive on WW-AG (42.86) but 9 points lower on WW-HC, where
+% its selection degenerates to a mid-stack block with a one-component band and a
+% rescoring that changes nothing; because it also crosses model generations, this is
+% a family effect as much as a size effect. Neither baseline scales: OAT stays within
+% 14--20 on WW-AG and 10--17 on WW-HC from 9B to 27B, and StepFinder moves without a
+% trend, with training-seed standard deviations of 2--7 points. These results confirm
+% that the margin of Table~\ref{tab:main} is intact at every size we could run.
+
+Table~\ref{tab:scale} reports the numbers behind Figure~\ref{fig:scale}(a--b) with seed standard deviations and baselines at every size. Within the Qwen3.5 family, \soap{} holds its level from 9B to 27B: 47.62 vs.\ 44.97 on WW-AG (within one standard deviation) and 34.48 on WW-HC at both sizes. The Qwen3-14B point is competitive on WW-AG (42.86) but 9 points lower on WW-HC; because it also crosses model generations, this gap reflects a family effect as much as a size effect. Neither baseline scales with model size. OAT stays within 14--20 on WW-AG and 10--17 on WW-HC, and StepFinder moves without a trend, both with training-seed standard deviations of 2--7 points. The margin of Table~\ref{tab:main} holds at every size we tested.
 % \note{revised: the Qwen3.5-4B column is removed from the table and the prose (the baseline ranges now read 9B to 27B); the removed column is kept in a comment.}
 % Qwen3.5-4B column removed 2026-09-14 (author's note). Its values, WW-AG / WW-HC:
 % OAT 20.00+-1.4 / 11.03+-1.0; StepFinder 15.34+-4.0 / 10.80+-3.0; SOAP not run.
@@ -1751,16 +1802,16 @@ each column is highlighted in \textbf{bold}.}
 \toprule
 Subset & Method & Qwen3.5-9B & Qwen3-14B & Qwen3.5-27B \\
 \midrule
-\multirow{4}{*}{WW-AG}
+\multirow{3}{*}{WW-AG}
  & OAT        & $\ms{16.72}{1.7}$ & $\ms{13.97}{1.7}$ & $\ms{20.42}{1.6}$ \\
  & StepFinder & $\ms{15.87}{3.4}$ & $\ms{22.65}{4.2}$ & $\ms{13.54}{2.3}$ \\
- & \cellcolor{gray!10}\soap{} (w/o rescoring) & \cellcolor{gray!10}$\ms{39.15}{5.6}$ & \cellcolor{gray!10}$\ms{40.21}{4.6}$ & \cellcolor{gray!10}$\ms{38.62}{7.5}$ \\
+% & \cellcolor{gray!10}\soap{} (w/o rescoring) & \cellcolor{gray!10}$\ms{39.15}{5.6}$ & \cellcolor{gray!10}$\ms{40.21}{4.6}$ & \cellcolor{gray!10}$\ms{38.62}{7.5}$ \\
  & \cellcolor{gray!10}\soap{}    & \cellcolor{gray!10}{\boldmath$\ms{47.62}{3.2}$} & \cellcolor{gray!10}{\boldmath$\ms{42.86}{5.7}$} & \cellcolor{gray!10}{\boldmath$\ms{44.97}{3.3}$} \\
 \midrule
-\multirow{4}{*}{WW-HC}
+\multirow{3}{*}{WW-HC}
  & OAT        & $\ms{10.11}{1.3}$ & $\ms{16.78}{2.2}$ & $\ms{12.41}{1.3}$ \\
  & StepFinder & $\ms{13.33}{5.4}$ & $\ms{14.02}{3.3}$ & $\ms{16.55}{7.0}$ \\
- & \cellcolor{gray!10}\soap{} (w/o rescoring) & \cellcolor{gray!10}$\ms{33.33}{5.3}$ & \cellcolor{gray!10}{\boldmath$\ms{25.29}{8.0}$} & \cellcolor{gray!10}$\ms{33.33}{2.0}$ \\
+% & \cellcolor{gray!10}\soap{} (w/o rescoring) & \cellcolor{gray!10}$\ms{33.33}{5.3}$ & \cellcolor{gray!10}{\boldmath$\ms{25.29}{8.0}$} & \cellcolor{gray!10}$\ms{33.33}{2.0}$ \\
  & \cellcolor{gray!10}\soap{}    & \cellcolor{gray!10}{\boldmath$\ms{34.48}{3.5}$} & \cellcolor{gray!10}{\boldmath$\ms{25.29}{8.0}$} & \cellcolor{gray!10}{\boldmath$\ms{34.48}{3.5}$} \\
 \bottomrule
 \end{tabular}
@@ -1795,8 +1846,7 @@ Figure~\ref{fig:transfer-app} gives the complete transfer grids for both backbon
 \centering
 \includegraphics[width=0.9\textwidth]{assets/fig_transfer_appendix.pdf}
 \caption{Cross-distribution transfer, all grids. Step-level accuracy (\%) of \soap{}
-with the reference fitted on the source subset (rows) and the configuration
-re-selected and evaluated on the target subset (columns), for both backbones. The outlined
+with the reference fitted on the source subset (rows) and evaluated on the target subset (columns), for both backbones. The outlined
 diagonal is the in-distribution number of Table~\ref{tab:main} in every grid.}
 \label{fig:transfer-app}
 \end{figure}
@@ -1867,6 +1917,14 @@ diagonal is the in-distribution number of Table~\ref{tab:main} in every grid.}
 \subsection{Synthetic references, full results}
 \label{app:synth-results}
 
+Table~\ref{tab:synth-app} extends Figure~\ref{fig:transfer}(d) to DeepSeek-R1-Distill-Llama-8B (generation details in Appendix~\ref{app:synth}). On WW-AG, the existing benchmark reference remains strongest (45.50), while both synthetic corpora stay within 6--7 points (39.68 and 38.10). On WW-HC the Qwen3.5-9B-generated corpus slightly exceeds the existing benchmark reference (29.89 vs.\ 28.74). Neither generator consistently dominates: GPT-4o wins on WW-AG and Qwen3.5-9B wins on WW-HC, matching the pattern observed with the Qwen3.5-9B backbone in Figure~\ref{fig:transfer}(d). All synthetic rows remain well above the training-based baselines of Table~\ref{tab:main}. 
+
+
+
+
+% \textcolor{red}{please refine all the texts.}
+% \note{revised: removed redundant results on base scores to avoid delivering mixed messages.}
+
 \begin{table}
 \vspace{-0.3\baselineskip}
 \centering
@@ -1888,10 +1946,6 @@ Synthetic, GPT-4o      & 38.10 & 25.29 \\
 \end{tabular}
 \vspace{-\baselineskip}
 \end{table}
-
-Table~\ref{tab:synth-app} extends Figure~\ref{fig:transfer}(d) to DeepSeek-R1-Distill-Llama-8B (generation details in Appendix~\ref{app:synth}). On WW-AG the existing benchmark reference remains strongest (45.50), while both synthetic corpora stay within 6--7 points (39.68 and 38.10). On WW-HC the Qwen3.5-9B-generated corpus slightly exceeds the existing benchmark reference (29.89 vs.\ 28.74). Neither generator consistently dominates: GPT-4o wins on WW-AG and Qwen3.5-9B wins on WW-HC, matching the pattern observed with the Qwen3.5-9B backbone in Figure~\ref{fig:transfer}(d). All synthetic rows remain well above the training-based baselines of Table~\ref{tab:main}.
-\textcolor{red}{please refine all the texts.}
-\note{revised: removed redundant results on base scores to avoid delivering mixed messages.}
 
 \subsection{Qualitative examples}
 \label{app:qualitative}
@@ -1942,7 +1996,7 @@ Table~\ref{tab:synth-app} extends Figure~\ref{fig:transfer}(d) to DeepSeek-R1-Di
 
 Figures~\ref{fig:qual-text-1}--\ref{fig:qual-text-4} show four textual trajectories
 in the test set, all scored with Qwen3.5-9B under the configuration selected
-for Table~\ref{tab:main}. We denote step $i$ as $S_i$. Each step shows its agent, $[\Sbase \rightarrow \Stilde]$ (base and rescored score, $\times 10^{3}$), and its content condensed by us; tags mark the annotated decisive step and each score's argmax. The third example (Figure~\ref{fig:qual-text-3}) is the trajectory whose score plot appears in Figure~\ref{fig:qualitative}. Agent names and step indices are as released. The WW-HC trajectory (Figure~\ref{fig:qual-text-2}) uses Magentic-One, whose orchestrator alternates between private ledger entries and dispatches: \textsf{(thought)} marks a ledger entry where the orchestrator reasons about progress, and $\rightarrow$ marks an instruction sent to an agent.
+for Table~\ref{tab:main}. We denote step $i$ as $S_i$. Each step shows its agent, $[\Sbase \rightarrow \Stilde]$ (base and rescored score, $\times 10^{-3}$), and its content condensed by us; tags mark the annotated decisive step and each score's argmax. The third example (Figure~\ref{fig:qual-text-3}) is the trajectory whose score plot appears in Figure~\ref{fig:qualitative}. Agent names and step indices are as released. The WW-HC trajectory (Figure~\ref{fig:qual-text-2}) uses Magentic-One, whose orchestrator alternates between private ledger entries and dispatches: \textsf{(thought)} marks a ledger entry where the orchestrator reasons about progress, and $\rightarrow$ marks an instruction sent to an agent.
 
 The four trajectories fail in different ways, but the base score misreads them in the same way: it flags a late symptom rather than the step that caused it. \soap{} rescores each step by accounting for the attention its successors pay to it, correcting this downstream contamination. For each example we give the task, the annotated decisive step and what went wrong, where the base score peaks, and where \soap{} lands.
 \begin{itemize}

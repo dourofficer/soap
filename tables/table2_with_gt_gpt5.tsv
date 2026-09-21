@@ -7,6 +7,7 @@ Binary Search			47.09	24.14	77.42	31.01	25.36
 CORRECT	cmark	cmark	32.80	21.84	38.25	27.13	20.29
 RAFFLES			49.21	34.48		36.43	28.99
 CHIEF			29.63	18.39		14.73	22.46
+ErrorProbe			53.44	17.24		29.46	19.57
 Backbone: Qwen3.5-9B							
 Trained LLM attributors							
 AgenTracer	xmark	cmark					

@@ -1,0 +1,166 @@
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/760 [00:00<?, ?it/s]Loading weights:   0%|          | 1/760 [00:00<04:22,  2.89it/s]Loading weights:   0%|          | 2/760 [00:00<04:58,  2.54it/s]Loading weights:   3%|▎         | 21/760 [00:00<00:20, 35.37it/s]Loading weights:   5%|▌         | 41/760 [00:00<00:10, 66.27it/s]Loading weights:   7%|▋         | 54/760 [00:01<00:09, 77.51it/s]Loading weights:  10%|█         | 76/760 [00:01<00:06, 110.39it/s]Loading weights:  12%|█▏        | 94/760 [00:01<00:05, 126.43it/s]Loading weights:  14%|█▍        | 110/760 [00:01<00:04, 131.18it/s]Loading weights:  17%|█▋        | 132/760 [00:01<00:04, 153.84it/s]Loading weights:  20%|█▉        | 150/760 [00:01<00:04, 143.10it/s]Loading weights:  22%|██▏       | 169/760 [00:01<00:03, 154.39it/s]Loading weights:  24%|██▍       | 186/760 [00:01<00:03, 157.61it/s]Loading weights:  27%|██▋       | 203/760 [00:02<00:03, 147.75it/s]Loading weights:  29%|██▉       | 219/760 [00:02<00:03, 149.81it/s]Loading weights:  31%|███▏      | 239/760 [00:02<00:03, 154.90it/s]Loading weights:  34%|███▎      | 255/760 [00:02<00:03, 144.39it/s]Loading weights:  36%|███▌      | 275/760 [00:02<00:03, 158.99it/s]Loading weights:  38%|███▊      | 292/760 [00:02<00:02, 156.09it/s]Loading weights:  41%|████      | 308/760 [00:02<00:03, 137.86it/s]Loading weights:  43%|████▎     | 328/760 [00:02<00:02, 151.64it/s]Loading weights:  45%|████▌     | 344/760 [00:02<00:02, 150.41it/s]Loading weights:  47%|████▋     | 360/760 [00:03<00:02, 152.26it/s]Loading weights:  49%|████▉     | 376/760 [00:03<00:02, 150.46it/s]Loading weights:  52%|█████▏    | 397/760 [00:03<00:02, 166.70it/s]Loading weights:  54%|█████▍    | 414/760 [00:03<00:02, 152.43it/s]Loading weights:  62%|██████▏   | 471/760 [00:03<00:01, 264.36it/s]Loading weights:  88%|████████▊ | 671/760 [00:03<00:00, 742.54it/s]Loading weights: 100%|██████████| 760/760 [00:03<00:00, 208.46it/s]
+  algorithm-generated    1 tok= 1258 steps=  6 single=  0.26s perstep=   2.85s
+  algorithm-generated    2 tok= 1451 steps=  7 single=  0.34s perstep=   3.52s
+  algorithm-generated    3 tok= 2856 steps=  8 single=  0.50s perstep=   4.87s
+  algorithm-generated    4 tok= 1389 steps=  8 single=  0.33s perstep=   3.83s
+  algorithm-generated    5 tok= 1903 steps=  9 single=  0.38s perstep=   5.12s
+  algorithm-generated    6 tok= 3888 steps=  8 single=  0.61s perstep=   6.66s
+  algorithm-generated    7 tok= 1983 steps= 10 single=  0.40s perstep=   5.40s
+  algorithm-generated    8 tok= 4054 steps= 10 single=  0.69s perstep=   8.42s
+  algorithm-generated    9 tok= 2266 steps=  5 single=  0.42s perstep=   3.34s
+  algorithm-generated   10 tok= 1488 steps= 10 single=  0.36s perstep=   5.10s
+  algorithm-generated   11 tok= 2947 steps= 10 single=  0.58s perstep=   6.59s
+  algorithm-generated   12 tok=  964 steps=  5 single=  0.29s perstep=   2.34s
+  algorithm-generated   13 tok= 4323 steps= 10 single=  0.73s perstep=   8.77s
+  algorithm-generated   14 tok= 5856 steps= 10 single=  0.93s perstep=  10.34s
+  algorithm-generated   15 tok= 3099 steps= 10 single=  0.59s perstep=   7.08s
+  algorithm-generated   16 tok= 2493 steps= 10 single=  0.52s perstep=   7.09s
+  algorithm-generated   17 tok= 2107 steps= 10 single=  0.47s perstep=   6.56s
+  algorithm-generated   18 tok= 3257 steps= 10 single=  0.71s perstep=   7.43s
+  algorithm-generated   19 tok=  830 steps= 10 single=  0.33s perstep=   4.65s
+  algorithm-generated   21 tok= 1226 steps=  6 single=  0.36s perstep=   3.18s
+  algorithm-generated   22 tok= 1442 steps=  6 single=  0.39s perstep=   3.33s
+  algorithm-generated   23 tok= 2141 steps= 10 single=  0.47s perstep=   6.16s
+  algorithm-generated   24 tok= 1345 steps= 10 single=  0.40s perstep=   5.32s
+  algorithm-generated   25 tok= 5943 steps= 10 single=  1.00s perstep=  12.26s
+  algorithm-generated   26 tok= 3714 steps=  9 single=  0.67s perstep=   7.68s
+  algorithm-generated   27 tok= 2835 steps= 10 single=  0.56s perstep=   8.56s
+  algorithm-generated   29 tok= 5756 steps= 10 single=  0.89s perstep=  12.61s
+  algorithm-generated   30 tok=  947 steps=  7 single=  0.37s perstep=   3.69s
+  algorithm-generated   31 tok= 3009 steps= 10 single=  0.58s perstep=   8.66s
+  algorithm-generated   32 tok= 3737 steps= 10 single=  0.70s perstep=   7.10s
+  algorithm-generated   33 tok= 3133 steps= 10 single=  0.59s perstep=   8.20s
+  algorithm-generated   34 tok= 1599 steps=  8 single=  0.41s perstep=   4.47s
+  algorithm-generated   36 tok= 2209 steps=  9 single=  0.48s perstep=   6.78s
+  algorithm-generated   37 tok= 1679 steps=  6 single=  0.42s perstep=   3.71s
+  algorithm-generated   38 tok=  735 steps=  6 single=  0.30s perstep=   2.66s
+  algorithm-generated   39 tok= 2720 steps= 10 single=  0.55s perstep=   7.84s
+  algorithm-generated   40 tok= 2562 steps=  9 single=  0.54s perstep=   6.42s
+  algorithm-generated   41 tok= 1041 steps=  6 single=  0.34s perstep=   2.97s
+  algorithm-generated   42 tok= 1106 steps=  6 single=  0.32s perstep=   3.19s
+  algorithm-generated   43 tok= 1500 steps=  9 single=  0.36s perstep=   4.89s
+  algorithm-generated   44 tok= 2381 steps= 10 single=  0.46s perstep=   6.63s
+  algorithm-generated   45 tok= 1142 steps=  5 single=  0.38s perstep=   2.33s
+  algorithm-generated   46 tok= 1795 steps=  7 single=  0.35s perstep=   4.34s
+  algorithm-generated   47 tok= 1061 steps=  6 single=  0.30s perstep=   3.05s
+  algorithm-generated   48 tok= 2161 steps= 10 single=  0.56s perstep=   6.18s
+  algorithm-generated   49 tok= 3705 steps= 10 single=  0.75s perstep=   6.93s
+  algorithm-generated   50 tok= 2261 steps= 10 single=  0.45s perstep=   5.52s
+  algorithm-generated   51 tok= 1442 steps=  6 single=  0.31s perstep=   2.71s
+  algorithm-generated   52 tok= 2444 steps= 10 single=  0.48s perstep=   5.81s
+  algorithm-generated   53 tok= 1030 steps=  5 single=  0.32s perstep=   2.28s
+  algorithm-generated   54 tok= 1993 steps= 10 single=  0.42s perstep=   5.53s
+  algorithm-generated   55 tok= 4867 steps= 10 single=  0.72s perstep=  10.65s
+  algorithm-generated   56 tok= 1560 steps= 10 single=  0.37s perstep=   4.73s
+  algorithm-generated   57 tok= 2861 steps=  5 single=  0.47s perstep=   3.53s
+  algorithm-generated   58 tok=  978 steps=  6 single=  0.29s perstep=   2.63s
+  algorithm-generated   59 tok= 4276 steps= 10 single=  0.63s perstep=   8.70s
+  algorithm-generated   60 tok= 2103 steps= 10 single=  0.42s perstep=   5.33s
+  algorithm-generated   61 tok= 1978 steps= 10 single=  0.39s perstep=   4.99s
+  algorithm-generated   62 tok= 1278 steps=  7 single=  0.27s perstep=   3.54s
+  algorithm-generated   63 tok= 2169 steps= 10 single=  0.42s perstep=   5.79s
+  algorithm-generated   64 tok= 6961 steps= 10 single=  1.00s perstep=  10.49s
+  algorithm-generated   65 tok= 1083 steps=  6 single=  0.31s perstep=   2.61s
+  algorithm-generated   66 tok=  994 steps=  6 single=  0.28s perstep=   2.57s
+  algorithm-generated   67 tok= 2131 steps= 10 single=  0.41s perstep=   5.94s
+  algorithm-generated   68 tok= 1780 steps=  7 single=  0.36s perstep=   3.94s
+  algorithm-generated   69 tok= 1634 steps= 10 single=  0.35s perstep=   4.73s
+  algorithm-generated   70 tok= 1007 steps=  6 single=  0.26s perstep=   2.64s
+  algorithm-generated   71 tok= 1572 steps= 10 single=  0.35s perstep=   4.98s
+  algorithm-generated   72 tok= 2020 steps= 10 single=  0.39s perstep=   5.19s
+  algorithm-generated   73 tok=  845 steps=  7 single=  0.28s perstep=   2.82s
+  algorithm-generated   74 tok= 1413 steps= 10 single=  0.33s perstep=   4.61s
+  algorithm-generated   75 tok= 2048 steps=  7 single=  0.39s perstep=   3.76s
+  algorithm-generated   76 tok= 2248 steps= 10 single=  0.46s perstep=   5.43s
+  algorithm-generated   77 tok= 2203 steps= 10 single=  0.63s perstep=   5.66s
+  algorithm-generated   78 tok= 2584 steps= 10 single=  0.47s perstep=   5.45s
+  algorithm-generated   79 tok= 3849 steps= 10 single=  0.63s perstep=   7.52s
+  algorithm-generated   81 tok= 1133 steps=  9 single=  0.27s perstep=   3.81s
+  algorithm-generated   82 tok= 1835 steps=  7 single=  0.37s perstep=   3.57s
+  algorithm-generated   83 tok= 2249 steps= 10 single=  0.44s perstep=   5.80s
+  algorithm-generated   84 tok= 1949 steps=  9 single=  0.39s perstep=   4.40s
+  algorithm-generated   85 tok= 6190 steps=  9 single=  0.87s perstep=  10.08s
+  algorithm-generated   86 tok= 3786 steps=  7 single=  0.59s perstep=   5.60s
+  algorithm-generated   87 tok= 1919 steps=  9 single=  0.38s perstep=   4.70s
+  algorithm-generated   88 tok= 2469 steps= 10 single=  0.53s perstep=   6.02s
+  algorithm-generated   89 tok= 2585 steps= 10 single=  0.46s perstep=   5.99s
+  algorithm-generated   90 tok= 3104 steps= 10 single=  0.52s perstep=   6.94s
+  algorithm-generated   91 tok= 2780 steps= 10 single=  0.48s perstep=   6.20s
+  algorithm-generated   92 tok= 1488 steps= 10 single=  0.41s perstep=   4.33s
+  algorithm-generated   93 tok=  709 steps=  6 single=  0.26s perstep=   2.21s
+  algorithm-generated   94 tok= 2315 steps= 10 single=  0.43s perstep=   5.20s
+  algorithm-generated   95 tok= 4957 steps= 10 single=  0.72s perstep=   6.65s
+  algorithm-generated   96 tok= 1942 steps= 10 single=  0.40s perstep=   5.02s
+  algorithm-generated   97 tok= 1480 steps= 10 single=  0.34s perstep=   4.49s
+  algorithm-generated   98 tok= 2544 steps=  7 single=  0.44s perstep=   4.72s
+  algorithm-generated   99 tok= 2239 steps=  7 single=  0.38s perstep=   4.22s
+  algorithm-generated  100 tok= 4785 steps= 10 single=  0.71s perstep=   7.56s
+  algorithm-generated  101 tok= 2075 steps=  8 single=  0.41s perstep=   4.08s
+  algorithm-generated  102 tok= 1553 steps= 10 single=  0.37s perstep=   4.99s
+  algorithm-generated  103 tok= 6772 steps= 10 single=  0.94s perstep=  11.46s
+  algorithm-generated  104 tok= 2845 steps= 10 single=  0.51s perstep=   5.50s
+  algorithm-generated  105 tok= 1953 steps=  8 single=  0.38s perstep=   4.55s
+  algorithm-generated  106 tok= 1146 steps=  6 single=  0.31s perstep=   2.86s
+  algorithm-generated  107 tok= 3323 steps=  8 single=  0.53s perstep=   4.50s
+  algorithm-generated  109 tok= 6920 steps= 10 single=  0.95s perstep=   9.31s
+  algorithm-generated  111 tok= 3013 steps= 10 single=  0.51s perstep=   6.94s
+  algorithm-generated  112 tok= 2891 steps= 10 single=  0.49s perstep=   6.63s
+  algorithm-generated  113 tok= 4491 steps=  9 single=  0.68s perstep=   7.51s
+  algorithm-generated  114 tok= 3447 steps=  7 single=  0.67s perstep=   5.04s
+  algorithm-generated  115 tok= 1293 steps=  7 single=  0.40s perstep=   3.40s
+  algorithm-generated  116 tok= 2668 steps= 10 single=  0.47s perstep=   5.92s
+  algorithm-generated  117 tok= 1552 steps=  7 single=  0.35s perstep=   3.50s
+  algorithm-generated  118 tok= 2642 steps= 10 single=  0.47s perstep=   6.33s
+  algorithm-generated  119 tok= 2452 steps=  8 single=  0.44s perstep=   4.85s
+  algorithm-generated  120 tok= 4682 steps= 10 single=  0.70s perstep=   7.99s
+  algorithm-generated  121 tok= 1552 steps=  7 single=  0.32s perstep=   3.42s
+  algorithm-generated  122 tok= 7234 steps= 10 single=  1.01s perstep=   9.28s
+  algorithm-generated  123 tok= 2961 steps= 10 single=  0.52s perstep=   6.32s
+  algorithm-generated  124 tok= 2324 steps= 10 single=  0.43s perstep=   5.08s
+  algorithm-generated  125 tok= 1837 steps= 10 single=  0.34s perstep=   4.91s
+  algorithm-generated  126 tok= 2983 steps=  8 single=  0.50s perstep=   5.06s
+[algorithm-generated] 120 single-pass, 6 over budget -> per-step copies
+  hand-crafted    4 tok= 6408 steps= 16 single=  0.86s perstep=  16.45s
+  hand-crafted    5 tok= 5251 steps= 19 single=  0.82s perstep=  18.58s
+  hand-crafted    6 tok= 2750 steps=  7 single=  0.49s perstep=   4.75s
+  hand-crafted   12 tok= 7194 steps= 19 single=  1.03s perstep=  22.55s
+  hand-crafted   22 tok= 7575 steps= 23 single=  1.11s perstep=  27.41s
+  hand-crafted   24 tok= 1638 steps=  4 single=  0.37s perstep=   2.58s
+  hand-crafted   25 tok= 7867 steps= 19 single=  1.13s perstep=  22.23s
+  hand-crafted   26 tok= 8020 steps= 32 single=  1.19s perstep=  39.95s
+  hand-crafted   29 tok= 5737 steps= 12 single=  0.88s perstep=  10.33s
+  hand-crafted   32 tok= 4260 steps= 11 single=  0.64s perstep=   9.34s
+  hand-crafted   33 tok= 4293 steps=  8 single=  0.66s perstep=   5.92s
+  hand-crafted   34 tok= 3761 steps=  4 single=  0.58s perstep=   2.52s
+  hand-crafted   43 tok= 4740 steps= 15 single=  0.70s perstep=  13.82s
+  hand-crafted   45 tok= 6869 steps= 20 single=  1.00s perstep=  21.42s
+  hand-crafted   48 tok= 3414 steps=  4 single=  0.55s perstep=   2.45s
+  hand-crafted   54 tok= 5454 steps= 18 single=  0.79s perstep=  17.79s
+  hand-crafted   57 tok= 6006 steps= 16 single=  0.97s perstep=  16.91s
+[hand-crafted] 17 single-pass, 41 over budget -> per-step copies
+[algorithm-generated] compared 1042 steps
+[hand-crafted] compared 247 steps
+{'subset': 'algorithm-generated', 'device': 'cpu', 'n_ref_traj': 37, 'n_ref_steps': 330, 'dim': 4096, 'n_test_traj': 63, 'svd_fit_s': 0.13141362369060516, 'score_ms_per_traj': 0.005832888067714752, 'rescore_ms_per_traj': 2.7022945088526558, 'attn_load_s_subset': 0.1071944460272789}
+{'subset': 'algorithm-generated', 'device': 'cuda', 'n_ref_traj': 37, 'n_ref_steps': 330, 'dim': 4096, 'n_test_traj': 63, 'svd_fit_s': 0.011994404718279839, 'score_ms_per_traj': 0.002137902710172865, 'rescore_ms_per_traj': 9.256132390527497, 'attn_load_s_subset': 0.20095372200012207}
+{'subset': 'hand-crafted', 'device': 'cpu', 'n_ref_traj': 17, 'n_ref_steps': 742, 'dim': 4096, 'n_test_traj': 29, 'svd_fit_s': 0.3017622046172619, 'score_ms_per_traj': 0.17654812284584703, 'rescore_ms_per_traj': 21.115604145773524, 'attn_load_s_subset': 0.3303309939801693}
+{'subset': 'hand-crafted', 'device': 'cuda', 'n_ref_traj': 17, 'n_ref_steps': 742, 'dim': 4096, 'n_test_traj': 29, 'svd_fit_s': 0.03841149061918259, 'score_ms_per_traj': 0.008312150322157761, 'rescore_ms_per_traj': 63.414049688084376, 'attn_load_s_subset': 0.7410354223102331}
+                                            0             1
+subset                    algorithm-generated  hand-crafted
+budget                                   8192          8192
+n_total                                   126            58
+n_in_budget                               120            17
+tokens_per_traj                   2530.958333   5366.882353
+steps_per_traj                       8.683333     14.529412
+single_pass_s_per_traj               0.482278      0.811554
+perstep_act_s_per_traj               3.060185      7.765481
+perstep_attn_s_per_traj              2.491283       7.23445
+perstep_total_s_per_traj             5.551468     14.999931
+svd_fit_s_cpu                        0.131414      0.301762
+score_ms_per_traj_cpu                0.005833      0.176548
+rescore_ms_per_traj_cpu              2.702295     21.115604
+n_ref_traj                                 37            17
+n_ref_steps                               330           742
+svd_fit_s_cuda                       0.011994      0.038411
+score_ms_per_traj_cuda               0.002138      0.008312
+rescore_ms_per_traj_cuda             9.256132      63.41405

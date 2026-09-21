@@ -1,0 +1,42 @@
+[ww] qwen3.5-9b/algorithm-generated anchor=act/27 [1,7) L=0-2 gamma=0.6 w=1
+[ww] qwen3.5-9b/hand-crafted anchor=act/31 [0,5) L=4-6 gamma=0.1 w=2
+[ww] deepseek-8b/algorithm-generated anchor=act/3 [1,5) L=24-32 gamma=1.0 w=1
+[ww] deepseek-8b/hand-crafted anchor=act/31 [0,4) L=8-16 gamma=0.0 w=all
+[traceelephant] qwen3.5-9b/magentic anchor=act/23 [0,2) L=6-8 gamma=1.0 w=4
+[traceelephant] qwen3.5-9b/captain anchor=act/23 [0,3) L=6-8 gamma=0.1 w=5
+[traceelephant] deepseek-8b/magentic anchor=act/10 [0,4) L=24-32 gamma=0.1 w=1
+[traceelephant] deepseek-8b/captain anchor=act/31_normed [0,18) L=8-16 gamma=0.2 w=all
+wrote /root/dataDisk/home/thanhdo/soap/results-ablations/a11_rescore_controls.tsv  (331 rows) and /root/dataDisk/home/thanhdo/soap/results-ablations/a11_rescore_controls_diag.tsv
+
+=== deepseek-8b (selected gamma in brackets; step acc %, test) ===
+cell          traceelephant/captain traceelephant/magentic ww/algorithm-generated ww/hand-crafted
+row                                                                                              
+base                    40.31 (0.0)            29.71 (0.0)            38.62 (0.0)     28.74 (0.0)
+exclude-final           42.64 (0.0)            27.54 (0.0)            38.62 (0.0)     16.09 (0.0)
+next-step               40.31 (0.1)            29.71 (0.0)            38.62 (0.0)     28.74 (0.0)
+const-boost             42.64 (1.0)            29.71 (0.0)            38.62 (1.0)     28.74 (0.0)
+uniform-norm            42.64 (0.1)            29.71 (0.0)            38.62 (0.0)     28.74 (0.0)
+soap                    42.64 (0.2)            30.43 (0.1)             45.5 (1.0)             NaN
+soap-lennorm            42.64 (0.2)            29.71 (0.0)            38.62 (0.0)             NaN
+soap-nofirst            42.64 (0.2)            30.43 (0.1)            40.21 (0.8)             NaN
+
+=== qwen3.5-9b (selected gamma in brackets; step acc %, test) ===
+cell          traceelephant/captain traceelephant/magentic ww/algorithm-generated ww/hand-crafted
+row                                                                                              
+base                    33.33 (0.0)            21.01 (0.0)            39.15 (0.0)     33.33 (0.0)
+exclude-final           34.88 (0.0)            19.57 (0.0)            40.74 (0.0)     22.99 (0.0)
+next-step               35.66 (0.1)            21.01 (0.0)            39.68 (0.1)     33.33 (0.0)
+const-boost             34.88 (1.0)            21.01 (0.0)            40.74 (1.0)     34.48 (0.1)
+uniform-norm            35.66 (0.1)            21.01 (0.0)            41.27 (0.8)     34.48 (0.1)
+soap                    35.66 (0.1)            23.19 (1.0)            47.62 (0.6)     34.48 (0.1)
+soap-lennorm            33.33 (0.1)            21.01 (0.0)            40.74 (0.1)     34.48 (0.1)
+soap-nofirst            35.66 (0.1)            21.74 (1.0)            40.74 (0.2)     34.48 (0.1)
+
+      dataset       model              subset  anchor_gamma   w  test_trajs  flips  flip_base_was_final  flip_moved_earlier  flip_mean_hops_earlier  flips_fixed  flips_broke  first_turn_mass  first_turn_mass_uniform
+           ww  qwen3.5-9b algorithm-generated           0.6   1         189     65                0.062               0.754                   1.477           23            7            0.438                    0.342
+           ww  qwen3.5-9b        hand-crafted           0.1   2          87      9                0.444               0.889                  21.333            1            0            0.031                    0.069
+           ww deepseek-8b algorithm-generated           1.0   1         189     75                0.013               0.840                   1.600           28           15            0.421                    0.342
+traceelephant  qwen3.5-9b            magentic           1.0   4         138     52                0.288               0.673                   8.942            8            5            0.162                    0.132
+traceelephant  qwen3.5-9b             captain           0.1   5         129      6                1.000               1.000                   4.000            3            0            0.272                    0.168
+traceelephant deepseek-8b            magentic           0.1   1         138     14                0.286               0.571                   2.429            3            2            0.166                    0.132
+traceelephant deepseek-8b             captain           0.2 all         129      7                1.000               1.000                   9.429            3            0            0.184                    0.168

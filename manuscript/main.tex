@@ -35,7 +35,9 @@
 \newcommand{\ms}[2]{\ensuremath{#1_{\,\pm #2}}}
 \newcommand{\TODO}[1]{\textcolor{red}{[TODO: #1]}}
 % \newcommand{\note}[1]{\textcolor{blue}{[Finn: #1]}} 
-\newcommand{\note}[1]{\textcolor{purple}{[#1 ---\textsc{finn}]}}
+% \newcommand{\note}[1]{\textcolor{purple}{[#1 ---\textsc{finn}]}}
+\newcommand{\note}[1]{\leavevmode{\color{purple}[#1 ---\textsc{finn}]}}  % \color, not \textcolor: the argument may hold paragraphs and lists
+
 \newcommand{\junlin}[1]{\textcolor{blue}{[#1 ---\textsc{junlin}]}}
 
 

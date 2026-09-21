@@ -1,0 +1,189 @@
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/760 [00:00<?, ?it/s]Loading weights:   0%|          | 1/760 [00:00<10:39,  1.19it/s]Loading weights:   2%|▎         | 19/760 [00:00<00:27, 27.07it/s]Loading weights:   5%|▌         | 41/760 [00:01<00:12, 58.54it/s]Loading weights:   7%|▋         | 56/760 [00:01<00:09, 73.72it/s]Loading weights:  10%|█         | 79/760 [00:01<00:06, 105.94it/s]Loading weights:  13%|█▎        | 96/760 [00:01<00:05, 114.14it/s]Loading weights:  16%|█▌        | 119/760 [00:01<00:04, 137.51it/s]Loading weights:  18%|█▊        | 137/760 [00:01<00:04, 142.08it/s]Loading weights:  20%|██        | 154/760 [00:01<00:04, 132.68it/s]Loading weights:  23%|██▎       | 175/760 [00:01<00:03, 151.43it/s]Loading weights:  26%|██▌       | 199/760 [00:01<00:03, 172.27it/s]Loading weights:  29%|██▊       | 218/760 [00:02<00:03, 156.64it/s]Loading weights:  31%|███       | 235/760 [00:02<00:03, 159.34it/s]Loading weights:  33%|███▎      | 253/760 [00:02<00:03, 156.36it/s]Loading weights:  36%|███▌      | 270/760 [00:02<00:03, 151.73it/s]Loading weights:  38%|███▊      | 292/760 [00:02<00:02, 161.49it/s]Loading weights:  41%|████      | 309/760 [00:02<00:02, 151.56it/s]Loading weights:  43%|████▎     | 328/760 [00:02<00:02, 160.98it/s]Loading weights:  45%|████▌     | 345/760 [00:02<00:02, 147.50it/s]Loading weights:  48%|████▊     | 364/760 [00:03<00:02, 154.13it/s]Loading weights:  51%|█████     | 384/760 [00:03<00:02, 164.21it/s]Loading weights:  53%|█████▎    | 401/760 [00:03<00:02, 161.44it/s]Loading weights:  55%|█████▌    | 418/760 [00:03<00:02, 155.45it/s]Loading weights:  73%|███████▎  | 553/760 [00:03<00:00, 477.67it/s]Loading weights:  99%|█████████▉| 753/760 [00:03<00:00, 891.61it/s]Loading weights: 100%|██████████| 760/760 [00:03<00:00, 209.87it/s]
+model loaded: 17.53 GB of weights on NVIDIA H200
+  algorithm-generated 1/126 1: steps=6 passes=6+5 tokens=11417 time=4.7s peak=18.52GB
+  algorithm-generated 2/126 2: steps=7 passes=7+6 tokens=14085 time=3.4s peak=18.66GB
+  algorithm-generated 3/126 3: steps=8 passes=8+7 tokens=26269 time=4.9s peak=19.73GB
+  algorithm-generated 4/126 4: steps=8 passes=8+7 tokens=15953 time=4.0s peak=18.62GB
+  algorithm-generated 5/126 5: steps=9 passes=9+8 tokens=25468 time=5.2s peak=19.01GB
+  algorithm-generated 6/126 6: steps=8 passes=8+7 tokens=44691 time=6.6s peak=20.51GB
+  algorithm-generated 7/126 7: steps=10 passes=10+9 tokens=23734 time=5.2s peak=19.07GB
+  algorithm-generated 8/126 8: steps=10 passes=10+9 tokens=55925 time=8.3s peak=20.65GB
+  algorithm-generated 9/126 9: steps=5 passes=5+4 tokens=18037 time=3.3s peak=19.29GB
+  algorithm-generated 10/126 10: steps=10 passes=10+9 tokens=19018 time=4.7s peak=18.70GB
+  algorithm-generated 11/126 11: steps=10 passes=10+9 tokens=36588 time=6.5s peak=19.81GB
+  algorithm-generated 12/126 12: steps=5 passes=5+4 tokens=7631 time=2.1s peak=18.31GB
+  algorithm-generated 13/126 13: steps=10 passes=10+9 tokens=49230 time=7.7s peak=20.85GB
+  algorithm-generated 14/126 14: steps=10 passes=10+9 tokens=61254 time=8.8s peak=22.02GB
+  algorithm-generated 15/126 15: steps=10 passes=10+9 tokens=33022 time=6.0s peak=19.91GB
+  algorithm-generated 16/126 16: steps=10 passes=10+9 tokens=34409 time=6.1s peak=19.46GB
+  algorithm-generated 17/126 17: steps=10 passes=10+9 tokens=26219 time=5.4s peak=19.16GB
+  algorithm-generated 18/126 18: steps=10 passes=10+9 tokens=33090 time=6.0s peak=20.04GB
+  algorithm-generated 19/126 19: steps=10 passes=10+9 tokens=10668 time=3.9s peak=18.19GB
+  algorithm-generated 20/126 20: steps=10 passes=10+9 tokens=87407 time=11.2s peak=23.67GB
+  algorithm-generated 21/126 21: steps=6 passes=6+5 tokens=10692 time=3.0s peak=18.51GB
+  algorithm-generated 22/126 22: steps=6 passes=6+5 tokens=10486 time=2.9s peak=18.66GB
+  algorithm-generated 23/126 23: steps=10 passes=10+9 tokens=22580 time=5.0s peak=19.20GB
+  algorithm-generated 24/126 24: steps=10 passes=10+9 tokens=15582 time=4.4s peak=18.60GB
+  algorithm-generated 25/126 25: steps=10 passes=10+9 tokens=77140 time=10.5s peak=22.07GB
+  algorithm-generated 26/126 26: steps=9 passes=9+8 tokens=40184 time=6.5s peak=20.39GB
+  algorithm-generated 27/126 27: steps=10 passes=10+9 tokens=43113 time=7.1s peak=19.71GB
+  algorithm-generated 28/126 28: steps=10 passes=10+9 tokens=105842 time=13.3s peak=23.76GB
+  algorithm-generated 29/126 29: steps=10 passes=10+9 tokens=80468 time=10.5s peak=21.93GB
+  algorithm-generated 30/126 30: steps=7 passes=7+6 tokens=10108 time=3.2s peak=18.28GB
+  algorithm-generated 31/126 31: steps=10 passes=10+9 tokens=44660 time=7.2s peak=19.86GB
+  algorithm-generated 32/126 32: steps=10 passes=10+9 tokens=32096 time=6.0s peak=20.40GB
+  algorithm-generated 33/126 33: steps=10 passes=10+9 tokens=42054 time=6.9s peak=19.94GB
+  algorithm-generated 34/126 34: steps=8 passes=8+7 tokens=16330 time=3.8s peak=18.77GB
+  algorithm-generated 35/126 35: steps=10 passes=10+9 tokens=102579 time=13.4s peak=23.73GB
+  algorithm-generated 36/126 36: steps=9 passes=9+8 tokens=32073 time=6.0s peak=19.24GB
+  algorithm-generated 37/126 37: steps=6 passes=6+5 tokens=15640 time=3.2s peak=18.84GB
+  algorithm-generated 38/126 38: steps=6 passes=6+5 tokens=6483 time=2.3s peak=18.13GB
+  algorithm-generated 39/126 39: steps=10 passes=10+9 tokens=39341 time=7.3s peak=19.63GB
+  algorithm-generated 40/126 40: steps=9 passes=9+8 tokens=29418 time=5.6s peak=19.51GB
+  algorithm-generated 41/126 41: steps=6 passes=6+5 tokens=9928 time=2.8s peak=18.35GB
+  algorithm-generated 42/126 42: steps=6 passes=6+5 tokens=10529 time=2.8s peak=18.41GB
+  algorithm-generated 43/126 43: steps=9 passes=9+8 tokens=19160 time=4.7s peak=18.71GB
+  algorithm-generated 44/126 44: steps=10 passes=10+9 tokens=30519 time=6.3s peak=19.38GB
+  algorithm-generated 45/126 45: steps=5 passes=5+4 tokens=8162 time=2.5s peak=18.43GB
+  algorithm-generated 46/126 46: steps=7 passes=7+6 tokens=20335 time=4.2s peak=18.92GB
+  algorithm-generated 47/126 47: steps=6 passes=6+5 tokens=10342 time=2.8s peak=18.36GB
+  algorithm-generated 48/126 48: steps=10 passes=10+9 tokens=27362 time=5.7s peak=19.21GB
+  algorithm-generated 49/126 49: steps=10 passes=10+9 tokens=34905 time=6.3s peak=20.38GB
+  algorithm-generated 50/126 50: steps=10 passes=10+9 tokens=22959 time=5.1s peak=19.29GB
+  algorithm-generated 51/126 51: steps=6 passes=6+5 tokens=10486 time=2.5s peak=18.66GB
+  algorithm-generated 52/126 52: steps=10 passes=10+9 tokens=27394 time=5.6s peak=19.42GB
+  algorithm-generated 53/126 53: steps=5 passes=5+4 tokens=7378 time=2.1s peak=18.34GB
+  algorithm-generated 54/126 54: steps=10 passes=10+9 tokens=24301 time=5.3s peak=19.09GB
+  algorithm-generated 55/126 55: steps=10 passes=10+9 tokens=74471 time=10.3s peak=21.26GB
+  algorithm-generated 56/126 56: steps=10 passes=10+9 tokens=18870 time=4.9s peak=18.74GB
+  algorithm-generated 57/126 57: steps=5 passes=5+4 tokens=22921 time=3.5s peak=19.73GB
+  algorithm-generated 58/126 58: steps=6 passes=6+5 tokens=8794 time=2.6s peak=18.31GB
+  algorithm-generated 59/126 59: steps=10 passes=10+9 tokens=53909 time=8.2s peak=20.81GB
+  algorithm-generated 60/126 60: steps=10 passes=10+9 tokens=24640 time=5.2s peak=19.16GB
+  algorithm-generated 61/126 61: steps=10 passes=10+9 tokens=22458 time=4.9s peak=19.06GB
+  algorithm-generated 62/126 62: steps=7 passes=7+6 tokens=13382 time=3.2s peak=18.53GB
+  algorithm-generated 63/126 63: steps=10 passes=10+9 tokens=27989 time=5.5s peak=19.21GB
+  algorithm-generated 64/126 64: steps=10 passes=10+9 tokens=78451 time=10.6s peak=22.85GB
+  algorithm-generated 65/126 65: steps=6 passes=6+5 tokens=8975 time=2.5s peak=18.38GB
+  algorithm-generated 66/126 66: steps=6 passes=6+5 tokens=7959 time=2.5s peak=18.32GB
+  algorithm-generated 67/126 67: steps=10 passes=10+9 tokens=31756 time=5.9s peak=19.19GB
+  algorithm-generated 68/126 68: steps=7 passes=7+6 tokens=20412 time=4.0s peak=18.91GB
+  algorithm-generated 69/126 69: steps=10 passes=10+9 tokens=19070 time=4.9s peak=18.81GB
+  algorithm-generated 70/126 70: steps=6 passes=6+5 tokens=8956 time=2.5s peak=18.33GB
+  algorithm-generated 71/126 71: steps=10 passes=10+9 tokens=20481 time=5.1s peak=18.75GB
+  algorithm-generated 72/126 72: steps=10 passes=10+9 tokens=22866 time=5.5s peak=19.10GB
+  algorithm-generated 73/126 73: steps=7 passes=7+6 tokens=8848 time=2.8s peak=18.22GB
+  algorithm-generated 74/126 74: steps=10 passes=10+9 tokens=16413 time=4.4s peak=18.63GB
+  algorithm-generated 75/126 75: steps=7 passes=7+6 tokens=17733 time=3.6s peak=19.12GB
+  algorithm-generated 76/126 76: steps=10 passes=10+9 tokens=26269 time=5.3s peak=19.28GB
+  algorithm-generated 77/126 77: steps=10 passes=10+9 tokens=27362 time=5.4s peak=19.24GB
+  algorithm-generated 78/126 78: steps=10 passes=10+9 tokens=25855 time=5.3s peak=19.52GB
+  algorithm-generated 79/126 79: steps=10 passes=10+9 tokens=48334 time=7.4s peak=20.48GB
+  algorithm-generated 80/126 80: steps=8 passes=8+3 tokens=35097 time=7.0s peak=23.79GB
+  algorithm-generated 81/126 81: steps=9 passes=9+8 tokens=12560 time=3.7s peak=18.42GB
+  algorithm-generated 82/126 82: steps=7 passes=7+6 tokens=17651 time=3.5s peak=18.95GB
+  algorithm-generated 83/126 83: steps=10 passes=10+9 tokens=28782 time=5.5s peak=19.28GB
+  algorithm-generated 84/126 84: steps=9 passes=9+8 tokens=18446 time=4.4s peak=19.04GB
+  algorithm-generated 85/126 85: steps=9 passes=9+8 tokens=77262 time=10.2s peak=22.26GB
+  algorithm-generated 86/126 86: steps=7 passes=7+6 tokens=37562 time=5.8s peak=20.45GB
+  algorithm-generated 87/126 87: steps=9 passes=9+8 tokens=23271 time=4.8s peak=19.02GB
+  algorithm-generated 88/126 88: steps=10 passes=10+9 tokens=33096 time=5.9s peak=19.44GB
+  algorithm-generated 89/126 89: steps=10 passes=10+9 tokens=32729 time=5.9s peak=19.52GB
+  algorithm-generated 90/126 90: steps=10 passes=10+9 tokens=41686 time=6.8s peak=19.92GB
+  algorithm-generated 91/126 91: steps=10 passes=10+9 tokens=33329 time=6.0s peak=19.68GB
+  algorithm-generated 92/126 92: steps=10 passes=10+9 tokens=15466 time=4.4s peak=18.70GB
+  algorithm-generated 93/126 93: steps=6 passes=6+5 tokens=6225 time=2.3s peak=18.11GB
+  algorithm-generated 94/126 94: steps=10 passes=10+9 tokens=24338 time=5.3s peak=19.32GB
+  algorithm-generated 95/126 95: steps=10 passes=10+9 tokens=39813 time=6.6s peak=21.34GB
+  algorithm-generated 96/126 96: steps=10 passes=10+9 tokens=22593 time=5.0s peak=19.04GB
+  algorithm-generated 97/126 97: steps=10 passes=10+9 tokens=17382 time=4.4s peak=18.70GB
+  algorithm-generated 98/126 98: steps=7 passes=7+6 tokens=29123 time=4.7s peak=19.50GB
+  algorithm-generated 99/126 99: steps=7 passes=7+6 tokens=23957 time=4.4s peak=19.26GB
+  algorithm-generated 100/126 100: steps=10 passes=10+9 tokens=49144 time=7.6s peak=21.20GB
+  algorithm-generated 101/126 101: steps=8 passes=8+7 tokens=18671 time=3.9s peak=19.14GB
+  algorithm-generated 102/126 102: steps=10 passes=10+9 tokens=21901 time=4.9s peak=18.74GB
+  algorithm-generated 103/126 103: steps=10 passes=10+9 tokens=86720 time=11.2s peak=22.71GB
+  algorithm-generated 104/126 104: steps=10 passes=10+9 tokens=28332 time=5.5s peak=19.72GB
+  algorithm-generated 105/126 105: steps=8 passes=8+7 tokens=21153 time=4.3s peak=19.05GB
+  algorithm-generated 106/126 106: steps=6 passes=6+5 tokens=10916 time=2.6s peak=18.43GB
+  algorithm-generated 107/126 107: steps=8 passes=8+7 tokens=23199 time=4.5s peak=20.09GB
+  algorithm-generated 108/126 108: steps=10 passes=10+9 tokens=101689 time=13.8s peak=23.76GB
+  algorithm-generated 109/126 109: steps=10 passes=10+9 tokens=65681 time=9.4s peak=22.82GB
+  algorithm-generated 110/126 110: steps=9 passes=9+6 tokens=23638 time=5.4s peak=23.79GB
+  algorithm-generated 111/126 111: steps=10 passes=10+9 tokens=41234 time=7.1s peak=19.87GB
+  algorithm-generated 112/126 112: steps=10 passes=10+9 tokens=39313 time=6.6s peak=19.77GB
+  algorithm-generated 113/126 113: steps=9 passes=9+8 tokens=49719 time=7.4s peak=20.98GB
+  algorithm-generated 114/126 114: steps=7 passes=7+6 tokens=31124 time=5.0s peak=20.18GB
+  algorithm-generated 115/126 115: steps=7 passes=7+6 tokens=14372 time=3.3s peak=18.54GB
+  algorithm-generated 116/126 116: steps=10 passes=10+9 tokens=31863 time=5.7s peak=19.59GB
+  algorithm-generated 117/126 117: steps=7 passes=7+6 tokens=15169 time=3.4s peak=18.74GB
+  algorithm-generated 118/126 118: steps=10 passes=10+9 tokens=35214 time=6.2s peak=19.58GB
+  algorithm-generated 119/126 119: steps=8 passes=8+7 tokens=27522 time=4.9s peak=19.43GB
+  algorithm-generated 120/126 120: steps=10 passes=10+9 tokens=52484 time=7.8s peak=21.13GB
+  algorithm-generated 121/126 121: steps=7 passes=7+6 tokens=15169 time=3.2s peak=18.74GB
+  algorithm-generated 122/126 122: steps=10 passes=10+9 tokens=64272 time=9.3s peak=23.07GB
+  algorithm-generated 123/126 123: steps=10 passes=10+9 tokens=32671 time=6.0s peak=19.81GB
+  algorithm-generated 124/126 124: steps=10 passes=10+9 tokens=22603 time=5.0s peak=19.32GB
+  algorithm-generated 125/126 125: steps=10 passes=10+9 tokens=21013 time=4.8s peak=18.96GB
+  algorithm-generated 126/126 126: steps=8 passes=8+7 tokens=29151 time=5.1s peak=19.83GB
+  wrote /root/dataDisk/home/thanhdo/soap/results-ablations/c4_extract_cost/soap_qwen3.5-9b_algorithm-generated.tsv
+  hand-crafted 1/58 1: steps=28 passes=28+28 tokens=247756 time=32.3s peak=23.38GB
+  hand-crafted 2/58 2: steps=85 passes=85+85 tokens=1117672 time=228.9s peak=23.78GB
+  hand-crafted 3/58 3: steps=92 passes=92+92 tokens=1300982 time=278.3s peak=23.78GB
+  hand-crafted 4/58 4: steps=16 passes=16+16 tokens=121854 time=16.7s peak=22.43GB
+  hand-crafted 5/58 5: steps=19 passes=19+19 tokens=134444 time=18.7s peak=21.55GB
+  hand-crafted 6/58 6: steps=7 passes=7+7 tokens=26200 time=4.5s peak=19.65GB
+  hand-crafted 7/58 7: steps=24 passes=24+24 tokens=271950 time=33.5s peak=23.78GB
+  hand-crafted 8/58 8: steps=128 passes=128+128 tokens=1806166 time=595.1s peak=23.78GB
+  hand-crafted 9/58 9: steps=94 passes=94+94 tokens=1217050 time=291.1s peak=23.78GB
+  hand-crafted 10/58 10: steps=43 passes=43+43 tokens=518900 time=65.9s peak=23.76GB
+  hand-crafted 11/58 11: steps=129 passes=129+129 tokens=1831456 time=456.6s peak=23.79GB
+  hand-crafted 12/58 12: steps=19 passes=19+19 tokens=171612 time=22.1s peak=23.03GB
+  hand-crafted 13/58 13: steps=52 passes=52+52 tokens=626180 time=84.5s peak=23.78GB
+  hand-crafted 14/58 14: steps=31 passes=31+29 tokens=364940 time=47.7s peak=23.79GB
+  hand-crafted 15/58 15: steps=128 passes=128+128 tokens=1846676 time=568.5s peak=23.79GB
+  hand-crafted 16/58 16: steps=20 passes=20+20 tokens=173060 time=23.0s peak=23.03GB
+  hand-crafted 17/58 17: steps=36 passes=36+36 tokens=432390 time=57.0s peak=23.78GB
+  hand-crafted 18/58 18: steps=30 passes=30+30 tokens=330524 time=41.9s peak=23.79GB
+  hand-crafted 19/58 19: steps=68 passes=68+68 tokens=884924 time=152.2s peak=23.78GB
+  hand-crafted 20/58 20: steps=66 passes=66+64 tokens=626105 time=166.5s peak=23.79GB
+  hand-crafted 21/58 21: steps=24 passes=24+24 tokens=245516 time=31.0s peak=23.59GB
+  hand-crafted 22/58 22: steps=23 passes=23+23 tokens=206430 time=26.2s peak=23.32GB
+  hand-crafted 23/58 23: steps=73 passes=73+73 tokens=932146 time=143.7s peak=23.78GB
+  hand-crafted 24/58 24: steps=4 passes=4+4 tokens=12180 time=2.4s peak=18.81GB
+  hand-crafted 25/58 25: steps=19 passes=19+19 tokens=165942 time=21.7s peak=23.54GB
+  hand-crafted 26/58 26: steps=32 passes=32+32 tokens=310178 time=38.9s peak=23.67GB
+  hand-crafted 27/58 27: steps=50 passes=50+50 tokens=630984 time=89.2s peak=23.79GB
+  hand-crafted 28/58 28: steps=31 passes=31+31 tokens=329934 time=44.3s peak=23.78GB
+  hand-crafted 29/58 29: steps=12 passes=12+12 tokens=69662 time=10.9s peak=21.93GB
+  hand-crafted 30/58 30: steps=120 passes=120+116 tokens=1511880 time=883.4s peak=23.79GB
+  hand-crafted 31/58 31: steps=31 passes=31+31 tokens=338884 time=44.1s peak=23.78GB
+  hand-crafted 32/58 32: steps=11 passes=11+11 tokens=61650 time=9.4s peak=20.80GB
+  hand-crafted 33/58 33: steps=8 passes=8+8 tokens=36614 time=6.0s peak=20.84GB
+  hand-crafted 34/58 34: steps=4 passes=4+4 tokens=14140 time=2.6s peak=20.44GB
+  hand-crafted 35/58 35: steps=43 passes=43+43 tokens=485686 time=64.5s peak=23.77GB
+  hand-crafted 36/58 36: steps=90 passes=90+90 tokens=1269662 time=300.6s peak=24.55GB
+  hand-crafted 37/58 37: steps=58 passes=58+58 tokens=705620 time=105.1s peak=23.79GB
+  hand-crafted 38/58 38: steps=51 passes=51+49 tokens=475349 time=103.4s peak=23.79GB
+  hand-crafted 39/58 39: steps=48 passes=48+48 tokens=602684 time=86.0s peak=23.78GB
+  hand-crafted 40/58 40: steps=16 passes=16+16 tokens=146878 time=19.8s peak=23.70GB
+  hand-crafted 41/58 41: steps=82 passes=82+82 tokens=1130974 time=243.8s peak=23.79GB
+  hand-crafted 42/58 42: steps=31 passes=31+31 tokens=335322 time=47.3s peak=23.77GB
+  hand-crafted 43/58 43: steps=15 passes=15+15 tokens=95532 time=15.6s peak=21.17GB
+  hand-crafted 44/58 44: steps=123 passes=123+123 tokens=1722356 time=521.4s peak=23.79GB
+  hand-crafted 45/58 45: steps=20 passes=20+20 tokens=157748 time=23.5s peak=22.79GB
+  hand-crafted 46/58 46: steps=129 passes=129+129 tokens=1844414 time=679.0s peak=23.79GB
+  hand-crafted 47/58 47: steps=66 passes=66+66 tokens=863988 time=121.1s peak=23.78GB
+  hand-crafted 48/58 48: steps=4 passes=4+4 tokens=13234 time=2.9s peak=20.18GB
+  hand-crafted 49/58 49: steps=15 passes=15+15 tokens=157912 time=22.8s peak=24.91GB
+  hand-crafted 50/58 50: steps=112 passes=112+112 tokens=1569832 time=485.2s peak=23.79GB
+  hand-crafted 51/58 51: steps=122 passes=122+120 tokens=1388700 time=637.8s peak=25.05GB
+  hand-crafted 52/58 52: steps=20 passes=20+20 tokens=162418 time=23.7s peak=23.78GB
+  hand-crafted 53/58 53: steps=27 passes=27+27 tokens=277792 time=40.0s peak=23.76GB
+  hand-crafted 54/58 54: steps=18 passes=18+18 tokens=128276 time=19.9s peak=21.72GB
+  hand-crafted 55/58 55: steps=39 passes=39+39 tokens=431130 time=61.0s peak=23.79GB
+  hand-crafted 56/58 56: steps=128 passes=128+128 tokens=1705256 time=733.5s peak=23.78GB
+  hand-crafted 57/58 57: steps=16 passes=16+16 tokens=124326 time=17.3s peak=22.13GB
+  hand-crafted 58/58 58: steps=105 passes=105+105 tokens=1442348 time=402.4s peak=23.78GB
+  wrote /root/dataDisk/home/thanhdo/soap/results-ablations/c4_extract_cost/soap_qwen3.5-9b_hand-crafted.tsv

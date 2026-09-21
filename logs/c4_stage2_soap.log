@@ -1,0 +1,5 @@
+{'subset': 'algorithm-generated', 'device': 'cpu', 'seed': 3, 'n_ref_traj': 37, 'n_ref_steps': 330, 'n_test_traj': 63, 'n_test_steps': 552, 'svd_fit_s': 0.1493, 'score_ms_per_traj': 0.01, 'attn_load_s_subset': 0.099, 'rescore_ms_per_traj': 0.688}
+{'subset': 'algorithm-generated', 'device': 'cuda', 'seed': 3, 'n_ref_traj': 37, 'n_ref_steps': 330, 'n_test_traj': 63, 'n_test_steps': 552, 'svd_fit_s': 0.0385, 'score_ms_per_traj': 0.2058, 'attn_load_s_subset': 0.213, 'rescore_ms_per_traj': 2.437}
+{'subset': 'hand-crafted', 'device': 'cpu', 'seed': 13, 'n_ref_traj': 17, 'n_ref_steps': 742, 'n_test_traj': 29, 'n_test_steps': 1384, 'svd_fit_s': 0.2974, 'score_ms_per_traj': 0.0632, 'attn_load_s_subset': 0.343, 'rescore_ms_per_traj': 5.297}
+{'subset': 'hand-crafted', 'device': 'cuda', 'seed': 13, 'n_ref_traj': 17, 'n_ref_steps': 742, 'n_test_traj': 29, 'n_test_steps': 1384, 'svd_fit_s': 0.0383, 'score_ms_per_traj': 0.0037, 'attn_load_s_subset': 0.542, 'rescore_ms_per_traj': 15.829}
+DONE

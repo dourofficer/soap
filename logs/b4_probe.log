@@ -1,0 +1,99 @@
+[ww] qwen3.5-9b/algorithm-generated layers=['act/3', 'act/7', 'act/11', 'act/15', 'act/19', 'act/23', 'act/27', 'act/31']
+    seed 3 probe-spectral  act/27 C=0.01  cv=0.500 test=0.254
+    seed 3 probe-hidden    act/7 C=0.01  cv=0.538 test=0.333
+    seed 3 probe-shuffled  act/23 C=10.0  cv=0.269 test=0.095
+    seed 4 probe-spectral  act/19 C=10.0  cv=0.269 test=0.349
+    seed 4 probe-hidden    act/15 C=0.01  cv=0.538 test=0.508
+    seed 4 probe-shuffled  act/3 C=0.01  cv=0.231 test=0.016
+    seed 5 probe-spectral  act/3 C=0.1  cv=0.462 test=0.286
+    seed 5 probe-hidden    act/19 C=0.1  cv=0.500 test=0.476
+    seed 5 probe-shuffled  act/27 C=0.1  cv=0.192 test=0.079
+[ww] qwen3.5-9b/hand-crafted layers=['act/3', 'act/7', 'act/11', 'act/15', 'act/19', 'act/23', 'act/27', 'act/31']
+    seed 13 probe-spectral  act/7 C=0.01  cv=0.167 test=0.103
+    seed 13 probe-hidden    act/15 C=10.0  cv=0.083 test=0.172
+    seed 13 probe-shuffled  act/7 C=0.1  cv=0.167 test=0.034
+    seed 14 probe-spectral  act/15 C=1.0  cv=0.250 test=0.276
+    seed 14 probe-hidden    act/11 C=1.0  cv=0.250 test=0.241
+    seed 14 probe-shuffled  act/7 C=1.0  cv=0.083 test=0.103
+    seed 15 probe-spectral  act/7 C=10.0  cv=0.167 test=0.069
+    seed 15 probe-hidden    act/3 C=0.01  cv=0.083 test=0.207
+    seed 15 probe-shuffled  act/31 C=1.0  cv=0.167 test=0.000
+[ww] deepseek-8b/algorithm-generated layers=['act/1', 'act/4', 'act/7', 'act/10', 'act/13', 'act/16', 'act/19', 'act/22', 'act/25', 'act/28', 'act/31']
+    seed 3 probe-spectral  act/19 C=0.01  cv=0.423 test=0.302
+    seed 3 probe-hidden    act/10 C=0.1  cv=0.462 test=0.270
+    seed 3 probe-shuffled  act/4 C=0.01  cv=0.308 test=0.095
+    seed 4 probe-spectral  act/31 C=10.0  cv=0.385 test=0.302
+    seed 4 probe-hidden    act/10 C=1.0  cv=0.500 test=0.397
+    seed 4 probe-shuffled  act/10 C=0.01  cv=0.231 test=0.000
+    seed 5 probe-spectral  act/28 C=0.01  cv=0.423 test=0.365
+    seed 5 probe-hidden    act/25 C=0.01  cv=0.500 test=0.397
+    seed 5 probe-shuffled  act/13 C=10.0  cv=0.269 test=0.095
+[ww] deepseek-8b/hand-crafted layers=['act/1', 'act/4', 'act/7', 'act/10', 'act/13', 'act/16', 'act/19', 'act/22', 'act/25', 'act/28', 'act/31']
+    seed 13 probe-spectral  act/28 C=0.01  cv=0.167 test=0.069
+    seed 13 probe-hidden    act/1 C=1.0  cv=0.083 test=0.172
+    seed 13 probe-shuffled  act/22 C=0.1  cv=0.167 test=0.034
+    seed 14 probe-spectral  act/1 C=0.1  cv=0.333 test=0.069
+    seed 14 probe-hidden    act/1 C=0.1  cv=0.333 test=0.138
+    seed 14 probe-shuffled  act/13 C=0.1  cv=0.083 test=0.103
+    seed 15 probe-spectral  act/1 C=0.01  cv=0.250 test=0.241
+    seed 15 probe-hidden    act/7 C=0.01  cv=0.167 test=0.276
+    seed 15 probe-shuffled  act/7 C=10.0  cv=0.167 test=0.000
+[traceelephant] qwen3.5-9b/magentic layers=['act/3', 'act/7', 'act/11', 'act/15', 'act/19', 'act/23', 'act/27', 'act/31']
+    seed 15 probe-spectral  act/31 C=1.0  cv=0.294 test=0.130
+    seed 15 probe-hidden    act/23 C=0.01  cv=0.471 test=0.196
+    seed 15 probe-shuffled  act/7 C=10.0  cv=0.176 test=0.000
+    seed 16 probe-spectral  act/3 C=0.01  cv=0.235 test=0.174
+    seed 16 probe-hidden    act/7 C=0.01  cv=0.294 test=0.174
+    seed 16 probe-shuffled  act/23 C=0.1  cv=0.176 test=0.043
+    seed 17 probe-spectral  act/11 C=1.0  cv=0.235 test=0.196
+    seed 17 probe-hidden    act/19 C=0.01  cv=0.235 test=0.152
+    seed 17 probe-shuffled  act/23 C=0.01  cv=0.059 test=0.000
+[traceelephant] qwen3.5-9b/captain layers=['act/3', 'act/7', 'act/11', 'act/15', 'act/19', 'act/23', 'act/27', 'act/31']
+    seed 22 probe-spectral  act/27 C=0.01  cv=0.353 test=0.326
+    seed 22 probe-hidden    act/27 C=1.0  cv=0.353 test=0.233
+    seed 22 probe-shuffled  act/7 C=0.1  cv=0.176 test=0.070
+    seed 23 probe-spectral  act/7 C=10.0  cv=0.412 test=0.349
+    seed 23 probe-hidden    act/19 C=0.01  cv=0.353 test=0.140
+    seed 23 probe-shuffled  act/19 C=0.01  cv=0.118 test=0.116
+    seed 24 probe-spectral  act/19 C=0.1  cv=0.471 test=0.256
+    seed 24 probe-hidden    act/3 C=10.0  cv=0.353 test=0.186
+    seed 24 probe-shuffled  act/3 C=10.0  cv=0.176 test=0.233
+[traceelephant] deepseek-8b/magentic layers=['act/1', 'act/4', 'act/7', 'act/10', 'act/13', 'act/16', 'act/19', 'act/22', 'act/25', 'act/28', 'act/31']
+    seed 15 probe-spectral  act/16 C=1.0  cv=0.294 test=0.283
+    seed 15 probe-hidden    act/22 C=1.0  cv=0.353 test=0.217
+    seed 15 probe-shuffled  act/19 C=0.01  cv=0.176 test=0.022
+    seed 16 probe-spectral  act/25 C=1.0  cv=0.294 test=0.283
+    seed 16 probe-hidden    act/7 C=0.1  cv=0.353 test=0.217
+    seed 16 probe-shuffled  act/7 C=1.0  cv=0.118 test=0.000
+    seed 17 probe-spectral  act/10 C=1.0  cv=0.294 test=0.174
+    seed 17 probe-hidden    act/16 C=10.0  cv=0.176 test=0.174
+    seed 17 probe-shuffled  act/28 C=0.01  cv=0.118 test=0.065
+[traceelephant] deepseek-8b/captain layers=['act/1', 'act/4', 'act/7', 'act/10', 'act/13', 'act/16', 'act/19', 'act/22', 'act/25', 'act/28', 'act/31']
+    seed 22 probe-spectral  act/25 C=0.01  cv=0.529 test=0.326
+    seed 22 probe-hidden    act/31 C=10.0  cv=0.353 test=0.279
+    seed 22 probe-shuffled  act/7 C=1.0  cv=0.176 test=0.093
+    seed 23 probe-spectral  act/25 C=0.01  cv=0.353 test=0.326
+    seed 23 probe-hidden    act/28 C=1.0  cv=0.353 test=0.233
+    seed 23 probe-shuffled  act/10 C=0.01  cv=0.118 test=0.140
+    seed 24 probe-spectral  act/28 C=10.0  cv=0.471 test=0.326
+    seed 24 probe-hidden    act/19 C=0.1  cv=0.471 test=0.116
+    seed 24 probe-shuffled  act/1 C=0.01  cv=0.235 test=0.116
+wrote /root/dataDisk/home/thanhdo/soap/results-ablations/b4_probe.tsv  (40 rows)
+
+=== deepseek-8b (step acc %, test) ===
+cell            traceelephant/captain  traceelephant/magentic  ww/algorithm-generated  ww/hand-crafted
+row                                                                                                   
+probe-spectral                  32.56                   24.64                   32.28            12.64
+probe-hidden                    20.93                   20.29                   35.45            19.54
+probe-shuffled                  11.63                    2.90                    6.35             4.60
+base                            40.31                   29.71                   38.62            28.74
+soap                            42.64                   30.43                   45.50            28.74
+
+=== qwen3.5-9b (step acc %, test) ===
+cell            traceelephant/captain  traceelephant/magentic  ww/algorithm-generated  ww/hand-crafted
+row                                                                                                   
+probe-spectral                  31.01                   16.67                   29.63            14.94
+probe-hidden                    18.60                   17.39                   43.92            20.69
+probe-shuffled                  13.95                    1.45                    6.35             4.60
+base                            33.33                   21.01                   39.15            33.33
+soap                            35.66                   23.19                   47.62            34.48

@@ -391,7 +391,7 @@ def fig_scale_transfer(out: Path) -> list[Path]:
     sizes = [("qwen3-14b", "14B\nQwen3"), ("qwen3.5-27b", "27B\nQwen3.5")]
     methods = [("soap", "SOAP", "#3F3D73"),
                ("oat", "OAT", "#807EAF"), ("stepfinder", "StepFinder", "#C6C5DF")]
-    refs = [("real", "Real", "#3F3D73"), ("syn-qwen9b", "Syn. (Qwen3.5-9B)", "#807EAF"),
+    refs = [("real", "Benchmark", "#3F3D73"), ("syn-qwen9b", "Syn. (Qwen3.5-9B)", "#807EAF"),
             ("syn-gpt4o", "Syn. (GPT-4o)", "#C6C5DF")]
     with plt.rc_context(RC):
         fig, axes = plt.subplots(1, 4, figsize=(7.6, 1.55),

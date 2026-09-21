@@ -28,13 +28,21 @@ POOLING = "mean"
 # The without-GT ablation coverage: both backbones on these four cells.
 CONFIGS_NOGT = ["configs-main/ww.yaml", "configs-main/traceelephant.yaml"]
 RESULTS_DIR = REPO / "results-ablations"
+# The two reported backbones; the configs also list the scalability models (S1).
+BACKBONES = ["qwen3.5-9b", "deepseek-8b"]
 
 
-def iter_cells(config_paths=CONFIGS_NOGT):
-    """Yield (cfg, model, subset) over every cell the ablations cover."""
+def iter_cells(config_paths=CONFIGS_NOGT, overrides=None, models=None):
+    """Yield (cfg, model, subset) over every cell the ablations cover.
+
+    ``overrides`` are dot-path config overrides, e.g. ``["select_rule=val"]`` to read
+    the anchors from the validation-selected tree.
+    """
     for cfg_path in config_paths:
-        cfg = C.load_config(REPO / cfg_path)
+        cfg = C.load_config(REPO / cfg_path, overrides)
         for model in cfg["models"]:
+            if models is not None and model not in models:
+                continue
             for subset in cfg["subsets"]:
                 yield cfg, model, subset
 
@@ -82,6 +90,49 @@ def base_scores(cfg, position, cb, ce, train, split, members=None):
         return ens_score_steps(cb, ce, members, fits, tr, ev)
     V = fit_svd(train.stores[(POOLING, position)].R, cfg["n_components"])
     return score_steps(split.stores[(POOLING, position)].R, V, cb, ce)
+
+
+def load_ntokens(cfg, model: str, subset: str, data_dir) -> dict:
+    """{traj_idx: {step_idx: n_tokens}} for EVERY history turn of every trajectory.
+
+    Scored steps carry the exact count A1 recorded under the backbone's tokenizer
+    (``a1_scorefn/nll``). Turns A1 never scored (the ``human`` question turn of
+    hand-crafted trajectories) get an estimate: their character count times the
+    trajectory's own tokens-per-character ratio.
+    """
+    import json
+    nll = pd.read_csv(RESULTS_DIR / "a1_scorefn" / "nll"
+                      / f"{cfg['dataset']}-{subset}-{model}.tsv", sep="\t")
+    out: dict = {}
+    for traj_idx, g in nll.groupby("traj_idx"):
+        known = dict(zip(g["step_idx"].astype(int), g["n_tokens"].astype(float)))
+        history = json.loads((Path(data_dir) / f"{traj_idx}.json").read_text())["history"]
+        chars = [max(len(t.get("content") or ""), 1) for t in history]
+        ratio = sum(known.values()) / sum(chars[i] for i in known)
+        out[int(traj_idx)] = {i: known.get(i, max(chars[i] * ratio, 1.0))
+                              for i in range(len(history))}
+    return out
+
+
+def ntoken_vector(ntok: dict, keeper):
+    """Per-step token counts aligned to keeper row order."""
+    import torch
+    return torch.tensor([ntok[e.traj_idx][e.step_idx] for e in keeper.index],
+                        dtype=torch.double)
+
+
+def pick(acc: dict, row: str, grid, split: str = "test", dp: int = 12):
+    """The standard rule over a one-knob grid: highest mean step accuracy on ``split``,
+    tiebreak agent accuracy, then the LARGER knob value (``>=`` over an ascending
+    grid, as ``main.sweep.select_config`` does)."""
+    sk, ak = ("step_t", "agent_t") if split == "test" else ("step_v", "agent_v")
+    best = None
+    for g in grid:
+        d = acc[(row, g)]
+        key = (round(d[sk], dp), round(d[ak], dp))
+        if best is None or key >= best[0]:
+            best = (key, g)
+    return best[1]
 
 
 def anchor_filter(df: pd.DataFrame, row: pd.Series, axes) -> pd.DataFrame:
