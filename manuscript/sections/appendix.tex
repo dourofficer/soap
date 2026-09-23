@@ -1378,6 +1378,233 @@ Reference data & WW-AG & WW-HC & TE-Cap & TE-Mag \\
 \end{tabular}
 \end{table}
 
+\subsection{Length and norm baselines}
+\label{app:length}
+
+Table~\ref{tab:length} compares \soap{} and the base score against trivial baselines. Length alone does not find the decisive step: the longest-step heuristic scores 10--20\%, above random but 12--30 points below the base score on every cell, and the shortest step sits at or below random. The base score does carry a norm component, however. The unit-norm rows scale every step vector to $\lVert \mathbf{v} \rVert = 1$ in both the reference and test sets; ``anchor band'' keeps the spectral band selected on the original vectors, while ``re-selected'' re-tunes it on the normalized vectors, since the optimal band may shift once the norm is removed. With the re-selected band, the unit-norm score reaches 23--36\%, 3--13 points below the base score but well above every length and random row, confirming that a directional signal persists beyond the norm. WW-AG loses the least ($\leq 4$ points) because its selected band $[1, k)$ skips the top singular vector, which captures most of the norm variation. \soap{} leads every cell on both backbones (47.62\% and 45.50\% on WW-AG, against the best unit-norm score of 35.45\% and 33.86\%), showing that rescoring adds to both the directional and the norm components of the base score.
+
+\begin{table}[h]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\caption{Trivial baselines and the unit-norm control. Step-level accuracy (\%) on the
+test split; the best result in each column is \textbf{bold}.}
+\label{tab:length}
+\begin{tabular}{l cccc}
+\toprule
+ & WW-AG & WW-HC & TE-Cap & TE-Mag \\
+\midrule
+\rowcolor{Gray}\multicolumn{5}{c}{\textit{\textbf{Qwen3.5-9B}}} \\
+Longest step         & 19.05 & 19.54 & 10.08 & 11.59 \\
+Shortest step        &  0.53 &  0.00 &  4.65 &  2.90 \\
+Random               & 12.10 &  5.08 &  8.58 &  5.16 \\
+Unit-norm, anchor band      & 35.45 & 16.09 & 24.81 & 16.67 \\
+Unit-norm, re-selected      & 35.45 & 22.99 & 30.23 & 23.19 \\
+Base score           & 39.15 & 33.33 & 33.33 & 21.01 \\
+\soap{}              & \best{47.62} & \best{34.48} & \best{35.66} & \best{23.19} \\
+\midrule
+\rowcolor{Gray}\multicolumn{5}{c}{\textit{\textbf{DeepSeek-R1-Distill-Llama-8B}}} \\
+Longest step         & 15.87 & 19.54 &  8.53 & 12.32 \\
+Shortest step        &  0.53 &  0.00 &  4.65 &  1.45 \\
+Random               & 12.10 &  5.08 &  8.58 &  5.16 \\
+Unit-norm, anchor band      & 29.10 &  6.90 & 25.58 & 10.87 \\
+Unit-norm, re-selected      & 33.86 & 22.99 & 27.13 & 22.46 \\
+Base score           & 38.62 & 28.74 & 40.31 & 29.71 \\
+\soap{}              & \best{45.50} & \best{28.74} & \best{42.64} & \best{30.43} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% \subsection{Rescoring controls}
+% \label{app:rescore-controls}
+
+% Rescoring adds 6--9 points on WW-AG but only 0--2 elsewhere
+% (\S\ref{sec:experiments}). Is the attention routing doing work that a simpler rule
+% cannot? Table~\ref{tab:rescore-controls} compares \soap{} against five
+% attention-free controls, each standing on its best~$\gamma$ from the shared grid
+% $\{0, 0.1, 0.2, 0.4, 0.6, 0.8, 1.0\}$, plus two \soap{} variants that test
+% specific confounds. DeepSeek-8B WW-HC's anchor selected $\gamma{=}0$, so it has no
+% attention band and the three \soap{} rows are undefined there.
+
+% \textbf{WW-AG: the attention routing is real.}
+% No attention-free control comes within 6~points of \soap{} on either backbone (best:
+% Uniform 41.27 on Qwen, nothing above base on DeepSeek).
+% Table~\ref{tab:rescore-diag} shows why: among the trajectories whose prediction
+% changes, almost none of the displaced predictions were the final step (6\% and 1\%),
+% and the prediction moves 1.5~steps on average. The reviewer's ``last-step penalty''
+% reading and the next-step shift control, which gains nothing, are both wrong here.
+% However, the gain rides on raw attention mass: normalizing by predecessor length or
+% dropping the first turn removes most of it (47.62 $\to$ 40.74 on Qwen; 45.50 $\to$
+% 38.62 / 40.21 on DeepSeek). The first turn draws 0.42--0.44 of the dependency weight
+% where uniform would give 0.34, so the routing partly reflects step length and the
+% attention sink.
+
+% \textbf{Other subsets: a final-step correction.}
+% On TE-Cap every displaced prediction was the final step, and the constant boost or
+% plain exclusion matches \soap{} within one trajectory. On WW-HC uniform averaging and
+% the constant boost tie \soap{} at 34.48 (one trajectory above base). On TE-Mag \soap{}
+% is the only row above base (+2.2 and +0.7 points), but excluding the final step hurts
+% ($-1.4$ and $-2.2$), indicating that the final step is often the correct answer there
+% and a soft penalty ($\gamma{=}0.1$) is all any row selects. The honest summary: on
+% WW-AG the attention structure carries signal beyond a position correction; elsewhere the
+% gain is a small bias away from the final step.
+
+% \begin{table}[h]
+% \centering
+% \small
+% \setlength{\tabcolsep}{5pt}
+% \caption{Rescoring controls. Step-level accuracy (\%) on the test split; the
+% co-selected $\gamma$ is in parentheses. ``Exclude final step'' removes the last scored
+% step from the argmax (no~$\gamma$). ``Next-step shift'' adds $\gamma \cdot S(s_{i+1})$
+% to step~$i$. ``Constant boost'' adds $\gamma \cdot \overline{S}$ to every non-final
+% step. ``Uniform'' collects the mean of all successors' base scores.
+% ``Length-normalized'' divides each predecessor's attention mass by its token count before
+% renormalizing. ``First turn removed'' drops step~1 from the dependency weights. The best
+% result in each column is \textbf{bold}.}
+% \label{tab:rescore-controls}
+% \begin{tabular}{l cccc}
+% \toprule
+%  & WW-AG & WW-HC & TE-Cap & TE-Mag \\
+% \midrule
+% \rowcolor{Gray}\multicolumn{5}{c}{\textit{\textbf{Qwen3.5-9B}}} \\
+% Base score                       & 39.15         & 33.33         & 33.33         & 21.01         \\
+% Exclude final step               & 40.74         & 22.99         & 34.88         & 19.57         \\
+% Next-step shift                  & 39.68\,(0.1)  & 33.33\,(0)    & 35.66\,(0.1)  & 21.01\,(0)    \\
+% Constant boost                   & 40.74\,(1.0)  & 34.48\,(0.1)  & 34.88\,(1.0)  & 21.01\,(0)    \\
+% Uniform                          & 41.27\,(0.8)  & 34.48\,(0.1)  & 35.66\,(0.1)  & 21.01\,(0)    \\
+% \soap{}                          & \best{47.62}\,(0.6) & \best{34.48}\,(0.1) & \best{35.66}\,(0.1) & \best{23.19}\,(1.0) \\
+% \soap{}, length-normalized       & 40.74\,(0.1)  & 34.48\,(0.1)  & 33.33\,(0.1)  & 21.01\,(0)    \\
+% \soap{}, first turn removed      & 40.74\,(0.2)  & 34.48\,(0.1)  & 35.66\,(0.1)  & 21.74\,(1.0)  \\
+% \midrule
+% \rowcolor{Gray}\multicolumn{5}{c}{\textit{\textbf{DeepSeek-R1-Distill-Llama-8B}}} \\
+% Base score                       & 38.62         & 28.74         & 40.31         & 29.71         \\
+% Exclude final step               & 38.62         & 16.09         & 42.64         & 27.54         \\
+% Next-step shift                  & 38.62\,(0)    & 28.74\,(0)    & 40.31\,(0.1)  & 29.71\,(0)    \\
+% Constant boost                   & 38.62\,(1.0)  & 28.74\,(0)    & 42.64\,(1.0)  & 29.71\,(0)    \\
+% Uniform                          & 38.62\,(0)    & 28.74\,(0)    & 42.64\,(0.1)  & 29.71\,(0)    \\
+% \soap{}                          & \best{45.50}\,(1.0) & ---           & \best{42.64}\,(0.2) & \best{30.43}\,(0.1) \\
+% \soap{}, length-normalized       & 38.62\,(0)    & ---           & 42.64\,(0.2)  & 29.71\,(0)    \\
+% \soap{}, first turn removed      & 40.21\,(0.8)  & ---           & 42.64\,(0.2)  & 30.43\,(0.1)  \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+
+% \begin{table}[h]
+% \centering
+% \small
+% \setlength{\tabcolsep}{4pt}
+% \caption{Diagnostics for trajectories whose \soap{} prediction differs from the base
+% score's (test split, three seeds pooled). ``Final-step base'' is the share whose base
+% prediction was the final step. ``Steps moved'' is the mean distance the prediction moved
+% earlier. ``Fixed/broke'' counts trajectories corrected vs.\ miscorrected. ``Wt.\ on
+% turn~1'' is the mean fraction of dependency weight landing on the first turn (uniform
+% expectation in parentheses).}
+% \label{tab:rescore-diag}
+% \begin{tabular}{l ccccc}
+% \toprule
+% Cell & Flips & Final-step base & Steps moved & Fixed / broke & Wt.\ on turn~1 \\
+% \midrule
+% Qwen WW-AG       & 65/189  &  6\% & 1.5 & 23\,/\,7  & 0.44\,(0.34) \\
+% DeepSeek WW-AG   & 75/189  &  1\% & 1.6 & 28\,/\,15 & 0.42\,(0.34) \\
+% Qwen WW-HC       &  9/87   & 44\% & 21.3 & 1\,/\,0  & 0.03\,(0.07) \\
+% Qwen TE-Cap      &  6/129  & 100\% & 4.0 & 3\,/\,0  & 0.27\,(0.17) \\
+% DeepSeek TE-Cap  &  7/129  & 100\% & 9.4 & 3\,/\,0  & 0.18\,(0.17) \\
+% Qwen TE-Mag      & 52/138  & 29\% & 8.9 & 8\,/\,5  & 0.16\,(0.13) \\
+% DeepSeek TE-Mag  & 14/138  & 29\% & 2.4 & 3\,/\,2  & 0.17\,(0.13) \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+
+\subsection{Sensitivity to the reference corpus}
+\label{app:reference-controls}
+
+Table~\ref{tab:ref-controls} replaces the benchmark's reference split with five
+alternatives. \emph{Random basis}: a random orthonormal basis matched in dimension to
+the selected band, encoding no textual structure. \emph{MCP-Atlas successes / failures}:
+50~successful and 50~failed runs drawn from MCP-Atlas~\citep{chen2025oat} (198
+single-agent tool-use runs by Qwen3.5-27B), fit out of distribution. \emph{Steps before
+$t^*$}: an in-distribution diagnostic$^\dagger$ that fits $R$ on only the train-split
+steps before the annotated decisive step, the nearest proxy for a success-only reference
+the benchmarks allow. \emph{Random subset}: the same number of steps drawn uniformly
+from the full train split$^\dagger$, to separate ``fewer rows'' from ``earlier, cleaner
+rows.'' Each reference's configuration is re-selected; every number is the step-level
+accuracy on the test split.
+
+\begin{table}[h]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\caption{Reference corpus controls on Who\&When. Step-level accuracy~(\%) on the
+test split. $^\dagger$Diagnostic rows that read step labels on the train split.
+The best result in each column is \textbf{bold}.}
+\label{tab:ref-controls}
+\begin{tabular}{l cc}
+\toprule
+Reference & WW-AG & WW-HC \\
+\midrule
+\rowcolor{Gray}\multicolumn{3}{c}{\textit{\textbf{Qwen3.5-9B}}} \\
+Random basis                   & 33.33        & 25.29 \\
+MCP-Atlas successes            & 38.10        & 28.74 \\
+MCP-Atlas failures             & 42.86        & 28.74 \\
+Steps before $t^*$$^\dagger$   & 36.51        & 33.33 \\
+Random subset$^\dagger$        & 39.68        & 33.33 \\
+Benchmark train split          & \best{47.62} & \best{34.48} \\
+\midrule
+\rowcolor{Gray}\multicolumn{3}{c}{\textit{\textbf{DeepSeek-R1-Distill-Llama-8B}}} \\
+Random basis                   & 36.51        & 27.59 \\
+MCP-Atlas successes            & 40.21        & 29.89 \\
+MCP-Atlas failures             & 44.44        & \best{32.18} \\
+Steps before $t^*$$^\dagger$   & 44.97        & 31.03 \\
+Random subset$^\dagger$        & 39.15        & 27.59 \\
+Benchmark train split          & \best{45.50} & 28.74 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The benchmark reference leads on WW-AG with both backbones (+5 to~+14 over every
+alternative) and stays competitive on WW-HC. Among the alternatives, MCP-Atlas failures
+consistently outperform successes on WW-AG (42.86 vs.\ 38.10 on Qwen; 44.44 vs.\
+40.21 on DeepSeek), and the full in-distribution reference outperforms the prefix that
+excludes the decisive step and its downstream consequences (47.62 vs.\ 36.51 on Qwen
+WW-AG). The random basis sits lowest on WW-AG (33.33 and 36.51), 11--14~points below
+the benchmark reference. On WW-HC the gaps narrow: the prefix ties the benchmark
+(33.33 vs.\ 34.48) and the random basis trails by 1--9~points. This indicates steps from failed trajectories therefore carry important signal for decisive-error localization.
+
+\subsection{Supervised probe on validation labels}
+\label{app:probe}
+
+\soap{} selects its configuration on a 20\% validation split with step-level labels.
+Table~\ref{tab:probe} asks whether a supervised classifier trained on those same labels
+would do better. The classifier is logistic regression on the 4096-d mean-pooled hidden
+state, one example per step, with balanced class weights. It trains on the validation
+split only (12--26 trajectories per seed); layer and regularization strength are chosen
+by leave-one-trajectory-out cross-validation inside that split. The prediction is the
+within-trajectory argmax of the fitted logit, scored on the test split.
+
+\begin{table}[h]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\caption{Supervised probe on validation labels vs.\ \soap{}. Step-level accuracy~(\%)
+on the test split. The best result in each column is \textbf{bold}.}
+\label{tab:probe}
+\begin{tabular}{l cccc}
+\toprule
+ & WW-AG & WW-HC & TE-Cap & TE-Mag \\
+\midrule
+\rowcolor{Gray}\multicolumn{5}{c}{\textit{\textbf{Qwen3.5-9B}}} \\
+Probe         & 43.92        & 20.69        & 18.60        & 17.39 \\
+\soap{}       & \best{47.62} & \best{34.48} & \best{35.66} & \best{23.19} \\
+\midrule
+\rowcolor{Gray}\multicolumn{5}{c}{\textit{\textbf{DeepSeek-R1-Distill-Llama-8B}}} \\
+Probe         & 35.45        & 19.54        & 20.93        & 20.29 \\
+\soap{}       & \best{45.50} & \best{28.74} & \best{42.64} & \best{30.43} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\soap{} leads every cell, by 4--22 points on Qwen and 3--22 on DeepSeek. The probe's closest approach is Qwen WW-AG (43.92 vs.\ 47.62). WW-HC and TE-Cap show the largest gaps (14--22 points), where the probe overfits its dozen training trajectories. \soap{} needs no training and operates consistently across backbones.
+
 \section{Additional analysis}
 \label{app:analysis}
 

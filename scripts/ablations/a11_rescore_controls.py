@@ -28,6 +28,8 @@ the prediction moved, and how many flips fixed or broke a correct answer; plus t
 share of dependency weight landing on the first turn.
 
     python scripts/ablations/a11_rescore_controls.py [--device cuda] [--select-rule test]
+    python scripts/ablations/a11_rescore_controls.py --configs configs-main/correct-error.yaml \
+        --out results-ablations/a11_rescore_controls_ce.tsv
 """
 from __future__ import annotations
 
@@ -48,7 +50,6 @@ from main.rescore import WCache, aggregate_attn, apply_strategy       # noqa: E4
 from main.stores import load_representations, split_files             # noqa: E402
 
 OUT = RESULTS_DIR / "a11_rescore_controls.tsv"
-DIAG = RESULTS_DIR / "a11_rescore_controls_diag.tsv"
 CLOSED = ["next-step", "const-boost", "uniform-norm"]
 ATTN = ["soap", "soap-lennorm", "soap-nofirst"]
 
@@ -114,13 +115,17 @@ def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--device", default="cuda")
     p.add_argument("--select-rule", default="test", choices=["test", "val"])
+    p.add_argument("--configs", nargs="+", default=None,
+                   help="config paths (default: the standard no-GT four-cell coverage)")
     p.add_argument("--out", default=str(OUT))
     args = p.parse_args()
     device = args.device
+    diag_out = Path(args.out).with_name(Path(args.out).stem + "_diag.tsv")
 
     rows, diags = [], []
+    kw = {"config_paths": args.configs} if args.configs else {}
     for cfg, model, subset in iter_cells(overrides=[f"select_rule={args.select_rule}"],
-                                         models=BACKBONES):
+                                         models=BACKBONES, **kw):
         seeds = C.seeds_for(cfg, subset)
         gammas = [float(g) for g in cfg["gammas"]]
         assert gammas[0] == 0.0 and gammas == sorted(gammas)
@@ -253,8 +258,8 @@ def main() -> int:
 
     df = pd.DataFrame(rows)
     df.to_csv(args.out, sep="\t", index=False)
-    pd.DataFrame(diags).to_csv(DIAG, sep="\t", index=False)
-    print(f"wrote {args.out}  ({len(df)} rows) and {DIAG}")
+    pd.DataFrame(diags).to_csv(diag_out, sep="\t", index=False)
+    print(f"wrote {args.out}  ({len(df)} rows) and {diag_out}")
 
     sel = df[df.selected].copy()
     sel["cell"] = sel["dataset"] + "/" + sel["subset"]

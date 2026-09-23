@@ -57,13 +57,19 @@ REF_ORDER = ["real", "syn-qwen9b", "syn-qwen9b-fail", "syn-gpt4o", "syn-gpt4o-fa
 
 
 class RandomReference(Reference):
-    """A reference that fits nothing: every position gets a random orthonormal basis."""
+    """A reference that fits nothing: every position gets a random orthonormal basis.
+
+    ``draw`` picks the basis: draw 0 is the ``random`` row of the main run, draws 1..k
+    the extra bases of the multi-draw study (``--random-draws``).
+    """
+    draw = 0
 
     def train(self, seed_files=None):
         store = super().train()
         for (_, position), st in store.stores.items():
             if position not in self.fits:
-                g = torch.Generator(device="cpu").manual_seed(zlib.crc32(position.encode()))
+                g = torch.Generator(device="cpu").manual_seed(
+                    zlib.crc32(position.encode()) + self.draw)
                 Q, _ = torch.linalg.qr(torch.randn(st.R.shape[1], self.n_comp, generator=g))
                 self.fits[position] = Q.to(self.device)
         return store
@@ -89,27 +95,43 @@ def build_refs(cell, model, syn_cfg, device, wanted) -> dict[str, Reference]:
     if "wikitext" in wanted:
         refs["wikitext"] = Reference("wikitext", C.reps_root(syn_cfg) / model / "wikitext",
                                      C.data_root(syn_cfg) / "wikitext", device, static=True)
-    if "random" in wanted:
-        refs["random"] = RandomReference("random", cell["rep_dir"], cell["data_dir"], device,
-                                         static=True, files=cell["files"])
-        refs["random"].n_comp = cell["cfg"]["n_components"]
+    for name in wanted:
+        if name == "random" or name.startswith("random-d"):
+            ref = RandomReference(name, cell["rep_dir"], cell["data_dir"], device,
+                                  static=True, files=cell["files"])
+            ref.n_comp = cell["cfg"]["n_components"]
+            ref.draw = 0 if name == "random" else int(name[len("random-d"):])
+            refs[name] = ref
     return refs
 
 
-def main() -> int:
+def main(build=build_refs, order=REF_ORDER, out=OUT, extra_args=None) -> int:
+    """E5 and E6 reuse this loop with their own references: ``build`` makes them,
+    ``order`` names them (``real`` first, so the self-check runs before any control),
+    and ``extra_args`` adds the runner's own flags, handed to ``build`` as ``args``."""
     p = argparse.ArgumentParser()
     p.add_argument("--device", default="cuda")
     p.add_argument("--models", nargs="+", default=BACKBONES)
-    p.add_argument("--refs", nargs="+", default=REF_ORDER)
+    p.add_argument("--refs", nargs="+", default=order)
     p.add_argument("--select-rule", default="test", choices=["test", "val"])
-    p.add_argument("--out", default=str(OUT))
+    p.add_argument("--out", default=str(out))
+    p.add_argument("--targets", nargs="+", default=None, help="e.g. WW-AG WW-HC")
+    p.add_argument("--random-draws", type=int, default=0,
+                   help="also run random-d1..dK: K more random bases per cell")
+    if extra_args:
+        extra_args(p)
     args = p.parse_args()
     device = args.device
 
     syn_cfg = C.load_config(REPO / "configs-main/synthetic.yaml")
+    extra = [f"random-d{k}" for k in range(1, args.random_draws + 1)]
+    args.refs = list(args.refs) + extra
+    order = list(order) + extra
     rows = []
     for cfg, model, subset in iter_cells(overrides=[f"select_rule={args.select_rule}"],
                                          models=args.models):
+        if args.targets and SHORT[subset] not in args.targets:
+            continue
         step_col, agent_col = rule_cols(cfg)
         svd_row, bp_row = anchor_rows(load_selection(cfg), model, subset)
         rep_dir, data_dir, files = cell_paths(cfg, model, subset)
@@ -126,8 +148,9 @@ def main() -> int:
                         "w": str(bp_row["w"]).removesuffix(".0")} if anchor_gamma > 0 else None)
         print(f"[{model}] {cell['name']}  anchor base={anchor_base} rescoring={anchor_resc}")
 
-        refs = build_refs(cell, model, syn_cfg, device, args.refs)
-        for ref_name in [r for r in REF_ORDER if r in refs]:
+        refs = (build(cell, model, syn_cfg, device, args.refs, args) if extra_args
+                else build(cell, model, syn_cfg, device, args.refs))
+        for ref_name in [r for r in order if r in refs]:
             ref = refs[ref_name]
             base_df = base_grid(cell, ref, device)
             sel_base = select_config(base_df, BASE_SWEPT, list(range(n)),
@@ -170,7 +193,8 @@ def main() -> int:
                              "layer_range": rcfg.get("layer_range", ""),
                              "gamma": float(rcfg.get("gamma", 0.0)), "w": rcfg.get("w", ""),
                              "seeds": ",".join(map(str, cell["seeds"])),
-                             **{c.replace("@1", ""): m[c] for c in METRIC_COLS}})
+                             **{c.replace("@1", ""): m[c] for c in METRIC_COLS},
+                             **getattr(ref, "extra", {})})
             a, r = out[("anchor", "soap")][2], out[("reselect", "soap")][2]
             print(f"  [{ref_name:16s}] anchor soap {a['step_acc_test@1']:.4f}   "
                   f"reselect soap {r['step_acc_test@1']:.4f}  base={sel_base}")
@@ -183,7 +207,7 @@ def main() -> int:
         pivot = g.pivot_table(index="reference", columns="target",
                               values="step_acc_test") * 100
         print(f"\n=== {model}, {mode}, {row} (step acc %) ===")
-        print(pivot.reindex([r for r in REF_ORDER if r in pivot.index]).round(2).to_string())
+        print(pivot.reindex([r for r in order if r in pivot.index]).round(2).to_string())
     return 0
 
 

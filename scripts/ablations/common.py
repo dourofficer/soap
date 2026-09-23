@@ -95,15 +95,26 @@ def base_scores(cfg, position, cb, ce, train, split, members=None):
 def load_ntokens(cfg, model: str, subset: str, data_dir) -> dict:
     """{traj_idx: {step_idx: n_tokens}} for EVERY history turn of every trajectory.
 
-    Scored steps carry the exact count A1 recorded under the backbone's tokenizer
-    (``a1_scorefn/nll``). Turns A1 never scored (the ``human`` question turn of
-    hand-crafted trajectories) get an estimate: their character count times the
-    trajectory's own tokens-per-character ratio.
+    Where A1 ran (``a1_scorefn/nll``: Who&When and TraceElephant), scored steps carry
+    the exact count it recorded under the backbone's tokenizer, and turns it never
+    scored (the ``human`` question turn of hand-crafted trajectories) get an estimate:
+    their character count times the trajectory's own tokens-per-character ratio.
+    Elsewhere (CORRECT-Error) every turn's content is tokenized here, on CPU — the same
+    tokenizer, but the bare content rather than A1's serialized, truncated step.
     """
     import json
-    nll = pd.read_csv(RESULTS_DIR / "a1_scorefn" / "nll"
-                      / f"{cfg['dataset']}-{subset}-{model}.tsv", sep="\t")
+    nll_path = RESULTS_DIR / "a1_scorefn" / "nll" / f"{cfg['dataset']}-{subset}-{model}.tsv"
     out: dict = {}
+    if not nll_path.exists():
+        from transformers import AutoTokenizer
+        tok = AutoTokenizer.from_pretrained(str(REPO / cfg["model_paths"][model]))
+        for fp in Path(data_dir).glob("*.json"):
+            history = json.loads(fp.read_text())["history"]
+            ids = tok([t.get("content") or "" for t in history],
+                      add_special_tokens=False)["input_ids"]
+            out[int(fp.stem)] = {i: float(max(len(x), 1)) for i, x in enumerate(ids)}
+        return out
+    nll = pd.read_csv(nll_path, sep="\t")
     for traj_idx, g in nll.groupby("traj_idx"):
         known = dict(zip(g["step_idx"].astype(int), g["n_tokens"].astype(float)))
         history = json.loads((Path(data_dir) / f"{traj_idx}.json").read_text())["history"]

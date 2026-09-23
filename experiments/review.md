@@ -1,8 +1,10 @@
 # Review-response experiments
 
-Four experiments that answer Weaknesses 2–4 of `SOAP_ICLR2027_review.pdf`. Drafted
-2026-09-21 for review: **nothing here has run**. Strike or edit any row, then approve;
-each finished experiment gets a **Results** block in this file.
+Four experiments that answer Weaknesses 2–4 of `SOAP_ICLR2027_review.pdf`. Drafted and
+approved 2026-09-21; all four ran the same day. Each section ends with a **Results**
+block; "Summary of findings" at the end collects what they mean for the paper.
+Two more, E5 and E6, stand in for the success-only reference control; they were
+planned and run later the same day and report three selection modes each.
 
 ## Conventions
 
@@ -216,6 +218,76 @@ restated.
   moves one or two steps between non-final steps. Report the length-normalized and
   first-turn rows rather than omit them.
 
+### A11 on CORRECT-Error — added 2026-09-21 on request
+
+- **Scope.** The same runner on all seven CORRECT-Error subsets, both backbones
+  (`--configs configs-main/correct-error.yaml`; output
+  `results-ablations/a11_rescore_controls_ce.tsv` and `..._ce_diag.tsv`; log
+  `logs/a11_rescore_controls_ce.log`). Base and SOAP rows reproduced the selection table
+  in every cell, and the macro-averages reproduce Table 1 (61.38 → 61.78 on Qwen,
+  64.19 → 64.68 on DeepSeek).
+- **Two differences from the main A11 run.** A1 never computed token counts for
+  CORRECT-Error, so the length-normalized row tokenizes each turn's bare content with
+  the backbone's tokenizer on CPU (`common.load_ntokens`), not A1's serialized,
+  truncated step. And only 5 of the 14 anchors selected γ > 0 (Qwen arc, gaia, hotpot,
+  wikimqa; DeepSeek wikimqa); elsewhere SOAP is the base score, the three SOAP rows are
+  blank, and the macro-average fills them with the base score, as Table 1 does.
+- **Results.** Step accuracy %, test; co-selected γ in the TSV.
+
+  | qwen3.5-9b | arc | gaia | hotpot | math500 | mmlu_pro | musique | wikimqa | macro |
+  |---|---|---|---|---|---|---|---|---|
+  | Base score | 81.36 | 68.00 | 45.67 | 61.18 | 79.71 | 43.59 | 50.14 | 61.38 |
+  | Exclude final step | 2.63 | 8.00 | 13.49 | 9.28 | 8.70 | 17.95 | 13.71 | 10.54 |
+  | Next-step shift | 81.58 | 72.00 | 45.91 | 61.18 | 79.71 | 43.59 | 50.59 | **62.08** |
+  | Constant boost | 81.36 | 70.67 | 45.67 | 61.18 | 79.71 | 43.59 | 50.14 | 61.76 |
+  | Uniform (normalized) | 81.36 | 69.33 | 45.67 | 61.18 | 79.71 | 43.59 | 50.14 | 61.57 |
+  | SOAP | 81.58 | 69.33 | 46.48 | — | — | — | 50.59 | 61.78 |
+  | SOAP, length-normalized | 81.36 | 69.33 | 46.83 | — | — | — | 50.59 | 61.80 |
+  | SOAP, first turn removed | 81.80 | 69.33 | 46.48 | — | — | — | 50.59 | 61.81 |
+
+  | deepseek-8b | arc | gaia | hotpot | math500 | mmlu_pro | musique | wikimqa | macro |
+  |---|---|---|---|---|---|---|---|---|
+  | Base score | 87.72 | 72.00 | 52.71 | 59.92 | 80.43 | 44.66 | 51.86 | 64.19 |
+  | Exclude final step | 5.26 | 6.67 | 20.65 | 8.86 | 9.42 | 16.67 | 14.35 | 11.70 |
+  | Next-step, constant, uniform | 87.72 | 72.00 | 52.71 | 59.92 | 80.43 | 44.66 | 51.86 | 64.19 |
+  | SOAP | — | — | — | — | — | — | **55.31** | 64.68 |
+  | SOAP, length-normalized | — | — | — | — | — | — | 51.86 | 64.19 |
+  | SOAP, first turn removed | — | — | — | — | — | — | 55.31 | 64.68 |
+
+  Flips on the five cells with γ > 0 (test, three seeds pooled): Qwen arc 14 of 456
+  trajectories (3 fixed, 2 broke); gaia 2 of 75 (1 / 0); hotpot 103 of 867 (27 / 20);
+  wikimqa 111 of 1,101 (20 / 15); DeepSeek wikimqa 309 of 1,101 (94 / 56). The
+  displaced prediction was the final step in 0–29 % of flips, and the first turn draws
+  LESS weight than a uniform spread would give it (0.12–0.28 against 0.21–0.34).
+
+  Reading.
+  - **On Qwen, rescoring on CORRECT-Error is indistinguishable from the crude
+    controls.** Every row sits between 61.57 and 62.08, and the next-step shift — the
+    reviewer's named control — is the best row, above SOAP. The +0.4 that Table 1
+    reports cannot be credited to attention routing.
+  - **One cell shows real routing: DeepSeek wikimqa,** +3.45 points (a net of 38
+    trajectories out of 1,101), which no attention-free control recovers at any γ.
+    As on WW-AG, length normalization erases it (55.31 → 51.86), while removing the
+    first turn does not — so here the gain rides on long predecessors, not on an
+    attention sink.
+  - **A new confound, and a larger one than anything else in this file: the decisive
+    step on CORRECT-Error is usually the final step.** Excluding the final step drops
+    the base score from 61–64 % to 11 %. Counted over the whole corpus, the gold step
+    is the last turn in 81.6 % of arc, 71.7 % of mmlu_pro, 65.0 % of math500, 64.0 % of
+    gaia, 42.2 % of wikimqa, 41.7 % of hotpot and 36.5 % of musique trajectories — a
+    macro-average of 57.5 %. "Always predict the final step" therefore scores about
+    57.5 on the CE column, against 61.78 / 64.68 for SOAP and 55.03–62.42 for the
+    strongest judges. (This is the corpus-wide share, not the mean over the three test
+    splits; a test-split number needs a one-line runner.) The reviewer asked for a
+    fixed-index baseline, and this plan had dropped it; on CORRECT-Error it must go
+    back in, because it shows every method in that column is within a few points of a
+    rule that reads nothing.
+
+  For the paper: add a "final step" row to the CE column of Table 1, and do not cite
+  CORRECT-Error as evidence for rescoring. Its value is the base score's margin over
+  the final-step rule on hotpot, musique and wikimqa, where the final step is decisive
+  in under half the trajectories.
+
 ## E4 — Reference controls (`e4_reference_controls`)  `[one GPU extraction, then CPU]`
 
 - **Target.** Weakness 3: is the reference matrix R capturing failure structure, or
@@ -245,6 +317,135 @@ restated.
   random while synthetic references hold, in-distribution agent logs are what matter —
   still short of "failures matter", which only the success-only control can settle.
 - **Output.** `results-ablations/e4_reference_controls.tsv`.
+- **Results** — DONE 2026-09-21 (`scripts/ablations/e4_reference_controls.py`, staging
+  `scripts/ablations/e4_stage_wikitext.py`; four runs merged from
+  `results-ablations/e4_parts_*.tsv`; logs `logs/e4_*.log`). The real reference
+  reproduced Table 1's base and SOAP rows in all eight cells, under both modes. WikiText
+  activations: `results-nogt/synthetic/activations/<model>/wikitext/` (120 files each;
+  `wikitext` added to `configs-main/synthetic.yaml`). Corpus sizes: real = the 30 %
+  split; synthetic 124 / 126 (WW-AG) and 55 / 55 (WW-HC), failure-only 93 / 110 and
+  49 / 53; WikiText 120. SOAP step accuracy %, test (base rows are in the TSV).
+
+  **Configuration re-selected per reference (test rule — the protocol of Table 1)**
+
+  | qwen3.5-9b | WW-AG | WW-HC | TE-Cap | TE-Mag |
+  |---|---|---|---|---|
+  | Benchmark train split | 47.62 | 34.48 | 35.66 | 23.19 |
+  | Synthetic (Qwen), mixed | 41.80 | 31.03 | — | — |
+  | Synthetic (Qwen), failures only | 41.27 | 31.03 | — | — |
+  | Synthetic (GPT-4o), mixed | 46.56 | 29.89 | — | — |
+  | Synthetic (GPT-4o), failures only | 43.92 | 29.89 | — | — |
+  | WikiText | 35.45 | 34.48 | 35.66 | 27.54 |
+  | Random basis, worst of 11 draws (WW) | 33.33 | 25.29 | 30.23 | 23.91 |
+
+  | deepseek-8b | WW-AG | WW-HC | TE-Cap | TE-Mag |
+  |---|---|---|---|---|
+  | Benchmark train split | 45.50 | 28.74 | 42.64 | 30.43 |
+  | Synthetic (Qwen), mixed | 39.68 | 29.89 | — | — |
+  | Synthetic (Qwen), failures only | 37.57 | 26.44 | — | — |
+  | Synthetic (GPT-4o), mixed | 38.10 | 25.29 | — | — |
+  | Synthetic (GPT-4o), failures only | 38.10 | 25.29 | — | — |
+  | WikiText | 41.80 | 28.74 | 31.01 | 23.91 |
+  | Random basis, worst of 11 draws (WW) | 36.51 | 27.59 | 31.01 | 22.46 |
+
+  **Table 1's configuration, frozen (only the reference changes)**
+
+  | qwen3.5-9b | WW-AG | WW-HC | TE-Cap | TE-Mag |
+  |---|---|---|---|---|
+  | Benchmark train split | 47.62 | 34.48 | 35.66 | 23.19 |
+  | Synthetic (Qwen), mixed / failures only | 30.16 / 30.69 | 24.14 / 24.14 | — | — |
+  | Synthetic (GPT-4o), mixed / failures only | 34.39 / 35.45 | 17.24 / 17.24 | — | — |
+  | WikiText | 24.34 | 31.03 | 11.63 | 16.67 |
+  | Random basis, worst of 11 draws (WW) | 14.81 | 3.45 | 8.53 | 15.22 |
+
+  | deepseek-8b | WW-AG | WW-HC | TE-Cap | TE-Mag |
+  |---|---|---|---|---|
+  | Benchmark train split | 45.50 | 28.74 | 42.64 | 30.43 |
+  | Synthetic (Qwen), mixed / failures only | 20.11 / 22.22 | 22.99 / 22.99 | — | — |
+  | Synthetic (GPT-4o), mixed / failures only | 26.98 / 25.93 | 13.79 / 13.79 | — | — |
+  | WikiText | 12.17 | 11.49 | 2.33 | 8.70 |
+  | Random basis, worst of 11 draws (WW) | 14.29 | 2.30 | 19.38 | 8.70 |
+
+  Reading. This is the result that most needs attention before the rebuttal.
+  - **Under Table 1's protocol, a reference with no agent content does about as well as
+    the benchmark's failed trajectories.** With the configuration re-selected on test,
+    WikiText ties the real reference on Qwen WW-HC and TE-Cap and beats it on TE-Mag
+    (27.54 vs 23.19); a random basis — no reference at all — stays within 1–2 points
+    of the real reference on DeepSeek WW-HC even at its worst draw (27.59 vs 28.74).
+    The real reference keeps a clear lead over the worst random draw on WW-AG (+9 to
+    +14) and on Qwen WW-HC (+9), and over WikiText only on DeepSeek TE-Cap and TE-Mag
+    (+7 to +12) and WW-AG (+4 to +12).
+  - **The random-basis rows for WW-AG and WW-HC are the WORST of 11 draws** (added
+    2026-09-22 on request: draw 0 is the main run's basis, draws 1–10 are new;
+    `results-ablations/e4_random_draws_<model>_<target>.tsv`, logs
+    `logs/e4_random_draws_*.log`; the TraceElephant cells keep the single draw). The
+    first run's single draw was lucky: it was the best of 11 on Qwen WW-AG (43.92,
+    median 39.15) and on DeepSeek WW-HC (34.48, median 31.03). Re-selected, the draws
+    span 33.33–43.92 (Qwen WW-AG), 36.51–47.09 (DeepSeek WW-AG), 25.29–33.33 (Qwen
+    WW-HC) and 27.59–34.48 (DeepSeek WW-HC).
+    The real reference beats every draw on Qwen and 9 of 11 on DeepSeek WW-AG, and
+    loses to 10 of 11 on DeepSeek WW-HC. A 10–14 point spread across bases that
+    carry no information is itself a measure of what test selection over the grid
+    can produce.
+  - **Two things explain it, and neither is failure structure.** First, A10 showed the
+    score has a large norm component, and the energy of a vector in any 20-d basis
+    grows with its norm, so any basis inherits that signal. Second, the base grid holds
+    2,310 (Qwen) to 7,350 (DeepSeek) configurations selected on 29–63 test
+    trajectories; the best of that many draws is high whatever the basis. The
+    re-selected table therefore measures the protocol's optimism as much as any
+    reference. It cannot support the claim that failed trajectories are what matter,
+    and it shows that the claim cannot be tested under test selection at all.
+  - **Failure-only versus mixed makes no difference** (within 0–3 points, both signs).
+    The corpora are 74–96 % failures to begin with, so this row says little; the
+    success-only control remains the real test and remains excluded.
+  - **The frozen-configuration table looks like support for the real reference, but
+    read it with care.** Every other reference collapses at Table 1's configuration,
+    often to random. That shows the selected layer and band are specific to the basis
+    they were selected with — the components of two different bases are not aligned, so
+    band [1, 7) means something else in each — not that the real reference carries more
+    signal. The one exception proves the point: WikiText at Qwen WW-HC's band [0, 5)
+    keeps 31.03 of 34.48, because the top component of any text corpus is the mean
+    direction, which is the norm.
+  - **Follow-up, validation rule — DONE 2026-09-21.** The same runner under
+    `--select-rule val` (`results-ablations/e4_reference_controls_valsel.tsv`, logs
+    `logs/e4_valsel_*.log`): anchors from `results-nogt-valsel/`, every reference's
+    configuration re-selected on the validation split, test accuracy reported. The real
+    row reproduced the validation-selected tree in all eight cells. This removes the
+    best-of-thousands optimism, so it is the fair test of the reference. SOAP step
+    accuracy %, test:
+
+    | qwen3.5-9b | WW-AG | WW-HC | TE-Cap | TE-Mag |
+    |---|---|---|---|---|
+    | Benchmark train split | 37.57 | 25.29 | 22.48 | 8.70 |
+    | Synthetic (Qwen), mixed / failures only | 27.51 / 28.04 | 12.64 / 12.64 | — | — |
+    | Synthetic (GPT-4o), mixed / failures only | 38.10 / 26.46 | 13.79 / 13.79 | — | — |
+    | WikiText | 30.69 | 32.18 | 26.36 | 21.01 |
+    | Random basis | 23.28 | 12.64 | 24.81 | 18.12 |
+
+    | deepseek-8b | WW-AG | WW-HC | TE-Cap | TE-Mag |
+    |---|---|---|---|---|
+    | Benchmark train split | 40.74 | 24.14 | 31.78 | 23.19 |
+    | Synthetic (Qwen), mixed / failures only | 29.63 / 25.93 | 14.94 / 18.39 | — | — |
+    | Synthetic (GPT-4o), mixed / failures only | 32.28 / 33.33 | 13.79 / 8.05 | — | — |
+    | WikiText | 30.69 | 17.24 | 32.56 | 18.12 |
+    | Random basis | 30.69 | 14.94 | 23.26 | 14.49 |
+
+    Reading. With the optimism gone the real reference separates from the controls in
+    some cells and not in others. It leads on WW-AG with both backbones (+7 to +14 over
+    WikiText and the random basis) and on DeepSeek WW-HC and TE-Mag (+5 to +9). On Qwen
+    it loses to WikiText on WW-HC, TE-Cap and TE-Mag (by 4 to 12 points), and DeepSeek
+    TE-Cap is a tie. The random basis falls behind the real reference in six of eight
+    cells, so a fitted reference does beat no reference; but "fitted on unrelated prose"
+    is about as good as "fitted on the benchmark's failures" half the time. The
+    validation splits hold 12–26 trajectories, so single cells are noisy (the synthetic
+    rows swing by 10 points between mixed and failures-only on Qwen WW-AG); the pattern
+    across cells is what to trust.
+
+  For the paper: the premise "failed trajectories reveal where agents go wrong" is not
+  supported as stated. What the evidence supports is narrower — a step's energy in a
+  low-rank basis, largely its norm, marks the decisive step, and an in-distribution
+  reference helps on WW-AG and on DeepSeek, not consistently elsewhere. The A7 result
+  (six to twelve trajectories suffice) and the transfer result fit this reading.
 
 ## B4 — Supervised probe on the validation labels (`b4_probe`)  `[CPU]`
 
@@ -312,16 +513,325 @@ restated.
   grid: most of the gap between its two rows is selection noise that a probe with two
   knobs does not pay.
 
+## E5 — Success versus failure reference, MCP-Atlas (`e5_success_reference`)  `[one GPU extraction, then CPU]`  — DONE 2026-09-21
+
+- **Target.** Weakness 3, the control E4 left open: does a reference built from FAILED
+  trajectories score better than one built from SUCCESSFUL ones? No benchmark in our
+  question pools ships successes, and generating them is costly and uncertain. MCP-Atlas
+  has both outcomes from one agent on one task pool, so it gives the clean contrast, at
+  the price of a cross-distribution fit.
+- **Corpus.** `../attrib-prompting/vendored/OAT/dataset/MCP-atlas/Qwen3.5-27B/` — 198
+  single-agent tool-use runs. Outcome follows OAT's split
+  (`data_pipeline.load_mcp_atlas_trajectories`): a run is a success when its `errors`
+  list is empty. That gives 103 successes — the corpus OAT trains on — and 95 failures.
+  OAT drops a failure whose errors carry no valid step; we drop the same ones. The two
+  pools are alike in size: median 13 messages per run in both, 1,436 vs 1,435 messages
+  in all.
+- **Rows.** Two references, nothing else:
+  1. *Successes* — 50 runs sampled from the 103.
+  2. *Failures* — 50 runs sampled from the failures.
+  One draw, seed 0, without replacement; the runner takes `--draw-seed` so a second draw
+  costs one CPU run. It records each arm's step count; if the two differ by more than
+  5 %, redraw the larger arm to match before reading anything.
+  For context the tables repeat E4's benchmark, WikiText and random rows; they are not
+  recomputed.
+- **Staging.** `scripts/ablations/e5_stage_mcp_atlas.py` writes all 198 runs to
+  `data/synthetic/mcp-atlas/<id>.json` in `main.data`'s minimal schema, as
+  `e4_stage_wikitext.py` does, plus `"outcome": "success" | "fail"` (the field E4's
+  `failed_files` already reads). One step = one message of `raw_conversation_history`,
+  with OAT's serialization so SOAP and OAT read the same text: reasoning content, then
+  content, then tool calls; tool output cut at 4,096 characters. `role` carries the
+  message role. `mistake_step = -1`: the error annotations are not read.
+- **Extraction.** Add `mcp-atlas` to `configs-main/synthetic.yaml`, then once per
+  backbone: `python -m main extract --config configs-main/synthetic.yaml --stage
+  activations --subset mcp-atlas`. No attention pass — dependency weights come from the
+  target's own trajectories.
+- **Procedure.** E4's, unchanged: fit R on the arm, score the target's real val and
+  test splits on the frozen triple. The runner imports `Reference`, `base_grid` and
+  `rescore_grid` from `e2_synthfit.py` and builds the two arms as static references
+  with `files=` the sampled list. All eight cells (both backbones × WW-AG, WW-HC,
+  TE-Cap, TE-Mag), base and SOAP rows.
+- **Three tables per backbone**, one per selection mode:
+  1. *Frozen* — Table 1's configuration, nothing re-tuned.
+  2. *Validation-selected* — the full configuration re-selected per reference on mean
+     validation accuracy; test accuracy reported (`--select-rule val`).
+  3. *Test-selected* — re-selected on mean test accuracy, Table 1's protocol
+     (`--select-rule test`).
+- **Self-check.** The `real` reference is run alongside and must reproduce
+  `selection.tsv` to 1e-9 under the test rule, and E4's validation rows under the val
+  rule, before either arm is written. Staged file count must equal the kept runs.
+- **Reading.** Decide before the run:
+  - *Failures beat successes* by more than two test trajectories in most cells, under
+    the frozen AND validation tables → first evidence for "failures matter".
+  - *The two tie* (the likely outcome, given E4) → the defensible claim is that failed
+    trajectories SUFFICE, and they are what a practitioner has. Rewrite the premise so.
+  - *Successes beat failures* → the mixture story of Section 2 is wrong as stated.
+  - The test-selected table is reported for continuity with Table 1 only; E4 showed it
+    cannot separate references. A gap that appears there alone is not evidence.
+- **Caveat.** Both arms are fit out of distribution, so they may both sit near E4's
+  WikiText row, leaving no room for a difference. E6 is the in-distribution complement.
+- **Output.** `results-ablations/e5_success_reference.tsv` (columns as E4, plus
+  `n_steps` and `draw_seed`).
+- **Results** — DONE 2026-09-21 (`scripts/ablations/e5_success_reference.py`, staging
+  `scripts/ablations/e5_stage_mcp_atlas.py`; four runs, one per backbone and rule,
+  merged from `results-ablations/e5_parts_*.tsv` with a `select_rule` column; logs
+  `logs/e5_*.log`). Staging kept 191 runs: 103 successes, 88 failures; OAT's rule
+  dropped 7 failures whose errors name no valid step. Activations:
+  `results-nogt/synthetic/activations/<model>/mcp-atlas/`. The seed-0 draw holds 715
+  success steps and 751 failure steps, 4.8 % apart, so no redraw. The real reference
+  reproduced the selection table in all eight cells under both rules. E4's loop was
+  made reusable for this (`e4_reference_controls.main(build, order, out, extra_args)`);
+  E4 itself was not rerun. SOAP step accuracy %, test (base rows are in the TSV):
+
+  **Frozen — Table 1's configuration**
+
+  | qwen3.5-9b | WW-AG | WW-HC | TE-Cap | TE-Mag |
+  |---|---|---|---|---|
+  | Benchmark train split | 47.62 | 34.48 | 35.66 | 23.19 |
+  | MCP-Atlas successes | 25.93 | 24.14 | 32.56 | 20.29 |
+  | MCP-Atlas failures | 33.86 | 24.14 | 31.01 | 19.57 |
+
+  | deepseek-8b | WW-AG | WW-HC | TE-Cap | TE-Mag |
+  |---|---|---|---|---|
+  | Benchmark train split | 45.50 | 28.74 | 42.64 | 30.43 |
+  | MCP-Atlas successes | 31.75 | 22.99 | 26.36 | 24.64 |
+  | MCP-Atlas failures | 30.69 | 18.39 | 28.68 | 25.36 |
+
+  **Validation-selected**
+
+  | qwen3.5-9b | WW-AG | WW-HC | TE-Cap | TE-Mag |
+  |---|---|---|---|---|
+  | Benchmark train split | 37.57 | 25.29 | 22.48 | 8.70 |
+  | MCP-Atlas successes | 24.34 | 19.54 | 27.13 | 10.14 |
+  | MCP-Atlas failures | 37.04 | 17.24 | 17.83 | 22.46 |
+
+  | deepseek-8b | WW-AG | WW-HC | TE-Cap | TE-Mag |
+  |---|---|---|---|---|
+  | Benchmark train split | 40.74 | 24.14 | 31.78 | 23.19 |
+  | MCP-Atlas successes | 27.51 | 20.69 | 26.36 | 17.39 |
+  | MCP-Atlas failures | 35.45 | 20.69 | 28.68 | 21.74 |
+
+  **Test-selected — the protocol of Table 1**
+
+  | qwen3.5-9b | WW-AG | WW-HC | TE-Cap | TE-Mag |
+  |---|---|---|---|---|
+  | Benchmark train split | 47.62 | 34.48 | 35.66 | 23.19 |
+  | MCP-Atlas successes | 38.10 | 28.74 | 33.33 | 22.46 |
+  | MCP-Atlas failures | 42.86 | 28.74 | 33.33 | 22.46 |
+
+  | deepseek-8b | WW-AG | WW-HC | TE-Cap | TE-Mag |
+  |---|---|---|---|---|
+  | Benchmark train split | 45.50 | 28.74 | 42.64 | 30.43 |
+  | MCP-Atlas successes | 40.21 | 29.89 | 40.31 | 29.71 |
+  | MCP-Atlas failures | 44.44 | 32.18 | 35.66 | 28.99 |
+
+  Reading, by the rule set before the run. "Two test trajectories" is 3.2 points on
+  WW-AG, 6.9 on WW-HC, 4.7 on TE-Cap and 4.3 on TE-Mag.
+  - **The two arms tie.** Failures beat successes by more than two trajectories in the
+    frozen AND the validation table in one cell of eight: Qwen WW-AG (+7.9 and +12.7).
+    Everywhere else the frozen gap is within ±5 points with both signs, and the
+    validation gaps swing from −9.3 (Qwen TE-Cap) to +12.3 (Qwen TE-Mag) — the size of
+    the noise E4 already measured for validation selection on these splits. The rule's
+    bar, "most cells, both tables", is not met.
+  - **WW-AG leans toward failures, and only there.** Failures lead on WW-AG in five of
+    the six tables (+4 to +13); the exception is DeepSeek, frozen (−1.1). WW-AG is also
+    the one subset whose band skips the mean direction (A10), so it is the cell most
+    able to show a difference in what the reference holds. One draw of 50 runs cannot
+    carry a claim; a second `--draw-seed` would say whether the lean survives.
+  - **Distribution matters more than outcome.** At the frozen configuration both
+    MCP-Atlas arms fall 10–20 points below the benchmark reference on WW-AG and 5–16
+    elsewhere on DeepSeek, far more than they differ from each other. Re-selected on
+    test, both climb back to within a few points of Table 1, as every reference in E4
+    did.
+  - **For the paper:** the evidence supports "failed trajectories suffice", not
+    "failed trajectories are what matter". A success reference from the same corpus
+    does as well on seven cells of eight.
+
+## E6 — Reference from the steps before the decisive error (`e6_prefix_reference`)  `[CPU]`  — DONE 2026-09-21
+
+- **Target.** The same question, in distribution. By the paper's own account the steps
+  before the decisive step `t*` are ordinary: nothing has gone wrong yet. A reference
+  fit on them alone is the nearest thing to a success-only reference that the
+  benchmarks allow. It is a proxy — these steps come from runs that later fail — and it
+  reads step labels on the reference split, so it is a DIAGNOSTIC, never a variant of
+  the method.
+- **Rows.**
+  1. *Full reference* — every step of the seed's train split. Table 1; must reproduce.
+  2. *Prefix* — the train split's steps with `step_idx < mistake_step` only.
+  3. *Random subset* — steps drawn uniformly without replacement from the same train
+     split, as many as row 2 holds for that seed. Draw seed = the split seed. This
+     separates "fewer rows" from "earlier, cleaner rows".
+- **Procedure.** A `Reference` subclass masks the rows of the train store before
+  `main.score.fit_svd`; the ensemble position's z-score statistics come from the masked
+  rows too. Validation and test splits, scoring, and dependency weights are untouched.
+  The mask uses the store's own `(traj_idx, step_idx)` index; the runner asserts that
+  the store's labeled step equals the JSON's `mistake_step` for every train trajectory
+  (`documents/CONVENTIONS.md` on step indexing) before masking. A trajectory with
+  `mistake_step = 0` contributes no row to the prefix arm. No extraction: every
+  activation exists.
+- **Coverage and tables.** All eight cells, base and SOAP rows, and the same three
+  tables as E5: frozen, validation-selected, test-selected.
+- **Recorded per cell and seed.** Rows in each arm. On WW-AG the mean `t*` is 3.0 over
+  37 train trajectories, so expect about 110 rows against 20 fitted components — enough,
+  but thin. If an arm has fewer than 40 rows in any seed, flag the cell.
+- **Self-check.** Row 1 reproduces `selection.tsv` to 1e-9; row 3 drawn at the full
+  size reproduces row 1.
+- **Reading.**
+  - *Prefix ≈ random subset ≈ full* → the decisive and later steps add nothing to R and
+    remove nothing from it; the reference captures the common mode of steps, and the
+    contamination in Section 2's mixture is too small a share of the rows to shape the
+    top directions.
+  - *Prefix above random subset* → cleaner rows help; failure steps pollute R. This
+    argues AGAINST "failures matter".
+  - *Prefix below random subset* → the later steps carry something the fit needs — but
+    the prefix is also all early steps, so position explains it as well as failure
+    does. State both readings; this design cannot separate them.
+- **Output.** `results-ablations/e6_prefix_reference.tsv` (columns as E4, plus
+  `n_rows`).
+- **Results** — DONE 2026-09-21 (`scripts/ablations/e6_prefix_reference.py`; four
+  runs merged from `results-ablations/e6_parts_*.tsv` with a `select_rule` column; logs
+  `logs/e6_*.log`). The store's labeled step matched the JSON's `mistake_step` in every
+  train trajectory, and the full reference reproduced the selection table in all eight
+  cells under both rules. The random subset is one fixed draw per split, seeded by the
+  split's file list. Rows in the prefix arm, mean over the triple (minimum; full
+  split): WW-AG 109 (93; 327), WW-HC 221 (178; 784), TE-Cap 157 (150; 539), TE-Mag 341
+  (216; 802) — no seed fell below 40. SOAP step accuracy %, test:
+
+  **Frozen — Table 1's configuration**
+
+  | qwen3.5-9b | WW-AG | WW-HC | TE-Cap | TE-Mag |
+  |---|---|---|---|---|
+  | Full reference | 47.62 | 34.48 | 35.66 | 23.19 |
+  | Steps before t* | 33.33 | 33.33 | 34.11 | 23.91 |
+  | Random subset, same size | 40.74 | 31.03 | 34.88 | 23.19 |
+
+  | deepseek-8b | WW-AG | WW-HC | TE-Cap | TE-Mag |
+  |---|---|---|---|---|
+  | Full reference | 45.50 | 28.74 | 42.64 | 30.43 |
+  | Steps before t* | 35.45 | 26.44 | 28.68 | 28.99 |
+  | Random subset, same size | 39.15 | 25.29 | 41.86 | 28.26 |
+
+  **Validation-selected**
+
+  | qwen3.5-9b | WW-AG | WW-HC | TE-Cap | TE-Mag |
+  |---|---|---|---|---|
+  | Full reference | 37.57 | 25.29 | 22.48 | 8.70 |
+  | Steps before t* | 25.40 | 25.29 | 24.81 | 12.32 |
+  | Random subset, same size | 40.74 | 21.84 | 22.48 | 8.70 |
+
+  | deepseek-8b | WW-AG | WW-HC | TE-Cap | TE-Mag |
+  |---|---|---|---|---|
+  | Full reference | 40.74 | 24.14 | 31.78 | 23.19 |
+  | Steps before t* | 37.57 | 10.34 | 34.88 | 23.19 |
+  | Random subset, same size | 25.93 | 24.14 | 31.78 | 22.46 |
+
+  **Test-selected — the protocol of Table 1**
+
+  | qwen3.5-9b | WW-AG | WW-HC | TE-Cap | TE-Mag |
+  |---|---|---|---|---|
+  | Full reference | 47.62 | 34.48 | 35.66 | 23.19 |
+  | Steps before t* | 36.51 | 33.33 | 35.66 | 25.36 |
+  | Random subset, same size | 39.68 | 33.33 | 36.43 | 23.19 |
+
+  | deepseek-8b | WW-AG | WW-HC | TE-Cap | TE-Mag |
+  |---|---|---|---|---|
+  | Full reference | 45.50 | 28.74 | 42.64 | 30.43 |
+  | Steps before t* | 44.97 | 31.03 | 34.88 | 31.16 |
+  | Random subset, same size | 39.15 | 27.59 | 42.64 | 29.71 |
+
+  Reading.
+  - **On WW-HC, TE-Cap (Qwen) and TE-Mag the three references tie** at the frozen
+    configuration, within one test trajectory. There the decisive and later steps add
+    nothing to R and take nothing from it: the first outcome of the reading rule. A
+    third of the rows, chosen either way, fits the same common mode.
+  - **Nowhere does the prefix beat the random subset by a margin that holds in two
+    tables.** So there is no sign that failure steps pollute R, and none for a cleaner
+    "ordinary-step" reference.
+  - **The prefix falls below the random subset in three frozen cells:** WW-AG on both
+    backbones (−7.4, −3.7) and DeepSeek TE-Cap (−13.2). This is the third outcome, and
+    the design cannot say why. On WW-AG the prefix is the first three turns of each
+    trajectory — the task statement and the opening plan — so "too few kinds of step"
+    explains the drop as well as "the later, failing steps carry signal" does.
+  - **Size alone costs WW-AG 6–7 points** (random subset 40.74 and 39.15 against 47.62
+    and 45.50), in line with A7's data-quantity curve.
+  - **Validation selection adds noise larger than any of these effects**: the random
+    subset beats the full reference on Qwen WW-AG (40.74 vs 37.57) and loses 15 points
+    to it on DeepSeek; the prefix drops to 10.34 on DeepSeek WW-HC. Read the frozen
+    table; the other two are reported for the record.
+  - **For the paper:** with E5, this closes the success-only question as far as the
+    available data allows. R captures what typical steps of the target system look
+    like; whether those steps come before or after the error, or from runs that fail
+    or succeed, changes little.
+
+## Summary of findings
+
+What the four experiments say about the three claims the reviewer challenged, and what
+to do about each.
+
+1. **"Attention propagation resolves downstream contamination" — true on WW-AG, not
+   shown elsewhere (A11).** On WW-AG no attention-free control comes within 6 points of
+   SOAP and the corrected predictions are not final-step predictions. On TE-Cap the
+   whole gain is a final-step penalty; on WW-HC uniform averaging ties SOAP; TE-Mag
+   keeps a gain of one to three trajectories. On CORRECT-Error (A11 extension) every
+   Qwen row sits within half a point and the next-step shift beats SOAP (62.08 vs
+   61.78); only DeepSeek wikimqa shows routing (+3.45), and length normalization erases
+   it. And on WW-AG the gain depends on raw
+   attention mass: normalizing by step length or dropping the first turn removes it.
+   *Action:* scope the claim to WW-AG, describe the rest as a final-step correction,
+   report the length and first-turn rows, replace the featured example. *Small
+   follow-up:* re-select the attention band and w for the two variants.
+2. **"Failed trajectories are what matter" — not supported (E4).** Under Table 1's
+   protocol WikiText reaches the headline numbers and a random basis comes within a few
+   points of them (worst of 11 draws: 9–14 below on WW-AG, 1 below on DeepSeek WW-HC).
+   Under validation
+   selection the benchmark reference leads on WW-AG and on DeepSeek, and loses to
+   WikiText on three of four Qwen cells. Failure-only filtering changes nothing.
+   *Action:* reframe the premise as a low-rank reference for the common mode of step
+   representations, helped by in-distribution data on some subsets; drop the Huber
+   mixture story or label it motivation only. The two stand-ins for the success-only
+   control agree (E5, E6): MCP-Atlas successes and failures tie on seven cells of
+   eight, with a lean toward failures on WW-AG from a single draw, and a reference cut
+   to the steps before the decisive error does no better than a random subset of the
+   same size. Claim that failed trajectories SUFFICE, not that they are required.
+3. **"The score is not a length or norm artifact" — half true (A10).** Length
+   baselines sit near random. But wherever the band starts at component 0 the score is
+   nearly a function of the vector norm (ρ −0.70 to −0.94), and removing the norm costs
+   3–13 points. *Action:* say so, and report the unit-norm row.
+4. **Same labels, supervised (B4).** No probe beats test-selected SOAP; against
+   validation-selected SOAP a probe wins three of four Qwen cells and roughly ties on
+   DeepSeek TraceElephant. *Action:* report the probe as a competitive baseline.
+
+5. **Found on the way: on CORRECT-Error the final step is usually the decisive one
+   (A11 extension).** Excluding the final step drops the base score from 61–64 % to
+   11 %, and over the whole corpus the gold step is the last turn in 57.5 % of
+   trajectories (macro; 81.6 % on arc, 36.5 % on musique). "Always predict the final
+   step" therefore lands within 4–7 points of SOAP and of the best judges in the CE
+   column. *Action:* add a final-step row to Table 1 — this restores the fixed-index
+   baseline dropped below, for the one column where it matters — and stop citing
+   CORRECT-Error as evidence for rescoring. *Small follow-up:* score the rule on the
+   three test splits; the 57.5 is a corpus-wide share.
+
+The thread through all four: SOAP's headline numbers lean on selecting among thousands
+of configurations with a few dozen labeled trajectories. E4's random-basis row measures
+that lean directly — on Qwen WW-AG, 33.33 to 43.92 across 11 random bases under test
+selection (median 39.15), 23.28 under validation selection. Shrinking the grid (a handful of layers, band families [0, k) and [1, k),
+fixed w) is the change most likely to move the validation-selected numbers toward the
+test-selected ones, and it is the work to do next, ahead of any rewriting.
+
 ## Excluded by decision (2026-09-21)
 
-- **Success-only reference** — successful trajectories exist only in the synthetic
-  corpora, and obtaining a clean, size-matched set is nontrivial. Deferred.
+- **Success-only reference in our own question pools** — successful trajectories exist
+  only in the synthetic corpora, and obtaining a clean, size-matched set is nontrivial.
+  Replaced by two stand-ins: E5 (MCP-Atlas successes vs failures, cross-distribution)
+  and E6 (steps before the decisive error, in distribution).
 - **Few-shot judge** with validation demonstrations — not needed.
 - **Fixed-index, first-non-orchestrator, agent-prior baselines** — dropped; A3's
-  temporal-bias rows already cover position.
+  temporal-bias rows already cover position. The CORRECT-Error run reopens one of them:
+  a final-step baseline (Summary, item 5).
 - **Probe trained on train+val labels** — dropped; the probe sees validation labels only.
 
 ## Order
 
 A10 and A11 first (CPU, minutes to run); then B4; then E4, whose WikiText extraction
-needs a free GPU (0–3 were idle on 2026-09-20).
+needs a free GPU (0–3 were idle on 2026-09-20). E6 next (CPU only, no staging); then
+E5: stage MCP-Atlas, extract once per backbone, run the two arms under both rules.

@@ -1,0 +1,46 @@
+[correct-error] qwen3.5-9b/arc anchor=embed [1,3) L=6-8 gamma=0.1 w=1
+[correct-error] qwen3.5-9b/gaia anchor=ens-mid3 [1,4) L=6-8 gamma=0.2 w=all
+[correct-error] qwen3.5-9b/hotpot anchor=act/15 [1,3) L=4-6 gamma=0.2 w=1
+[correct-error] qwen3.5-9b/math500 anchor=act/7 [0,20) L=6-8 gamma=0.0 w=all
+[correct-error] qwen3.5-9b/mmlu_pro anchor=act/11 [0,3) L=6-8 gamma=0.0 w=all
+[correct-error] qwen3.5-9b/musique anchor=act/3 [1,3) L=6-8 gamma=0.0 w=all
+[correct-error] qwen3.5-9b/wikimqa anchor=act/15 [1,3) L=6-8 gamma=0.1 w=1
+[correct-error] deepseek-8b/arc anchor=act/13 [0,3) L=8-16 gamma=0.0 w=all
+[correct-error] deepseek-8b/gaia anchor=act/13 [0,4) L=8-16 gamma=0.0 w=all
+[correct-error] deepseek-8b/hotpot anchor=act/16 [0,4) L=8-16 gamma=0.0 w=all
+[correct-error] deepseek-8b/math500 anchor=act/15 [1,3) L=8-16 gamma=0.0 w=all
+[correct-error] deepseek-8b/mmlu_pro anchor=act/8 [0,3) L=8-16 gamma=0.0 w=all
+[correct-error] deepseek-8b/musique anchor=act/13 [0,6) L=8-16 gamma=0.0 w=all
+[correct-error] deepseek-8b/wikimqa anchor=act/12 [0,3) L=0-8 gamma=0.1 w=1
+wrote results-ablations/a11_rescore_controls_ce.tsv  (427 rows) and results-ablations/a11_rescore_controls_ce_diag.tsv
+
+=== deepseek-8b (selected gamma in brackets; step acc %, test) ===
+cell          correct-error/arc correct-error/gaia correct-error/hotpot correct-error/math500 correct-error/mmlu_pro correct-error/musique correct-error/wikimqa
+row                                                                                                                                                             
+base                87.72 (0.0)         72.0 (0.0)          52.71 (0.0)           59.92 (0.0)            80.43 (0.0)           44.66 (0.0)           51.86 (0.0)
+exclude-final        5.26 (0.0)         6.67 (0.0)          20.65 (0.0)            8.86 (0.0)             9.42 (0.0)           16.67 (0.0)           14.35 (0.0)
+next-step           87.72 (0.0)         72.0 (0.0)          52.71 (0.0)           59.92 (0.0)            80.43 (0.0)           44.66 (0.0)           51.86 (0.0)
+const-boost         87.72 (0.0)         72.0 (0.0)          52.71 (0.0)           59.92 (0.0)            80.43 (0.0)           44.66 (0.0)           51.86 (0.0)
+uniform-norm        87.72 (0.0)         72.0 (0.0)          52.71 (0.0)           59.92 (0.0)            80.43 (0.0)           44.66 (0.0)           51.86 (0.0)
+soap                        NaN                NaN                  NaN                   NaN                    NaN                   NaN           55.31 (0.1)
+soap-lennorm                NaN                NaN                  NaN                   NaN                    NaN                   NaN           51.86 (0.0)
+soap-nofirst                NaN                NaN                  NaN                   NaN                    NaN                   NaN           55.31 (0.1)
+
+=== qwen3.5-9b (selected gamma in brackets; step acc %, test) ===
+cell          correct-error/arc correct-error/gaia correct-error/hotpot correct-error/math500 correct-error/mmlu_pro correct-error/musique correct-error/wikimqa
+row                                                                                                                                                             
+base                81.36 (0.0)         68.0 (0.0)          45.67 (0.0)           61.18 (0.0)            79.71 (0.0)           43.59 (0.0)           50.14 (0.0)
+exclude-final        2.63 (0.0)          8.0 (0.0)          13.49 (0.0)            9.28 (0.0)              8.7 (0.0)           17.95 (0.0)           13.71 (0.0)
+next-step           81.58 (0.1)         72.0 (0.8)          45.91 (0.1)           61.18 (0.0)            79.71 (0.0)           43.59 (0.0)           50.59 (0.1)
+const-boost         81.36 (0.0)        70.67 (0.4)          45.67 (0.0)           61.18 (0.0)            79.71 (0.0)           43.59 (0.0)           50.14 (0.0)
+uniform-norm        81.36 (0.0)        69.33 (0.8)          45.67 (0.0)           61.18 (0.0)            79.71 (0.0)           43.59 (0.0)           50.14 (0.0)
+soap                81.58 (0.1)        69.33 (0.2)          46.48 (0.2)                   NaN                    NaN                   NaN           50.59 (0.1)
+soap-lennorm        81.36 (0.0)        69.33 (0.2)          46.83 (0.2)                   NaN                    NaN                   NaN           50.59 (0.1)
+soap-nofirst         81.8 (0.1)        69.33 (0.2)          46.48 (0.2)                   NaN                    NaN                   NaN           50.59 (0.1)
+
+      dataset       model  subset  anchor_gamma   w  test_trajs  flips  flip_base_was_final  flip_moved_earlier  flip_mean_hops_earlier  flips_fixed  flips_broke  first_turn_mass  first_turn_mass_uniform
+correct-error  qwen3.5-9b     arc           0.1   1         456     14                0.286               0.929                   3.214            3            2            0.279                    0.336
+correct-error  qwen3.5-9b    gaia           0.2 all          75      2                0.000               1.000                   4.000            1            0            0.173                    0.241
+correct-error  qwen3.5-9b  hotpot           0.2   1         867    103                0.262               0.845                   3.282           27           20            0.128                    0.217
+correct-error  qwen3.5-9b wikimqa           0.1   1        1101    111                0.126               0.802                   5.189           20           15            0.120                    0.206
+correct-error deepseek-8b wikimqa           0.1   1        1101    309                0.272               0.773                   2.502           94           56            0.121                    0.208
